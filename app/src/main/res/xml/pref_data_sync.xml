@@ -1,0 +1,20 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/pref_list_table"
+        android:entryValues="@array/pref_table_list_values"
+        android:key="table_list"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_sync_table_to_realm" />
+
+    <Preference
+        android:key = "show_data_key"
+        android:title="DATA" />
+
+    <Preference
+        android:key = "start_sync_key"
+        android:title="SYNC" />
+
+</PreferenceScreen>

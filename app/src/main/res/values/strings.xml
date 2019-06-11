@@ -1,0 +1,131 @@
+<resources>
+    <string name="app_name">Starfang</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_sync_table_to_realm">DB 테이블 선택</string>
+    <string-array name="pref_list_table">
+        <item>장수 정보</item>
+        <item>병종 정보</item>
+        <item>병종 상성</item>
+        <item>지형 정보</item>
+        <item>몽매 시너지</item>
+        <item>설명</item>
+        <item>인연</item>
+        <item>보물</item>
+        <item>보물 분류</item>
+        <item>보물 강화</item>
+        <item>보패 접두사</item>
+        <item>보패 접미사</item>
+        <item>보패 조합</item>
+        <item>도트</item>
+    </string-array>
+    <string-array name="pref_table_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync">선택</string>
+    <string name="pref_default_sync_db">냥</string>
+
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_show_realm">ShowRealmActivity</string>
+
+    <string name="description">
+        "냥봇 19.04.11 설명 \n"
+        "궁금한 점: open.kakao.com/o/guWfoIhb\n"
+
+        "01.장수정보: [장수이름] + '냥'\n"
+		"02.장수목록: [조건] + '냥'\n"
+            "    조건1) 효과\n"
+	    	"    조건2) 병종\n"
+			"    조건3) 코스트\n"
+            "      [숫자] + [~]\n"
+			"    조건4) 계보 4자리\n"
+        "03. 효과설명: [효과] + '설명' + '냥'\n"
+		"04. 병종설명: [병종] + '설명' + '냥'\n"
+		"05. 보패조합: [접미사] + [효과] + '보패조합 냥'\n"
+		"06. 보패접두사: [접두사] + '보패냥'\n"
+		"07. 지형상성: [병종] + [지형] + '지형 냥'\n"
+		"08. 병종상성: [병종] + [병종] + '상성 냥'\n"
+        "09. 이동력소모: [병종] + [지형] + '소모 냥'\n"
+        "10. 보물검색: [보물이름]or[효과] + '(보물) 냥'\n"
+        "11. 일정: [날짜]or[맵] + '섬멸'or'경쟁' + '일정 냥'\n"
+        "12. 인연: [인연]or[장수] + '인연 냥'\n"
+        "13. 몽매의 시련: [장수]+ '시너지 냥'\n"
+        "14. 퇴치 임무: [병종]+ '퇴치 냥'\n"
+        "15. 약탈시간계산: [광] + [수량] + '약탈(보조) 멍'\n"
+        "16. 약탈당함: [시:분] + [광] + '약탈당함 멍' \n\n" </string>
+    <string name="desc_tooManyComb">
+        "개 조합: 특성조합 수가 너무 많다냥..특성이름을 자세하게 입력해보라냥\n"
+        "eg. 공격냥(X) 주동공격(O)"
+    </string>
+    <string name="action_settings">Settings</string>
+</resources>
