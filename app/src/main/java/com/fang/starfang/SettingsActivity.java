@@ -14,12 +14,10 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.fang.starfang.model.realm.RealmSyncTask;
+import com.fang.starfang.local.task.RealmSyncTask;
 import com.fang.starfang.view.ShowRealmActivity;
 
 import java.util.List;
-
-import io.realm.Realm;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 

@@ -1,17 +1,26 @@
 package com.fang.starfang.view.list;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.model.realm.Heroes;
+import com.fang.starfang.local.model.realm.Heroes;
 
+
+import io.realm.Case;
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
 import io.realm.RealmBaseAdapter;
+import io.realm.RealmQuery;
 
-public class HeroesListAdapter extends RealmBaseAdapter<Heroes> {
+public class HeroesListAdapter extends RealmBaseAdapter<Heroes> implements Filterable {
+
+    private Realm realm;
 
     private static class ViewHolder {
         TextView hero_no;
@@ -20,8 +29,31 @@ public class HeroesListAdapter extends RealmBaseAdapter<Heroes> {
         TextView hero_cost;
     }
 
-    public HeroesListAdapter(OrderedRealmCollection<Heroes> data) {
+    public void filterResults( String cs ) {
+        cs = (cs == null) ? null : cs.toLowerCase().trim();
+        RealmQuery<Heroes> query = realm.where(Heroes.class);
+        if( !(cs == null || "".equals(cs))) {
+            query.contains(Heroes.FIELD_NAME,cs, Case.INSENSITIVE);
+        }
+        updateData(query.findAll());
+    }
+
+    @Override
+    public Filter getFilter() {
+        HeroesFilter filter = new HeroesFilter(this);
+        return filter;
+    }
+
+
+
+
+    public HeroesListAdapter(OrderedRealmCollection<Heroes> data, Realm realm) {
         super(data);
+        this.realm = realm;
+
+
+
+
     }
 
 
@@ -65,10 +97,24 @@ public class HeroesListAdapter extends RealmBaseAdapter<Heroes> {
         return convertView;
     }
 
-    //public void setData(OrderedRealmCollection<Heroes> details) {
-    //    this.adapterData = details;
-     //   notifyDataSetChanged();
-   // }
 
+    private class HeroesFilter extends Filter {
+        private final HeroesListAdapter adapter;
+        private HeroesFilter(HeroesListAdapter adapter) {
+            super();
+            this.adapter = adapter;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            return new FilterResults();
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            adapter.filterResults(constraint.toString());
+
+        }
+    }
 
 }

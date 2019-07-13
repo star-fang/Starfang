@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
-import com.fang.starfang.model.io.Action;
+import com.fang.starfang.util.model.io.Action;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.service.notification.StatusBarNotification;
 
-import com.fang.starfang.model.io.Action;
+import com.fang.starfang.util.model.io.Action;
 import com.fang.starfang.network.Communicate;
 import com.fang.starfang.util.NotificationUtils;
 

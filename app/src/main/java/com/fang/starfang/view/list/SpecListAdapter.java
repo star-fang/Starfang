@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.model.realm.Spec;
+import com.fang.starfang.local.model.realm.Spec;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;

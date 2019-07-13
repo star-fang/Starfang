@@ -1,14 +1,12 @@
 package com.fang.starfang;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
-import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import com.fang.starfang.local.LocalDataHandler;
+import com.fang.starfang.local.task.LocalDataHandler;
 import com.fang.starfang.network.task.SuggestTask;
 
 // 카톡 알림을 읽어오는 리스너

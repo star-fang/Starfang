@@ -6,6 +6,12 @@
     android:orientation="vertical"
     tools:context="com.fang.starfang.view.ShowRealmActivity" >
 
+    <EditText
+        android:inputType="textNoSuggestions"
+        android:id="@+id/et_search"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
     <ListView
         android:id="@+id/realm_view_list"
         android:layout_width="match_parent"
