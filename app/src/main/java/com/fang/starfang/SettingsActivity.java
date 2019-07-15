@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.fang.starfang.local.task.RealmSyncTask;
+import com.fang.starfang.view.ProgressBarPreference;
 import com.fang.starfang.view.ShowRealmActivity;
 
 import java.util.List;
@@ -161,8 +163,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
 
 
-            Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-            startActivity(intent);
+
+            addPreferencesFromResource(R.xml.pref_notification);
+            setHasOptionsMenu(true);
+
+            Preference pref_notifications_setting= findPreference("notifications_setting");
+            pref_notifications_setting.setOnPreferenceClickListener(preference -> {
+                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                startActivity(intent);
+                return false;
+            } );
+
+
 
 
         }
@@ -179,8 +191,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
 
+
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class DataSyncPreferenceFragment extends PreferenceFragment {
+
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -189,6 +205,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
             bindPreferenceSummaryToValue(findPreference("table_list"));
 
+            Preference pref_sync_all = findPreference("start_sync_key_all");
+            pref_sync_all.setOnPreferenceClickListener(preference -> {
+
+                ProgressBarPreference syncPreference = new ProgressBarPreference(getActivity());
+                ((PreferenceCategory)findPreference("pref_progress")).addPreference(syncPreference);
+                for( String pref_table_name: getResources().getStringArray(R.array.pref_list_table))
+                    new RealmSyncTask(getActivity(),pref_table_name, syncPreference).getAllData(false );
+                ((PreferenceCategory)findPreference("pref_progress")).removeAll();
+                return false;
+            } );
+
             Preference pref_sync = findPreference("start_sync_key");
             pref_sync.setOnPreferenceClickListener(preference -> {
 
@@ -196,9 +223,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 String pref_table_name =  pref_table_value.getSummary().toString();
                 Log.d(TAG,pref_table_name);
 
+                ProgressBarPreference syncPreference = new ProgressBarPreference(getContext());
+                ((PreferenceCategory)findPreference("pref_progress")).addPreference(syncPreference);
+                RealmSyncTask syncTask = new RealmSyncTask(getActivity(),pref_table_name, syncPreference );
 
-                RealmSyncTask syncTask = new RealmSyncTask(getActivity(),pref_table_name);
-                syncTask.getAllData();
+
+                //((PreferenceCategory)findPreference("pref_progress")).getPre
+
+                //syncPreference.getTvSync().setText(pref_table_name);
+                //((PreferenceCategory)findPreference("pref_progress")).removeAll();
+                syncTask.getAllData(true );
                 return false;
             });
 
@@ -217,9 +251,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 return false;
             });
 
-/*
-            bindPreferenceSummaryToValue(findPreference("sync_frequency"));
-            */
+
         }
 
         @Override

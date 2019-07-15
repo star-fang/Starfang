@@ -24,6 +24,7 @@ import com.fang.starfang.local.model.realm.Spec;
 import com.fang.starfang.local.model.realm.TermSynergy;
 import com.fang.starfang.local.model.realm.Terrain;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
+import com.fang.starfang.view.ProgressBarPreference;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -52,10 +53,13 @@ public class RealmSyncTask  {
     private String pref_table;
     private Realm realm;
     private Gson gson;
+    private ProgressBarPreference progressBarPreference;
 
-    public RealmSyncTask( Context c, String pref_t ) {
-        context = c;
-        pref_table = pref_t;
+    public RealmSyncTask(Context context, String pref_table, ProgressBarPreference syncPreference) {
+        this.context = context;
+        this.pref_table = pref_table;
+        this.progressBarPreference = syncPreference;
+
 
         GsonBuilder gsonBuilder = new GsonBuilder()
                 .setExclusionStrategies(new ExclusionStrategy() {
@@ -76,7 +80,7 @@ public class RealmSyncTask  {
         gson = gsonBuilder.create();
     }
 
-    public void getAllData() {
+    public void getAllData(boolean toast) {
         realm = Realm.getDefaultInstance();
 
         // Get Data and Delete old data from Realm database....
@@ -95,21 +99,27 @@ public class RealmSyncTask  {
                                 realm.delete(Terrain.class);
                                 realm.createAllFromJson(Terrain.class,jsonArray);
                                 Log.d(TAG, "SYNC Terrain REALM COMPLETE!");
-                                Toast.makeText(context,"지형 정보 Merge, 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"지형 정보 Merge, 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case Heroes.PREF_TABLE:
                                 realm.delete(Heroes.class);
+                                progressBarPreference.setMax(jsonArray.length());
                                 for(int i = 0; i < jsonArray.length(); i++ ) {
                                     try {
                                         String json = jsonArray.get(i).toString();
                                         Heroes hero = gson.fromJson(json,Heroes.class);
                                         realm.copyToRealm(hero);
+                                        progressBarPreference.setProgress(i);
+                                        //progressBarPreference.setLabel(hero.getHeroName());
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
                                 }
+                                progressBarPreference.setLabel("장수 정보 동기화 완료");
+
+
                                 Log.d(TAG, "SYNC Hero REALM COMPLETE!");
-                                Toast.makeText(context,"장수 정보 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"장수 정보 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case Destiny.PREF_TABLE:
                                 realm.delete(Destiny.class);
@@ -117,22 +127,35 @@ public class RealmSyncTask  {
                                 for(Destiny des : realm.where(Destiny.class).findAll())
                                     des.setDesNameNoBlank(des.getDesName().replace(" ", ""));
                                 Log.d(TAG, "SYNC Destiny REALM COMPLETE!");
-                                Toast.makeText(context,"인연 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"인연 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case Spec.PREF_TABLE:
                                 realm.delete(Spec.class);
-                                realm.createAllFromJson(Spec.class, jsonArray);
+
+
+                                for(int i = 0; i < jsonArray.length(); i++ ) {
+                                    try {
+                                        String json = jsonArray.get(i).toString();
+                                        Spec spec = gson.fromJson(json,Spec.class);
+                                        realm.copyToRealm(spec);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+
+                                //realm.createAllFromJson(Spec.class, jsonArray);
                                 for(Spec spec : realm.where(Spec.class).findAll())
                                     spec.setSpecNameNoBlank(spec.getSpecName().replace(" ",""));
                                     // 검색용 공백 제거 column 생성
                                 Log.d(TAG, "SYNC Spec REALM COMPLETE!");
-                                Toast.makeText(context,"설명 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"설명 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case Branch.PREF_TABLE:
                                 realm.delete(Branch.class);
                                 realm.createAllFromJson(Branch.class, jsonArray);
                                 Log.d(TAG, "SYNC Branch REALM COMPLETE!");
-                                Toast.makeText(context,"병종 정보 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"병종 정보 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case TermSynergy.PREF_TABLE:
                                 realm.delete(TermSynergy.class);
@@ -146,7 +169,7 @@ public class RealmSyncTask  {
                                     }
                                 }
                                 Log.d(TAG, "SYNC TermSynergy REALM COMPLETE!");
-                                Toast.makeText(context,"몽매 시너지 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"몽매 시너지 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case Item.PREF_TABLE:
                                 realm.delete(Item.class);
@@ -163,25 +186,25 @@ public class RealmSyncTask  {
                                     item.setItemNameNoBlank(item.getItemName().replace(" ",""));
                                       // 검색용 공백 제거 column 생성
                                 Log.d(TAG, "SYNC Item REALM COMPLETE!");
-                                Toast.makeText(context,"보물 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"보물 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case ItemCate.PREF_TABLE:
                                 realm.delete(ItemCate.class);
                                 realm.createAllFromJson(ItemCate.class, jsonArray);
                                 Log.d(TAG, "SYNC ItemCate REALM COMPLETE!");
-                                Toast.makeText(context,"보물 분류 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"보물 분류 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case ItemReinforcement.PREF_TABLE:
                                 realm.delete(ItemReinforcement.class);
                                 realm.createAllFromJson(ItemReinforcement.class, jsonArray);
                                 Log.d(TAG, "SYNC ItemReinforcement REALM COMPLETE!");
-                                Toast.makeText(context,"보물 강화 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"보물 강화 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case Relation.PREF_TABLE:
                                 realm.delete((Relation.class));
                                 realm.createAllFromJson(Relation.class, jsonArray);
                                 Log.d(TAG, "SYNC Relation REALM COMPLETE!");
-                                Toast.makeText(context,"병종 상성 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"병종 상성 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case MagicItemCombination.PREF_TABLE:
                                 realm.delete(MagicItemCombination.class);
@@ -195,25 +218,25 @@ public class RealmSyncTask  {
                                     }
                                 }
                                 Log.d(TAG, "SYNC MagicItemCombination REALM COMPLETE!");
-                                Toast.makeText(context,"보패 조합 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"보패 조합 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case MagicItemPRFX.PREF_TABLE:
                                 realm.delete(MagicItemPRFX.class);
                                 realm.createAllFromJson(MagicItemPRFX.class, jsonArray);
                                 Log.d(TAG, "SYNC  MagicItemPRFX REALM COMPLETE!");
-                                Toast.makeText(context,"보패 접두사 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"보패 접두사 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case MagicItemSFX.PREF_TABLE:
                                 realm.delete(MagicItemSFX.class);
                                 realm.createAllFromJson(MagicItemSFX.class, jsonArray);
                                 Log.d(TAG, "SYNC MagicItemSFX REALM COMPLETE!");
-                                Toast.makeText(context,"보패 접미사 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"보패 접미사 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             case Dot.PREF_TABLE:
                                 realm.delete(Dot.class);
                                 realm.createAllFromJson(Dot.class, jsonArray);
                                 Log.d(TAG, "SYNC Dot REALM COMPLETE!");
-                                Toast.makeText(context,"도트 동기화 완료",Toast.LENGTH_SHORT).show();
+                                if(toast) Toast.makeText(context,"도트 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             default:
                                 Log.d(TAG, "SYNC REALM failure : empty table name");

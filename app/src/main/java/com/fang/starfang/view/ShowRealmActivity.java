@@ -1,11 +1,12 @@
 package com.fang.starfang.view;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import com.fang.starfang.view.list.DestinyListAdapter;
 import com.fang.starfang.view.list.HeroesListAdapter;
 import com.fang.starfang.local.model.realm.Heroes;
 import com.fang.starfang.view.list.SpecListAdapter;
+import com.fang.starfang.view.recycler.HeroesRecyclerAdapter;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -28,27 +30,30 @@ public class ShowRealmActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_realm);
+        setContentView(R.layout.activity_show_realm_recycler_view);
 
 
-        Realm realm = Realm.getDefaultInstance();
+       try {
+           Realm realm = Realm.getDefaultInstance();
 
-        String ref_table = getIntent().getStringExtra("ref_table");
+           String ref_table = getIntent().getStringExtra("ref_table");
 
-        ListView listView = findViewById(R.id.realm_view_list);
-        EditText et_search = findViewById(R.id.et_search);
+           RecyclerView recyclerView = findViewById(R.id.realm_recycler_view);
+           EditText et_search = findViewById(R.id.et_search);
 
+           RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
 
-        switch(ref_table) {
-            case Heroes.PREF_TABLE:
+           recyclerView.setHasFixedSize(true);
+           recyclerView.setItemAnimator(new DefaultItemAnimator());
+           recyclerView.setLayoutManager(layoutManager);
 
+           switch (ref_table) {
+               case Heroes.PREF_TABLE:
 
-
-
-                RealmResults<Heroes> heroResult = realm.where(Heroes.class).findAll();
-                HeroesListAdapter heroAdapter = new HeroesListAdapter(heroResult, realm);
-                listView.setAdapter(heroAdapter);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                   HeroesRecyclerAdapter heroAdapter = new HeroesRecyclerAdapter(realm, getSupportFragmentManager());
+                   recyclerView.setAdapter(heroAdapter);
+                /*
+                .setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -57,46 +62,41 @@ public class ShowRealmActivity extends AppCompatActivity {
                         HeroesDialogFragment fragment = HeroesDialogFragment.newInstance((Heroes)parent.getItemAtPosition(position));
                         fragment.show(getSupportFragmentManager(),"dialog");
 
-
-
-
                     }
                 });
+                */
 
 
-                et_search.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                   et_search.addTextChangedListener(new TextWatcher() {
+                       @Override
+                       public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                    }
+                       }
 
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        heroAdapter.getFilter().filter(s);
+                       @Override
+                       public void onTextChanged(CharSequence s, int start, int before, int count) {
+                           heroAdapter.getFilter().filter(s);
 
-                    }
+                       }
 
-                    @Override
-                    public void afterTextChanged(Editable s) {
+                       @Override
+                       public void afterTextChanged(Editable s) {
 
-                    }
-                });
+                       }
+                   });
 
 
-                break;
-            case Destiny.PREF_TABLE:
-                RealmResults<Destiny> desResult = realm.where(Destiny.class).findAll();
-                DestinyListAdapter destinyAdapter = new DestinyListAdapter(desResult);
-                listView.setAdapter(destinyAdapter);
-                break;
-            case Spec.PREF_TABLE:
-                RealmResults<Spec> specResult = realm.where(Spec.class).findAll();
-                SpecListAdapter specAdapter = new SpecListAdapter(specResult);
-                listView.setAdapter(specAdapter);
-                break;
-                default:
-        }
+                   break;
+               case Destiny.PREF_TABLE:
+                   break;
+               case Spec.PREF_TABLE:
+                   break;
+               default:
+           }
 
+       }catch (RuntimeException ignore) {
+
+       }
     }
 
     @Override

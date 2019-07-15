@@ -4,11 +4,13 @@
 
     <header
         android:fragment="com.fang.starfang.SettingsActivity$GeneralPreferenceFragment"
-        android:icon="@drawable/ic_info_black_24dp"/>
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/pref_header_information"/>
 
     <header
         android:fragment="com.fang.starfang.SettingsActivity$NotificationPreferenceFragment"
-        android:icon="@drawable/ic_notifications_black_24dp"/>
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/pref_header_notifications"/>
 
     <header
         android:fragment="com.fang.starfang.SettingsActivity$DataSyncPreferenceFragment"

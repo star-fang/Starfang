@@ -13,7 +13,7 @@
         android:layout_height="50dp" />
 
     <ListView
-        android:id="@+id/realm_view_list"
+        android:id="@+id/realm_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </ListView>
