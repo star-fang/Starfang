@@ -18,6 +18,7 @@ import com.fang.starfang.local.model.realm.Magic;
 import com.fang.starfang.local.model.realm.MagicItemCombination;
 import com.fang.starfang.local.model.realm.MagicItemPRFX;
 import com.fang.starfang.local.model.realm.MagicItemSFX;
+import com.fang.starfang.local.model.realm.Memo;
 import com.fang.starfang.local.model.realm.Relation;
 import com.fang.starfang.local.model.realm.Spec;
 import com.fang.starfang.local.model.realm.TVpair;
@@ -67,15 +68,15 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
         COMMAND_DEST,COMMAND_TER,COMMAND_MOV,COMMAND_DESC,
         COMMAND_SYN,COMMAND_ITEM,COMMAND_AGENDA,COMMAND_MAGIC_ITEM,
         COMMAND_RELATION,COMMAND_EXTERMINATE,COMMAND_DOT,COMMAND_COMB,
-        COMMAND_CALC, COMMAND_MAGIC, COMMAND_DEFAULT }
+        COMMAND_CALC, COMMAND_MAGIC, COMMAND_MEMO, COMMAND_DEL_MEMO, COMMAND_DEFAULT }
     private static final String[] COMMAND_CERTAIN = {
             "인연","지형","소모","설명",
             "시너지","보물","일정","보패",
-            "상성","퇴치","도트","조합","계산","책략"};
+            "상성","퇴치","도트","조합","계산","책략","메모","삭제"};
 
 
-    private static final String[] PRFX_COMMAND = {"","","이동력","","몽매","","","","병종","","","보패","",""};
-    private static final String[] SFX_COMMAND = {"","상성","","","","","","","","","","","",""};
+    private static final String[] PRFX_COMMAND = {"","","이동력","","몽매","","","","병종","","","보패","","","","메모"};
+    private static final String[] SFX_COMMAND = {"","상성","","","","","","","","","","","","","",""};
 
 
     private enum COMMAND_CERTAIN_ENUM_UNION {
@@ -1529,14 +1530,14 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
                 String dateInfo = q.replaceAll("[^0-9]", "");
                 Date date = new Date();
                 date.setTime(date.getTime());
-                SimpleDateFormat df_ymd = new SimpleDateFormat("yyMMdd", Locale.KOREAN);
+                SimpleDateFormat df_ymd = new SimpleDateFormat("yyMMdd", Locale.KOREA);
                 try {
                     if (dateInfo.length() == 6) {
                         q = q.replace(dateInfo, "");
                         date = df_ymd.parse(dateInfo);
                     } else if (dateInfo.length() == 4) {
                         q = q.replace(dateInfo, "");
-                        dateInfo = (new SimpleDateFormat("yy", Locale.KOREAN).format(date)) + dateInfo;
+                        dateInfo = (new SimpleDateFormat("yy", Locale.KOREA).format(date)) + dateInfo;
                         date = df_ymd.parse(dateInfo);
                     }
 
@@ -1555,7 +1556,7 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
 
 
 
-                lambdaResult.append( new SimpleDateFormat("yyyy.MM.dd", Locale.KOREAN).format(date) ).
+                lambdaResult.append( new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(date) ).
                         append(BLANK).append(division).append("일정").append(CRLF).append(SEPARATOR);
 
                 RealmResults<Agenda> agendaRealmResults = null;
@@ -1572,7 +1573,7 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
                     return "[날짜4~6자리]or[맵] [경쟁or섬멸] 일정냥 <<< 이렇게 입력하게냥";
                 }
 
-                    SimpleDateFormat df_md = new SimpleDateFormat("MM.dd", Locale.KOREAN);
+                    SimpleDateFormat df_md = new SimpleDateFormat("MM.dd", Locale.KOREA);
 
                     for (Agenda agenda : agendaRealmResults) {
 
@@ -1594,6 +1595,93 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
 
                return lambdaResult.toString();
             };
+
+            HandleLocalDB createOrGetMemo = q -> {
+                if(catRoom == null) {
+                    return "단톡방에서만 사용가능한 기능입니다.";
+                }
+
+                q = q.trim();
+
+                StringBuilder lambdaResult = new StringBuilder();
+
+                RealmResults<Memo> memos = realm.where(Memo.class).equalTo(Memo.FIELD_ROOM,catRoom).and().equalTo(Memo.FIELD_NAME,sendCat).findAll();
+                if(q.isEmpty()) {
+                    if(memos.isEmpty()) {
+                        return "[" + catRoom + "]" + sendCat + "님의 메모가 존재하지 않습니다.";
+                    }
+                    lambdaResult.append("[").append(catRoom).append("]").append(CRLF).append(sendCat).append("님의 메모").append(CRLF)
+                            .append("메모삭제는 [메모 번호] + 메모 삭제 냥").append(COMMA).append(CRLF);
+                    for(Memo memo : memos ) {
+                        lambdaResult.append("작성일자 :").append(memo.getMemoTimestamp()).append(CRLF)
+                                .append("메모 번호: ").append(memo.getMemoID()).append(CRLF).append(SEPARATOR)
+                                .append(memo.getMemoText()).append(COMMA).append(CRLF);
+                    }
+                } else {
+
+                    Memo memo = new Memo();
+
+                    try {
+                        Number number = realm.where(Memo.class).max(Memo.FIELD_ID);
+                        if (number != null) {
+                            number = number.intValue() + 1;
+                        } else {
+                            number = 0;
+                        }
+                        memo.setMemoID(number.intValue());
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        return "메모 추가 실패: Starfang에게 문의 하라옹";
+                    }
+
+                    memo.setMemoTimestamp(new SimpleDateFormat("yyMMdd HH:mm:ss",Locale.KOREA).format(new Date()));
+                    memo.setMemoName(sendCat);
+                    memo.setMemoRoom(catRoom);
+                    memo.setMemoText(q);
+                    realm.beginTransaction();
+                    realm.copyToRealm(memo);
+                    realm.commitTransaction();
+
+                    lambdaResult.append(memo.getMemoTimestamp()).append(BLANK).append("메모 추가 성공!" +
+                            "\r\n*확인 방법: 메모 냥" +
+                            "\r\n\n*삭제 방법: [메모 번호] 메모 삭제 냥(본인만 가능)" +
+                            "\r\n\r\n!메모는 냥봇 상황에 따라 언제든 초기화 될수 있으니 주의 바랍니다.");
+                }
+
+
+                return lambdaResult.toString();
+            };
+
+            HandleLocalDB deleteMemo = q -> {
+                if(catRoom == null) {
+                    return "삭제 실패: 단톡방에서만 사용가능한 기능입니다.";
+                }
+
+                int id = NumberUtils.toInt(q.replaceAll("[^0-9]",EMPTY),-1);
+                if( id < 0 ) {
+                    return "삭제 실패: 삭제할 문서 번호를 입력 하세요!";
+                }
+                RealmResults<Memo> memos = realm.where(Memo.class).equalTo(Memo.FIELD_ID,id).equalTo(Memo.FIELD_ROOM,catRoom).and().equalTo(Memo.FIELD_NAME,sendCat).findAll();
+                if(memos.isEmpty()) {
+                    return "삭제 실패: [" + catRoom + "]" + sendCat + "님의 메모 중에 " + id + "번 메모가 존재하지 않습니다.";
+                } else {
+                    StringBuilder lambdaResult = new StringBuilder();
+                    lambdaResult.append("메모 삭제 성공!").append(CRLF);
+                    for( Memo memo : memos ) {
+                        lambdaResult.append(memo.getMemoText()).append(CRLF);
+                    }
+                    realm.beginTransaction();
+                    memos.deleteAllFromRealm();
+                    realm.commitTransaction();
+                    return lambdaResult.toString();
+
+                }
+
+            };
+
+
+
+
+
                 String result = null;
 
             switch (certainCMD) {
@@ -1637,6 +1725,12 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
                     break;
                 case COMMAND_DOT:
                     result = dotByPoints.handle(req);
+                    break;
+                case COMMAND_MEMO:
+                    result = createOrGetMemo.handle(req);
+                    break;
+                case COMMAND_DEL_MEMO:
+                    result = deleteMemo.handle(req);
                     break;
                 case COMMAND_CALC:
                     try {
@@ -1926,4 +2020,5 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
 
         return drawResult.toString();
     }
+
 }
