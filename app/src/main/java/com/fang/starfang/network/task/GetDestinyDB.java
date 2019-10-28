@@ -55,7 +55,7 @@ public class GetDestinyDB {
 
 
         for (JSONObject obj : Communicate.parseJSONObjects("[" + object.get(oneKey).toString() + "]")) {
-            Iterator<String> keys = obj.keySet().iterator();
+            Iterator keys = obj.keySet().iterator();
 
             try {
                 str += shortMSG ? "" : "인연의 끈: " + obj.get("desCord").toString() + "\r\n";

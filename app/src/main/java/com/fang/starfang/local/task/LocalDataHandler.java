@@ -7,12 +7,14 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.Agenda;
 import com.fang.starfang.local.model.realm.Branch;
 import com.fang.starfang.local.model.realm.Destiny;
 import com.fang.starfang.local.model.realm.Dot;
 import com.fang.starfang.local.model.realm.Heroes;
 import com.fang.starfang.local.model.realm.Item;
 import com.fang.starfang.local.model.realm.ItemCate;
+import com.fang.starfang.local.model.realm.Magic;
 import com.fang.starfang.local.model.realm.MagicItemCombination;
 import com.fang.starfang.local.model.realm.MagicItemPRFX;
 import com.fang.starfang.local.model.realm.MagicItemSFX;
@@ -21,6 +23,8 @@ import com.fang.starfang.local.model.realm.Spec;
 import com.fang.starfang.local.model.realm.TVpair;
 import com.fang.starfang.local.model.realm.TermSynergy;
 import com.fang.starfang.local.model.realm.Terrain;
+import com.fang.starfang.local.model.realm.UnionBranch;
+import com.fang.starfang.local.model.realm.UnionSkill;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.network.task.LambdaFunctionHandler;
 import com.fang.starfang.util.KakaoReplier;
@@ -29,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.mozilla.javascript.Scriptable;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +41,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Set;
 
 import io.realm.Case;
@@ -47,43 +53,52 @@ import io.realm.Sort;
 
 
 
-// 4/23 todo list
-/*
-1. 퇴치임무 로컬화, 공백시 안내 멘트
-2. 병종, 효과 설명 동시에 입력시 처리
-3. 섬멸, 경쟁 일정 로컬화
- */
 public class LocalDataHandler extends AsyncTask<String, Integer, String> {
     @SuppressLint("StaticFieldLeak")
     private Context context;
     private String sendCat;
+    private String catRoom;
     private StatusBarNotification sbn;
 
     private static final String TAG = "LOCAL_HANDLER";
     private static final String COMMAND_BOT = "냥";
+    private static final String COMMAND_BOT_UNION = "멍";
     private enum COMMAND_CERTAIN_ENUM {
         COMMAND_DEST,COMMAND_TER,COMMAND_MOV,COMMAND_DESC,
-        COMMAND_SYN,COMMAND_ITEM,COMMAND_AGENDA,COMMAND_MAGIC,
+        COMMAND_SYN,COMMAND_ITEM,COMMAND_AGENDA,COMMAND_MAGIC_ITEM,
         COMMAND_RELATION,COMMAND_EXTERMINATE,COMMAND_DOT,COMMAND_COMB,
-        COMMAND_CALC, COMMAND_DEFAULT }
+        COMMAND_CALC, COMMAND_MAGIC, COMMAND_DEFAULT }
     private static final String[] COMMAND_CERTAIN = {
             "인연","지형","소모","설명",
             "시너지","보물","일정","보패",
-            "상성","퇴치","도트","조합","계산"};
-    private static final String[] PRFX_COMMAND = {"","","이동력","","몽매","","","","병종","","","보패",""};
-    private static final String[] SFX_COMMAND = {"","상성","","","","","","","","","","",""};
+            "상성","퇴치","도트","조합","계산","책략"};
+
+
+    private static final String[] PRFX_COMMAND = {"","","이동력","","몽매","","","","병종","","","보패","",""};
+    private static final String[] SFX_COMMAND = {"","상성","","","","","","","","","","","",""};
+
+
+    private enum COMMAND_CERTAIN_ENUM_UNION {
+        COMMAND_BRANCH_UNION,COMMAND_SPEC_UNION,COMMAND_SKILL_UNION,COMMAND_DESC_UNION, COMMAND_RAVEN,COMMAND_RAVENT, COMMAND_DEFAULT_UNION }
+    private static final String[] COMMAND_CERTAIN_UNION = {
+            "병종","능력", "스킬", "설명","약탈","당함"};
+
+    private static final String[] PRFX_COMMAND_UNION = {"","","","","",""};
+    private static final String[] SFX_COMMAND_UNION = {"","","","","보조",""};
+
     private static final String CRLF = "\r\n";
     private static final String BLANK = " ";
     private static final String EMPTY = "";
     private static final String DASH = "-";
     private static final String COMMA = ",";
-    private static final String SEPARATOR = "---------------------------------\n";
+    private static final String SEPARATOR = "-------------------------------\n";
     private static final String RANGE_EMPTY = "□";
     private static final String RANGE_FULL = "■";
 
-    public LocalDataHandler(Context c, String sender, StatusBarNotification _sbn ) {
+    public LocalDataHandler(Context c, String sender, String room,StatusBarNotification _sbn ) {
         context = c;
         sendCat = sender;
+        catRoom = room;
         sbn = _sbn;
     }
 
@@ -102,7 +117,7 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
 
     private boolean handleRequest( String req, Realm realm ) {
 
-        if (req.substring(req.length() - 1, req.length()).equals(COMMAND_BOT)) {
+        if (req.substring(req.length() - 1).equals(COMMAND_BOT)) {
             req = req.substring(0, req.length() - 1).trim();
 
             COMMAND_CERTAIN_ENUM certainCMD = COMMAND_CERTAIN_ENUM.COMMAND_DEFAULT;
@@ -115,12 +130,12 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
                     String reqWithoutSFX = req;
                     try {
                         if (!suffix.isEmpty())
-                            reqWithoutSFX = (req.substring(req.length() - suffix.length(), req.length()).equals(suffix)) ?
+                            reqWithoutSFX = (req.substring(req.length() - suffix.length()).equals(suffix)) ?
                                     req.substring(0, req.length() - suffix.length() ): req;
                     } catch( StringIndexOutOfBoundsException  ignore ) { }
 
                     try {
-                        if (reqWithoutSFX.substring(reqWithoutSFX.length() - probKey.length(), reqWithoutSFX.length()).equals(probKey)) {
+                        if (reqWithoutSFX.substring(reqWithoutSFX.length() - probKey.length()).equals(probKey)) {
                             certainCMD = certain;
                             req = req.replace(prefix, EMPTY);
                             req = req.replace(suffix, EMPTY).trim();
@@ -484,7 +499,7 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
                         lambdaEachResult.append(cost_below>0 ? "*COST: "+ (cost_below+10) + "이하" + CRLF : EMPTY);
                         lambdaEachResult.append(cost_more>0 ? "*COST: "+ (cost_more+10)  + "이상" + CRLF : EMPTY);
                         lambdaEachResult.append(cost_equal>0 ? "*COST: "+ (cost_equal+10)  + CRLF : EMPTY);
-                        lambdaEachResult.append(level_pivot == 0 ? "검색 결과: " + heroes.size() + "개" + CRLF: BLANK);
+                        lambdaEachResult.append(level_pivot == 0 ? "검색 결과: " + heroes.size() + "개" + CRLF : BLANK);
 
                         StringBuilder heroListBuilder = new StringBuilder();
                         heroListBuilder.append(SEPARATOR).append("병종계열 장수이름 COST")
@@ -510,10 +525,10 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
                             }
                         }
 
-                        lambdaEachResult.append(level_pivot > 0 ? "검색 결과: " + count_each + "개" + CRLF: BLANK);
+                        lambdaEachResult.append(level_pivot > 0 ? "검색 결과: " + count_each + "개" + CRLF: EMPTY );
                         lambdaEachResult.append(heroListBuilder);
                         valid_hero_count_total += count_each;
-                        lambdaResult.append(count_each > 0 ? lambdaEachResult.toString() + COMMA + CRLF : EMPTY);
+                        lambdaResult.append(count_each > 0 ? lambdaEachResult.toString() + COMMA + CRLF : EMPTY );
                     }
                 }
 
@@ -748,7 +763,7 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
 
                         for(TVpair pair : isTerCMD ? terrain.getTerrainSyns(): terrain.getMovingCost()) {
 
-                            lambdaResult.append(pair.getPaddTvTerrainName(3)).append(":")
+                            lambdaResult.append(pair.getPaddTvTerrainName(4)).append(":")
                                     .append(pair.getPaddTvValue(isTerCMD?3:1));
                             lambdaResult.append((iForCRLF++)%2==0? BLANK+BLANK:CRLF);
                         }
@@ -947,7 +962,7 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
                 String insertCate = null;
                 while( !qList.isEmpty()) {
                     String qEach = qList.remove();
-                    if(qEach.equals("전용")||qEach.equals("연의")) {
+                    if(qEach.equals("전용")||qEach.equals("연의")||qEach.equals("제작")) {
                         reinfOrGRD = qEach;
                     } else if(!ignoreList.contains(qEach)){
                         RealmResults<ItemCate> mainCate = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_MAIN_CATE,qEach).findAll();
@@ -1359,6 +1374,7 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
 
             });
 
+
             // 섬멸, 경쟁 일정 검색
 
             // 보패관리 : Starfang 강인한 각 습득
@@ -1377,7 +1393,208 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
             });
 
 
-            String result = null;
+            // 책략 이름 검색
+            HandleLocalDB searchMagicByName = ( q-> {
+
+                Log.d(TAG,"searchMagicByName Activated" );
+                q = q.replace(BLANK,EMPTY);
+
+                if( q.isEmpty() )
+                    return null;
+
+
+
+               RealmResults<Magic> magics = realm.where(Magic.class).contains(Magic.FIELD_NAME, q).findAll();
+
+               if( magics.isEmpty() ) return null;
+
+               StringBuilder lambdaResult = new StringBuilder();
+               for( Magic magic : magics ) {
+                   int tmpEP = magic.getMagicEP();
+                   int tmpMP = magic.getMagicMP();
+                   String tmpHealType = magic.getMagicHealType();
+                   String tmpDamageType = magic.getMagicDamageType();
+                   String tmpAccuType = magic.getMagicAccuType();
+                   int tmpStreak = magic.getMagicCanStreakCast();
+                   int tmpObstructive = magic.getMagicObstructiveSkill();
+                   lambdaResult.append("[").append(magic.getMagicSkillType()).append("]책략 ").append(magic.getMagicName()).append(CRLF)
+                           .append(tmpEP == 0 ? tmpMP == 0 ? "*소모 자원 없음" : "*소모MP: " + magic.getMagicMP() : "*소모EP: " + tmpEP)
+                           .append(CRLF + "*책략 계수: ").append(magic.getMagicSkillPower())
+                           .append(CRLF + "*기본 명중률: ").append(magic.getMagicAccu())
+                           .append(CRLF + "*효과 범위: ").append(magic.getMagicEffectArea())
+                           .append(CRLF + "*시전 범위: ").append(magic.getMagicTargetArea())
+                           .append(tmpAccuType.equals("Normal") ? "" : CRLF + "*적중 타입: " + tmpAccuType)
+                           .append(tmpDamageType.equals("None") ? "" : CRLF + "*데미지 타입: " + tmpDamageType)
+                           .append(tmpHealType.equals("-") ? "" : CRLF + "*치료 타입: " + tmpHealType)
+                           .append(tmpStreak == 0 ? "" : CRLF + "*연속 발동 가능")
+                           .append(tmpObstructive == 0 ? "" : CRLF + "*방해계 책략")
+                           .append(CRLF).append(magic.getMagicDesc()).append(",");
+               }
+                return lambdaResult.toString();
+            });
+
+
+            HandleLocalDB searchMagicByType = ( q-> {
+
+                Log.d(TAG,"searchMagicByType Activated" );
+                q = q.replace(BLANK, EMPTY);
+
+                if (q.isEmpty())
+                    return null;
+
+                StringBuilder lambdaResult = new StringBuilder();
+                RealmResults<Magic> magicTypes = realm.where(Magic.class).distinct(Magic.FIELD_TYPE).findAll();
+
+                int count = 0;
+                for( Magic type : magicTypes ) {
+
+
+                    if( type.getMagicSkillType().contains(q)) {
+
+                        Log.d(TAG,type.getMagicSkillType());
+                        RealmResults<Magic> magics = realm.where(Magic.class).equalTo(Magic.FIELD_TYPE, type.getMagicSkillType()).findAll();
+                        lambdaResult.append("*[" + type.getMagicSkillType() + "]속성 책략" + CRLF);
+                        lambdaResult.append("검색 결과: ").append(magics.size()).append("개")
+                                .append(CRLF).append(SEPARATOR);
+                        for (Magic magic : magics) {
+                            lambdaResult.append(magic.getMagicName()).append(CRLF);
+                            count++;
+                        }
+                        lambdaResult.append(",");
+                    }
+                 }
+
+
+
+
+                return count == 0 ? null: lambdaResult.toString();
+            } );
+
+
+            HandleLocalDB searchMagicByBranch = ( q-> {
+
+                Log.d(TAG, "searchMagicByBranch Activated");
+                q = q.replace(BLANK, EMPTY);
+
+                if (q.isEmpty())
+                    return null;
+
+
+                q = findBranchName(q, realm);
+
+                if( q == null)
+                    return null;
+
+                StringBuilder lambdaResult = new StringBuilder();
+
+                lambdaResult.append("*").append(q).append("계 책략").append(CRLF).append(SEPARATOR);
+
+
+
+                try {
+                    Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_NAME, q).findFirst();
+                    if (branch.getBranchMagic().equals("-")) return "책략 없음";
+
+                    for(String each : branch.getBranchMagic().split(":")) {
+                        Magic magic = realm.where(Magic.class).equalTo(Magic.FIELD_NAME, each).findFirst();
+                        lambdaResult.append("[").append(magic.getMagicSkillType()).append("] ").append(magic.getMagicName()).append(CRLF);
+                    }
+                } catch (NullPointerException ignore) {
+                }
+
+
+                return lambdaResult.toString();
+
+
+
+            });
+
+
+            HandleLocalDB getAgenda = q-> {
+               StringBuilder lambdaResult = new StringBuilder();
+               String division = null;
+               if( q.contains("섬멸")) {
+                   q = q.replace("섬멸전","");
+                   q = q.replace("섬멸","");
+                   division = "섬멸";
+               } else if( q.contains("경쟁")) {
+                   q = q.replace("경쟁전", "");
+                   q = q.replace("경쟁", "");
+                   division = "경쟁";
+               } else {
+                   return "[섬멸]혹은[경쟁]을 입력하세요";
+               }
+
+
+                String dateInfo = q.replaceAll("[^0-9]", "");
+                Date date = new Date();
+                date.setTime(date.getTime());
+                SimpleDateFormat df_ymd = new SimpleDateFormat("yyMMdd", Locale.KOREAN);
+                try {
+                    if (dateInfo.length() == 6) {
+                        q = q.replace(dateInfo, "");
+                        date = df_ymd.parse(dateInfo);
+                    } else if (dateInfo.length() == 4) {
+                        q = q.replace(dateInfo, "");
+                        dateInfo = (new SimpleDateFormat("yy", Locale.KOREAN).format(date)) + dateInfo;
+                        date = df_ymd.parse(dateInfo);
+                    }
+
+                } catch (ParseException ignore) {
+                }
+
+
+                Date date_before = new Date();
+                date_before.setTime(date.getTime() - 21 * 24 * 60 * 60 * 1000);
+                Date date_after = new Date();
+                date_after.setTime(date.getTime() + 22 * 24 * 60 * 60 * 1000);
+
+               int dateBeforeInt = Integer.parseInt(df_ymd.format(date_before));
+               int dateAfterInt = Integer.parseInt(df_ymd.format(date_after));
+                String map = q.trim();
+
+
+
+                lambdaResult.append( new SimpleDateFormat("yyyy.MM.dd", Locale.KOREAN).format(date) ).
+                        append(BLANK).append(division).append("일정").append(CRLF).append(SEPARATOR);
+
+                RealmResults<Agenda> agendaRealmResults = null;
+                if(map.equals("")) {
+                    agendaRealmResults = realm.where(Agenda.class).between(Agenda.FIELD_START, dateBeforeInt, dateAfterInt).and()
+                            .equalTo(Agenda.FIELD_DIV, division).findAll();
+                } else {
+                    agendaRealmResults = realm.where(Agenda.class).and().contains(Agenda.FIELD_MAP, map)
+                            .equalTo(Agenda.FIELD_DIV, division).findAll();
+                }
+
+
+                if(agendaRealmResults.isEmpty()) {
+                    return "[날짜4~6자리]or[맵] [경쟁or섬멸] 일정냥 <<< 이렇게 입력하게냥";
+                }
+
+                    SimpleDateFormat df_md = new SimpleDateFormat("MM.dd", Locale.KOREAN);
+
+                    for (Agenda agenda : agendaRealmResults) {
+
+                        try {
+                            Date start_date = df_ymd.parse(agenda.getAgendaStart()+"");
+                            Date end_date = new Date();
+                            end_date.setTime(start_date.getTime() + 6 * 24 * 60 * 60 * 1000);
+
+                            lambdaResult.append(df_md.format(start_date) + "~" + df_md.format(end_date) + BLANK + agenda.getAgendaMap())
+                                    .append(((start_date.getTime() <= date.getTime())
+                                            && (end_date.getTime() + 24 * 60 * 60 * 1000 > date.getTime())) ? " V" : "")
+                                    .append(CRLF);
+
+                        } catch (ParseException ignore) {
+                        }
+                    }
+
+
+
+               return lambdaResult.toString();
+            };
+                String result = null;
 
             switch (certainCMD) {
                 case COMMAND_TER:
@@ -1402,12 +1619,12 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
                     result = (result==null)? "그런 보물 없다냥..." : result;
                     break;
                 case COMMAND_AGENDA:
-                    result = null;
+                    result = getAgenda.handle(req);
                     break;
                 case COMMAND_RELATION:
                     result = relationByKey.handle(req);
                     break;
-                case COMMAND_MAGIC:
+                case COMMAND_MAGIC_ITEM:
                     result = magicItemByKey.handle(req);
                     result = (result==null)? magicCombByKey.handle(req) : result;
                     result = (result==null)? "보패정보 -> 보패조합 검색결과 : 없음" : result;
@@ -1431,12 +1648,217 @@ public class LocalDataHandler extends AsyncTask<String, Integer, String> {
 
                     }
                     break;
+
+                case COMMAND_MAGIC:
+                    result = searchMagicByName.handle(req);
+                    result = (result==null)? searchMagicByBranch.handle(req) : result;
+                    result = (result==null)? searchMagicByType.handle(req) : result;
+                    result = (result==null)? "책략 이름 또는 속성을 입력하라옹" : result;
+                    break;
                     default:
                         result = heroesByName.handle(req);
                         result = (result==null)? heroesBySpec.handle(req) : result;
                         result = (result==null)? itemByKey.handle(req) : result;
+                        result = (result==null)? searchMagicByName.handle(req) : result;
                         result = (result==null)? descBySpec.handle(req) : result;
-                        result = (result==null)? "장수->특성->보물->설명 검색결과: 없음" : result;
+                        result = (result==null)? "장수->특성->보물->책략->설명 검색결과: 없음" : result;
+            }
+
+
+            if(result == null) {
+                return false;
+            } else {
+                KakaoReplier replier = new KakaoReplier(context,sendCat,sbn);
+                replier.execute(result,"[L]");
+                return true;
+            }
+        }
+        else if (req.substring(req.length() - 1).equals(COMMAND_BOT_UNION) ) {
+            //Log.d(TAG,"멍멍멍");
+            req = req.substring(0, req.length() - 1).trim();
+            COMMAND_CERTAIN_ENUM_UNION certainCMD = COMMAND_CERTAIN_ENUM_UNION.COMMAND_DEFAULT_UNION;
+            for( COMMAND_CERTAIN_ENUM_UNION certain : COMMAND_CERTAIN_ENUM_UNION.values() ) {
+                try {
+                    String probKey = COMMAND_CERTAIN_UNION[certain.ordinal()];
+                    String suffix = SFX_COMMAND_UNION[certain.ordinal()];
+                    String prefix = PRFX_COMMAND_UNION[certain.ordinal()];
+
+                    String reqWithoutSFX = req;
+                    try {
+                        if (!suffix.isEmpty())
+                            reqWithoutSFX = (req.substring(req.length() - suffix.length(), req.length()).equals(suffix)) ?
+                                    req.substring(0, req.length() - suffix.length() ): req;
+                    } catch( StringIndexOutOfBoundsException  ignore ) { }
+
+                    try {
+                        if (reqWithoutSFX.substring(reqWithoutSFX.length() - probKey.length(), reqWithoutSFX.length()).equals(probKey)) {
+                            certainCMD = certain;
+                            req = req.replace(prefix, EMPTY);
+                            req = req.replace(suffix, EMPTY).trim();
+                            req = req.substring(0, req.length() - probKey.length()).trim();
+                            break;
+                        }
+                    } catch( StringIndexOutOfBoundsException  ignore ) { }
+
+                } catch (ArrayIndexOutOfBoundsException ignore) { }
+            }
+
+
+            // 연합전 병종 정보 검색 : 상병 병종멍, 병종멍, 기마대 병종멍
+            HandleLocalDB searchBranchInfo = ( q -> {
+
+                Log.d(TAG,"searchBranchInfo activated");
+
+                q = q.replace(BLANK,EMPTY);
+                StringBuilder lambdaResult = new StringBuilder();
+
+                if( q.isEmpty() ) {
+                    return null;
+                }
+
+                if( q.equals("전체")) {
+                    q = "";
+                }
+
+                RealmResults<UnionBranch> uBranchResult = realm.where(UnionBranch.class).contains(UnionBranch.FIELD_CLASS,q).findAll();
+
+                if( !uBranchResult.isEmpty() ) {
+                    int ubSize = uBranchResult.size();
+                    lambdaResult.append("연합전 " + q + " 병종" + CRLF);
+                    lambdaResult.append("검색 결과: " + ubSize + "개" + CRLF);
+
+                    lambdaResult.append(SEPARATOR).append("병종계열 병과분류 등급").append(CRLF).append(SEPARATOR);
+
+
+                    for (UnionBranch uBranch : uBranchResult) {
+                        lambdaResult.append(String.format("%-4s", uBranch.getuBranch()).replace(' ', '　'))
+                                .append(BLANK).append(String.format("%-4s", uBranch.getuBranchClass()).replace(' ', '　'))
+                                .append(BLANK).append(uBranch.getuBranckGrade()).append(CRLF);
+                    }
+
+                    return lambdaResult.toString();
+                }
+
+
+                uBranchResult = realm.where(UnionBranch.class).contains(UnionBranch.FIELD_NAME,q).findAll();
+
+                if( !uBranchResult.isEmpty() ) {
+                    for (UnionBranch uBranch : uBranchResult) {
+                        lambdaResult.append("[").append(uBranch.getuBranchClass()).append("]")
+                                .append(BLANK).append(uBranch.getuBranch())
+                                .append(BLANK).append(uBranch.getuBranckGrade()).append(CRLF);
+
+                        lambdaResult.append("HP").append(uBranch.getuBranchHP()).append(BLANK)
+                                .append("EP").append(uBranch.getuBranchEP()).append(BLANK)
+                                .append("이동력").append(uBranch.getuBranchMove()).append(CRLF);
+
+                        lambdaResult.append("*병종 능력치(상대값)").append(CRLF);
+                        lambdaResult.append(" -공격력: ").append(uBranch.getuBranchAttackPower()).append(CRLF);
+                        lambdaResult.append(" -정신력: ").append(uBranch.getuBranchMentalPower()).append(CRLF);
+                        lambdaResult.append(" -방어력: ").append(uBranch.getuBranchDefensePower()).append(CRLF);
+                        lambdaResult.append(" -순발력: ").append(uBranch.getuBranchAgilityPower()).append(CRLF);
+                        lambdaResult.append(" -사기　: ").append(uBranch.getuBranchMoralePower()).append(CRLF);
+
+                        lambdaResult.append("*병종 능력").append(CRLF);
+                        for (int i = 0; i < 4; i++) {
+                                String val = uBranch.getuBranchSpecValue().get(i);
+                                String spec = uBranch.getuBranchSpec().get(i);
+                                if( spec != null ) {
+                                    lambdaResult.append(" -")
+                                            .append(uBranch.getuBranchSpec().get(i)).append(BLANK)
+                                            .append(val == null ? EMPTY : val).append(CRLF);
+                                }
+                        }
+
+                        lambdaResult.append("*병종 설명").append(CRLF);
+                        lambdaResult.append(uBranch.getuBranchDesc());
+                        lambdaResult.append(COMMA).append(CRLF);
+                    }
+                } else {
+                    return null;
+                }
+
+
+                return lambdaResult.toString();
+            } );
+
+
+            // 연합전 스킬 정보 검색 : 초열 스킬멍, 스킬멍, 원융노병 스킬멍
+            HandleLocalDB searchSkillInfo = ( q-> {
+
+                StringBuilder lambdaResult = new StringBuilder();
+
+                if(q.isEmpty()) {
+                    return null;
+                }
+
+                RealmResults<UnionBranch> uBranchResult = realm.where(UnionBranch.class).contains(UnionBranch.FIELD_NAME,q).findAll();
+
+                if(!uBranchResult.isEmpty()) {
+                    for(UnionBranch uBranch : uBranchResult) {
+                        lambdaResult.append(uBranch.getuBranch() + " 스킬").append(CRLF)
+                                .append(SEPARATOR);
+                        String skills = uBranch.getuBranchSkill();
+                        for(String skill: skills.split(",")) {
+                            skill = skill.trim();
+                            UnionSkill uSkill = realm.where(UnionSkill.class).equalTo(UnionSkill.FIELD_NAME,skill).findFirst();
+                            lambdaResult.append("[").append(uSkill.getuSkillType()).append("] ").append(skill).append(CRLF);
+                        }
+
+                        lambdaResult.append(COMMA).append(CRLF);
+                    }
+                    return lambdaResult.toString();
+                }
+
+                RealmResults<UnionSkill> uSkillResult = realm.where(UnionSkill.class).contains(UnionSkill.FIELD_NAME,q).findAll();
+
+                if( !uSkillResult.isEmpty() ) {
+                    for( UnionSkill uSkill : uSkillResult ) {
+                        lambdaResult.append("[").append(uSkill.getuSkillType()).append("]")
+                                .append(uSkill.getuSkillName()).append(CRLF)
+                                .append("*소모EP: ").append(uSkill.getuSkillEP()).append(CRLF)
+                                .append("*쿨타임: ").append(uSkill.getuSkillCooldown()).append("초").append(CRLF)
+                                .append("스킬 파워:" ).append(uSkill.getuSkillPower()).append(CRLF)
+                                .append("효과 범위: ").append(uSkill.getuSkillEffectArea()).append(CRLF)
+                                .append("시전 범위: ").append(uSkill.getuSkillTargetArea()).append(CRLF)
+                                .append(uSkill.getuSkillDesc()).append(COMMA).append(CRLF);
+                    }
+
+                    return lambdaResult.toString();
+                }
+
+
+                return null;
+            } );
+
+            Log.d(TAG,"searchSkillInfo activated");
+
+            String result = null;
+            switch (certainCMD) {
+                case COMMAND_BRANCH_UNION:
+                    result = searchBranchInfo.handle(req);
+                    result = (result==null)?"병종 이름을 정확하게 입력해 주세요!" : result;
+                    break;
+                case COMMAND_SPEC_UNION:
+                    break;
+                case COMMAND_SKILL_UNION :
+                    result = searchSkillInfo.handle(req);
+                    result = (result==null)?"스킬 이름이나 병종을 정확하게 입력해 주세요!" : result;
+                    break;
+                case COMMAND_DESC_UNION:
+                    result = "설명 준비중";
+                    break;
+                case COMMAND_RAVEN:
+                    result = null;
+                    break;
+                case COMMAND_RAVENT:
+                    result = null;
+                    break;
+                default:
+                    result = searchBranchInfo.handle(req);
+                    result = (result==null)?searchSkillInfo.handle(req) : result;
+                    result = (result==null)?"병종 -> 책략 검색 결과 : 없음" : result;
+
             }
 
 

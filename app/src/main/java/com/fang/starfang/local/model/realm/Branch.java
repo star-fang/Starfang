@@ -31,6 +31,7 @@ public class Branch extends RealmObject {
     private RealmList<String> branchSpecValues; // 10, 15, 20 ,25
     private RealmList<String> branchHiddenStats; // 공정방순사
     private String branchName2;
+    private String branchMagic;
 
 
 
@@ -53,6 +54,7 @@ public class Branch extends RealmObject {
     public RealmList<String> getBranchSpecs() {return branchSpecs;}
     public RealmList<String> getBranchSpecValues() {return branchSpecValues;}
     public String getBranchName2() {return branchName2;}
+    public String getBranchMagic() {return branchMagic;}
 
 
 }

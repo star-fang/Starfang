@@ -27,7 +27,7 @@ public class Communicate {
     public final static String NUN_FORMAT_DESC = "(깜짝)";
     public final static String PARSE_DESC = "(흑흑)";
 
-    public static final String SERVER_URL = "http://clavis.dothome.co.kr/fangcat/";
+    public static final String SERVER_URL = "http://192.168.25.4/fangcat/";
     private final static String TAG = "COMMUNICATE";
 
     // toServer() : send message to server and receive echo message

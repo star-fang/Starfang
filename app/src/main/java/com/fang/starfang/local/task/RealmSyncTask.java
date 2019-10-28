@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.fang.starfang.local.model.realm.Agenda;
 import com.fang.starfang.local.model.realm.Branch;
 import com.fang.starfang.local.model.realm.Destiny;
 import com.fang.starfang.local.model.realm.Dot;
@@ -16,6 +17,7 @@ import com.fang.starfang.local.model.realm.Heroes;
 import com.fang.starfang.local.model.realm.Item;
 import com.fang.starfang.local.model.realm.ItemCate;
 import com.fang.starfang.local.model.realm.ItemReinforcement;
+import com.fang.starfang.local.model.realm.Magic;
 import com.fang.starfang.local.model.realm.MagicItemCombination;
 import com.fang.starfang.local.model.realm.MagicItemPRFX;
 import com.fang.starfang.local.model.realm.MagicItemSFX;
@@ -23,6 +25,9 @@ import com.fang.starfang.local.model.realm.Relation;
 import com.fang.starfang.local.model.realm.Spec;
 import com.fang.starfang.local.model.realm.TermSynergy;
 import com.fang.starfang.local.model.realm.Terrain;
+import com.fang.starfang.local.model.realm.UnionBranch;
+import com.fang.starfang.local.model.realm.UnionSkill;
+import com.fang.starfang.local.model.realm.UnionSpec;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.view.ProgressBarPreference;
 import com.google.gson.ExclusionStrategy;
@@ -47,7 +52,7 @@ import io.realm.RealmObject;
 public class RealmSyncTask  {
 
     private final static String TAG = "FANG_REALM";
-    private final static String REALM_BASE_URL = "http://clavis.dothome.co.kr/fangcat/convertToRealm/";
+    private final static String REALM_BASE_URL = "http://192.168.25.4/fangcat/convertToRealm/";
     private final static String GET_JSON_PHP = "convertToJSON.php";
     private Context context;
     private String pref_table;
@@ -237,6 +242,36 @@ public class RealmSyncTask  {
                                 realm.createAllFromJson(Dot.class, jsonArray);
                                 Log.d(TAG, "SYNC Dot REALM COMPLETE!");
                                 if(toast) Toast.makeText(context,"도트 동기화 완료",Toast.LENGTH_SHORT).show();
+                                break;
+                            case Magic.PREF_TABLE:
+                                realm.delete(Magic.class);
+                                realm.createAllFromJson(Magic.class, jsonArray);
+                                Log.d(TAG, "SYNC Magic REALM COMPLETE!");
+                                if(toast) Toast.makeText(context,"책략 동기화 완료",Toast.LENGTH_SHORT).show();
+                                break;
+                            case UnionBranch.PREF_TABLE:
+                                realm.delete(UnionBranch.class);
+                                realm.createAllFromJson(UnionBranch.class, jsonArray);
+                                Log.d(TAG, "SYNC UnionBranch REALM COMPLETE!");
+                                if(toast) Toast.makeText(context,"연합전 병종 동기화 완료",Toast.LENGTH_SHORT).show();
+                                break;
+                            case UnionSkill.PREF_TABLE:
+                                realm.delete(UnionSkill.class);
+                                realm.createAllFromJson(UnionSkill.class, jsonArray);
+                                Log.d(TAG, "SYNC UnionSkill REALM COMPLETE!");
+                                if(toast) Toast.makeText(context,"연합전 스킬 동기화 완료",Toast.LENGTH_SHORT).show();
+                                break;
+                            case UnionSpec.PREF_TABLE:
+                                realm.delete(UnionSpec.class);
+                                realm.createAllFromJson(UnionSpec.class, jsonArray);
+                                Log.d(TAG, "SYNC UnionSpec REALM COMPLETE!");
+                                if(toast) Toast.makeText(context,"연합전 능력 동기화 완료",Toast.LENGTH_SHORT).show();
+                                break;
+                            case Agenda.PREF_TABLE:
+                                realm.delete(Agenda.class);
+                                realm.createAllFromJson(Agenda.class,jsonArray);
+                                Log.d(TAG, "SYNC Agenda REALM COMPLETE!");
+                                if(toast) Toast.makeText(context,"일정 동기화 완료",Toast.LENGTH_SHORT).show();
                                 break;
                             default:
                                 Log.d(TAG, "SYNC REALM failure : empty table name");

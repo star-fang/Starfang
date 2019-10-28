@@ -2,7 +2,6 @@ package com.fang.starfang.view.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -41,11 +40,8 @@ public class HeroesDialogFragment extends DialogFragment {
        mCost.setText(String.valueOf(getArguments().get("hero_cost")));
        EditText mLineage = view.findViewById(R.id.dialog_hero_lineage);
        mLineage.setText((String)getArguments().get("hero_lineage"));
-       builder.setView(view).setPositiveButton("변경", new DialogInterface.OnClickListener() {
-           @Override
-           public void onClick(DialogInterface dialog, int which) {
+       builder.setView(view).setPositiveButton("변경", (dialog, which) -> {
 
-           }
        }).setNegativeButton("취소",null);
 
        return builder.create();

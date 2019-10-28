@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.service.notification.StatusBarNotification;
+import android.util.Log;
 
 import com.fang.starfang.util.model.io.Action;
 
@@ -12,7 +13,7 @@ import java.util.StringTokenizer;
 
 public class KakaoReplier extends AsyncTask<String, Integer, String> {
 
-    private static final String TAG = "REPLIER";
+    private static final String TAG = "FANG";
 
     @SuppressLint("StaticFieldLeak")
     private Context context;
@@ -27,14 +28,14 @@ public class KakaoReplier extends AsyncTask<String, Integer, String> {
 
     @Override
     protected String doInBackground(String... answers) {
-        Action a = NotificationUtils.getQuickReplyAction(sbn.getNotification(),"com.kakao.talk");
-
+        Action a = NotificationUtils.getQuickReplyAction(sbn.getNotification(),sbn.getPackageName());
+        Log.d(TAG, "REP!!!" + sbn.getPackageName());
 
         StringTokenizer st = new StringTokenizer(answers[0],"," );
 
         while( st.hasMoreTokens()) {
             String tmpRes = st.nextToken();
-            //Log.d(TAG, "a" + tmpRes.substring());
+
 
             if( tmpRes.substring(0,2).equals("\r\n")) {
                 tmpRes = tmpRes.substring(2);

@@ -25,6 +25,7 @@ public class NotificationUtils {
     private static final String[] REPLY_KEYWORDS = {"reply", "android.intent.extra.text"};
     private static final CharSequence REPLY_KEYWORD = "reply";
     private static final CharSequence INPUT_KEYWORD = "input";
+    private static final String TAG = "NOTIFICATION";
 
 
     public static boolean isRecent(StatusBarNotification sbn, long recentTimeframeInSecs) {
@@ -45,15 +46,9 @@ public class NotificationUtils {
     }
 
     public static String getMessage(Bundle extras) {
-        Log.d("NOTIFICATIONUTILS", "Getting message from extras..");
-        Log.d("Text", "" + extras.getCharSequence(Notification.EXTRA_TEXT));
-        Log.d("Big Text", "" + extras.getCharSequence(Notification.EXTRA_BIG_TEXT));
-        Log.d("Title Big", "" + extras.getCharSequence(Notification.EXTRA_TITLE_BIG));
-//        Log.d("Text lines", "" + extras.getCharSequence(Notification.EXTRA_TEXT_LINES));
-        Log.d("Info text", "" + extras.getCharSequence(Notification.EXTRA_INFO_TEXT));
-        Log.d("Info text", "" + extras.getCharSequence(Notification.EXTRA_INFO_TEXT));
-        Log.d("Subtext", "" + extras.getCharSequence(Notification.EXTRA_SUB_TEXT));
-		Log.d("Summary", "" + extras.getString(Notification.EXTRA_SUMMARY_TEXT));
+        Log.d(TAG, "Getting message from extras..");
+        Log.d(TAG, "" + extras.getCharSequence(Notification.EXTRA_TEXT));
+        Log.d(TAG, "" + extras.getCharSequence(Notification.EXTRA_SUB_TEXT));
         CharSequence chars = extras.getCharSequence(Notification.EXTRA_TEXT);
         if(!TextUtils.isEmpty(chars))
             return chars.toString();
@@ -65,7 +60,7 @@ public class NotificationUtils {
 
 
     public static ViewGroup getMessageView(Context context, Notification n) {
-        Log.d("NOTIFICATIONUTILS", "Getting message view..");
+        Log.d(TAG, "Getting message view..");
         RemoteViews views = null;
         if (Build.VERSION.SDK_INT >= 16)
             views = n.bigContentView;
@@ -81,9 +76,9 @@ public class NotificationUtils {
     }
 
     public static String getTitle(Bundle extras) {
-        Log.d("NOTIFICATIONUTILS", "Getting title from extras..");
+        Log.d(TAG, "Getting title from extras..");
         String msg = extras.getString(Notification.EXTRA_TITLE);
-        Log.d("Title Big", "" + extras.getString(Notification.EXTRA_TITLE_BIG));
+        Log.d(TAG, "" + extras.getString(Notification.EXTRA_TITLE_BIG));
         return msg;
     }
 

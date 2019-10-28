@@ -253,7 +253,7 @@ public class SuckEDB {
 				}
 
 				if (val_hm == "") {
-					return "언제 당했냐옹? (hh:mm, hh시mm분)";
+					return "언제 당했냐옹? (hh:mm or hh시mm분)";
 				} else {
 					Date date_now = new Date();
 					Date date_yesterday = new Date();

@@ -1,9 +1,7 @@
 package com.fang.starfang.view;
 
-import android.app.Service;
 import android.content.Context;
 import android.preference.Preference;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,17 +17,17 @@ public class ProgressBarPreference extends Preference {
 
     public ProgressBarPreference(Context context) {
         super(context);
-        mInflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        mInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     public ProgressBarPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mInflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        mInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public ProgressBarPreference(Context context, AttributeSet attrs,
                                  int defStyle) {
         super(context, attrs, defStyle);
-        mInflator = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        mInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     private ProgressBar mProgressBar;
@@ -43,8 +41,8 @@ public class ProgressBarPreference extends Preference {
 
         View myLayout=mInflator.inflate(R.layout.progressbarpreference, null, false);
         ((ViewGroup)myLayout.findViewById(R.id.preference_super_container)).addView(super.onCreateView(parent));
-        mProgressBar=(ProgressBar) myLayout.findViewById(R.id.preference_progress_bar);
-        mLabel=(TextView) myLayout.findViewById(R.id.preference_progress_label);
+        mProgressBar= myLayout.findViewById(R.id.preference_progress_bar);
+        mLabel= myLayout.findViewById(R.id.preference_progress_label);
         if (lastReqProgress>-1){
             mProgressBar.setProgress(lastReqProgress);
         }
