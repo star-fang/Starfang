@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
@@ -204,14 +205,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
             bindPreferenceSummaryToValue(findPreference("table_list"));
-
             Preference pref_sync_all = findPreference("start_sync_key_all");
+            EditTextPreference text_address = (EditTextPreference)findPreference("text_address");
+
             pref_sync_all.setOnPreferenceClickListener(preference -> {
 
                 ProgressBarPreference syncPreference = new ProgressBarPreference(getActivity());
                 ((PreferenceCategory)findPreference("pref_progress")).addPreference(syncPreference);
                 for( String pref_table_name: getResources().getStringArray(R.array.pref_list_table))
-                    new RealmSyncTask(getActivity(),pref_table_name, syncPreference).getAllData(false );
+                    new RealmSyncTask(text_address.getText(),getActivity(),pref_table_name, syncPreference).getAllData(false );
                 ((PreferenceCategory)findPreference("pref_progress")).removeAll();
                 return false;
             } );
@@ -225,7 +227,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                 ProgressBarPreference syncPreference = new ProgressBarPreference(getContext());
                 ((PreferenceCategory)findPreference("pref_progress")).addPreference(syncPreference);
-                RealmSyncTask syncTask = new RealmSyncTask(getActivity(),pref_table_name, syncPreference );
+                RealmSyncTask syncTask = new RealmSyncTask(text_address.getText(),getActivity(),pref_table_name, syncPreference );
 
 
                 //((PreferenceCategory)findPreference("pref_progress")).getPre

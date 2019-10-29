@@ -1,5 +1,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <EditTextPreference
+        android:title="DB SYNC 주소 입력"
+        android:key="text_address"
+        android:defaultValue = "http://192.168.25.4"
+        />
+
+
     <ListPreference
         android:defaultValue="0"
         android:entries="@array/pref_list_table"
@@ -8,6 +15,8 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_sync_table_to_realm" />
+
+
 
     <Preference
         android:key = "show_data_key"

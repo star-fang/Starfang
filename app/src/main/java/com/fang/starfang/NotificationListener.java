@@ -6,8 +6,8 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import com.fang.starfang.local.task.LocalDataHandler;
-import com.fang.starfang.network.task.SuggestTask;
+import com.fang.starfang.local.task.LocalDataHandlerCat;
+import com.fang.starfang.local.task.LocalDataHandlerDog;
 
 // 카톡 알림을 읽어오는 리스너
 
@@ -18,7 +18,6 @@ public class NotificationListener extends NotificationListenerService {
     private static final String PACKAGE_DISCORD = "com.discord";
     private static final String COMMAND_CAT = "냥";
     private static final String COMMAND_DOG = "멍";
-    private static final String COMMAND_SUG = "건의";
 
     @Override
     public void onCreate() {
@@ -34,7 +33,7 @@ public class NotificationListener extends NotificationListenerService {
 
     //@TargetApi(Build.VERSION_CODES.P)
     public void addNotification(StatusBarNotification sbn, boolean updateDash)  {
-        Log.i(TAG, sbn.getPackageName() + ">> " + sbn.getNotification().extras.toString() );
+       // Log.i(TAG, sbn.getPackageName() + ">> " + sbn.getNotification().extras.toString() );
 
 
             Notification mNotification = sbn.getNotification();
@@ -64,15 +63,11 @@ public class NotificationListener extends NotificationListenerService {
             Log.i(TAG, sbn.getPackageName() + ">> from: " + from + ", text: " + text + ", room: " + room);
 
             try {
-                // 멍 또는 냥이 포함된 문장이 있으면 반응
-                if ((text.contains(COMMAND_DOG) || text.contains(COMMAND_CAT))
-                        && text.length() > 2) {
-                    text = text.trim();
-                    if (text.contains(COMMAND_SUG)) {
-                        new SuggestTask(this, from, sbn).execute(text);
-                    } else {
-                        new LocalDataHandler(this, from, room, sbn).execute(text);
-                    }
+
+                if (text.substring(text.length() - 1).equals(COMMAND_CAT) && text.length() > 2) {
+                    new LocalDataHandlerCat(this, from, room, sbn).execute(text);
+                } else if (text.substring(text.length() - 1).equals(COMMAND_DOG) && text.length() > 2) {
+                    new LocalDataHandlerDog(this, from, room, sbn).execute(text);
                 }
             } catch (NullPointerException ignore) {
             }
@@ -84,7 +79,7 @@ public class NotificationListener extends NotificationListenerService {
         if (sbn!=null) {
             String sbnPackage = sbn.getPackageName();
             String sbnTag = sbn.getTag();
-            Log.d(TAG, sbnPackage + " Notification [" + sbn.getKey() + "] Posted:\n");
+            //Log.d(TAG, sbnPackage + " Notification [" + sbn.getKey() + "] Posted:\n");
             if ( ( sbnTag != null &&  sbnPackage.equalsIgnoreCase(PACKAGE_KAKAO) ) || sbnPackage.equalsIgnoreCase(PACKAGE_DISCORD) )
                 addNotification(sbn, true);
         }

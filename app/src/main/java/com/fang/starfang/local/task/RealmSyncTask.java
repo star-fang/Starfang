@@ -1,7 +1,5 @@
 package com.fang.starfang.local.task;
 
-// 190403 To do : realm object 상속으로 dynamic binding 구현하기 (가능?)
-
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -52,19 +50,20 @@ import io.realm.RealmObject;
 public class RealmSyncTask  {
 
     private final static String TAG = "FANG_REALM";
-    private final static String REALM_BASE_URL = "http://192.168.25.4/fangcat/convertToRealm/";
+    private final static String REALM_BASE_URL = "/fangcat/convertToRealm/";
     private final static String GET_JSON_PHP = "convertToJSON.php";
     private Context context;
     private String pref_table;
     private Realm realm;
     private Gson gson;
     private ProgressBarPreference progressBarPreference;
+    private String address;
 
-    public RealmSyncTask(Context context, String pref_table, ProgressBarPreference syncPreference) {
+    public RealmSyncTask(String address, Context context, String pref_table, ProgressBarPreference syncPreference) {
         this.context = context;
         this.pref_table = pref_table;
         this.progressBarPreference = syncPreference;
-
+        this.address = address;
 
         GsonBuilder gsonBuilder = new GsonBuilder()
                 .setExclusionStrategies(new ExclusionStrategy() {
@@ -89,7 +88,7 @@ public class RealmSyncTask  {
         realm = Realm.getDefaultInstance();
 
         // Get Data and Delete old data from Realm database....
-        String url_get_heroes = REALM_BASE_URL + GET_JSON_PHP + "?pref_t=" + pref_table.replace(" ","%20");
+        String url_get_heroes = address + REALM_BASE_URL + GET_JSON_PHP + "?pref_t=" + pref_table.replace(" ","%20");
         Log.d(TAG,"get method: " + url_get_heroes );
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
