@@ -30,9 +30,5 @@
         android:key = "start_sync_key_all"
         android:title="SYNC ALL" />
 
-    <PreferenceCategory
-            android:key = "pref_progress"  >
-    </PreferenceCategory>
-
 
 </PreferenceScreen>

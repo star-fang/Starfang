@@ -13,12 +13,14 @@ import android.preference.PreferenceCategory;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
 import com.fang.starfang.local.task.RealmSyncTask;
-import com.fang.starfang.view.ProgressBarPreference;
 import com.fang.starfang.view.ShowRealmActivity;
+import com.fang.starfang.view.dialog.ProgressbarDialogFragment;
 
 import java.util.List;
 
@@ -197,11 +199,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class DataSyncPreferenceFragment extends PreferenceFragment {
 
-
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
+            ProgressbarDialogFragment progressbarDialogFragment = new ProgressbarDialogFragment();
             addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
             bindPreferenceSummaryToValue(findPreference("table_list"));
@@ -210,10 +212,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             pref_sync_all.setOnPreferenceClickListener(preference -> {
 
-                ProgressBarPreference syncPreference = new ProgressBarPreference(getActivity());
-                ((PreferenceCategory)findPreference("pref_progress")).addPreference(syncPreference);
+                progressbarDialogFragment.show(getFragmentManager(),"dialog");
                 for( String pref_table_name: getResources().getStringArray(R.array.pref_list_table))
-                    new RealmSyncTask(text_address.getText(),getActivity(),pref_table_name, syncPreference).getAllData(false );
+                    new RealmSyncTask(text_address.getText(),getActivity(),pref_table_name, progressbarDialogFragment).getAllData(false );
                 ((PreferenceCategory)findPreference("pref_progress")).removeAll();
                 return false;
             } );
@@ -225,15 +226,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 String pref_table_name =  pref_table_value.getSummary().toString();
                 Log.d(TAG,pref_table_name);
 
-                ProgressBarPreference syncPreference = new ProgressBarPreference(getContext());
-                ((PreferenceCategory)findPreference("pref_progress")).addPreference(syncPreference);
-                RealmSyncTask syncTask = new RealmSyncTask(text_address.getText(),getActivity(),pref_table_name, syncPreference );
 
 
-                //((PreferenceCategory)findPreference("pref_progress")).getPre
+                RealmSyncTask syncTask = new RealmSyncTask(text_address.getText(),getActivity(),pref_table_name, progressbarDialogFragment);
 
-                //syncPreference.getTvSync().setText(pref_table_name);
-                //((PreferenceCategory)findPreference("pref_progress")).removeAll();
                 syncTask.getAllData(true );
                 return false;
             });

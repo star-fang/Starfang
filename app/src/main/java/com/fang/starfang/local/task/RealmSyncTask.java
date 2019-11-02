@@ -2,10 +2,16 @@ package com.fang.starfang.local.task;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fang.starfang.local.model.realm.Agenda;
 import com.fang.starfang.local.model.realm.Branch;
@@ -27,7 +33,7 @@ import com.fang.starfang.local.model.realm.UnionBranch;
 import com.fang.starfang.local.model.realm.UnionSkill;
 import com.fang.starfang.local.model.realm.UnionSpec;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
-import com.fang.starfang.view.ProgressBarPreference;
+import com.fang.starfang.view.dialog.ProgressbarDialogFragment;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -39,9 +45,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -56,13 +64,15 @@ public class RealmSyncTask  {
     private String pref_table;
     private Realm realm;
     private Gson gson;
-    private ProgressBarPreference progressBarPreference;
     private String address;
+    private ProgressBar progressBar;
+    private TextView progressText;
 
-    public RealmSyncTask(String address, Context context, String pref_table, ProgressBarPreference syncPreference) {
+    public RealmSyncTask(String address, Context context, String pref_table, ProgressbarDialogFragment progressbarDialogFragment) {
+        this.progressBar = progressbarDialogFragment.getProgressBar();
+        this.progressText = progressbarDialogFragment.getTextView();
         this.context = context;
         this.pref_table = pref_table;
-        this.progressBarPreference = syncPreference;
         this.address = address;
 
         GsonBuilder gsonBuilder = new GsonBuilder()
@@ -88,14 +98,32 @@ public class RealmSyncTask  {
         realm = Realm.getDefaultInstance();
 
         // Get Data and Delete old data from Realm database....
-        String url_get_heroes = address + REALM_BASE_URL + GET_JSON_PHP + "?pref_t=" + pref_table.replace(" ","%20");
-        Log.d(TAG,"get method: " + url_get_heroes );
+        Date date = new Date();
+        String mJSONURLString = address + REALM_BASE_URL + GET_JSON_PHP + "?pref_t=" + pref_table.replace(" ","%20")
+                +"?lut="+date;
+        Log.d(TAG,"get method: " + mJSONURLString );
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                url_get_heroes, jsonArray -> {
-                    Log.d(TAG,"JSON received: " + jsonArray.length() + "objects" );
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
 
-                    if (!jsonArray.isNull(0)) {
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                mJSONURLString, jsonObject -> {
+
+            try {
+                String status = jsonObject.get("status").toString();
+                String message = jsonObject.get("message").toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            JSONArray jsonArray = null;
+            try {
+                jsonArray = jsonObject.getJSONArray("data");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (jsonArray!=null) {
 
                         realm.beginTransaction();
                         switch ( pref_table ) {
@@ -107,19 +135,31 @@ public class RealmSyncTask  {
                                 break;
                             case Heroes.PREF_TABLE:
                                 realm.delete(Heroes.class);
-                                progressBarPreference.setMax(jsonArray.length());
-                                for(int i = 0; i < jsonArray.length(); i++ ) {
-                                    try {
-                                        String json = jsonArray.get(i).toString();
-                                        Heroes hero = gson.fromJson(json,Heroes.class);
-                                        realm.copyToRealm(hero);
-                                        progressBarPreference.setProgress(i);
-                                        //progressBarPreference.setLabel(hero.getHeroName());
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
+                                progressBar.setMax(jsonArray.length());
+                                JSONArray finalJsonArray = jsonArray;
+                                Thread thread = new Thread() {
+                                    @Override
+                                    public void run() {
+
+                                        for(int i = 0; i < finalJsonArray.length(); i++ ) {
+                                            try {
+                                                progressBar.setProgress(i);
+                                                String json = finalJsonArray.get(i).toString();
+                                                Heroes hero = gson.fromJson(json,Heroes.class);
+                                                realm.copyToRealm(hero);
+                                                progressText.setText(hero.getHeroName());
+                                                sleep(200);
+                                            } catch (JSONException | InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+
                                     }
-                                }
-                                progressBarPreference.setLabel("장수 정보 동기화 완료");
+
+                                };
+
+                                thread.start();
+
 
 
                                 Log.d(TAG, "SYNC Hero REALM COMPLETE!");
@@ -286,8 +326,7 @@ public class RealmSyncTask  {
                               Toast.makeText(context,"데이터 전송 실패",Toast.LENGTH_LONG).show(); } );
 
 
-        RequestQueue queue = Volley.newRequestQueue(context);
-        queue.add(jsonArrayRequest);
+        requestQueue.add(jsonObjectRequest);
 
     }
 
