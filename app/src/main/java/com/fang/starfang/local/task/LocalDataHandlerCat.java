@@ -22,7 +22,6 @@ import com.fang.starfang.local.model.realm.Memo;
 import com.fang.starfang.local.model.realm.Relation;
 import com.fang.starfang.local.model.realm.Spec;
 import com.fang.starfang.local.model.realm.TVpair;
-import com.fang.starfang.local.model.realm.TermSynergy;
 import com.fang.starfang.local.model.realm.Terrain;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.util.KakaoReplier;
@@ -61,17 +60,17 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
     private static final String TAG = "LOCAL_HANDLER";
     private enum COMMAND_CERTAIN_ENUM {
         COMMAND_DEST,COMMAND_TER,COMMAND_MOV,COMMAND_DESC,
-        COMMAND_SYN,COMMAND_ITEM,COMMAND_AGENDA,COMMAND_MAGIC_ITEM,
+        COMMAND_ITEM,COMMAND_AGENDA,COMMAND_MAGIC_ITEM,
         COMMAND_RELATION,COMMAND_EXTERMINATE,COMMAND_DOT,COMMAND_COMB,
         COMMAND_CALC, COMMAND_MAGIC, COMMAND_MEMO, COMMAND_DEL_MEMO, COMMAND_DEFAULT }
     private static final String[] COMMAND_CERTAIN = {
             "인연","지형","소모","설명",
-            "시너지","보물","일정","보패",
+            "보물","일정","보패",
             "상성","퇴치","도트","조합","계산","책략","메모","삭제"};
 
 
-    private static final String[] PRFX_COMMAND = {"","","이동력","","몽매","","","","병종","","","보패","","","","메모"};
-    private static final String[] SFX_COMMAND = {"","상성","","","","","","","","","","","","","",""};
+    private static final String[] PRFX_COMMAND = {"","","이동력","","","","","병종","","","보패","","","","메모"};
+    private static final String[] SFX_COMMAND = {"","상성","","","","","","","","","","","","",""};
 
     private static final String CRLF = "\r\n";
     private static final String BLANK = " ";
@@ -803,67 +802,6 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                 return lambdaResult.toString();
             });
 
-            // 몽매 시련 시너지 검색 : 조조 시너지냥
-            @SuppressLint("SimpleDateFormat") HandleLocalDB synergyByKey = (q -> {
-                Date now = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyMM");
-                StringBuilder lambdaResult = new StringBuilder();
-
-                RealmResults<TermSynergy> synergies;
-
-                if(q.replace(BLANK,EMPTY).isEmpty()) {
-                    synergies = realm.where(TermSynergy.class)
-                            .equalTo(TermSynergy.FIELD_TERM, format.format(now)).findAll();
-                } else {
-                    RealmQuery<TermSynergy> synQuery = realm.where(TermSynergy.class);
-                    for(String probHero : q.split(BLANK)) {
-                        RealmResults<Heroes> heroes = realm.where(Heroes.class)
-                                .equalTo(Heroes.FIELD_NAME, probHero).findAll();
-                        if( heroes.isEmpty() )
-                            heroes = realm.where(Heroes.class)
-                                    .contains(Heroes.FIELD_NAME2, probHero).findAll();
-                        if( heroes.isEmpty() )
-                            return probHero + ": 없다냥";
-
-                        synQuery.beginGroup();
-                        if(heroes.size() > 1) {// 조조, 제갈량...
-                            for (Heroes hero : heroes) {
-                                synQuery.equalTo(TermSynergy.FIELD_MEMBERS + "." + RealmString.VALUE, hero.getHeroName2());
-                                synQuery = (heroes.indexOf(hero) == heroes.size()-1)? synQuery : synQuery.or();
-                            }
-                        } else // 아만, 주준...
-                            synQuery.beginGroup().equalTo(TermSynergy.FIELD_MEMBERS+"."+RealmString.VALUE,heroes.first().getHeroName())
-                                    .or().equalTo(TermSynergy.FIELD_MEMBERS+"."+RealmString.VALUE,heroes.first().getHeroName2()).endGroup();
-
-                        synQuery.endGroup();
-                        synQuery = (q.indexOf(probHero) == q.length()-1)? synQuery : synQuery.and();
-                    }
-                    synergies = synQuery.findAll();
-                    if(synergies.isEmpty())
-                        return q + ": 시너지 없다냥";
-
-                }
-
-                lambdaResult.append(new SimpleDateFormat("yy").format(now)).append("년 ")
-                        .append(new SimpleDateFormat("MM").format(now)).append("월")
-                        .append(CRLF).append("몽매의 시련 시너지");
-                for( TermSynergy syn : synergies) {
-                    lambdaResult.append(CRLF).append(SEPARATOR);
-                    for(RealmString member : syn.getSynMembers())
-                        lambdaResult.append(member.isEmpty()? "":
-                                StringUtils.rightPad(member.toString(),3,'　'))
-                                .append(member.isEmpty()?EMPTY:BLANK);
-                    lambdaResult.append(syn.getSynEnemies().get(0).isEmpty()?EMPTY : "vs ");
-                    for(RealmString enemy : syn.getSynEnemies())
-                        lambdaResult.append(enemy).append(enemy.isEmpty()?EMPTY:BLANK);
-                    for(int i = 0; i < syn.getSynSpecs().size(); i++ )
-                        lambdaResult.append(CRLF).append("→ ").append(syn.getSynSpecs().get(i)).append(BLANK)
-                                .append(syn.getSynSpecValues().get(i));
-                }
-
-
-                return lambdaResult.toString();
-            });
 
             // 인연 검색
             HandleLocalDB destinyByKey = (q->{
@@ -1686,9 +1624,6 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                     break;
                 case COMMAND_DEST :
                     result = destinyByKey.handle(req);
-                    break;
-                case COMMAND_SYN:
-                    result = synergyByKey.handle(req);
                     break;
                 case COMMAND_ITEM:
                     result = itemByKey.handle(req);

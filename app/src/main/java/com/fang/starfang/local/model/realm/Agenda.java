@@ -24,4 +24,5 @@ public class Agenda extends RealmObject {
         return agendaMap;
     }
 
+
 }

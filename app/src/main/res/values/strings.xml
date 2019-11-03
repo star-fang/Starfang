@@ -22,7 +22,6 @@
         <item>병종 정보</item>
         <item>병종 상성</item>
         <item>지형 정보</item>
-        <item>몽매 시너지</item>
         <item>설명</item>
         <item>인연</item>
         <item>보물</item>
@@ -57,7 +56,6 @@
         <item>15</item>
         <item>16</item>
         <item>17</item>
-        <item>18</item>
     </string-array>
 
     <!-- Example settings for Data & Sync -->

@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
-public class Terrain extends RealmObject {
+public class Terrain extends RealmObject{
 
     public static final String PREF_TABLE = "지형 정보";
     public static final String FIELD_BRANCH_NAME = "branchName";

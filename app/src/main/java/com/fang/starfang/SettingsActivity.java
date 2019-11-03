@@ -13,14 +13,11 @@ import android.preference.PreferenceCategory;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
 
 import com.fang.starfang.local.task.RealmSyncTask;
 import com.fang.starfang.view.ShowRealmActivity;
-import com.fang.starfang.view.dialog.ProgressbarDialogFragment;
 
 import java.util.List;
 
@@ -203,7 +200,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            ProgressbarDialogFragment progressbarDialogFragment = new ProgressbarDialogFragment();
             addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
             bindPreferenceSummaryToValue(findPreference("table_list"));
@@ -211,11 +207,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             EditTextPreference text_address = (EditTextPreference)findPreference("text_address");
 
             pref_sync_all.setOnPreferenceClickListener(preference -> {
-
-                progressbarDialogFragment.show(getFragmentManager(),"dialog");
-                for( String pref_table_name: getResources().getStringArray(R.array.pref_list_table))
-                    new RealmSyncTask(text_address.getText(),getActivity(),pref_table_name, progressbarDialogFragment).getAllData(false );
-                ((PreferenceCategory)findPreference("pref_progress")).removeAll();
+                new RealmSyncTask(text_address.getText(),getActivity()).execute(getResources().getStringArray(R.array.pref_list_table));
                 return false;
             } );
 
@@ -226,11 +218,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 String pref_table_name =  pref_table_value.getSummary().toString();
                 Log.d(TAG,pref_table_name);
 
-
-
-                RealmSyncTask syncTask = new RealmSyncTask(text_address.getText(),getActivity(),pref_table_name, progressbarDialogFragment);
-
-                syncTask.getAllData(true );
+                new RealmSyncTask(text_address.getText(),getActivity()).execute(pref_table_name);
                 return false;
             });
 

@@ -15,6 +15,7 @@ public class Branch extends RealmObject {
     public static final String INIT_MP = "MP";
     public static final String INIT_EP = "EP";
     public static final String INIT_MOVING = "이동력";
+    public static String updateTime;
 
 
     private String branchName;

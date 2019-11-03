@@ -28,4 +28,5 @@ public class Spec extends RealmObject {
     public void setSpecNameNoBlank(String noBlank) { specNameNoBlank = noBlank; }
     public String getSpecName2() { return specName2; }
     public void setSpecName2( String name2 ) { specName2 = name2; }
+
 }

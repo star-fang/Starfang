@@ -11,6 +11,7 @@ public class Destiny extends RealmObject {
     public static final String INIT_CORD = "인연의 끈: ";
     public static final String[] INIT_CONDITIONS = {"조건1: ","조건2: ","조건3: "};
     public static final String INIT_LASTING_EFFECT = "지속 효과: ";
+    public static String updateTime;
 
     private String desName;
     private String desCord;
