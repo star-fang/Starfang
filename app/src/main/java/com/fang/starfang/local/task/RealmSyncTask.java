@@ -4,15 +4,17 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
+import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Agenda;
 import com.fang.starfang.local.model.realm.Branch;
 import com.fang.starfang.local.model.realm.Destiny;
@@ -48,11 +50,9 @@ import org.json.JSONException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -65,18 +65,17 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
     private final static String TAG = "FANG_REALM";
     private final static String REALM_BASE_URL = "/fangcat/convertToRealm/";
     private final static String GET_JSON_PHP = "convertToJSON.php";
-    private Context context;
+    private WeakReference<Context> context;
     private Gson gson;
     private String address;
     private AlertDialog.Builder builder;
-    private AlertDialog progressDialog;
-    private ProgressBar progressBar;
-    private TextView mTextView;
+    private WeakReference<LinearLayout> progress_list;
+    private WeakReference<View> currentProgressView;
 
     public RealmSyncTask(String address, Context context)
     {
 
-        this.context = context;
+        this.context = new WeakReference<>(context);
         this.address = address;
 
         GsonBuilder gsonBuilder = new GsonBuilder()
@@ -97,7 +96,8 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
         gson = gsonBuilder.create();
 
-        progressDialog = getDialogProgressBar("Loading...").create();
+        AlertDialog progressDialog = getDialogProgressBar().create();
+
         progressDialog.show();
     }
 
@@ -108,31 +108,30 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         int count_fail = 0;
 
 
-            for (int i = 0; i < tasks.length; i++ ) {
-                String currentTask = tasks[i];
-                String[] jsonResult = getAllData(currentTask);
-                publishProgress(currentTask,jsonResult[0],jsonResult[1]);
-                if( jsonResult[0].equals("fail")) {
-                    count_fail++;
-                } else if( jsonResult[0].equals("latest")) {
-                    count_latest++;
-                }
-
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (isCancelled()) {
-                    break;
-                }
+        for (String currentTask : tasks) {
+            publishProgress(currentTask, "", "동기화 중 입니다.");
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String[] jsonResult = getAllData(currentTask);
+            publishProgress(currentTask, jsonResult[0], jsonResult[1]);
+            if (jsonResult[0].equals("fail")) {
+                count_fail++;
+            } else if (jsonResult[0].equals("latest")) {
+                count_latest++;
             }
 
 
-        String resultStr = "동기화 완료: 전체:" + count + "개, 갱신: " + (count-count_fail-count_latest) + "개, 최신:" + count_latest + "개, 실패:" + count_fail + "개";
+            if (isCancelled()) {
+                break;
+            }
+        }
 
-
-        return resultStr;
+        return "동기화 완료: 전체:" + count + "개, 갱신: " +
+                (count - count_fail - count_latest) + "개, 최신:" + count_latest +
+                "개, 실패:" + count_fail + "개";
     }
 
     private String[] getAllData(String pref_table) {
@@ -156,15 +155,15 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
         final String[] jsonResult = {"", ""};
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        RequestQueue requestQueue = Volley.newRequestQueue(context.get());
 
         RequestFuture<JSONObject> requestFuture= RequestFuture.newFuture();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET, mJSONURLString,null,
                 requestFuture, requestFuture ) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
                 params.put("Content-Type", "application/json");
                 return params;
             }
@@ -180,6 +179,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                 try {
                     jsonResult[0] = jsonObject.get("status").toString();
                     jsonResult[1] = jsonObject.get("message").toString();
+                    Log.d(TAG,jsonResult[1]);
                     String lut = jsonObject.get("time").toString();
                     realm.beginTransaction();
                     UpdateTime updateTime = realm.where(UpdateTime.class).equalTo(UpdateTime.FIELD_TABLE,pref_table).findFirst();
@@ -362,24 +362,23 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
 
 
-        } catch (InterruptedException | ExecutionException ignored) {
+        } catch (InterruptedException | ExecutionException e) {
+            jsonResult[0] = "fail";
+            jsonResult[1] = "전송 정보 오류";
+
 
         }
         return jsonResult;
     }
 
-    private AlertDialog.Builder getDialogProgressBar(String title) {
+    private AlertDialog.Builder getDialogProgressBar() {
+
 
         if (builder == null) {
-            builder = new AlertDialog.Builder(context);
-
-            builder.setTitle("Loading...");
-            mTextView = new TextView(context);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            mTextView.setLayoutParams(lp);
-            builder.setView(mTextView);
+            builder = new AlertDialog.Builder(context.get());
+            LinearLayout progress_dialog = (LinearLayout) View.inflate(context.get(), R.layout.dialog_progress, null);
+            progress_list = new WeakReference<>(progress_dialog.findViewById(R.id.progress_list));
+            builder.setView(progress_dialog);
         }
         return builder;
     }
@@ -387,15 +386,38 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
     // After each task done
     @Override
     protected void onProgressUpdate(String... values){
-        String beforeValue = mTextView.getText().toString();
-        mTextView.setText(beforeValue + "\n" + values[0] + values[1]);
+
+        LayoutInflater inflater = LayoutInflater.from(context.get());
+        View row_progress = inflater.inflate(R.layout.row_progress,progress_list.get(),false);
+        ProgressBar progressBar = row_progress.findViewById(R.id.progressBar);
+        TextView textView_progress = row_progress.findViewById(R.id.progressBar_text);
+        textView_progress.setText(values[1]);
+        TextView textView_db = row_progress.findViewById(R.id.progressTextView_table);
+        textView_db.setText(values[0]);
+        TextView textView_msg = row_progress.findViewById(R.id.progressTextView_message);
+        textView_msg.setText(values[2]);
+
+        if(values[1].equals("")) {
+            progress_list.get().addView(row_progress);
+            currentProgressView = new WeakReference<>(row_progress);
+        } else {
+            progress_list.get().removeView(currentProgressView.get());
+            progressBar.setVisibility(View.INVISIBLE);
+            progress_list.get().addView(row_progress);
+        }
+
+//        String beforeValue = mTextView.getText().toString();
+      //  mTextView.setText(beforeValue + "\n" +  + " " +  + " " + values[2]);
     }
 
     // When all async task done
     @Override
     protected void onPostExecute(String result){
-        String beforeValue = mTextView.getText().toString();
-        mTextView.setText(beforeValue + "\n\n" + result);
+        TextView textView_result = new TextView(context.get());
+        textView_result.setText(result);
+        progress_list.get().addView(textView_result);
+       // String beforeValue = mTextView.getText().toString();
+   //     mTextView.setText(beforeValue + "\n\n" + result);
     }
 
 

@@ -1,6 +1,5 @@
 package com.fang.starfang.local.task;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.service.notification.StatusBarNotification;
@@ -30,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.mozilla.javascript.Scriptable;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,8 +51,7 @@ import io.realm.Sort;
 
 
 public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
-    @SuppressLint("StaticFieldLeak")
-    private Context context;
+    private WeakReference<Context> context;
     private String sendCat;
     private String catRoom;
     private StatusBarNotification sbn;
@@ -82,7 +81,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
     private static final String RANGE_FULL = "■";
 
     public LocalDataHandlerCat(Context c, String sender, String room, StatusBarNotification _sbn ) {
-        context = c;
+        context = new WeakReference<>(c);
         sendCat = sender;
         catRoom = room;
         sbn = _sbn;
@@ -102,7 +101,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
     }
 
 
-    private boolean handleRequest( String req, Realm realm ) {
+    private void handleRequest(String req, Realm realm ) {
 
             req = req.substring(0, req.length() - 1).trim();
 
@@ -149,7 +148,9 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
 
                 StringBuilder lambdaResult = new StringBuilder();
                 try {
-                    lambdaResult.append(drawRangeView(13, 13, dot.getDotPoints().split(COMMA)));
+                    if (dot != null) {
+                        lambdaResult.append(drawRangeView(dot.getDotPoints().split(COMMA)));
+                    }
                 } catch( NullPointerException e) {
                     return emptyResult.toString();
                 }
@@ -431,7 +432,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                 Log.d( TAG,"rowSize:" + rowSize + " colSize:" + colSize );
 
                     if( rowSize > 500)
-                        return rowSize + context.getResources().getString(R.string.desc_tooManyComb);
+                        return rowSize + context.get().getResources().getString(R.string.desc_tooManyComb);
                 }
                 StringBuilder lambdaResult = new StringBuilder();
 
@@ -537,7 +538,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
 
                 Log.d(TAG,"descBySepc Activated! : " + q);
                 if(q.replace(BLANK,EMPTY).isEmpty())
-                    return context.getResources().getString(R.string.description);
+                    return context.get().getResources().getString(R.string.description);
 
                 ArrayList<String> specList = new ArrayList<>(Arrays.asList(q.split(BLANK)));
 
@@ -1301,25 +1302,6 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
 
             });
 
-
-            // 섬멸, 경쟁 일정 검색
-
-            // 보패관리 : Starfang 강인한 각 습득
-            HandleLocalDB manageMagicItem = (q-> {
-
-                // 습득, 갈갈, 변경, 착용, 해제, 렙업
-
-                if(q.replace(BLANK,EMPTY).isEmpty())
-                    return null;
-
-                LinkedList<String> rQueue = new LinkedList<>();
-                rQueue.addAll(Arrays.asList(q.split(BLANK)));
-
-                if( rQueue.isEmpty() ) return null;
-                return null;
-            });
-
-
             // 책략 이름 검색
             HandleLocalDB searchMagicByName = ( q-> {
 
@@ -1683,12 +1665,10 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
 
 
             if(result != null) {
-                KakaoReplier replier = new KakaoReplier(context,sendCat,sbn);
+                KakaoReplier replier = new KakaoReplier(context.get(),sendCat,sbn);
                 replier.execute(result,"[L]");
-                return true;
             }
 
-        return false;
     }
 
     private interface HandleLocalDB {
@@ -1724,9 +1704,9 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
         return lineageName;
     }
 
-    private String drawRangeView( int rowSize, int colSize, String... points) {
+    private String drawRangeView(String... points) {
 
-        boolean[][] sparseMatrix = new boolean[rowSize][colSize];
+        boolean[][] sparseMatrix = new boolean[13][13];
 
         for( String point : points ) {
             String[] value = point.split(BLANK);

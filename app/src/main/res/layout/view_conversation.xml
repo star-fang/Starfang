@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.fang.starfang.MainActivity">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/conversation_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:layout_above="@id/conversationEtLayout"
+        tools:listitem="@layout/row_conversation"
+        />
+
+
+    <RelativeLayout
+        android:id="@+id/conversationEtLayout"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/et_conversation"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginEnd="5dp"
+            android:autofillHints=""
+            android:focusedByDefault="false"
+            android:hint="@string/et_conversation_hint"
+            android:inputType="textNoSuggestions"
+            tools:targetApi="o" />
+
+        <ExpandableListView
+            android:layout_width="120dp"
+            android:layout_height="70dp"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+
+
+
+
+</RelativeLayout>

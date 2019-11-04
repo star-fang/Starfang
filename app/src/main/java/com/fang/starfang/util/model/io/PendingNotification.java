@@ -2,7 +2,8 @@ package com.fang.starfang.util.model.io;
 
 import android.annotation.SuppressLint;
 import android.service.notification.StatusBarNotification;
-import android.support.v4.app.NotificationCompat;
+
+import androidx.core.app.NotificationCompat;
 
 import com.fang.starfang.util.VersionUtils;
 

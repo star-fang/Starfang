@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="1dp">
+
+    <RelativeLayout
+        android:layout_width="50dp"
+        android:layout_height="18dp"
+        >
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:indeterminate="false"
+        android:max="100"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/progressBar_text"
+            android:layout_width="50dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            tools:text="@android:string/cancel" />
+</RelativeLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/progressTextView_table"
+            android:layout_width="75dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            tools:text="@tools:sample/last_names" />
+        <TextView
+            android:id="@+id/progressTextView_message"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            tools:text="@tools:sample/lorem[4]"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+</LinearLayout>

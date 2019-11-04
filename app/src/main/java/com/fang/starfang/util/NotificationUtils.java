@@ -6,13 +6,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.RemoteInput;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.RemoteInput;
 
 import com.fang.starfang.util.model.io.Action;
 

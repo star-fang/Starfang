@@ -3,11 +3,11 @@ package com.fang.starfang.view.dialog;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.fragment.app.DialogFragment;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Heroes;
@@ -26,7 +26,6 @@ public class HeroesDialogFragment extends DialogFragment {
         return fragment;
     }
 
-   @NonNull
    @Override
    public Dialog onCreateDialog(Bundle savedInstanceState ) {
        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

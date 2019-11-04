@@ -1,6 +1,5 @@
 package com.fang.starfang.view.list;
 
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import io.realm.RealmBaseAdapter;
 
 public class DestinyListAdapter extends RealmBaseAdapter<Destiny> {
 
-    public DestinyListAdapter(@Nullable OrderedRealmCollection<Destiny> data) {
+    public DestinyListAdapter(OrderedRealmCollection<Destiny> data) {
         super(data);
     }
 

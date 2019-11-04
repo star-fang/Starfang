@@ -1,29 +1,22 @@
 package com.fang.starfang.view;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Destiny;
 import com.fang.starfang.local.model.realm.Spec;
-import com.fang.starfang.view.dialog.HeroesDialogFragment;
-import com.fang.starfang.view.list.DestinyListAdapter;
-import com.fang.starfang.view.list.HeroesListAdapter;
 import com.fang.starfang.local.model.realm.Heroes;
-import com.fang.starfang.view.list.SpecListAdapter;
 import com.fang.starfang.view.recycler.HeroesRecyclerAdapter;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 public class ShowRealmActivity extends AppCompatActivity {
 

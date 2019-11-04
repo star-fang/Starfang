@@ -1,9 +1,5 @@
 package com.fang.starfang.view.recycler;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +7,15 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Heroes;
 import com.fang.starfang.view.dialog.HeroesDialogFragment;
 
 import io.realm.Case;
-import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import io.realm.RealmBaseAdapter;
 import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
 
@@ -27,16 +24,15 @@ public class HeroesRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, Recy
     private Realm realm;
     private FragmentManager fragmentManager;
 
-    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_heroes,viewGroup,false);
 
         return new HeroesViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
 
         HeroesViewHolder heroesViewHolder = (HeroesViewHolder) viewHolder;
 
@@ -100,13 +96,13 @@ public class HeroesRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, Recy
         public TextView hero_name;
         public TextView hero_cost;
 
-        public HeroesViewHolder(@NonNull View itemView) {
+        public HeroesViewHolder(View itemView) {
             super(itemView);
 
-            hero_no = itemView.findViewById(R.id.hero_no);
-            hero_line = itemView.findViewById(R.id.hero_line);
-            hero_name = itemView.findViewById(R.id.hero_name);
-            hero_cost = itemView.findViewById(R.id.hero_cost);
+            hero_no = (TextView)itemView.findViewById(R.id.hero_no);
+            hero_line = (TextView)itemView.findViewById(R.id.hero_line);
+            hero_name = (TextView)itemView.findViewById(R.id.hero_name);
+            hero_cost = (TextView)itemView.findViewById(R.id.hero_cost);
 
         }
 

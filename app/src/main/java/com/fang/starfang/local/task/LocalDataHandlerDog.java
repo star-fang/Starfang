@@ -1,6 +1,5 @@
 package com.fang.starfang.local.task;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.service.notification.StatusBarNotification;
@@ -10,6 +9,7 @@ import com.fang.starfang.local.model.realm.UnionBranch;
 import com.fang.starfang.local.model.realm.UnionSkill;
 import com.fang.starfang.util.KakaoReplier;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,10 +21,8 @@ import io.realm.RealmResults;
 
 
 public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
-    @SuppressLint("StaticFieldLeak")
-    private Context context;
+    private WeakReference<Context> context;
     private String sendCat;
-    private String catRoom;
     private StatusBarNotification sbn;
 
     private static final String TAG = "LOCAL_HANDLER";
@@ -35,20 +33,18 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
             "병종","능력", "스킬", "설명","약탈","당함","보조"};
 
     private static final String[] PRFX_COMMAND_UNION = {"","","","","","","약탈"};
-    private static final String[] SFX_COMMAND_UNION = {"","","","","","",""};
+    private static final String[] SFX_COMMAND_UNION = {"","","","","","보조",""};
 
     private static final String CRLF = "\r\n";
     private static final String BLANK = " ";
     private static final String EMPTY = "";
-    private static final String DASH = "-";
     private static final String COMMA = ",";
     private static final String SEPARATOR = "-------------------------------\n";
     private final static String[] cmdMine = { "동광", "서광", "남광", "북광", "중광" };
 
-    public LocalDataHandlerDog(Context c, String sender, String room, StatusBarNotification _sbn ) {
-        context = c;
+    public LocalDataHandlerDog(Context c, String sender, StatusBarNotification _sbn ) {
+        context = new WeakReference<>(c);
         sendCat = sender;
-        catRoom = room;
         sbn = _sbn;
     }
 
@@ -64,7 +60,7 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
     }
 
 
-    private boolean handleRequest( String req, Realm realm ) {
+    private void handleRequest(String req, Realm realm ) {
 
 
             req = req.substring(0, req.length() - 1).trim();
@@ -77,9 +73,10 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
 
                     String reqWithoutSFX = req;
                     try {
-                        if (!suffix.isEmpty())
+                        if (!suffix.equals(BLANK)) {
                             reqWithoutSFX = (req.substring(req.length() - suffix.length()).equals(suffix)) ?
-                                    req.substring(0, req.length() - suffix.length() ): req;
+                                    req.substring(0, req.length() - suffix.length()) : req;
+                        }
                     } catch( StringIndexOutOfBoundsException  ignore ) { }
 
                     try {
@@ -116,8 +113,8 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
 
                 if( !uBranchResult.isEmpty() ) {
                     int ubSize = uBranchResult.size();
-                    lambdaResult.append("연합전 " + q + " 병종" + CRLF);
-                    lambdaResult.append("검색 결과: " + ubSize + "개" + CRLF);
+                    lambdaResult.append("연합전 ").append(q).append(" 병종").append(CRLF);
+                    lambdaResult.append("검색 결과: ").append(ubSize).append("개").append(CRLF);
 
                     lambdaResult.append(SEPARATOR).append("병종계열 병과분류 등급").append(CRLF).append(SEPARATOR);
 
@@ -188,13 +185,13 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
 
                 if(!uBranchResult.isEmpty()) {
                     for(UnionBranch uBranch : uBranchResult) {
-                        lambdaResult.append(uBranch.getuBranch() + " 스킬").append(CRLF)
+                        lambdaResult.append(uBranch.getuBranch()).append(" 스킬").append(CRLF)
                                 .append(SEPARATOR);
                         String skills = uBranch.getuBranchSkill();
                         for(String skill: skills.split(",")) {
                             skill = skill.trim();
                             UnionSkill uSkill = realm.where(UnionSkill.class).equalTo(UnionSkill.FIELD_NAME,skill).findFirst();
-                            lambdaResult.append("[").append(uSkill.getuSkillType()).append("] ").append(skill).append(CRLF);
+                            lambdaResult.append("[").append(uSkill != null ? uSkill.getuSkillType() : null).append("] ").append(skill).append(CRLF);
                         }
 
                         lambdaResult.append(COMMA).append(CRLF);
@@ -258,11 +255,9 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
 
 
             if(result != null) {
-                KakaoReplier replier = new KakaoReplier(context,sendCat,sbn);
+                KakaoReplier replier = new KakaoReplier(context.get(),sendCat,sbn);
                 replier.execute(result,"[L]");
-                return true;
             }
-        return false;
     }
 
     private interface HandleLocalDB {
@@ -369,7 +364,7 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
 
 
     private String pirate(String priKey, boolean assistant) {
-        String str = "";
+        StringBuilder str = new StringBuilder();
 
         boolean noMine = true;
         int num = 0;
@@ -384,32 +379,32 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
         String val = priKey.replaceAll("[^0-9]", "");
 
         if (val.equals("")) {
-            str += "1시간 약탈량 ";
-            str += assistant ? "(약탈 보조)\r\n" : "\r\n";
-            str += "광명 | 품목  수량\r\n";
+            str.append("1시간 약탈량 ");
+            str.append(assistant ? "(약탈 보조)\r\n" : "\r\n");
+            str.append("광명 | 품목  수량\r\n");
             if (noMine) {
                 for (int i = 0; i < loot1.length; i++) {
-                    str += cmdMine[i] + " | " + loot1[i] + "  ";
-                    str += assistant ? (double) pirateUnitHour1[i] * 1.2 + "\r\n" : pirateUnitHour1[i] + "\r\n";
-                    str += cmdMine[i] + " | " + loot2[i] + "  ";
-                    str += assistant ? (double) pirateUnitHour2[i] * 1.2 + "\r\n" : pirateUnitHour2[i];
-                    str += (i < loot1.length - 1) ? "\r\n\r\n" : "";
+                    str.append(cmdMine[i]).append(" | ").append(loot1[i]).append("  ");
+                    str.append(assistant ? (double) pirateUnitHour1[i] * 1.2 + "\r\n" : pirateUnitHour1[i] + "\r\n");
+                    str.append(cmdMine[i]).append(" | ").append(loot2[i]).append("  ");
+                    str.append(assistant ? (double) pirateUnitHour2[i] * 1.2 + "\r\n" : pirateUnitHour2[i]);
+                    str.append((i < loot1.length - 1) ? "\r\n\r\n" : "");
                 }
             } else {
-                str += cmdMine[num] + " | " + loot1[num] + "  ";
-                str += assistant ? (double) pirateUnitHour1[num] * 1.2 + "\r\n" : pirateUnitHour1[num] + "\r\n";
-                str += cmdMine[num] + " | " + loot2[num] + "  ";
-                str += assistant ? (double) pirateUnitHour2[num] * 1.2 + "\r\n" : pirateUnitHour2[num];
+                str.append(cmdMine[num]).append(" | ").append(loot1[num]).append("  ");
+                str.append(assistant ? (double) pirateUnitHour1[num] * 1.2 + "\r\n" : pirateUnitHour1[num] + "\r\n");
+                str.append(cmdMine[num]).append(" | ").append(loot2[num]).append("  ");
+                str.append(assistant ? (double) pirateUnitHour2[num] * 1.2 + "\r\n" : pirateUnitHour2[num]);
             }
 
         } else if (!noMine) {
 
             double pirateUnitSec;
 
-            String loot = "";
-            String lootSFX = "";
-            String lootPRFX = "";
-            String lootUnit = "";
+            String loot;
+            String lootSFX;
+            String lootPRFX;
+            String lootUnit;
             if (priKey.contains(loot2[num])) {
                 loot = loot2[num];
                 lootSFX = loot2SFX[num];
@@ -455,20 +450,18 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
             // String dateMaxInfo = df.format(dateMax);
             String datePirateInfo = df.format(datePirate);
 
-            str += cmdMine[num] + " " + lootPRFX + loot + lootSFX + ":" + val + lootUnit + "\r\n";
-            str += "점령 : " + ((hour > 0) ? (hour + "시간 ") : "") + minute + "분 " + second + "초 경과\r\n";
-            str += "잔여 : " + ((hour_remain > 0) ? (hour_remain + "시간 ") : "") + minute_remain + "분 " + second_remain
-                    + "초 남음\r\n";
-            str += "오차 : " + ((minute_error > 0) ? (minute_error + "분 ") : "")
-                    + ((second_error > 0 || minute_error == 0) ? (second_error + "초 ") : "") + "\r\n\r\n";
-            str += "현재시간 : " + dateNowInfo + "\r\n";
-            str += "점령시간 : " + datePirateInfo + " ± 오차\r\n";
-            str += "풀광시간 : " + dateFullInfo + " ± 오차";
+            str.append(cmdMine[num]).append(" ").append(lootPRFX).append(loot).append(lootSFX).append(":").append(val).append(lootUnit).append("\r\n");
+            str.append("점령 : ").append((hour > 0) ? (hour + "시간 ") : "").append(minute).append("분 ").append(second).append("초 경과\r\n");
+            str.append("잔여 : ").append((hour_remain > 0) ? (hour_remain + "시간 ") : "").append(minute_remain).append("분 ").append(second_remain).append("초 남음\r\n");
+            str.append("오차 : ").append((minute_error > 0) ? (minute_error + "분 ") : "").append((second_error > 0 || minute_error == 0) ? (second_error + "초 ") : "").append("\r\n\r\n");
+            str.append("현재시간 : ").append(dateNowInfo).append("\r\n");
+            str.append("점령시간 : ").append(datePirateInfo).append(" ± 오차\r\n");
+            str.append("풀광시간 : ").append(dateFullInfo).append(" ± 오차");
             // str += "풀광(최대) : " + dateMaxInfo;
 
         }
 
-        return str;
+        return str.toString();
     }
 
 }

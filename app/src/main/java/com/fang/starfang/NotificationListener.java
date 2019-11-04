@@ -1,39 +1,75 @@
 package com.fang.starfang;
 
 import android.app.Notification;
+import android.content.Intent;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
+import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.task.LocalDataHandlerCat;
 import com.fang.starfang.local.task.LocalDataHandlerDog;
 
-// 카톡 알림을 읽어오는 리스너
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
+
+import io.realm.Realm;
 
 public class NotificationListener extends NotificationListenerService {
 
-    private static final String TAG = "FANG";
+    private static final String TAG = "FANG_LISTENER";
     private static final String PACKAGE_KAKAO = "com.kakao.talk";
     private static final String PACKAGE_DISCORD = "com.discord";
-    private static final String COMMAND_CAT = "냥";
-    private static final String COMMAND_DOG = "멍";
+    private String COMMAND_CAT = "냥";
+    private String COMMAND_DOG = "멍";
+    private static String status = "stop";
+    private Realm realm;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        super.stopSelf();
         Log.d(TAG, "Notification Listener created!");
+
+        realm = Realm.getDefaultInstance();
+        Log.d(TAG, "Start record to realm");
+
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "Notification Listener destroyed!");
+
+        realm.close();
+        Log.d(TAG, "Stop record to realm");
     }
 
-    //@TargetApi(Build.VERSION_CODES.P)
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        status = (String) Objects.requireNonNull(intent.getExtras()).get("status");
+        Log.d(TAG, "status changed:" + status);
+        if(status.equals("start")) {
+            super.onStartCommand(intent, flags, startId);
+
+        } else {
+            super.stopSelf();
+
+        }
+
+
+        return START_NOT_STICKY;
+    }
+
+
     public void addNotification(StatusBarNotification sbn, boolean updateDash)  {
-       // Log.i(TAG, sbn.getPackageName() + ">> " + sbn.getNotification().extras.toString() );
+
+
 
 
             Notification mNotification = sbn.getNotification();
@@ -42,32 +78,52 @@ public class NotificationListener extends NotificationListenerService {
         String from = null;
         String text = null;
         String room = null;
+        String packageName = sbn.getPackageName();
 
-        if( sbn.getPackageName().equalsIgnoreCase(PACKAGE_KAKAO )) {
+        boolean isAvailablePackage = false;
+
+        if( packageName.equalsIgnoreCase(PACKAGE_KAKAO )) {
 
 
             from = extras.getString(Notification.EXTRA_TITLE);
             text = extras.getString(Notification.EXTRA_TEXT);
             room = extras.getString(Notification.EXTRA_SUB_TEXT);
+            isAvailablePackage = true;
 
-        } else if( sbn.getPackageName().equalsIgnoreCase(PACKAGE_DISCORD ) ) {
+
+        } else if( packageName.equalsIgnoreCase(PACKAGE_DISCORD ) ) {
 
             text = extras.getCharSequence(Notification.EXTRA_TEXT)+"";
-
             from = extras.getCharSequence(Notification.EXTRA_TITLE)+"";
-
             room = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)+"";
+            isAvailablePackage = true;
 
         }
 
-            Log.i(TAG, sbn.getPackageName() + ">> from: " + from + ", text: " + text + ", room: " + room);
+        if( isAvailablePackage ) {
+            Conversation conversation = new Conversation();
+            conversation.setCatRoom(room);
+            conversation.setPackageName(packageName);
+            conversation.setSandCat(from);
+            conversation.setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(new Date()));
+            conversation.setReplyID(sbn.getTag());
+            conversation.setConversation(text);
 
+            realm.beginTransaction();
+            realm.copyToRealm(conversation);
+            realm.commitTransaction();
+            realm.refresh();
+        }
+
+            //Log.i(TAG, sbn.getPackageName() + ">> from: " + from + ", text: " + text + ", room: " + room);
             try {
 
-                if (text.substring(text.length() - 1).equals(COMMAND_CAT) && text.length() > 2) {
-                    new LocalDataHandlerCat(this, from, room, sbn).execute(text);
-                } else if (text.substring(text.length() - 1).equals(COMMAND_DOG) && text.length() > 2) {
-                    new LocalDataHandlerDog(this, from, room, sbn).execute(text);
+                if (text != null) {
+                    if (text.substring(text.length() - 1).equals(COMMAND_CAT) && text.length() > 2) {
+                        new LocalDataHandlerCat(this, from, room, sbn).execute(text);
+                    } else if (text.substring(text.length() - 1).equals(COMMAND_DOG) && text.length() > 2) {
+                        new LocalDataHandlerDog(this, from, sbn).execute(text);
+                    }
                 }
             } catch (NullPointerException ignore) {
             }
@@ -76,6 +132,8 @@ public class NotificationListener extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
+        if(status.equals("stop"))
+            return;
         if (sbn!=null) {
             String sbnPackage = sbn.getPackageName();
             String sbnTag = sbn.getTag();
@@ -90,6 +148,9 @@ public class NotificationListener extends NotificationListenerService {
         //Log.d(TAG, "Notification [" + sbn.getKey() + "] Removed:\n");
     }
 
+    public static String getStatus() {
+        return status;
+    }
 
 
 
