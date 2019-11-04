@@ -26,27 +26,18 @@ public class NotificationListener extends NotificationListenerService {
     private String COMMAND_CAT = "냥";
     private String COMMAND_DOG = "멍";
     private static String status = "stop";
-    private Realm realm;
 
     @Override
     public void onCreate() {
         super.onCreate();
         super.stopSelf();
-        Log.d(TAG, "Notification Listener created!");
-
-        realm = Realm.getDefaultInstance();
-        Log.d(TAG, "Start record to realm");
-
-
+        //Log.d(TAG, "Notification Listener created");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "Notification Listener destroyed!");
-
-        realm.close();
-        Log.d(TAG, "Stop record to realm");
+        //Log.d(TAG, "Notification Listener destroyed");
     }
 
 
@@ -56,10 +47,8 @@ public class NotificationListener extends NotificationListenerService {
         Log.d(TAG, "status changed:" + status);
         if(status.equals("start")) {
             super.onStartCommand(intent, flags, startId);
-
         } else {
             super.stopSelf();
-
         }
 
 
@@ -67,10 +56,8 @@ public class NotificationListener extends NotificationListenerService {
     }
 
 
-    public void addNotification(StatusBarNotification sbn, boolean updateDash)  {
-
-
-
+    public void addNotification(StatusBarNotification sbn)  {
+        Log.d(TAG, "addNotification activated");
 
             Notification mNotification = sbn.getNotification();
             Bundle extras = mNotification.extras;
@@ -82,6 +69,7 @@ public class NotificationListener extends NotificationListenerService {
 
         boolean isAvailablePackage = false;
 
+        //Log.d(TAG, "before package name check");
         if( packageName.equalsIgnoreCase(PACKAGE_KAKAO )) {
 
 
@@ -100,6 +88,8 @@ public class NotificationListener extends NotificationListenerService {
 
         }
 
+        //Log.d(TAG, "after package name check");
+
         if( isAvailablePackage ) {
             Conversation conversation = new Conversation();
             conversation.setCatRoom(room);
@@ -109,15 +99,17 @@ public class NotificationListener extends NotificationListenerService {
             conversation.setReplyID(sbn.getTag());
             conversation.setConversation(text);
 
-            realm.beginTransaction();
+            //Log.d(TAG, "set conversation object");
+            Realm realm = Realm.getDefaultInstance();
+           realm.beginTransaction();
             realm.copyToRealm(conversation);
             realm.commitTransaction();
-            realm.refresh();
+            realm.close();
+
         }
 
-            //Log.i(TAG, sbn.getPackageName() + ">> from: " + from + ", text: " + text + ", room: " + room);
+            //Log.d(TAG, sbn.getPackageName() + ">> from: " + from + ", text: " + text + ", room: " + room);
             try {
-
                 if (text != null) {
                     if (text.substring(text.length() - 1).equals(COMMAND_CAT) && text.length() > 2) {
                         new LocalDataHandlerCat(this, from, room, sbn).execute(text);
@@ -138,8 +130,9 @@ public class NotificationListener extends NotificationListenerService {
             String sbnPackage = sbn.getPackageName();
             String sbnTag = sbn.getTag();
             //Log.d(TAG, sbnPackage + " Notification [" + sbn.getKey() + "] Posted:\n");
-            if ( ( sbnTag != null &&  sbnPackage.equalsIgnoreCase(PACKAGE_KAKAO) ) || sbnPackage.equalsIgnoreCase(PACKAGE_DISCORD) )
-                addNotification(sbn, true);
+            if ( ( sbnTag != null &&  sbnPackage.equalsIgnoreCase(PACKAGE_KAKAO) ) || sbnPackage.equalsIgnoreCase(PACKAGE_DISCORD) ) {
+                addNotification(sbn);
+            }
         }
     }
 

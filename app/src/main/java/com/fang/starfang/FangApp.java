@@ -18,6 +18,7 @@ public class FangApp extends Application {
             realm = Realm.getDefaultInstance();
         } catch ( RealmMigrationNeededException e ) {
             Log.d("FANG_APP", e.toString());
+            // delete and re-configuration when new table added
             RealmConfiguration config = new RealmConfiguration.Builder()
                     .deleteRealmIfMigrationNeeded()
                     .build();

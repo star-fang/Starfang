@@ -116,7 +116,7 @@ public class PlaceholderFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(layoutManager);
-        ConversationRecyclerAdapter conversationRecyclerAdapter = new ConversationRecyclerAdapter( realm, getActivity().getSupportFragmentManager());
+        final ConversationRecyclerAdapter conversationRecyclerAdapter = new ConversationRecyclerAdapter( realm, recyclerView );
         recyclerView.setAdapter(conversationRecyclerAdapter);
 
 

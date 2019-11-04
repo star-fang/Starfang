@@ -14,39 +14,45 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Conversation;
 
+import java.lang.ref.WeakReference;
+
 import io.realm.Case;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
 
 public class ConversationRecyclerAdapter extends RealmRecyclerViewAdapter<Conversation, RecyclerView.ViewHolder>{
 
-    private Realm realm;
-    private FragmentManager fragmentManager;
     private static final String TAG = "FANG_CONVERSATION";
-
+    private WeakReference<RecyclerView> recyclerViewWeakReference;
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        //Log.d(TAG,"onCreateViewHolder");
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_conversation,viewGroup,false);
-
         return new ConversationRecyclerAdapter.ConversationViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
 
-        ConversationRecyclerAdapter.ConversationViewHolder conversationViewHolder = (ConversationRecyclerAdapter.ConversationViewHolder) viewHolder;
+        ConversationRecyclerAdapter.ConversationViewHolder conversationViewHolder =
+                (ConversationRecyclerAdapter.ConversationViewHolder) viewHolder;
 
         Conversation conversation = getItem(i);
         conversationViewHolder.bind(conversation);
 
     }
 
-    public ConversationRecyclerAdapter(Realm realm, FragmentManager fragmentManager) {
-        super(realm.where(Conversation.class).findAll(),false);
-        this.realm = realm;
-        this.fragmentManager = fragmentManager;
-
+    public ConversationRecyclerAdapter(Realm realm, RecyclerView recyclerView) {
+        super(realm.where(Conversation.class).findAll(),true);
+        //Log.d(TAG,"ConversationRecyclerAdapter constructed");
+        realm.addChangeListener(o -> {
+            notifyDataSetChanged();
+            recyclerView.smoothScrollToPosition(getItemCount());
+        });
+        recyclerView.smoothScrollToPosition(getItemCount());
+        recyclerViewWeakReference = new WeakReference<>(recyclerView);
     }
 
 
@@ -94,26 +100,28 @@ public class ConversationRecyclerAdapter extends RealmRecyclerViewAdapter<Conver
     }
  */
 
+    //https://stackoverflow.com/questions/48508017/how-to-update-recycleview-single-item-while-realm-database-update
+
 
 
     public class ConversationViewHolder extends RecyclerView.ViewHolder {
-        public TextView sandCatTv;
-        public TextView catRoomTv;
-        public TextView timestampTv;
-        public TextView conversationTv;
+        private TextView sandCatTv;
+        private TextView catRoomTv;
+        private TextView timestampTv;
+        private TextView conversationTv;
 
-        public ConversationViewHolder(View itemView) {
+        private ConversationViewHolder(View itemView) {
             super(itemView);
 
-            sandCatTv = (TextView)itemView.findViewById(R.id.conv_sendCat);
-            catRoomTv = (TextView)itemView.findViewById(R.id.conv_catRoom);
-            timestampTv = (TextView)itemView.findViewById(R.id.conv_timestamp);
-            conversationTv = (TextView)itemView.findViewById(R.id.conv_conversation);
+            sandCatTv = itemView.findViewById(R.id.conv_sendCat);
+            catRoomTv = itemView.findViewById(R.id.conv_catRoom);
+            timestampTv = itemView.findViewById(R.id.conv_timestamp);
+            conversationTv = itemView.findViewById(R.id.conv_conversation);
         }
 
 
 
-        public void bind(final Conversation conversation ) {
+        private void bind(final Conversation conversation ) {
             try {
                 //Log.d(TAG,conversation.getSandCat());
                 sandCatTv.setText(conversation.getSandCat());
@@ -126,6 +134,8 @@ public class ConversationRecyclerAdapter extends RealmRecyclerViewAdapter<Conver
             //itemView.setOnClickListener(v -> {
             //});
         }
+
+
     }
 
 }

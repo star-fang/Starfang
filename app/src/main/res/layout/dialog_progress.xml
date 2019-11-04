@@ -2,46 +2,74 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="295dp"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:background="@drawable/border"
+    android:backgroundTint="@color/design_default_color_primary_dark"
+    android:backgroundTintMode="add"
     android:orientation="vertical"
     tools:context="com.fang.starfang.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal"
-        android:padding="2dp"
-        android:layout_marginBottom="5dp">
+        android:padding="2dp">
 
         <TextView
             android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_height="20dp"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:text="@string/progress_condition"
-            android:textAlignment="center"/>
+            android:textAlignment="center" />
 
         <TextView
             android:layout_width="75dp"
-            android:layout_height="40dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="20dp"
             android:text="@string/progress_db"
-            android:textAlignment="center"/>
+            android:textAlignment="center" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="20dp"
+            android:minWidth="100dp"
             android:text="@string/progress_message"
-            android:textAlignment="center"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progress_list"
-        android:orientation="vertical">
+            android:textAlignment="center" />
 
     </LinearLayout>
 
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="215dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/progress_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/progress_result"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:textAlignment="center" />
 
 
 </LinearLayout>

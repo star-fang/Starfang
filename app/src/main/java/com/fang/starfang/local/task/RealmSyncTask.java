@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -55,6 +56,8 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -71,6 +74,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
     private AlertDialog.Builder builder;
     private WeakReference<LinearLayout> progress_list;
     private WeakReference<View> currentProgressView;
+    private WeakReference<TextView> progress_result;
 
     public RealmSyncTask(String address, Context context)
     {
@@ -150,7 +154,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         String utStr = ut.getLatestUpadateTime();
         realmForUT.close();
         String mJSONURLString = address + REALM_BASE_URL + GET_JSON_PHP + "?pref_t=" + pref_table.replace(" ","%20")
-                +"&lut="+utStr;
+                +"&lut="+utStr.replace(" ","%20");
         Log.d(TAG,"get method: " + mJSONURLString );
 
         final String[] jsonResult = {"", ""};
@@ -163,9 +167,9 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                 requestFuture, requestFuture ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<>();
-                params.put("Content-Type", "application/json");
-                return params;
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
             }
         };
 
@@ -174,12 +178,14 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
 
         try {
-            JSONObject jsonObject = requestFuture.get();
+            JSONObject jsonObject = requestFuture.get(3, TimeUnit.SECONDS);
+            //Log.d(TAG,jsonObject.toString());
+
                 Realm realm = Realm.getDefaultInstance();
                 try {
                     jsonResult[0] = jsonObject.get("status").toString();
                     jsonResult[1] = jsonObject.get("message").toString();
-                    Log.d(TAG,jsonResult[1]);
+
                     String lut = jsonObject.get("time").toString();
                     realm.beginTransaction();
                     UpdateTime updateTime = realm.where(UpdateTime.class).equalTo(UpdateTime.FIELD_TABLE,pref_table).findFirst();
@@ -190,10 +196,11 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+
                 }
 
                 if(jsonResult[0].equals("latest") || jsonResult[0].equals("fail") ) {
-                    Log.d(TAG,pref_table + ":" + jsonResult[1]);
+
                     return jsonResult;
                 }
 
@@ -225,11 +232,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
                             }
-
-
-
                             Log.d(TAG, "SYNC Hero REALM COMPLETE!");
                             break;
                         case Destiny.PREF_TABLE:
@@ -363,10 +366,16 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
 
         } catch (InterruptedException | ExecutionException e) {
+            Log.d(TAG,e.toString());
+
             jsonResult[0] = "fail";
             jsonResult[1] = "전송 정보 오류";
 
 
+        } catch (TimeoutException e) {
+            Log.d(TAG,e.toString());
+            jsonResult[0] = "fail";
+            jsonResult[1] = "시간 초과";
         }
         return jsonResult;
     }
@@ -378,6 +387,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
             builder = new AlertDialog.Builder(context.get());
             LinearLayout progress_dialog = (LinearLayout) View.inflate(context.get(), R.layout.dialog_progress, null);
             progress_list = new WeakReference<>(progress_dialog.findViewById(R.id.progress_list));
+            progress_result = new WeakReference<>(progress_dialog.findViewById(R.id.progress_result));
             builder.setView(progress_dialog);
         }
         return builder;
@@ -406,18 +416,12 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
             progress_list.get().addView(row_progress);
         }
 
-//        String beforeValue = mTextView.getText().toString();
-      //  mTextView.setText(beforeValue + "\n" +  + " " +  + " " + values[2]);
     }
 
     // When all async task done
     @Override
     protected void onPostExecute(String result){
-        TextView textView_result = new TextView(context.get());
-        textView_result.setText(result);
-        progress_list.get().addView(textView_result);
-       // String beforeValue = mTextView.getText().toString();
-   //     mTextView.setText(beforeValue + "\n\n" + result);
+        progress_result.get().setText(result);
     }
 
 
