@@ -94,8 +94,12 @@ public class NotificationListener extends NotificationListenerService {
             Conversation conversation = new Conversation();
             conversation.setCatRoom(room);
             conversation.setPackageName(packageName);
-            conversation.setSandCat(from);
-            conversation.setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(new Date()));
+            conversation.setSendCat(from);
+            Date curDate = new Date();
+            String timestamp =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(curDate);
+            long timeValue = curDate.getTime();
+            conversation.setTimestamp(timestamp);
+            conversation.setTimeValue(timeValue);
             conversation.setReplyID(sbn.getTag());
             conversation.setConversation(text);
 

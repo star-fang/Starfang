@@ -4,20 +4,22 @@ import io.realm.RealmObject;
 
 public class Conversation extends RealmObject {
 
-    private String sandCat;
+    public static final String FIELD_SENDCAT = "sendCat";
+    public static final String FIELD_ROOM = "catRoom";
+    public static final String FIELD_TIME = "timestamp";
+    public static final String FIELD_TIME_VALUE = "timeValue";
+    public static final String FIELD_PACKAGE  = "packageName";
+    public static final String FIELD_CONVERSATION = "conversation";
+
+    private String sendCat;
     private String catRoom;
     private String replyID;
     private String timestamp;
+    private long timeValue;
     private String packageName;
     private String conversation;
 
-    public String getSandCat() {
-        return sandCat;
-    }
 
-    public void setSandCat(String sandCat) {
-        this.sandCat = sandCat;
-    }
 
     public String getCatRoom() {
         return catRoom;
@@ -57,5 +59,21 @@ public class Conversation extends RealmObject {
 
     public void setConversation(String conversation) {
         this.conversation = conversation;
+    }
+
+    public String getSendCat() {
+        return sendCat;
+    }
+
+    public void setSendCat(String sendCat) {
+        this.sendCat = sendCat;
+    }
+
+    public long getTimeValue() {
+        return timeValue;
+    }
+
+    public void setTimeValue(long timeValue) {
+        this.timeValue = timeValue;
     }
 }
