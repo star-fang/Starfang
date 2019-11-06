@@ -11,10 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -25,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fang.starfang.NotificationListener;
 import com.fang.starfang.R;
 import com.fang.starfang.local.task.RealmSyncTask;
+import com.fang.starfang.view.recycler.ConversationFilter;
 import com.fang.starfang.view.recycler.ConversationRecyclerAdapter;
 
 import java.util.Objects;
@@ -119,6 +124,42 @@ public class PlaceholderFragment extends Fragment {
         final ConversationRecyclerAdapter conversationRecyclerAdapter = new ConversationRecyclerAdapter( realm, recyclerView );
         recyclerView.setAdapter(conversationRecyclerAdapter);
 
+        final AppCompatButton button_filter_sendCat =  child_conversation.findViewById(R.id.button_filter_sendCat);
+        final LinearLayout inner_row_filter_sendCat = child_conversation.findViewById(R.id.inner_row_filter_sendCat);
+        final AppCompatButton button_input_filter_sendCat = child_conversation.findViewById(R.id.button_input_filter_sendCat);
+        final AppCompatEditText text_input_filter_sendCat = child_conversation.findViewById(R.id.text_input_filter_sendCat);
+        final AppCompatCheckBox checkbox_filter_sendCat = child_conversation.findViewById(R.id.checkbox_filter_sendCat);
+
+        button_filter_sendCat.setOnClickListener( v -> {
+            ViewGroup.LayoutParams layoutParams = inner_row_filter_sendCat.getLayoutParams();
+            layoutParams.width = 270;
+            inner_row_filter_sendCat.setLayoutParams(layoutParams);
+        });
+
+        button_input_filter_sendCat.setOnClickListener( v -> {
+            ViewGroup.LayoutParams layoutParams_check = checkbox_filter_sendCat.getLayoutParams();
+            layoutParams_check.width = 30;
+            checkbox_filter_sendCat.setLayoutParams(layoutParams_check);
+            checkbox_filter_sendCat.setChecked(true);
+
+            ViewGroup.LayoutParams layoutParams_row = inner_row_filter_sendCat.getLayoutParams();
+            layoutParams_row.width = 0;
+            inner_row_filter_sendCat.setLayoutParams(layoutParams_row);
+
+            try {
+                String filterStr_sendCat = text_input_filter_sendCat.getText().toString();
+                ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setSendCats(new String[]{filterStr_sendCat});
+                conversationRecyclerAdapter.getFilter().filter("on");
+                //ConversationFilter.ConversationFilterObject = new ConversationFilter.ConversationFilterObject();
+            } catch (NullPointerException ignored) {
+
+            }
+
+
+
+
+        });
+
 
         pageViewModel.getText().observe(this, s -> {
             if( s== null)
@@ -143,6 +184,9 @@ public class PlaceholderFragment extends Fragment {
         });
         return root;
     }
+
+
+
 
     private boolean isMyServiceRunning() {
         ActivityManager manager = (ActivityManager) Objects.requireNonNull(getActivity()).getSystemService(Context.ACTIVITY_SERVICE);

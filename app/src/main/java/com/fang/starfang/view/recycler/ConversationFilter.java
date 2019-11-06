@@ -8,10 +8,10 @@ import com.google.gson.Gson;
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmQuery;
-import io.realm.RealmResults;
 
 public class ConversationFilter extends Filter {
 
+    private ConversationFilterObject conversationFilterObject;
     private final ConversationRecyclerAdapter adapter;
     private Realm realm;
 
@@ -21,6 +21,11 @@ public class ConversationFilter extends Filter {
         super();
         this.adapter = adapter;
         this.realm = realm;
+        conversationFilterObject = new ConversationFilterObject();
+    }
+
+    public ConversationFilterObject getConversationFilterObject() {
+        return conversationFilterObject;
     }
 
     @Override
@@ -35,14 +40,14 @@ public class ConversationFilter extends Filter {
 
 
 
-    private void filterResults( String cs_json ) {
-        if(cs_json == null) {
+    private void filterResults( String cs_on_off) {
+        if(cs_on_off == null || cs_on_off.equals("off")) {
             return;
         }
 
         Gson gson = new Gson();
 
-        ConversationFilterObject conversationFilterObject = gson.fromJson(cs_json, ConversationFilterObject.class);
+        //ConversationFilterObject conversationFilterObject = gson.fromJson(cs_json, ConversationFilterObject.class);
 
         //   { sendCat:["","","",..],
         //     room:["","","",...],
