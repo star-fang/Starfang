@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -29,6 +30,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -39,9 +41,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.NotificationListener;
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.task.RealmSyncTask;
 import com.fang.starfang.view.recycler.ConversationFilter;
 import com.fang.starfang.view.recycler.ConversationRecyclerAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -51,6 +57,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 
 /**
@@ -144,10 +152,30 @@ public class PlaceholderFragment extends Fragment {
         final AppCompatEditText text_conversation = child_conversation.findViewById(R.id.text_conversation);
         final AppCompatButton button_conversation = child_conversation.findViewById(R.id.button_conversation);
         final AppCompatButton button_clear_conversation = child_conversation.findViewById(R.id.button_clear_conversation);
+        final LinearLayout row_filter = child_conversation.findViewById((R.id.row_filter));
         final NestedScrollView scroll_filter = child_conversation.findViewById(R.id.scroll_filter);
+        final AppCompatButton button_filter_summary = child_conversation.findViewById(R.id.button_filter_summary);
+        final SwitchCompat switch_filter = child_conversation.findViewById(R.id.switch_filter);
 
-        button_clear_conversation.setOnClickListener( v -> {
-            text_conversation.setText("");
+        button_clear_conversation.setOnClickListener( v -> text_conversation.setText(""));
+        text_conversation.setOnFocusChangeListener((view, b) ->
+                button_clear_conversation.setVisibility( text_conversation.length() > 0 ? View.VISIBLE : View.INVISIBLE));
+        button_filter_summary.setOnClickListener( v -> Log.d(TAG, builConstraintDoc( conversationRecyclerAdapter, realm)));
+        switch_filter.setOnCheckedChangeListener( (v, b)-> {
+            if(b) {
+                toggleLayoutWidth(row_filter,ViewGroup.LayoutParams.MATCH_PARENT,null,0 );
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.ABOVE,R.id.row_filter);
+                recyclerView.setLayoutParams(params);
+
+            } else {
+                toggleLayoutWidth(row_filter,dip2pix(getActivity(),40),null,0);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.ABOVE,R.id.conversationEtLayout);
+                recyclerView.setLayoutParams(params);
+            }
         });
 
         final AppCompatButton button_filter_sendCat =  child_conversation.findViewById(R.id.button_filter_sendCat);
@@ -186,20 +214,13 @@ public class PlaceholderFragment extends Fragment {
 
             showSoftKeyboard(text_conversation);
 
-            ViewGroup.LayoutParams layoutParams_column = inner_column_filter_sendCat.getLayoutParams();
-            layoutParams_column.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            inner_column_filter_sendCat.setLayoutParams(layoutParams_column);
-
-            ViewGroup.LayoutParams layoutParams_scroll = scroll_filter.getLayoutParams();
-            layoutParams_scroll.width = 0;
-            scroll_filter.setLayoutParams(layoutParams_scroll);
+            toggleLayoutWidth(inner_column_filter_sendCat, ViewGroup.LayoutParams.MATCH_PARENT,
+                    scroll_filter, 0 );
 
             title_conversation.setText(R.string.filter_title_sendCat);
-            // 이름 필터링 완료, 레이아웃 축소, editText 와 버튼 리스너 해제
             button_conversation.setOnClickListener( view -> {
 
                 hideSoftKeyboard(getActivity());
-
                 String text = text_input_filter_sendCat.getText().toString();
                 text_conversation.removeTextChangedListener(textWatcher_sendCat);
                 text_conversation.setText("");
@@ -212,11 +233,8 @@ public class PlaceholderFragment extends Fragment {
                     checkbox_filter_sendCat.setChecked(true);
                 }
 
-                layoutParams_column.width = 0;
-                inner_column_filter_sendCat.setLayoutParams(layoutParams_column);
-
-                layoutParams_scroll.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                scroll_filter.setLayoutParams(layoutParams_scroll);
+                toggleLayoutWidth(scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT,
+                        inner_column_filter_sendCat, 0 );
 
                 try {
                     ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setSendCats(text.split(","));
@@ -295,7 +313,6 @@ public class PlaceholderFragment extends Fragment {
                 text_conversation.removeTextChangedListener(textWatcher_room);
                 text_conversation.setText("");
 
-                ViewGroup.LayoutParams layoutParams_check = checkbox_filter_room.getLayoutParams();
                 if(text.equals("") ) {
                     checkbox_filter_room.setChecked(false);
                 } else {
@@ -335,76 +352,163 @@ public class PlaceholderFragment extends Fragment {
 
         final AppCompatButton button_filter_time =  child_conversation.findViewById(R.id.button_filter_time);
         final RelativeLayout inner_column_filter_time = child_conversation.findViewById(R.id.inner_column_filter_time);
-        final AppCompatTextView text_input_filter_time_desc = child_conversation.findViewById(R.id.text_input_filter_time_desc);
         final AppCompatCheckBox checkbox_filter_time = child_conversation.findViewById(R.id.checkbox_filter_time);
-
-
-
-        View.OnClickListener commitTimeBefore =  v -> {
-            /*
-            Calendar calendar = new GregorianCalendar(date_picker_filter.getYear(),
-                    date_picker_filter.getMonth(),
-                    date_picker_filter.getDayOfMonth());
-            Date date = calendar.getTime();
-            long time_before = date.getTime();
-            ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setTime_before(time_before);
-            //text_conversation.setText(new SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA).format(date));
-            date_picker_filter.setOnClickListener(null);
-            button_conversation.setOnClickListener(null);
-            conversationRecyclerAdapter.getFilter().filter("on");
-            ((RelativeLayout) child_conversation).removeView(dialog_date_picker);
-            checkbox_filter_time.setChecked(true);
-            toggleLayoutWidth(scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT , inner_column_filter_time, 0);
-
-             */
-        };
-
-        View.OnClickListener commitTimeAfter =  v -> {
-            /*
-            Calendar calendar = new GregorianCalendar(date_picker_filter.getYear(),
-                    date_picker_filter.getMonth(),
-                    date_picker_filter.getDayOfMonth());
-            Date date = calendar.getTime();
-            long time_after = date.getTime();
-            ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setTime_after(time_after);
-            text_input_filter_time_desc.setText("시작날짜:" + new SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA).format(date));
-            button_conversation.setOnClickListener(null);
-            button_conversation.setOnClickListener(commitTimeBefore);
-            conversationRecyclerAdapter.getFilter().filter("on");
-            title_date_filter.setText("검색 종료 날짜를 선택 하세요.");
-            text_conversation.setFocusableInTouchMode(true);*/
-        };
-
-
         final View.OnClickListener listener_time = v -> {
+
+            toggleLayoutWidth(inner_column_filter_time, 0,
+                    scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT  );
+
             Calendar calendar = Calendar.getInstance();
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), R.style.DatePickerDialogTheme, (view, year, monthOfYear, dayOfMonth) -> {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+                    R.style.DatePickerDialogTheme, null,
+                    calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+//(view, year, monthOfYear, dayOfMonth) -> {
+//                Calendar newDate = Calendar.getInstance();
+//                newDate.set(year, monthOfYear, dayOfMonth);
+//
+//                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.KOREA);
+//                String date = simpleDateFormat.format(newDate.getTime());
+//            }
+            datePickerDialog.setTitle("시작 날짜를 선택 하세요!");
 
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.KOREA);
-                String date = simpleDateFormat.format(newDate.getTime());
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "취소",
+                    (dialog, which) -> {
 
+                if(which == DialogInterface.BUTTON_NEGATIVE) {
+
+
+                    toggleLayoutWidth(inner_column_filter_time, 0,
+                            scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT  );
+                    dialog.cancel();
+                }
+
+                    } );
+
+            datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "선택",
+                    (dialog, which) -> {
+                        if(which == DialogInterface.BUTTON_POSITIVE) {
+
+                            datePickerDialog.setTitle("");
+
+                            long dateValue = getDateValueFromDatePicker(datePickerDialog.getDatePicker());
+                            ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setTime_after(dateValue);
+                            datePickerDialog.getDatePicker().setMaxDate(dateValue);
+
+                            datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "완료",
+                                    (dialog2, which2) -> {
+                                if(which2 == DialogInterface.BUTTON_POSITIVE) {
+                                    ((ConversationFilter) conversationRecyclerAdapter.getFilter()).
+                                            getConversationFilterObject().setTime_after(getDateValueFromDatePicker(datePickerDialog.getDatePicker()));
+                                    conversationRecyclerAdapter.getFilter().filter("on");
+                                    checkbox_filter_time.setChecked(true);
+                                    toggleLayoutWidth(inner_column_filter_time, 0,
+                                            scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT  );
+                                    dialog2.dismiss();
+                                }
+
+
+
+                                    }
+                            );
+                        }
+
+                    } );
+
+
+            datePickerDialog.setCancelable(false);
             datePickerDialog.show();
 
-            /*
-            ((RelativeLayout) child_conversation).addView(dialog_date_picker);
-            text_conversation.setText("");
-            text_conversation.setFocusable(false);
-            toggleLayoutWidth(scroll_filter, 0 , inner_column_filter_time, ViewGroup.LayoutParams.MATCH_PARENT);
-            title_date_filter.setText("검색 시작 날짜를 선택 하세요.");
-            button_conversation.setOnClickListener(commitTimeAfter);*/
-        };
 
+        };
         button_filter_time.setOnClickListener( listener_time );
 
+        final AppCompatButton button_filter_conversation =  child_conversation.findViewById(R.id.button_filter_conversation);
+        final RelativeLayout inner_column_filter_conversation = child_conversation.findViewById(R.id.inner_column_filter_conversation);
+        final AppCompatTextView text_input_filter_conversation = child_conversation.findViewById(R.id.text_input_filter_conversation);
+        final AppCompatCheckBox checkbox_filter_conversation = child_conversation.findViewById(R.id.checkbox_filter_conversation);
+        final TextWatcher textWatcher_conversation = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    String filterStr_conv = s.toString();
+                    text_input_filter_conversation.setText(filterStr_conv);
+                    ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setConversations(filterStr_conv.split(","));
+                    conversationRecyclerAdapter.getFilter().filter("on");
+                } catch (NullPointerException ignored) {
+                }
+            }
+        };
+        final View.OnClickListener listener_conversation = v -> {
 
+            text_conversation.removeTextChangedListener(textWatcher_conversation);
+            text_conversation.addTextChangedListener(textWatcher_conversation);
+            if(checkbox_filter_conversation.isChecked()) {
+                text_conversation.setText(text_input_filter_conversation.getText());
+            } else {
+                text_conversation.setText("");
+            }
+
+            showSoftKeyboard(text_conversation);
+
+            toggleLayoutWidth(inner_column_filter_conversation,ViewGroup.LayoutParams.MATCH_PARENT,
+                    scroll_filter, 0  );
+
+            title_conversation.setText(R.string.filter_title_conversation);
+            // 단톡방 필터링 완료, 레이아웃 축소, editText 와 버튼 리스너 해제
+            button_conversation.setOnClickListener( view -> {
+
+                hideSoftKeyboard(getActivity());
+
+                String text = text_input_filter_conversation.getText().toString();
+                text_conversation.removeTextChangedListener(textWatcher_conversation);
+                text_conversation.setText("");
+
+                if(text.equals("") ) {
+                    checkbox_filter_conversation.setChecked(false);
+                } else {
+                    checkbox_filter_conversation.setChecked(true);
+                }
+
+                toggleLayoutWidth(inner_column_filter_conversation, 0,
+                        scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT  );
+
+                try {
+                    ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setConversations(text.split(","));
+                    conversationRecyclerAdapter.getFilter().filter("on");
+                } catch ( NullPointerException ignored) {
+
+                }
+
+                title_conversation.setText("");
+                button_conversation.setOnClickListener(null);
+
+            });
+        };
+        button_filter_conversation.setOnClickListener( listener_conversation );
+        checkbox_filter_conversation.setOnCheckedChangeListener((v,isChecked)-> {
+            if(isChecked) {
+                String text = text_input_filter_conversation.getText().toString();
+                if(text.equals("")) {
+                    checkbox_filter_conversation.setChecked(false);
+                    return;
+                }
+                ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setConversations(text.split(","));
+                conversationRecyclerAdapter.getFilter().filter("on");
+            } else{
+                ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setConversations(null);
+                conversationRecyclerAdapter.getFilter().filter("on");
+            }
+        });
         /*대화 파트 끝*/
-
 
         pageViewModel.getText().observe(this, s -> {
             if( s== null)
@@ -430,14 +534,25 @@ public class PlaceholderFragment extends Fragment {
         return root;
     }
 
+    private long getDateValueFromDatePicker(DatePicker picker) {
+        Calendar calendar_gregorian = new GregorianCalendar(
+                picker.getYear(),
+                picker.getMonth(),
+                picker.getDayOfMonth());
+        Date date = calendar_gregorian.getTime();
+        return date.getTime();
+    }
+
     private void toggleLayoutWidth(View v1, int w1, View v2, int w2) {
         ViewGroup.LayoutParams lp1 = v1.getLayoutParams();
         lp1.width = w1;
         v1.setLayoutParams(lp1);
 
-        ViewGroup.LayoutParams lp2 = v2.getLayoutParams();
-        lp2.width = w2;
-        v2.setLayoutParams(lp2);
+        if( v2 != null) {
+            ViewGroup.LayoutParams lp2 = v2.getLayoutParams();
+            lp2.width = w2;
+            v2.setLayoutParams(lp2);
+        }
     }
 
 
@@ -478,5 +593,76 @@ public class PlaceholderFragment extends Fragment {
             imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
     }
+
+    private String builConstraintDoc( ConversationRecyclerAdapter adapter, Realm realm) {
+        ConversationFilter.ConversationFilterObject filterObject = ((ConversationFilter) adapter.getFilter()).getConversationFilterObject();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA);
+        String[] cs_cats = filterObject.getSendCats();
+        String[] cs_rooms = filterObject.getRooms();
+        long time_after = filterObject.getTime_after();
+        long time_before = filterObject.getTime_before();
+        String[] cs_convs = filterObject.getConversations();
+        String[] cs_packs = filterObject.getPackages();
+
+        StringBuilder stringBuilder = new StringBuilder();
+        if(cs_cats != null) {
+            if (cs_cats.length > 0) {
+                RealmQuery<Conversation> query_cats = realm.where(Conversation.class).alwaysFalse();
+                for(String cs_cat : cs_cats) {
+                    query_cats.or().contains(Conversation.FIELD_SENDCAT, cs_cat);
+                }
+                RealmResults<Conversation> realmResults_cats = query_cats.distinct(Conversation.FIELD_SENDCAT).findAll();
+                stringBuilder.append("\n*작성자:  ").append(realmResults_cats.size()).append("명").append("\n");
+                for(Conversation conversation : realmResults_cats) {
+                    stringBuilder.append("  ").append(conversation.getSendCat()).append("\n");
+                }
+            }
+        }
+
+        if(cs_rooms != null) {
+            if (cs_rooms.length > 0) {
+                RealmQuery<Conversation> query_rooms = realm.where(Conversation.class).alwaysFalse();
+                for(String cs_room : cs_rooms) {
+                    query_rooms.or().contains(Conversation.FIELD_ROOM, cs_room);
+                }
+                RealmResults<Conversation> realmResults_rooms = query_rooms.distinct(Conversation.FIELD_ROOM).findAll();
+                stringBuilder.append("\n*단톡방:  ").append(realmResults_rooms.size()).append("개").append("\n");
+                for(Conversation conversation : realmResults_rooms) {
+                    stringBuilder.append("  ").append(conversation.getCatRoom()).append("\n");
+                }
+            }
+        }
+
+        if(time_after > 0  && time_before > 0) {
+            stringBuilder.append("\n*기간:  ").append(simpleDateFormat.format(new Date(time_after)))
+                    .append("\n").append("  ").append("~").append(simpleDateFormat.format(new Date(time_before))).append("\n");
+        } else if (time_after > 0) {
+            stringBuilder.append("\n*기간:  ").append(simpleDateFormat.format(new Date(time_after))).append(" 이후\n");
+        } else if (time_before > 0) {
+            stringBuilder.append("\n*기간:  ").append(simpleDateFormat.format(new Date(time_before))).append(" 이전\n");
+        }
+
+        if(cs_convs != null) {
+            if(cs_convs.length>0) {
+                stringBuilder.append("\n*대화: 다음 단어들을 포함").append("\n");
+                for(String conv : cs_convs) {
+                    stringBuilder.append("  ").append(conv).append("\n");
+                }
+            }
+        }
+
+        if(cs_packs != null) {
+            if(cs_packs.length>0) {
+                stringBuilder.append("\n*메신저:").append("\n");
+                for(String pack : cs_packs) {
+                    stringBuilder.append("  ").append(pack).append("\n");
+                }
+            }
+        }
+
+        return  stringBuilder.toString();
+
+    }
+
 
 }

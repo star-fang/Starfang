@@ -57,7 +57,7 @@ public class NotificationListener extends NotificationListenerService {
 
 
     public void addNotification(StatusBarNotification sbn)  {
-        Log.d(TAG, "addNotification activated");
+        //Log.d(TAG, "addNotification activated");
 
             Notification mNotification = sbn.getNotification();
             Bundle extras = mNotification.extras;

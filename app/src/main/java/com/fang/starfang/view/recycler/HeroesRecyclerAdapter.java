@@ -11,8 +11,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.model.realm.Heroes;
 import com.fang.starfang.view.dialog.HeroesDialogFragment;
+
+import java.util.Collection;
 
 import io.realm.Case;
 import io.realm.Realm;

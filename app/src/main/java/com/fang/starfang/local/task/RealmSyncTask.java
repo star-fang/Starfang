@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -72,6 +73,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
     private Gson gson;
     private String address;
     private AlertDialog.Builder builder;
+    private WeakReference<ScrollView> scroll_progress_list;
     private WeakReference<LinearLayout> progress_list;
     private WeakReference<View> currentProgressView;
     private WeakReference<TextView> progress_result;
@@ -101,6 +103,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         gson = gsonBuilder.create();
 
         AlertDialog progressDialog = getDialogProgressBar().create();
+        progressDialog.setCancelable(false);
 
         progressDialog.show();
     }
@@ -387,6 +390,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
             builder = new AlertDialog.Builder(context.get());
             LinearLayout progress_dialog = (LinearLayout) View.inflate(context.get(), R.layout.dialog_progress, null);
             progress_list = new WeakReference<>(progress_dialog.findViewById(R.id.progress_list));
+            scroll_progress_list = new WeakReference<>(progress_dialog.findViewById(R.id.scroll_progress_list));
             progress_result = new WeakReference<>(progress_dialog.findViewById(R.id.progress_result));
             builder.setView(progress_dialog);
         }
@@ -407,14 +411,23 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         TextView textView_msg = row_progress.findViewById(R.id.progressTextView_message);
         textView_msg.setText(values[2]);
 
+        LinearLayout progress_layout = progress_list.get();
         if(values[1].equals("")) {
-            progress_list.get().addView(row_progress);
+            progress_layout.addView(row_progress);
             currentProgressView = new WeakReference<>(row_progress);
         } else {
-            progress_list.get().removeView(currentProgressView.get());
+            progress_layout.removeView(currentProgressView.get());
             progressBar.setVisibility(View.INVISIBLE);
-            progress_list.get().addView(row_progress);
+            progress_layout.addView(row_progress);
         }
+
+        ScrollView scroll_progress = scroll_progress_list.get();
+        View last_child = scroll_progress.getChildAt(scroll_progress.getChildCount() - 1 );
+        int bottom = last_child.getBottom() + scroll_progress.getPaddingBottom();
+        int sy = scroll_progress.getScrollY();
+        int sh = scroll_progress.getHeight();
+        int delta = bottom - (sy + sh);
+        scroll_progress.smoothScrollBy( 0 , delta );
 
     }
 

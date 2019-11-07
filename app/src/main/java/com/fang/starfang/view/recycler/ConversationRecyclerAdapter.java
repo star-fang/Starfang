@@ -53,7 +53,7 @@ public class ConversationRecyclerAdapter
             notifyDataSetChanged();
             recyclerView.smoothScrollToPosition(getItemCount());
         });
-        recyclerView.smoothScrollToPosition(getItemCount());
+        recyclerView.scrollToPosition(getItemCount());
 
         this.realm = realm;
         this.recyclerViewWeakReference = new WeakReference<>(recyclerView);

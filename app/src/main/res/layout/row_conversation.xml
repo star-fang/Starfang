@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:background="@drawable/border"
-            android:backgroundTint="@color/colorPrimaryDark"
+            android:backgroundTint="#F0010113"
             android:singleLine="false"
             android:textAlignment="gravity"
             android:textColor="@android:color/background_light"

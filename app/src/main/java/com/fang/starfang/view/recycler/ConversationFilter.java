@@ -3,11 +3,18 @@ package com.fang.starfang.view.recycler;
 import android.util.Log;
 import android.widget.Filter;
 
+import androidx.annotation.NonNull;
+
 import com.fang.starfang.local.model.realm.Conversation;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 public class ConversationFilter extends Filter {
 
@@ -17,8 +24,7 @@ public class ConversationFilter extends Filter {
     private Realm realm;
 
 
-
-    public ConversationFilter(ConversationRecyclerAdapter adapter, Realm realm) {
+    protected ConversationFilter(ConversationRecyclerAdapter adapter, Realm realm) {
         super();
         this.adapter = adapter;
         this.realm = realm;
@@ -46,8 +52,6 @@ public class ConversationFilter extends Filter {
             return;
         }
 
-
-
         RealmQuery<Conversation> query = realm.where(Conversation.class).alwaysTrue();
         makeQueryGroup(query, conversationFilterObject.getSendCats(), Conversation.FIELD_SENDCAT);
         makeQueryGroup(query, conversationFilterObject.getRooms(),Conversation.FIELD_ROOM);
@@ -67,8 +71,8 @@ public class ConversationFilter extends Filter {
 
     }
 
-
-        adapter.updateData(query.findAll());
+        RealmResults<Conversation> realmResults = query.findAll();
+        adapter.updateData(realmResults);
     }
 
     private void makeQueryGroup(RealmQuery<Conversation> query, String[] cs_group, String column) {
@@ -96,27 +100,27 @@ public class ConversationFilter extends Filter {
         private String[] packages;
         private String[] conversations;
 
-        private String[] getSendCats() {
+        public String[] getSendCats() {
             return sendCats;
         }
 
-        private String[] getRooms() {
+        public String[] getRooms() {
             return rooms;
         }
 
-        private long getTime_before() {
+        public long getTime_before() {
             return time_before;
         }
 
-        private long getTime_after() {
+        public long getTime_after() {
             return time_after;
         }
 
-        private String[] getPackages() {
+        public String[] getPackages() {
             return packages;
         }
 
-        private String[] getConversations() {
+        public String[] getConversations() {
             return conversations;
         }
 
@@ -144,4 +148,5 @@ public class ConversationFilter extends Filter {
             this.conversations = conversations;
         }
     }
+
 }
