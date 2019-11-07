@@ -43,8 +43,9 @@
             android:name="com.fang.starfang.view.ShowRealmActivity"
             android:label="@string/title_activity_show_realm" />
 
-
-
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
 
     </application>

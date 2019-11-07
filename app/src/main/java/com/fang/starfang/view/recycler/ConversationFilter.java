@@ -1,9 +1,9 @@
 package com.fang.starfang.view.recycler;
 
+import android.util.Log;
 import android.widget.Filter;
 
 import com.fang.starfang.local.model.realm.Conversation;
-import com.google.gson.Gson;
 
 import io.realm.Case;
 import io.realm.Realm;
@@ -11,7 +11,8 @@ import io.realm.RealmQuery;
 
 public class ConversationFilter extends Filter {
 
-    private ConversationFilterObject conversationFilterObject;
+    private static final String TAG = "FANG_FILTER";
+    private static ConversationFilterObject conversationFilterObject = null;
     private final ConversationRecyclerAdapter adapter;
     private Realm realm;
 
@@ -21,11 +22,11 @@ public class ConversationFilter extends Filter {
         super();
         this.adapter = adapter;
         this.realm = realm;
-        conversationFilterObject = new ConversationFilterObject();
+        //conversationFilterObject = new ConversationFilterObject();
     }
 
     public ConversationFilterObject getConversationFilterObject() {
-        return conversationFilterObject;
+        return conversationFilterObject == null ? conversationFilterObject = new ConversationFilterObject() : conversationFilterObject;
     }
 
     @Override
@@ -45,32 +46,38 @@ public class ConversationFilter extends Filter {
             return;
         }
 
-        Gson gson = new Gson();
 
-        //ConversationFilterObject conversationFilterObject = gson.fromJson(cs_json, ConversationFilterObject.class);
-
-        //   { sendCat:["","","",..],
-        //     room:["","","",...],
-        //     time_before:"",
-        //     time_after:"",
-        //     package:["",""],
-        //     conversation:["",""] }
 
         RealmQuery<Conversation> query = realm.where(Conversation.class).alwaysTrue();
         makeQueryGroup(query, conversationFilterObject.getSendCats(), Conversation.FIELD_SENDCAT);
         makeQueryGroup(query, conversationFilterObject.getRooms(),Conversation.FIELD_ROOM);
         makeQueryGroup(query,conversationFilterObject.getPackages(),Conversation.FIELD_PACKAGE);
         makeQueryGroup(query,conversationFilterObject.getConversations(),Conversation.FIELD_CONVERSATION);
-        query = (conversationFilterObject.getTime_before() < 0 )? query :
-                query.and().lessThanOrEqualTo(Conversation.FIELD_TIME, conversationFilterObject.getTime_before());
-        query = (conversationFilterObject.getTime_after() < 0 )? query :
-                query.and().greaterThanOrEqualTo(Conversation.FIELD_TIME, conversationFilterObject.getTime_after());
+        try {
+            query = (conversationFilterObject.getTime_before() < 0) ? query :
+                    query.and().lessThanOrEqualTo(Conversation.FIELD_TIME, conversationFilterObject.getTime_before());
+        } catch( IllegalArgumentException ignored) {
+
+        }
+
+        try {
+            query = (conversationFilterObject.getTime_after() < 0) ? query :
+                    query.and().greaterThanOrEqualTo(Conversation.FIELD_TIME, conversationFilterObject.getTime_after());
+        } catch( IllegalArgumentException ignored) {
+
+    }
 
 
         adapter.updateData(query.findAll());
     }
 
     private void makeQueryGroup(RealmQuery<Conversation> query, String[] cs_group, String column) {
+
+        if(cs_group == null) {
+            //Log.d(TAG,column + " filter : null");
+            return;
+        }
+
         if(cs_group.length == 0) {
             return;
         }
