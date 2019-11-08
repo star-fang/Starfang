@@ -3,13 +3,8 @@ package com.fang.starfang.view.recycler;
 import android.util.Log;
 import android.widget.Filter;
 
-import androidx.annotation.NonNull;
 
 import com.fang.starfang.local.model.realm.Conversation;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import io.realm.Case;
 import io.realm.Realm;
@@ -45,8 +40,6 @@ public class ConversationFilter extends Filter {
         filterResults(constraint.toString());
     }
 
-
-
     private void filterResults( String cs_on_off) {
         if(cs_on_off == null || cs_on_off.equals("off")) {
             return;
@@ -57,11 +50,16 @@ public class ConversationFilter extends Filter {
         makeQueryGroup(query, conversationFilterObject.getRooms(),Conversation.FIELD_ROOM);
         makeQueryGroup(query,conversationFilterObject.getPackages(),Conversation.FIELD_PACKAGE);
         makeQueryGroup(query,conversationFilterObject.getConversations(),Conversation.FIELD_CONVERSATION);
-            long time_before = conversationFilterObject.getTime_before();
+        long time_before = conversationFilterObject.getTime_before();
+        try {
+            long time_before_day_after = addAndCheck(time_before, (long) 24 * 60 * 60 * 1000 - 1, "");
+
             query = (time_before < 0) ? query :
-                    query.and().lessThanOrEqualTo(Conversation.FIELD_TIME_VALUE, time_before +
-                            (long)24 * 60 * 60 * 1000 * 100);
-            //Log.d(TAG,"time_before: " + time_before);
+                    query.and().lessThanOrEqualTo(Conversation.FIELD_TIME_VALUE, time_before_day_after);
+            //Log.d(TAG, "time_before: " + time_before_day_after);
+        } catch( ArithmeticException ignored ) {
+
+        }
 
 
             long time_after = conversationFilterObject.getTime_after();
@@ -71,6 +69,40 @@ public class ConversationFilter extends Filter {
 
         RealmResults<Conversation> realmResults = query.findAll();
         adapter.updateData(realmResults);
+    }
+
+    private long addAndCheck(long a, long b, String msg) {
+        long ret;
+        if (a > b) {
+            // use symmetry to reduce boundry cases
+            ret = addAndCheck(b, a, msg);
+        } else {
+            // assert a <= b
+            if (a < 0) {
+                if (b < 0) {
+                    // check for negative overflow
+                    if (Long.MIN_VALUE - b <= a) {
+                        ret = a + b;
+                    } else {
+                        throw new ArithmeticException(msg);
+                    }
+                } else {
+                    // oppisite sign addition is always safe
+                    ret = a + b;
+                }
+            } else {
+                // assert a >= 0
+                // assert b >= 0
+
+                // check for positive overflow
+                if (a <= Long.MAX_VALUE - b) {
+                    ret = a + b;
+                } else {
+                    throw new ArithmeticException(msg);
+                }
+            }
+        }
+        return ret;
     }
 
     private void makeQueryGroup(RealmQuery<Conversation> query, String[] cs_group, String column) {
@@ -89,6 +121,9 @@ public class ConversationFilter extends Filter {
         }
         query.alwaysFalse().endGroup();
     }
+
+
+
 
     public class ConversationFilterObject {
         private String[] sendCats = null;
@@ -146,5 +181,8 @@ public class ConversationFilter extends Filter {
             this.conversations = conversations;
         }
     }
+
+
+
 
 }

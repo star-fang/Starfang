@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -77,6 +78,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
     private WeakReference<LinearLayout> progress_list;
     private WeakReference<View> currentProgressView;
     private WeakReference<TextView> progress_result;
+    private WeakReference<Button> button_close;
 
     public RealmSyncTask(String address, Context context)
     {
@@ -105,6 +107,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         AlertDialog progressDialog = getDialogProgressBar().create();
         progressDialog.setCancelable(false);
 
+        button_close.get().setOnClickListener(v-> progressDialog.dismiss());
         progressDialog.show();
     }
 
@@ -388,10 +391,12 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
         if (builder == null) {
             builder = new AlertDialog.Builder(context.get());
-            LinearLayout progress_dialog = (LinearLayout) View.inflate(context.get(), R.layout.dialog_progress, null);
+            View progress_dialog = View.inflate(context.get(), R.layout.dialog_progress, null);
             progress_list = new WeakReference<>(progress_dialog.findViewById(R.id.progress_list));
             scroll_progress_list = new WeakReference<>(progress_dialog.findViewById(R.id.scroll_progress_list));
             progress_result = new WeakReference<>(progress_dialog.findViewById(R.id.progress_result));
+            button_close = new WeakReference<>(progress_dialog.findViewById(R.id.button_close_progress_dialog));
+            button_close.get().setVisibility(View.INVISIBLE);
             builder.setView(progress_dialog);
         }
         return builder;
@@ -415,6 +420,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         if(values[1].equals("")) {
             progress_layout.addView(row_progress);
             currentProgressView = new WeakReference<>(row_progress);
+
         } else {
             progress_layout.removeView(currentProgressView.get());
             progressBar.setVisibility(View.INVISIBLE);
@@ -424,16 +430,17 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         ScrollView scroll_progress = scroll_progress_list.get();
         View last_child = scroll_progress.getChildAt(scroll_progress.getChildCount() - 1 );
         int bottom = last_child.getBottom() + scroll_progress.getPaddingBottom();
-        int sy = scroll_progress.getScrollY();
-        int sh = scroll_progress.getHeight();
-        int delta = bottom - (sy + sh);
-        scroll_progress.scrollBy( 0 , delta );
+        //int sy = scroll_progress.getScrollY();
+        //int sh = scroll_progress.getHeight();
+        //int delta = bottom - (sy + sh);
+        scroll_progress.scrollTo( 0 , bottom );
 
     }
 
     // When all async task done
     @Override
     protected void onPostExecute(String result){
+        button_close.get().setVisibility(View.VISIBLE);
         progress_result.get().setText(result);
     }
 

@@ -164,5 +164,6 @@
     <string name="filter_button_title_submit">SUBMIT</string>
     <string name="desc_filter_sendCat">작성자 필터: 쉼표(,)로 구분하여 여러 명 입력가능.</string>
     <string name="summary_filter">필터 요약</string>
+    <string name="desc_no_filter">필터 설정 안됨...</string>
 
 </resources>
