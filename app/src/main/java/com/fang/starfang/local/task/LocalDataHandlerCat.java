@@ -863,7 +863,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                         lambdaResult.append(COMMA);
                     }
                 } else {
-                    return "그럼 인연 없다옹";
+                    return "그런 인연 없다옹";
                 }
 
                 return lambdaResult.toString();

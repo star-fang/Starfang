@@ -57,19 +57,17 @@ public class ConversationFilter extends Filter {
         makeQueryGroup(query, conversationFilterObject.getRooms(),Conversation.FIELD_ROOM);
         makeQueryGroup(query,conversationFilterObject.getPackages(),Conversation.FIELD_PACKAGE);
         makeQueryGroup(query,conversationFilterObject.getConversations(),Conversation.FIELD_CONVERSATION);
-        try {
-            query = (conversationFilterObject.getTime_before() < 0) ? query :
-                    query.and().lessThanOrEqualTo(Conversation.FIELD_TIME, conversationFilterObject.getTime_before());
-        } catch( IllegalArgumentException ignored) {
+            long time_before = conversationFilterObject.getTime_before();
+            query = (time_before < 0) ? query :
+                    query.and().lessThanOrEqualTo(Conversation.FIELD_TIME_VALUE, time_before +
+                            (long)24 * 60 * 60 * 1000 * 100);
+            //Log.d(TAG,"time_before: " + time_before);
 
-        }
 
-        try {
-            query = (conversationFilterObject.getTime_after() < 0) ? query :
-                    query.and().greaterThanOrEqualTo(Conversation.FIELD_TIME, conversationFilterObject.getTime_after());
-        } catch( IllegalArgumentException ignored) {
-
-    }
+            long time_after = conversationFilterObject.getTime_after();
+            query = (time_after < 0) ? query :
+                    query.and().greaterThanOrEqualTo(Conversation.FIELD_TIME_VALUE, time_after);
+            //Log.d(TAG,"time_after: "+ time_after);
 
         RealmResults<Conversation> realmResults = query.findAll();
         adapter.updateData(realmResults);
@@ -93,12 +91,12 @@ public class ConversationFilter extends Filter {
     }
 
     public class ConversationFilterObject {
-        private String[] sendCats;
-        private String[] rooms;
-        private long time_before;
-        private long time_after;
-        private String[] packages;
-        private String[] conversations;
+        private String[] sendCats = null;
+        private String[] rooms = null;
+        private long time_before = -1;
+        private long time_after = -1;
+        private String[] packages = null;
+        private String[] conversations = null;
 
         public String[] getSendCats() {
             return sendCats;

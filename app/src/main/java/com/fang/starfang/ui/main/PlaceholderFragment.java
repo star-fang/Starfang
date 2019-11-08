@@ -22,7 +22,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,20 +45,15 @@ import com.fang.starfang.local.task.RealmSyncTask;
 import com.fang.starfang.view.recycler.ConversationFilter;
 import com.fang.starfang.view.recycler.ConversationRecyclerAdapter;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.Objects;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
-
 
 /**
  * A placeholder fragment containing a simple view.
@@ -67,11 +61,12 @@ import io.realm.RealmResults;
 public class PlaceholderFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final String TAG = "FANG_SETTING";
+    private static final String TAG = "FANG_MAIN";
 
     private PageViewModel pageViewModel;
+    private Activity mActivity;
 
-    public static PlaceholderFragment newInstance(int index) {
+    private static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_SECTION_NUMBER, index);
@@ -88,6 +83,14 @@ public class PlaceholderFragment extends Fragment {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
         }
         pageViewModel.setIndex(index);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity=(Activity) context;
+        }
     }
 
     @Override
@@ -108,7 +111,7 @@ public class PlaceholderFragment extends Fragment {
         text_address.setEnabled(false);
         text_address.setInputType(InputType.TYPE_NULL);
 
-        button_sync_all.setOnClickListener(v -> new RealmSyncTask(text_address.getText().toString(), getActivity()).execute(getResources().getStringArray(R.array.pref_list_table)));
+        button_sync_all.setOnClickListener(v -> new RealmSyncTask(text_address.getText().toString(), mActivity).execute(getResources().getStringArray(R.array.pref_list_table)));
 
         button_notifications_setting.setOnClickListener(v -> {
             Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
@@ -120,20 +123,20 @@ public class PlaceholderFragment extends Fragment {
 
         switch_bot.setOnCheckedChangeListener((v,isChecked)->{
 
-            Intent intent = new Intent(getActivity(), NotificationListener.class);
+            Intent intent = new Intent(mActivity, NotificationListener.class);
             if(isChecked) {
                 if(!isMyServiceRunning()) {
-                    Toast.makeText(getActivity(), "알림 읽기 권한 설정 하세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "알림 읽기 권한 설정 하세요", Toast.LENGTH_SHORT).show();
                     switch_bot.setChecked(false);
                 } else {
                     intent.putExtra("status", "start");
-                    Toast.makeText(getActivity(), "냥봇 시작", Toast.LENGTH_SHORT).show();
-                    Objects.requireNonNull(getActivity()).startService(intent);
+                    Toast.makeText(mActivity, "냥봇 시작", Toast.LENGTH_SHORT).show();
+                    mActivity.startService(intent);
                 }
             } else {
                 intent.putExtra("status","stop");
-                Toast.makeText(getActivity(), "냥봇 중지", Toast.LENGTH_SHORT).show();
-                Objects.requireNonNull(getActivity()).startService(intent);
+                Toast.makeText(mActivity, "냥봇 중지", Toast.LENGTH_SHORT).show();
+                mActivity.startService(intent);
             }
         });
 
@@ -141,12 +144,14 @@ public class PlaceholderFragment extends Fragment {
         Realm realm = Realm.getDefaultInstance();
         final View child_conversation = inflater.inflate(R.layout.view_conversation,constraintLayout,false);
         RecyclerView recyclerView = child_conversation.findViewById(R.id.conversation_recycler_view);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mActivity);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(layoutManager);
         final ConversationRecyclerAdapter conversationRecyclerAdapter = new ConversationRecyclerAdapter( realm, recyclerView );
         recyclerView.setAdapter(conversationRecyclerAdapter);
+        final ConversationFilter conversationFilter = ((ConversationFilter)conversationRecyclerAdapter.getFilter());
+        final ConversationFilter.ConversationFilterObject filterObject = conversationFilter.getConversationFilterObject();
 
         final AppCompatTextView title_conversation = child_conversation.findViewById(R.id.title_conversation);
         final AppCompatEditText text_conversation = child_conversation.findViewById(R.id.text_conversation);
@@ -170,7 +175,7 @@ public class PlaceholderFragment extends Fragment {
                 recyclerView.setLayoutParams(params);
 
             } else {
-                toggleLayoutWidth(row_filter,dip2pix(getActivity(),40),null,0);
+                toggleLayoutWidth(row_filter,dip2pix(mActivity,40),null,0);
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                         RelativeLayout.LayoutParams.WRAP_CONTENT);
                 params.addRule(RelativeLayout.ABOVE,R.id.conversationEtLayout);
@@ -196,8 +201,8 @@ public class PlaceholderFragment extends Fragment {
                 try {
                     String filterStr_sendCat = s.toString();
                     text_input_filter_sendCat.setText(filterStr_sendCat);
-                    ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setSendCats(filterStr_sendCat.split(","));
-                    conversationRecyclerAdapter.getFilter().filter("on");
+                    filterObject.setSendCats(filterStr_sendCat.split(","));
+                    conversationFilter.filter("on");
                 } catch (NullPointerException ignored) {
                 }
             }
@@ -220,30 +225,24 @@ public class PlaceholderFragment extends Fragment {
             title_conversation.setText(R.string.filter_title_sendCat);
             button_conversation.setOnClickListener( view -> {
 
-                hideSoftKeyboard(getActivity());
+                hideSoftKeyboard(mActivity);
                 String text = text_input_filter_sendCat.getText().toString();
                 text_conversation.removeTextChangedListener(textWatcher_sendCat);
                 text_conversation.setText("");
 
-                ViewGroup.LayoutParams layoutParams_check = checkbox_filter_sendCat.getLayoutParams();
-                //boolean noItem = conversationRecyclerAdapter.getItemCount() == 0
                 if(text.equals("") ) {
+                    filterObject.setSendCats(null);
+                    conversationFilter.filter("on");
                     checkbox_filter_sendCat.setChecked(false);
                 } else {
+                    filterObject.setSendCats(text.split(","));
+                    conversationFilter.filter("on");
                     checkbox_filter_sendCat.setChecked(true);
                 }
 
                 toggleLayoutWidth(scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT,
                         inner_column_filter_sendCat, 0 );
-
-                try {
-                    ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setSendCats(text.split(","));
-                    conversationRecyclerAdapter.getFilter().filter("on");
-                } catch ( NullPointerException ignored) {
-
-                }
-
-                title_conversation.setText("");
+                title_conversation.setText(R.string.tab_text_3);
                 button_conversation.setOnClickListener(null);
 
             });
@@ -256,11 +255,11 @@ public class PlaceholderFragment extends Fragment {
                     checkbox_filter_sendCat.setChecked(false);
                     return;
                 }
-                ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setSendCats(text.split(","));
-                conversationRecyclerAdapter.getFilter().filter("on");
+                filterObject.setSendCats(text.split(","));
+                conversationFilter.filter("on");
             } else{
-                ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setSendCats(null);
-                conversationRecyclerAdapter.getFilter().filter("on");
+                filterObject.setSendCats(null);
+                conversationFilter.filter("on");
             }
         });
 
@@ -282,8 +281,8 @@ public class PlaceholderFragment extends Fragment {
                 try {
                     String filterStr_room = s.toString();
                     text_input_filter_room.setText(filterStr_room);
-                    ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setRooms(filterStr_room.split(","));
-                    conversationRecyclerAdapter.getFilter().filter("on");
+                    filterObject.setRooms(filterStr_room.split(","));
+                    conversationFilter.filter("on");
                 } catch (NullPointerException ignored) {
                 }
             }
@@ -307,29 +306,25 @@ public class PlaceholderFragment extends Fragment {
             // 단톡방 필터링 완료, 레이아웃 축소, editText 와 버튼 리스너 해제
             button_conversation.setOnClickListener( view -> {
 
-                hideSoftKeyboard(getActivity());
+                hideSoftKeyboard(mActivity);
 
                 String text = text_input_filter_room.getText().toString();
                 text_conversation.removeTextChangedListener(textWatcher_room);
                 text_conversation.setText("");
 
                 if(text.equals("") ) {
+                    filterObject.setRooms(null);
                     checkbox_filter_room.setChecked(false);
                 } else {
+                    filterObject.setRooms(text.split(","));
                     checkbox_filter_room.setChecked(true);
                 }
+                conversationFilter.filter("on");
 
                 toggleLayoutWidth(inner_column_filter_room, 0,
                         scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT  );
 
-                try {
-                    ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setRooms(text.split(","));
-                    conversationRecyclerAdapter.getFilter().filter("on");
-                } catch ( NullPointerException ignored) {
-
-                }
-
-                title_conversation.setText("");
+                title_conversation.setText(R.string.tab_text_3);
                 button_conversation.setOnClickListener(null);
 
             });
@@ -342,17 +337,19 @@ public class PlaceholderFragment extends Fragment {
                     checkbox_filter_room.setChecked(false);
                     return;
                 }
-                ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setRooms(text.split(","));
-                conversationRecyclerAdapter.getFilter().filter("on");
+                filterObject.setRooms(text.split(","));
             } else{
-                ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setRooms(null);
-                conversationRecyclerAdapter.getFilter().filter("on");
+                filterObject.setRooms(null);
             }
+            conversationFilter.filter("on");
         });
 
         final AppCompatButton button_filter_time =  child_conversation.findViewById(R.id.button_filter_time);
         final RelativeLayout inner_column_filter_time = child_conversation.findViewById(R.id.inner_column_filter_time);
         final AppCompatCheckBox checkbox_filter_time = child_conversation.findViewById(R.id.checkbox_filter_time);
+        final AppCompatTextView text_input_filter_time_after = child_conversation.findViewById(R.id.text_input_filter_time_after);
+        final AppCompatTextView text_input_filter_time_before = child_conversation.findViewById(R.id.text_input_filter_time_before);
+
         final View.OnClickListener listener_time = v -> {
 
             toggleLayoutWidth(inner_column_filter_time, 0,
@@ -360,68 +357,86 @@ public class PlaceholderFragment extends Fragment {
 
             Calendar calendar = Calendar.getInstance();
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+            DatePickerDialog datePickerDialog = new DatePickerDialog(mActivity,
                     R.style.DatePickerDialogTheme, null,
-                    calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-//(view, year, monthOfYear, dayOfMonth) -> {
-//                Calendar newDate = Calendar.getInstance();
-//                newDate.set(year, monthOfYear, dayOfMonth);
-//
-//                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.KOREA);
-//                String date = simpleDateFormat.format(newDate.getTime());
-//            }
-            datePickerDialog.setTitle("시작 날짜를 선택 하세요!");
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)) {
+               private boolean allowClose = false;
+               @Override
+               public void show() {
+                   setTitle("시작 날짜를 선택 하세요!");
+                   setButton(DialogInterface.BUTTON_POSITIVE, "완료",
+                           (dialog, which) -> {
+                               long dateValue = getDateValueFromDatePicker(getDatePicker());
+                       filterObject.setTime_before(dateValue);
+                               text_input_filter_time_before.setText(String.valueOf(dateValue));
+                               conversationFilter.filter("on");
+                       checkbox_filter_time.setChecked(true);
+                       toggleLayoutWidth(inner_column_filter_time, 0,
+                               scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT  );
 
-            datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "취소",
-                    (dialog, which) -> {
+                       allowClose = true;
+                   });
 
-                if(which == DialogInterface.BUTTON_NEGATIVE) {
+                   setButton(DialogInterface.BUTTON_NEGATIVE, "취소",
+                           (dialog, which) -> {
+                       toggleLayoutWidth(inner_column_filter_time, 0,
+                               scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT  );
+                               allowClose = true;
+                   });
 
+                   setButton(DialogInterface.BUTTON_NEUTRAL, "선택",
+                           (dialog, which) -> {
+                                   getButton(which).setVisibility(View.INVISIBLE);
+                                   getButton(DialogInterface.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+                                   long dateValue = getDateValueFromDatePicker(getDatePicker());
+                                   filterObject.setTime_after(getDateValueFromDatePicker(getDatePicker()));
+                                   text_input_filter_time_after.setText(String.valueOf(dateValue));
+                                   conversationFilter.filter("on");
+                                   checkbox_filter_time.setChecked(true);
+                                   getDatePicker().setMinDate(dateValue);
+                                   setTitle("종료 날짜를 선택 하세요.");
+                           } );
+                   super.show();
+                   getButton(DialogInterface.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+               }
 
-                    toggleLayoutWidth(inner_column_filter_time, 0,
-                            scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT  );
-                    dialog.cancel();
+                @Override
+                public void dismiss() {
+                    if (allowClose) {
+                        Log.d(TAG,"dismiss : closing allowed");
+                        super.dismiss();
+                    } else {
+                        Log.d(TAG,"dismiss : closing not allowed");
+                    }
                 }
 
-                    } );
-
-            datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "선택",
-                    (dialog, which) -> {
-                        if(which == DialogInterface.BUTTON_POSITIVE) {
-
-                            datePickerDialog.setTitle("");
-
-                            long dateValue = getDateValueFromDatePicker(datePickerDialog.getDatePicker());
-                            ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setTime_after(dateValue);
-                            datePickerDialog.getDatePicker().setMaxDate(dateValue);
-
-                            datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "완료",
-                                    (dialog2, which2) -> {
-                                if(which2 == DialogInterface.BUTTON_POSITIVE) {
-                                    ((ConversationFilter) conversationRecyclerAdapter.getFilter()).
-                                            getConversationFilterObject().setTime_after(getDateValueFromDatePicker(datePickerDialog.getDatePicker()));
-                                    conversationRecyclerAdapter.getFilter().filter("on");
-                                    checkbox_filter_time.setChecked(true);
-                                    toggleLayoutWidth(inner_column_filter_time, 0,
-                                            scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT  );
-                                    dialog2.dismiss();
-                                }
-
-
-
-                                    }
-                            );
-                        }
-
-                    } );
-
+            };
 
             datePickerDialog.setCancelable(false);
             datePickerDialog.show();
-
-
         };
         button_filter_time.setOnClickListener( listener_time );
+        checkbox_filter_time.setOnCheckedChangeListener((v,b) -> {
+            if(b) {
+                String time_before_str = text_input_filter_time_before.getText().toString();
+                String time_after_str = text_input_filter_time_after.getText().toString();
+                if(time_before_str.equals("") && time_after_str.equals("") ) {
+                    checkbox_filter_time.setChecked(false);
+                    return;
+                }
+
+                filterObject.setTime_before(time_before_str.equals("") ?  -1 : Long.valueOf(time_before_str));
+                filterObject.setTime_after(time_after_str.equals("") ?  -1 : Long.valueOf(time_after_str));
+                conversationFilter.filter("on");
+
+            } else {
+                filterObject.setTime_before(-1);
+                filterObject.setTime_after(-1);
+                conversationFilter.filter("on");
+            }
+        });
 
         final AppCompatButton button_filter_conversation =  child_conversation.findViewById(R.id.button_filter_conversation);
         final RelativeLayout inner_column_filter_conversation = child_conversation.findViewById(R.id.inner_column_filter_conversation);
@@ -441,8 +456,8 @@ public class PlaceholderFragment extends Fragment {
                 try {
                     String filterStr_conv = s.toString();
                     text_input_filter_conversation.setText(filterStr_conv);
-                    ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setConversations(filterStr_conv.split(","));
-                    conversationRecyclerAdapter.getFilter().filter("on");
+                    filterObject.setConversations(filterStr_conv.split(","));
+                    conversationFilter.filter("on");
                 } catch (NullPointerException ignored) {
                 }
             }
@@ -466,29 +481,25 @@ public class PlaceholderFragment extends Fragment {
             // 단톡방 필터링 완료, 레이아웃 축소, editText 와 버튼 리스너 해제
             button_conversation.setOnClickListener( view -> {
 
-                hideSoftKeyboard(getActivity());
+                hideSoftKeyboard(mActivity);
 
                 String text = text_input_filter_conversation.getText().toString();
                 text_conversation.removeTextChangedListener(textWatcher_conversation);
                 text_conversation.setText("");
 
                 if(text.equals("") ) {
+                    filterObject.setConversations(null);
                     checkbox_filter_conversation.setChecked(false);
                 } else {
+                    filterObject.setConversations(text.split(","));
                     checkbox_filter_conversation.setChecked(true);
                 }
+                conversationFilter.filter("on");
 
                 toggleLayoutWidth(inner_column_filter_conversation, 0,
                         scroll_filter, ViewGroup.LayoutParams.MATCH_PARENT  );
 
-                try {
-                    ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setConversations(text.split(","));
-                    conversationRecyclerAdapter.getFilter().filter("on");
-                } catch ( NullPointerException ignored) {
-
-                }
-
-                title_conversation.setText("");
+                title_conversation.setText(R.string.tab_text_3);
                 button_conversation.setOnClickListener(null);
 
             });
@@ -501,12 +512,11 @@ public class PlaceholderFragment extends Fragment {
                     checkbox_filter_conversation.setChecked(false);
                     return;
                 }
-                ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setConversations(text.split(","));
-                conversationRecyclerAdapter.getFilter().filter("on");
+                filterObject.setConversations(text.split(","));
             } else{
-                ((ConversationFilter) conversationRecyclerAdapter.getFilter()).getConversationFilterObject().setConversations(null);
-                conversationRecyclerAdapter.getFilter().filter("on");
+                filterObject.setConversations(null);
             }
+            conversationFilter.filter("on");
         });
         /*대화 파트 끝*/
 
@@ -528,8 +538,6 @@ public class PlaceholderFragment extends Fragment {
                     default:
 
             }
-
-           //textView.setText(s);
         });
         return root;
     }
@@ -558,12 +566,11 @@ public class PlaceholderFragment extends Fragment {
 
 
     private boolean isMyServiceRunning() {
-        ActivityManager manager = (ActivityManager)getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager)mActivity.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (NotificationListener.class.getName().equals(service.service.getClassName())) {
                 Log.d(TAG,"알림 설정 됨");
                 return true;
-
             }
         }
         Log.d(TAG,"알림 설정 안됨");
@@ -582,14 +589,19 @@ public class PlaceholderFragment extends Fragment {
         InputMethodManager inputMethodManager =
                 (InputMethodManager) activity.getSystemService(
                         Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(
-                activity.getCurrentFocus().getWindowToken(), 0);
+
+        View focusedView = activity.getCurrentFocus();
+
+        if (focusedView != null) {
+            inputMethodManager.hideSoftInputFromWindow(
+                    focusedView.getWindowToken(), 0);
+        }
     }
 
     private void showSoftKeyboard(View view) {
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
-                    getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
     }

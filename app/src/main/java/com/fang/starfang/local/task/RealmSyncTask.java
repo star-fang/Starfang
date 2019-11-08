@@ -427,7 +427,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         int sy = scroll_progress.getScrollY();
         int sh = scroll_progress.getHeight();
         int delta = bottom - (sy + sh);
-        scroll_progress.smoothScrollBy( 0 , delta );
+        scroll_progress.scrollBy( 0 , delta );
 
     }
 

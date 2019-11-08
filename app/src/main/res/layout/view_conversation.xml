@@ -270,10 +270,20 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_input_filter_time_desc"
-                android:layout_width="match_parent"
+                android:id="@+id/text_input_filter_time_before"
+                android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="10dp"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_input_filter_time_after"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_toEndOf="@id/text_input_filter_time_before"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="10dp"
