@@ -264,7 +264,7 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
 
 
             realm.beginTransaction();
-            Conversation conversationRep = new Conversation(sendCat, null, null, "com.fang.starfang", result);
+            Conversation conversationRep = new Conversation(null, null, null, "com.fang.starfang", result);
             realm.copyToRealm(conversationRep);
             realm.commitTransaction();
         } else {

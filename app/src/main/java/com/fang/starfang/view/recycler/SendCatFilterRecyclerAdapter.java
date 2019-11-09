@@ -75,6 +75,12 @@ public class SendCatFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conve
 
         private void bind(final Conversation conversation ) {
             try {
+
+                final String sendCatStr = conversation.getSendCat();
+                if( sendCatStr == null) {
+                    sendCatTv.setVisibility(View.INVISIBLE);
+                    return;
+                }
                 final ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
 
                 if( filterObject.catIsChecked(conversation.getSendCat())) {
@@ -82,10 +88,10 @@ public class SendCatFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conve
                     sendCatTv.setChecked(true);
                 }
 
+
                 sendCatTv.setText(conversation.getSendCat());
 
                 sendCatTv.setOnClickListener( v -> {
-                    String sendCatStr = sendCatTv.getText().toString();
                     if(sendCatTv.isChecked()) {
                         sendCatTv.setCheckMarkDrawable(null);
                         filterObject.removeSendCat(sendCatStr);

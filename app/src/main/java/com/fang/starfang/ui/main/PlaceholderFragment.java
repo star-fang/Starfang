@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -29,7 +30,6 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -47,6 +47,7 @@ import com.fang.starfang.view.recycler.ConversationFilter;
 import com.fang.starfang.view.recycler.ConversationFilterObject;
 import com.fang.starfang.view.recycler.ConversationRecyclerAdapter;
 import com.fang.starfang.view.recycler.SendCatFilterRecyclerAdapter;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -156,86 +157,96 @@ public class PlaceholderFragment extends Fragment {
         recyclerView.setAdapter(conversationRecyclerAdapter);
         final ConversationFilter conversationFilter = ((ConversationFilter)conversationRecyclerAdapter.getFilter());
         final ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
+        conversationFilter.filter("on");
 
         final AppCompatTextView title_conversation = child_conversation.findViewById(R.id.title_conversation);
         final AppCompatEditText text_conversation = child_conversation.findViewById(R.id.text_conversation);
         final AppCompatButton button_conversation = child_conversation.findViewById(R.id.button_conversation);
         final AppCompatButton button_clear_conversation = child_conversation.findViewById(R.id.button_clear_conversation);
-        final View row_filter = child_conversation.findViewById((R.id.row_filter));
         final View inner_column_filter = child_conversation.findViewById((R.id.inner_column_filter));
         final View scroll_filter = child_conversation.findViewById(R.id.scroll_filter);
         final AppCompatTextView text_filter_summary = child_conversation.findViewById(R.id.text_filter_summary);
-        final SwitchCompat switch_filter = child_conversation.findViewById(R.id.switch_filter);
         final AppCompatButton button_hide_filters = child_conversation.findViewById(R.id.button_hide_filters);
+        final AppCompatButton button_show_filters = child_conversation.findViewById(R.id.button_show_filters);
+        final View row_filter = child_conversation.findViewById(R.id.row_filter);
+        buildConstraintDoc( realm, text_filter_summary);
 
-
-        View.OnClickListener searchButton_default_listener = v -> {
+        final View.OnClickListener searchButton_default_listener = v -> {
 
             Editable editable = text_conversation.getText();
             if( editable == null ) {
                 return;
             }
-
             String text = editable.toString();
-            if(text.substring(text.length()-1).equals(NotificationListener.getCommandCat())) {
-                new LocalDataHandlerCat(mActivity, getString(R.string.tab_text_3), null, null, true).execute(text);
-            } else if (text.substring(text.length()-1).equals(NotificationListener.getCommandDog())) {
-                new LocalDataHandlerDog(mActivity, getString(R.string.tab_text_3), null, true).execute(text);
+            String botMode = getString(R.string.tab_text_3);
+
+            if( botMode.equals(title_conversation.getText().toString() )) {
+                if(text.length() > 1 ) {
+                    if (text.substring(text.length() - 1).equals(NotificationListener.getCommandCat())) {
+                        new LocalDataHandlerCat(mActivity, null, null, null, true).execute(text);
+                    } else if (text.substring(text.length() - 1).equals(NotificationListener.getCommandDog())) {
+                        new LocalDataHandlerDog(mActivity, null, null, true).execute(text);
+                    }
+                }
+                text_conversation.setText("");
+            } else {
+                hideSoftKeyboard(mActivity);
             }
 
-            text_conversation.setText("");
+
         };
         button_conversation.setOnClickListener(searchButton_default_listener);
         button_clear_conversation.setOnClickListener( v -> text_conversation.setText(""));
-        switch_filter.setOnCheckedChangeListener( (v, b)-> {
 
-            if(b) {
-                if(button_hide_filters.getLayoutParams().width == 0 ) {
-                    changeLayoutSize(scroll_filter,ViewGroup.LayoutParams.WRAP_CONTENT,-1, -1.0f);
-                    toggleLayoutWidth(row_filter, ViewGroup.LayoutParams.MATCH_PARENT, button_hide_filters, dip2pix(mActivity, 40));
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                            RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    params.addRule(RelativeLayout.ABOVE, R.id.row_filter);
-                    recyclerView.setLayoutParams(params);
-                }
-            }
-        });
+        final View.OnClickListener showButton_default_listener = v -> {
+                    changeLayoutSize(row_filter,-1,dip2pix(mActivity,80));
+                    button_show_filters.setOnClickListener(null);
+                    Log.d(TAG,"SHOW LISTENER OPERATED");
+        };
 
-        button_hide_filters.setOnClickListener( v -> {
-            changeLayoutSize(scroll_filter,0,-1, -1.0f);
-            toggleLayoutWidth(row_filter,dip2pix(mActivity,65),button_hide_filters,0);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT);
-            params.addRule(RelativeLayout.ABOVE,R.id.conversationEtLayout);
-            recyclerView.setLayoutParams(params);
-
-        });
-
+        final View.OnClickListener hideButton_default_listener = v -> {
+            changeLayoutSize(row_filter,-1,0);
+            button_show_filters.setOnClickListener(showButton_default_listener);
+        };
+        button_hide_filters.setOnClickListener(hideButton_default_listener);
 
         final SendCatFilterRecyclerAdapter sendCatFilterRecyclerAdapter = new SendCatFilterRecyclerAdapter(realm, child_conversation);
         final AppCompatButton button_filter_sendCat =  child_conversation.findViewById(R.id.button_filter_sendCat);
-        final AppCompatCheckBox checkbox_filter_sendCat = child_conversation.findViewById(R.id.checkbox_filter_sendCat);
+        final CheckedTextView checkbox_filter_sendCat = child_conversation.findViewById(R.id.checkbox_filter_sendCat);
         final View inner_column_filter_sendCat = child_conversation.findViewById(R.id.inner_column_filter_sendCat);
         final AppCompatButton button_filter_sendCat_commit = child_conversation.findViewById(R.id.button_filter_sendCat_commit);
 
-        button_filter_sendCat.setOnClickListener( v -> {
+        if( filterObject.getSendCatCount() > 0 ) {
+            checkbox_filter_sendCat.setCheckMarkDrawable(R.drawable.ic_check_pink_24dp);
+        }
+
+        checkbox_filter_sendCat.setChecked(filterObject.getSendCatCount()>0);
+        button_filter_sendCat.setOnClickListener( view -> {
             recyclerView.setAdapter(sendCatFilterRecyclerAdapter);
-            changeLayoutSize(inner_column_filter,-1,-1, 0f);
+            changeLayoutSize(inner_column_filter,-1,-1, 0.0f);
             changeLayoutSize(inner_column_filter_sendCat, -1, -1, 1.0f);
             title_conversation.setText(R.string.filter_title_sendCat);
 
         });
-
-        button_filter_sendCat_commit.setOnClickListener( v -> {
-
-            recyclerView.setAdapter(conversationRecyclerAdapter);
+        button_filter_sendCat_commit.setOnClickListener( view -> {
             conversationFilter.filter("on");
+            boolean check = filterObject.getSendCatCount()>0;
+            if( check ) {
+                checkbox_filter_sendCat.setCheckMarkDrawable(R.drawable.ic_check_pink_24dp);
+                Snackbar.make(child_conversation,"작성자 필터 ON",Snackbar.LENGTH_LONG).show();
+            } else {
+                checkbox_filter_sendCat.setCheckMarkDrawable(null);
+                Snackbar.make(child_conversation,"작성자 필터 OFF",Snackbar.LENGTH_LONG).show();
+            }
+            checkbox_filter_sendCat.setChecked(check);
+            recyclerView.setAdapter(conversationRecyclerAdapter);
+
             changeLayoutSize(inner_column_filter,-1,-1,1.0f);
-            changeLayoutSize(inner_column_filter_sendCat, -1, -1, 0f);
-            checkbox_filter_sendCat.setChecked(filterObject.getSendCatCount()>0);
+            changeLayoutSize(inner_column_filter_sendCat, -1, -1, 0.0f);
             buildConstraintDoc( realm, text_filter_summary);
             title_conversation.setText(R.string.tab_text_3);
         });
+
 
         final AppCompatButton button_filter_room =  child_conversation.findViewById(R.id.button_filter_room);
         final RelativeLayout inner_column_filter_room = child_conversation.findViewById(R.id.inner_column_filter_room);
@@ -546,17 +557,36 @@ public class PlaceholderFragment extends Fragment {
     }
 
     private void changeLayoutSize(View view, int width, int height, float weight) {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)view.getLayoutParams();
+
+        try {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+            if (width >= 0) {
+                params.width = width;
+            }
+
+            if (height >= 0) {
+                params.height = height;
+            }
+
+            if (weight >= 0) {
+                params.weight = weight;
+            }
+
+            view.setLayoutParams(params);
+        } catch (ClassCastException e) {
+            changeLayoutSize(view, width, height);
+        }
+    }
+
+    private void changeLayoutSize(View view, int width, int height) {
+
+        ViewGroup.LayoutParams params = view.getLayoutParams();
         if(width >= 0 ) {
             params.width = width;
         }
 
         if(height >= 0 ) {
             params.height = height;
-        }
-
-        if( weight >= 0 ) {
-            params.weight=weight;
         }
 
         view.setLayoutParams(params);

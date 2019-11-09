@@ -166,5 +166,6 @@
     <string name="summary_filter">필터 요약</string>
     <string name="desc_no_filter">필터 설정 안됨…</string>
     <string name="sendcat_count_holder">명 선택 됨 :</string>
+    <string name="title_filter">FILTER</string>
 
 </resources>

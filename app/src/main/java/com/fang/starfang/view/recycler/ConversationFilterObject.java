@@ -1,10 +1,13 @@
 package com.fang.starfang.view.recycler;
 
+import android.util.Log;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 public class ConversationFilterObject {
+    private final static String TAG = "FANG_FILTER_OBJECT";
     private Set<String> sendCats;
     private String[] rooms = null;
     private long time_before = -1;
@@ -15,6 +18,7 @@ public class ConversationFilterObject {
 
     private ConversationFilterObject() {
         this.sendCats = new HashSet<>();
+        Log.d(TAG,"ConversationFilterObject constructed");
     }
 
     public static ConversationFilterObject getInstance() {
@@ -109,4 +113,5 @@ public class ConversationFilterObject {
     public void setConversations(String[] conversations) {
         this.conversations = conversations;
     }
+
 }

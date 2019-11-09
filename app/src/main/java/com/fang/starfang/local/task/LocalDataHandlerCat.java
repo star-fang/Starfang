@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import io.realm.Case;
 import io.realm.Realm;
@@ -966,6 +967,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                             realm.where(Spec.class).contains(Spec.FIELD_NAME_NO_BLANK,nameOrSpec, Case.INSENSITIVE)
                             .or().contains(Spec.FIELD_NAME2,nameOrSpec).findAll();
 
+                    final String reinfOrGrdReplacement = reinfOrGRD.isEmpty() ? EMPTY : "*" + reinfOrGRD + CRLF;
                     if( specs == null) {
                         Log.d(TAG,"Item Search type B");
                         itemQuery = realm.where(Item.class);
@@ -981,7 +983,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                         if(itemsByCATE.isEmpty()) return null;
 
                         lambdaResult.append(insertCate != null ? "*" + insertCate + CRLF : EMPTY);
-                        lambdaResult.append(reinfOrGRD.isEmpty() ? EMPTY : "*" + reinfOrGRD + CRLF);
+                        lambdaResult.append(reinfOrGrdReplacement);
                         lambdaResult.append("검색 결과: ").append(itemsByCATE.size()).append("개")
                                 .append(CRLF).append(SEPARATOR);
                         for (Item item : itemsByCATE) {
@@ -1011,7 +1013,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                             if (!itemsBySpec.isEmpty()) {
                                 lambdaResult.append("*").append(spec.getSpecName()).append(CRLF);
                                 lambdaResult.append(insertCate != null ? "*" + insertCate + CRLF : EMPTY);
-                                lambdaResult.append(reinfOrGRD.isEmpty() ? EMPTY : "*" + reinfOrGRD + CRLF);
+                                lambdaResult.append(reinfOrGrdReplacement);
                                 lambdaResult.append("검색 결과: ").append(itemsBySpec.size()).append("개")
                                         .append(CRLF).append(SEPARATOR);
                                 for (Item item : itemsBySpec) {
@@ -1669,14 +1671,29 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
 
         if (isLocalRequest) {
             result = result == null ? "검색결과가 없다옹" : result;
-            final String substring = result.substring(result.length() - 3);
-            result = substring.equals(",\r\n") || substring.equals("\r\n,") ? result.substring(0,result.length()-4) : result;
-            result = result.replace(",",CRLF);
+
+            StringTokenizer st = new StringTokenizer(result,"," );
 
             realm.beginTransaction();
-            Conversation conversationRep = new Conversation( sendCat, catRoom,null,"com.fang.starfang",result);
-            realm.copyToRealm(conversationRep);
+            while( st.hasMoreTokens()) {
+                String tmpRes = st.nextToken();
+
+                if( tmpRes.substring(0,2).equals("\r\n")) {
+                    tmpRes = tmpRes.substring(2);
+                }
+
+                try {
+                    if( tmpRes.substring(tmpRes.length()-2).equals("\r\n")) {
+                        tmpRes = tmpRes.substring(0,tmpRes.length()-2);
+                    }
+                    Conversation conversationRep = new Conversation( null, null,null,"com.fang.starfang",tmpRes);
+                    realm.copyToRealm(conversationRep);
+
+                } catch (NullPointerException | StringIndexOutOfBoundsException | ArrayIndexOutOfBoundsException ignored) {
+                }
+            }
             realm.commitTransaction();
+
         } else {
 
             if (result != null) {

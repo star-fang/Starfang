@@ -13,6 +13,25 @@
         android:scrollbars="vertical"
         tools:listitem="@layout/row_conversation" />
 
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/row_filter"
+        android:layout_alignParentEnd="true">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_show_filters"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:background="#66000000"
+            android:fontFamily="@font/krona_one"
+            android:text="@string/title_filter"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+
     <LinearLayout
         android:id="@+id/row_filter"
         android:layout_width="match_parent"
@@ -31,16 +50,12 @@
         android:background="@color/design_default_color_primary_dark"
         android:orientation="horizontal">
 
+
         <HorizontalScrollView
             android:id="@+id/scroll_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="3dp"
-            android:layout_alignParentStart="true"
-            android:animateLayoutChanges="true"
-            android:orientation="horizontal"
-            android:background="#30000000">
+            >
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -51,22 +66,25 @@
                     android:id="@+id/column_filter_sendCat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="65dp"
-                    android:orientation="vertical">
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="vertical"
+                    >
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/button_filter_sendCat"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="12dp"
                         android:layout_marginTop="3dp"
                         android:background="@mipmap/ogq4_round" />
 
-                    <androidx.appcompat.widget.AppCompatCheckBox
+                    <androidx.appcompat.widget.AppCompatCheckedTextView
                         android:id="@+id/checkbox_filter_sendCat"
-                        android:layout_width="70dp"
+                        android:layout_width="65dp"
                         android:layout_height="20dp"
                         android:layout_marginTop="5dp"
+                        android:checked="false"
                         android:text="@string/filter_title_sendCat"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -150,7 +168,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginEnd="40dp">
+                    android:layout_marginEnd="100dp">
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/button_filter_package"
@@ -174,44 +192,19 @@
         </HorizontalScrollView>
 
         <LinearLayout
-            android:id="@+id/row_filter_switch"
-            android:layout_width="65dp"
-            android:layout_height="67dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="5dp"
-            android:background="#A6000000"
-            android:orientation="vertical">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="45dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:text="@string/filter_title"
-                android:textAlignment="center"
-                android:textSize="18sp" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_filter"
-                android:layout_width="45dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="10dp"
-                android:checked="false" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
-            android:layout_height="67dp"
-            android:background="#A6000000"
-            android:layout_alignParentEnd="true">
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button_hide_filters"
-            android:layout_width="35dp"
-            android:layout_height="70dp"
-            android:background="@drawable/ic_chevron_right_pink_20dp" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="#66000000">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_hide_filters"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/ic_keyboard_arrow_down_pink_24dp" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -413,6 +406,7 @@
 
     </LinearLayout>
 
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -509,7 +503,7 @@
             android:background="@color/colorPrimaryDark"
             android:fontFamily="@font/krona_one"
             android:text="@string/filter_button_title_submit"
-            android:textSize="14sp" />
+            android:textSize="13sp" />
 
     </RelativeLayout>
 

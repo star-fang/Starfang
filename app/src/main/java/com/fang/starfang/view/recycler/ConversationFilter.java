@@ -43,10 +43,10 @@ public class ConversationFilter extends Filter {
 
         ConversationFilterObject conversationFilterObject = ConversationFilterObject.getInstance();
         RealmQuery<Conversation> query = realm.where(Conversation.class).alwaysTrue();
-        makeQueryGroup(query, conversationFilterObject.getSendCats(), Conversation.FIELD_SENDCAT,true);
-        makeQueryGroup(query, conversationFilterObject.getRooms(),Conversation.FIELD_ROOM,true);
-        makeQueryGroup(query,conversationFilterObject.getPackages(),Conversation.FIELD_PACKAGE,true);
-        makeQueryGroup(query,conversationFilterObject.getConversations(),Conversation.FIELD_CONVERSATION,false);
+        makeQueryGroup(query, conversationFilterObject.getSendCats(), Conversation.FIELD_SENDCAT,true, true);
+        makeQueryGroup(query, conversationFilterObject.getRooms(),Conversation.FIELD_ROOM,true, false);
+        makeQueryGroup(query,conversationFilterObject.getPackages(),Conversation.FIELD_PACKAGE,true, false);
+        makeQueryGroup(query,conversationFilterObject.getConversations(),Conversation.FIELD_CONVERSATION,false, false);
         long time_before = conversationFilterObject.getTime_before();
         try {
             long time_before_day_after = addAndCheck(time_before, (long) 24 * 60 * 60 * 1000 - 1, "");
@@ -102,7 +102,7 @@ public class ConversationFilter extends Filter {
         return ret;
     }
 
-    private void makeQueryGroup(RealmQuery<Conversation> query, String[] cs_group, String column,boolean match) {
+    private void makeQueryGroup(RealmQuery<Conversation> query, String[] cs_group, String column,boolean match, boolean isCatRequest) {
 
         if(cs_group == null) {
             //Log.d(TAG,column + " filter : null");
@@ -117,6 +117,7 @@ public class ConversationFilter extends Filter {
             query = match ? query.equalTo(column,cs) : query.contains(column,cs, Case.INSENSITIVE);
             query.or();
         }
+        query = isCatRequest? query.isNull(column).or() : query;
         query.alwaysFalse().endGroup();
     }
 

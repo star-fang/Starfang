@@ -48,7 +48,7 @@ public class ConversationRecyclerAdapter
 
     public ConversationRecyclerAdapter(Realm realm, RecyclerView recyclerView) {
         super(realm.where(Conversation.class).findAll(),true);
-        //Log.d(TAG,"ConversationRecyclerAdapter constructed");
+        Log.d(TAG,"ConversationRecyclerAdapter constructed");
         realm.addChangeListener(o -> {
             notifyDataSetChanged();
             recyclerView.smoothScrollToPosition(getItemCount());
@@ -84,16 +84,12 @@ public class ConversationRecyclerAdapter
 
 
         private void bind(final Conversation conversation ) {
-            try {
-                //Log.d(TAG,conversation.getSandCat());
-                sandCatTv.setText(conversation.getSendCat());
-                timestampTv.setText(conversation.getTimestamp());
-                catRoomTv.setText(conversation.getCatRoom());
-                conversationTv.setText(conversation.getConversation());
-            } catch( NullPointerException ignored) {
-            }
-            //itemView.setOnClickListener(v -> {
-            //});
+            String sendCatStr = conversation.getSendCat();
+            sandCatTv.setText( sendCatStr == null ? "" : sendCatStr );
+            String catRoomStr = conversation.getCatRoom();
+            catRoomTv.setText( catRoomStr == null ? "" : catRoomStr );
+            timestampTv.setText(conversation.getTimestamp());
+            conversationTv.setText(conversation.getConversation());
         }
 
 
