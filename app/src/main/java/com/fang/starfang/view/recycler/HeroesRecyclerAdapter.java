@@ -7,6 +7,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ public class HeroesRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, Recy
     private Realm realm;
     private FragmentManager fragmentManager;
 
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_heroes,viewGroup,false);
@@ -35,7 +37,7 @@ public class HeroesRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, Recy
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
         HeroesViewHolder heroesViewHolder = (HeroesViewHolder) viewHolder;
 

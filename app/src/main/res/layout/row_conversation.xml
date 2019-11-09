@@ -10,23 +10,23 @@
     <TextView
         android:id="@+id/conv_sendCat"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="30dp"
         android:layout_marginEnd="80dp"
         android:textAlignment="gravity"
         android:textSize="18sp"
-        tools:text="@tools:sample/full_names" />
+        tools:text="@tools:sample/full_names"
+        android:maxLines="1"/>
 
     <TextView
         android:id="@+id/conv_catRoom"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_gravity="start"
-        android:layout_marginStart="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
         android:layout_marginEnd="80dp"
         android:textAlignment="gravity"
-        tools:text="@tools:sample/cities[6]" />
+        android:maxLines="1"/>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -56,8 +56,9 @@
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="80dp"
+        android:layout_marginEnd="90dp"
         android:textAlignment="textEnd"
         android:textSize="12sp"
-        tools:text="@tools:sample/date/mmddyy" />
+        tools:text="@tools:sample/date/mmddyy"
+        android:maxLines="1"/>
 </LinearLayout>

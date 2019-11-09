@@ -14,21 +14,17 @@ import io.realm.RealmResults;
 public class ConversationFilter extends Filter {
 
     private static final String TAG = "FANG_FILTER";
-    private static ConversationFilterObject conversationFilterObject = null;
     private final ConversationRecyclerAdapter adapter;
     private Realm realm;
 
 
-    protected ConversationFilter(ConversationRecyclerAdapter adapter, Realm realm) {
+    ConversationFilter(ConversationRecyclerAdapter adapter, Realm realm) {
         super();
         this.adapter = adapter;
         this.realm = realm;
         //conversationFilterObject = new ConversationFilterObject();
     }
 
-    public ConversationFilterObject getConversationFilterObject() {
-        return conversationFilterObject == null ? conversationFilterObject = new ConversationFilterObject() : conversationFilterObject;
-    }
 
     @Override
     protected FilterResults performFiltering(CharSequence constraint) {
@@ -45,11 +41,12 @@ public class ConversationFilter extends Filter {
             return;
         }
 
+        ConversationFilterObject conversationFilterObject = ConversationFilterObject.getInstance();
         RealmQuery<Conversation> query = realm.where(Conversation.class).alwaysTrue();
-        makeQueryGroup(query, conversationFilterObject.getSendCats(), Conversation.FIELD_SENDCAT);
-        makeQueryGroup(query, conversationFilterObject.getRooms(),Conversation.FIELD_ROOM);
-        makeQueryGroup(query,conversationFilterObject.getPackages(),Conversation.FIELD_PACKAGE);
-        makeQueryGroup(query,conversationFilterObject.getConversations(),Conversation.FIELD_CONVERSATION);
+        makeQueryGroup(query, conversationFilterObject.getSendCats(), Conversation.FIELD_SENDCAT,true);
+        makeQueryGroup(query, conversationFilterObject.getRooms(),Conversation.FIELD_ROOM,true);
+        makeQueryGroup(query,conversationFilterObject.getPackages(),Conversation.FIELD_PACKAGE,true);
+        makeQueryGroup(query,conversationFilterObject.getConversations(),Conversation.FIELD_CONVERSATION,false);
         long time_before = conversationFilterObject.getTime_before();
         try {
             long time_before_day_after = addAndCheck(time_before, (long) 24 * 60 * 60 * 1000 - 1, "");
@@ -105,7 +102,7 @@ public class ConversationFilter extends Filter {
         return ret;
     }
 
-    private void makeQueryGroup(RealmQuery<Conversation> query, String[] cs_group, String column) {
+    private void makeQueryGroup(RealmQuery<Conversation> query, String[] cs_group, String column,boolean match) {
 
         if(cs_group == null) {
             //Log.d(TAG,column + " filter : null");
@@ -117,7 +114,8 @@ public class ConversationFilter extends Filter {
         }
         query.and().beginGroup();
         for(String cs : cs_group) {
-            query.contains(column,cs,Case.INSENSITIVE).or();
+            query = match ? query.equalTo(column,cs) : query.contains(column,cs, Case.INSENSITIVE);
+            query.or();
         }
         query.alwaysFalse().endGroup();
     }
@@ -125,62 +123,7 @@ public class ConversationFilter extends Filter {
 
 
 
-    public class ConversationFilterObject {
-        private String[] sendCats = null;
-        private String[] rooms = null;
-        private long time_before = -1;
-        private long time_after = -1;
-        private String[] packages = null;
-        private String[] conversations = null;
 
-        public String[] getSendCats() {
-            return sendCats;
-        }
-
-        public String[] getRooms() {
-            return rooms;
-        }
-
-        public long getTime_before() {
-            return time_before;
-        }
-
-        public long getTime_after() {
-            return time_after;
-        }
-
-        public String[] getPackages() {
-            return packages;
-        }
-
-        public String[] getConversations() {
-            return conversations;
-        }
-
-        public void setSendCats(String[] sendCats) {
-            this.sendCats = sendCats;
-        }
-
-        public void setRooms(String[] rooms) {
-            this.rooms = rooms;
-        }
-
-        public void setTime_before(long time_before) {
-            this.time_before = time_before;
-        }
-
-        public void setTime_after(long time_after) {
-            this.time_after = time_after;
-        }
-
-        public void setPackages(String[] packages) {
-            this.packages = packages;
-        }
-
-        public void setConversations(String[] conversations) {
-            this.conversations = conversations;
-        }
-    }
 
 
 

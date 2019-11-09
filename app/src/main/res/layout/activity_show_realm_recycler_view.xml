@@ -36,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        tools:listitem="@layout/recycler_view_item" />
+        tools:listitem="@layout/row_heroes" />
 
 
 

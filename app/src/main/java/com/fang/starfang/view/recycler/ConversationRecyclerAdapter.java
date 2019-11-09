@@ -90,7 +90,6 @@ public class ConversationRecyclerAdapter
                 timestampTv.setText(conversation.getTimestamp());
                 catRoomTv.setText(conversation.getCatRoom());
                 conversationTv.setText(conversation.getConversation());
-
             } catch( NullPointerException ignored) {
             }
             //itemView.setOnClickListener(v -> {

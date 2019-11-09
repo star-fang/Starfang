@@ -8,6 +8,7 @@ import android.util.Log;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Agenda;
 import com.fang.starfang.local.model.realm.Branch;
+import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.model.realm.Destiny;
 import com.fang.starfang.local.model.realm.Dot;
 import com.fang.starfang.local.model.realm.Heroes;
@@ -55,6 +56,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
     private String sendCat;
     private String catRoom;
     private StatusBarNotification sbn;
+    private boolean isLocalRequest;
 
     private static final String TAG = "LOCAL_HANDLER";
     private enum COMMAND_CERTAIN_ENUM {
@@ -80,11 +82,12 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
     private static final String RANGE_EMPTY = "□";
     private static final String RANGE_FULL = "■";
 
-    public LocalDataHandlerCat(Context c, String sender, String room, StatusBarNotification _sbn ) {
-        context = new WeakReference<>(c);
-        sendCat = sender;
-        catRoom = room;
-        sbn = _sbn;
+    public LocalDataHandlerCat(Context context, String sendCat, String catRoom, StatusBarNotification sbn, boolean isLocalRequest) {
+        this.context = new WeakReference<>(context);
+        this.sendCat = sendCat;
+        this.catRoom = catRoom;
+        this.sbn = sbn;
+        this.isLocalRequest = isLocalRequest;
     }
 
 
@@ -1664,10 +1667,24 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
             }
 
 
-            if(result != null) {
-                KakaoReplier replier = new KakaoReplier(context.get(),sendCat,sbn);
-                replier.execute(result,"[L]");
+        if (isLocalRequest) {
+            result = result == null ? "검색결과가 없다옹" : result;
+            final String substring = result.substring(result.length() - 3);
+            result = substring.equals(",\r\n") || substring.equals("\r\n,") ? result.substring(0,result.length()-4) : result;
+            result = result.replace(",",CRLF);
+
+            realm.beginTransaction();
+            Conversation conversationRep = new Conversation( sendCat, catRoom,null,"com.fang.starfang",result);
+            realm.copyToRealm(conversationRep);
+            realm.commitTransaction();
+        } else {
+
+            if (result != null) {
+                KakaoReplier replier = new KakaoReplier(context.get(), sendCat, sbn);
+                replier.execute(result, "[L]");
             }
+
+        }
 
     }
 

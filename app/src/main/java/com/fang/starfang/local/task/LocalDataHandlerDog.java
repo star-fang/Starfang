@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
+import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.model.realm.UnionBranch;
 import com.fang.starfang.local.model.realm.UnionSkill;
 import com.fang.starfang.util.KakaoReplier;
@@ -24,6 +25,7 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
     private WeakReference<Context> context;
     private String sendCat;
     private StatusBarNotification sbn;
+    private boolean isLocalRequest;
 
     private static final String TAG = "LOCAL_HANDLER";
 
@@ -42,10 +44,11 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
     private static final String SEPARATOR = "-------------------------------\n";
     private final static String[] cmdMine = { "동광", "서광", "남광", "북광", "중광" };
 
-    public LocalDataHandlerDog(Context c, String sender, StatusBarNotification _sbn ) {
-        context = new WeakReference<>(c);
-        sendCat = sender;
-        sbn = _sbn;
+    public LocalDataHandlerDog(Context context, String sendCat, StatusBarNotification sbn, boolean isLocalRequest ) {
+        this.context = new WeakReference<>(context);
+        this.sendCat = sendCat;
+        this.sbn = sbn;
+        this.isLocalRequest = isLocalRequest;
     }
 
 
@@ -253,10 +256,22 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
 
             }
 
+        if (isLocalRequest) {
+            result = result == null ? "검색결과가 없다옹" : result;
+            final String substring = result.substring(result.length() - 3);
+            result = substring.equals(",\r\n") || substring.equals("\r\n,") ? result.substring(0,result.length()-4) : result;
+            result = result.replace(",",CRLF);
 
+
+            realm.beginTransaction();
+            Conversation conversationRep = new Conversation(sendCat, null, null, "com.fang.starfang", result);
+            realm.copyToRealm(conversationRep);
+            realm.commitTransaction();
+        } else {
             if(result != null) {
                 KakaoReplier replier = new KakaoReplier(context.get(),sendCat,sbn);
                 replier.execute(result,"[L]");
+            }
             }
     }
 

@@ -11,9 +11,6 @@ import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.task.LocalDataHandlerCat;
 import com.fang.starfang.local.task.LocalDataHandlerDog;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 
 import io.realm.Realm;
@@ -21,11 +18,19 @@ import io.realm.Realm;
 public class NotificationListener extends NotificationListenerService {
 
     private static final String TAG = "FANG_LISTENER";
-    private static final String PACKAGE_KAKAO = "com.kakao.talk";
-    private static final String PACKAGE_DISCORD = "com.discord";
-    private String COMMAND_CAT = "냥";
-    private String COMMAND_DOG = "멍";
+    public static final String PACKAGE_KAKAO = "com.kakao.talk";
+    public static final String PACKAGE_DISCORD = "com.discord";
+    private static String COMMAND_CAT = "냥";
+    private static String COMMAND_DOG = "멍";
     private static String status = "stop";
+
+    public static String getCommandCat() {
+        return COMMAND_CAT;
+    }
+
+    public static String getCommandDog() {
+        return COMMAND_DOG;
+    }
 
     @Override
     public void onCreate() {
@@ -88,37 +93,22 @@ public class NotificationListener extends NotificationListenerService {
 
         }
 
-        //Log.d(TAG, "after package name check");
-
         if( isAvailablePackage ) {
-            Conversation conversation = new Conversation();
-            conversation.setCatRoom(room);
-            conversation.setPackageName(packageName);
-            conversation.setSendCat(from);
-            Date curDate = new Date();
-            String timestamp =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA).format(curDate);
-            long timeValue = curDate.getTime();
-            conversation.setTimestamp(timestamp);
-            conversation.setTimeValue(timeValue);
-            conversation.setReplyID(sbn.getTag());
-            conversation.setConversation(text);
-
-            //Log.d(TAG, "set conversation object");
+            Conversation conversation = new Conversation(from,room,sbn.getTag(),packageName,text);
             Realm realm = Realm.getDefaultInstance();
-           realm.beginTransaction();
+            realm.beginTransaction();
             realm.copyToRealm(conversation);
             realm.commitTransaction();
             realm.close();
-
         }
 
             //Log.d(TAG, sbn.getPackageName() + ">> from: " + from + ", text: " + text + ", room: " + room);
             try {
                 if (text != null) {
                     if (text.substring(text.length() - 1).equals(COMMAND_CAT) && text.length() > 2) {
-                        new LocalDataHandlerCat(this, from, room, sbn).execute(text);
+                        new LocalDataHandlerCat(this, from, room, sbn, false).execute(text);
                     } else if (text.substring(text.length() - 1).equals(COMMAND_DOG) && text.length() > 2) {
-                        new LocalDataHandlerDog(this, from, sbn).execute(text);
+                        new LocalDataHandlerDog(this, from, sbn, false).execute(text);
                     }
                 }
             } catch (NullPointerException ignore) {
