@@ -9,7 +9,7 @@
 
     <CheckedTextView
         android:layout_marginStart="20dp"
-        android:id="@+id/text_filter_sendCat"
+        android:id="@+id/text_filter_room"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:checked="false"

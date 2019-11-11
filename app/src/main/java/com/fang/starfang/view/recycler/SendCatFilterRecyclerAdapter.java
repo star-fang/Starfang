@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Conversation;
+import com.fang.starfang.view.recycler.Filter.ConversationFilterObject;
 
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
@@ -42,7 +43,7 @@ public class SendCatFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conve
     }
 
     public SendCatFilterRecyclerAdapter(Realm realm, View view) {
-        super(realm.where(Conversation.class).distinct(Conversation.FIELD_SENDCAT).findAll(),true);
+        super(realm.where(Conversation.class).isNotNull(Conversation.FIELD_SENDCAT).distinct(Conversation.FIELD_SENDCAT).findAll(),true);
         realm.addChangeListener(o -> notifyDataSetChanged());
         countText = view.findViewById(R.id.text_filter_sendCat_count);
         listText = view.findViewById(R.id.text_filter_sendCat_count_desc);
@@ -74,22 +75,28 @@ public class SendCatFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conve
 
 
         private void bind(final Conversation conversation ) {
+
+            if( conversation == null ) {
+                return;
+            }
             try {
 
                 final String sendCatStr = conversation.getSendCat();
                 if( sendCatStr == null) {
-                    sendCatTv.setVisibility(View.INVISIBLE);
                     return;
                 }
                 final ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
 
-                if( filterObject.catIsChecked(conversation.getSendCat())) {
+                if( filterObject.catIsAdded(sendCatStr)) {
                     sendCatTv.setCheckMarkDrawable(R.drawable.ic_check_pink_24dp);
                     sendCatTv.setChecked(true);
+                } else {
+                    sendCatTv.setCheckMarkDrawable(null);
+                    sendCatTv.setChecked(false);
                 }
 
 
-                sendCatTv.setText(conversation.getSendCat());
+                sendCatTv.setText(sendCatStr);
 
                 sendCatTv.setOnClickListener( v -> {
                     if(sendCatTv.isChecked()) {
@@ -107,7 +114,8 @@ public class SendCatFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conve
                 });
 
 
-            } catch( NullPointerException ignored) {
+            } catch( NullPointerException e) {
+                e.printStackTrace();
             }
         }
 

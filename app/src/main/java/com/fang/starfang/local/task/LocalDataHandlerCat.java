@@ -1,14 +1,11 @@
 package com.fang.starfang.local.task;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Agenda;
 import com.fang.starfang.local.model.realm.Branch;
-import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.model.realm.Destiny;
 import com.fang.starfang.local.model.realm.Dot;
 import com.fang.starfang.local.model.realm.Heroes;
@@ -24,7 +21,6 @@ import com.fang.starfang.local.model.realm.Spec;
 import com.fang.starfang.local.model.realm.TVpair;
 import com.fang.starfang.local.model.realm.Terrain;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
-import com.fang.starfang.util.KakaoReplier;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -37,11 +33,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import io.realm.Case;
 import io.realm.Realm;
@@ -52,14 +46,12 @@ import io.realm.Sort;
 
 
 
-public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
+class LocalDataHandlerCat {
     private WeakReference<Context> context;
     private String sendCat;
     private String catRoom;
-    private StatusBarNotification sbn;
-    private boolean isLocalRequest;
 
-    private static final String TAG = "LOCAL_HANDLER";
+    private static final String TAG = "FANG_HANDLER_CAT";
     private enum COMMAND_CERTAIN_ENUM {
         COMMAND_DEST,COMMAND_TER,COMMAND_MOV,COMMAND_DESC,
         COMMAND_ITEM,COMMAND_AGENDA,COMMAND_MAGIC_ITEM,
@@ -83,31 +75,13 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
     private static final String RANGE_EMPTY = "□";
     private static final String RANGE_FULL = "■";
 
-    public LocalDataHandlerCat(Context context, String sendCat, String catRoom, StatusBarNotification sbn, boolean isLocalRequest) {
+    LocalDataHandlerCat(Context context, String sendCat, String catRoom) {
         this.context = new WeakReference<>(context);
         this.sendCat = sendCat;
         this.catRoom = catRoom;
-        this.sbn = sbn;
-        this.isLocalRequest = isLocalRequest;
     }
 
-
-    @Override
-    protected String doInBackground(String... strings) {
-        try(Realm realm = Realm.getDefaultInstance()) {
-            handleRequest( strings[0], realm);
-            //if()
-             //   new LambdaFunctionHandler(context, sendCat, sbn).execute(strings[0]);
-        } catch ( RuntimeException ignore ) {
-
-        }
-        return null;
-    }
-
-
-    private void handleRequest(String req, Realm realm ) {
-
-            req = req.substring(0, req.length() - 1).trim();
+    String handleRequest(String req, Realm realm ) {
 
             COMMAND_CERTAIN_ENUM certainCMD = COMMAND_CERTAIN_ENUM.COMMAND_DEFAULT;
             for( COMMAND_CERTAIN_ENUM certain : COMMAND_CERTAIN_ENUM.values() ) {
@@ -168,8 +142,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                 if(q.replace(BLANK,EMPTY).isEmpty())
                     return null;
 
-                LinkedList<String> rQueue = new LinkedList<>();
-                rQueue.addAll(Arrays.asList(q.split(BLANK)));
+                LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(BLANK)));
 
                 if( rQueue.isEmpty() ) return null;
 
@@ -226,9 +199,14 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
 
                         String destinies = tmpHero.getHeroDestiny();
                         if (destinies != null) {
-                            for(String destiny : destinies.split(":"))
-                            map_destiny.put(destiny, map_destiny.containsKey(destiny) ?
-                                    (map_destiny.get(destiny) + 1) : 1);
+                            for(String destiny : destinies.split(":")) {
+                                int putValue = 1;
+                                Integer curDestinyValue = map_destiny.get(destiny);
+                                if( curDestinyValue != null ) {
+                                    putValue = curDestinyValue + 1;
+                                }
+                                map_destiny.put(destiny, putValue);
+                            }
                         }
 
                         if (insert_hero_num == 1) {
@@ -246,15 +224,20 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                             lambdaResult.append("교본작: 최대 +").append((init_cost+16)*5).append(CRLF);
 
                             for (int i = 0; i < Heroes.INIT_SPECS.length; i++) {
-                                String val = null;
+                                String val = EMPTY;
                                 try {
-                                    val = (i < 4) ? tmpHero.getHeroSpecValues().get(i).toString() : EMPTY;
+                                    if(i < 4) {
+                                        RealmString tmpSpecValue = tmpHero.getHeroSpecValues().get(i);
+                                        if( tmpSpecValue != null ) {
+                                            val = tmpSpecValue.toString();
+                                        }
+                                    }
                                 } catch (ArrayIndexOutOfBoundsException ignore) {
 
                                 }
                                 lambdaResult.append(Heroes.INIT_SPECS[i]).append(": ")
                                         .append(tmpHero.getHeroSpecs().get(i)).append(BLANK)
-                                        .append(val != null ? val : EMPTY).append(CRLF);
+                                        .append(val).append(CRLF);
 
                             }
 
@@ -280,25 +263,30 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                 lambdaResult.append("경쟁전: ").append(145).append(" - ").append(total_cost).append(" = ").append(145 - total_cost).append(CRLF);
 
 
-                Set set = map_destiny.keySet();
-                Iterator iterator = set.iterator();
-                while(iterator.hasNext()) {
-                    String key = iterator.next().toString();
-                    //Log.d( TAG, key +": " + map_destiny.get(key));
-                    if (!key.isEmpty()) {
-                        Destiny des = realm.where(Destiny.class).equalTo(Destiny.FIELD_NAME, key).findFirst();
-                        try {
-                            if (NumberUtils.toInt(des.getdesJoinEffect().get(0).substring(0, 1)) <= map_destiny.get(key)) {
-                                lambdaResult.append(SEPARATOR).append(des.getDesName()).append(CRLF);
-                                for(String joinEffect : des.getdesJoinEffect()) {
-                                    String[] joinEffectSplit = joinEffect.split(":");
-                                    lambdaResult.append(NumberUtils.isDigits(joinEffectSplit[0]) ? EMPTY : joinEffectSplit[0] + " 시 ");
-                                    lambdaResult.append(joinEffectSplit[1]).append(BLANK).append(joinEffectSplit[2]).append(CRLF);
+                Set<String> set = map_destiny.keySet();
+            for (String key : set.toArray(new String[0])) {
+                //Log.d( TAG, key +": " + map_destiny.get(key));
+                if (!key.isEmpty()) {
+                    Destiny des = realm.where(Destiny.class).equalTo(Destiny.FIELD_NAME, key).findFirst();
+                    try {
+                        Integer mapDestinyValue = map_destiny.get(key);
+                        if (mapDestinyValue != null && des != null) {
+                            String desValueStr = des.getdesJoinEffect().get(0);
+                            if (desValueStr != null) {
+                                if (NumberUtils.toInt(desValueStr.substring(0, 1)) <= mapDestinyValue) {
+                                    lambdaResult.append(SEPARATOR).append(des.getDesName()).append(CRLF);
+                                    for (String joinEffect : des.getdesJoinEffect()) {
+                                        String[] joinEffectSplit = joinEffect.split(":");
+                                        lambdaResult.append(NumberUtils.isDigits(joinEffectSplit[0]) ? EMPTY : joinEffectSplit[0] + " 시 ");
+                                        lambdaResult.append(joinEffectSplit[1]).append(BLANK).append(joinEffectSplit[2]).append(CRLF);
+                                    }
                                 }
                             }
-                        } catch( NullPointerException ignored) { }
+                        }
+                    } catch (NullPointerException ignored) {
                     }
                 }
+            }
 
         } else if(insert_hero_num > 1) {
                     RealmResults<Heroes> whoHaveSecondName =
@@ -362,9 +350,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                 }
 
 
-
-                LinkedList<String> rQueue = new LinkedList<>();
-                rQueue.addAll(Arrays.asList(q.split(BLANK)));
+                LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(BLANK)));
 
                 if( rQueue.isEmpty() ) return null;
                 String qBranch = null;
@@ -428,8 +414,12 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                         if( specs.isEmpty()) return null;
                     }
                     validSpecs[colSize] = new String[specs.size()];
-                    for( int i = 0; i < specs.size(); i++)
-                        validSpecs[colSize][i] = specs.get(i).getSpecName();
+                    for( int i = 0; i < specs.size(); i++) {
+                        Spec curSpec = specs.get(i);
+                        if( curSpec != null ) {
+                            validSpecs[colSize][i] = curSpec.getSpecName();
+                        }
+                    }
                     rowSize *= specs.size();
                     colSize++;
                 }
@@ -505,14 +495,19 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                                         .append(BLANK).append(String.format("%-4s", hero.getHeroName()).replace(' ', '　'))
                                         .append(BLANK).append(hero.getHeroCost() + 10).append(CRLF);
                                 count_each ++;
-                            } else if ( hero.getHeroSpecs().get((level_pivot-30)/20).toString().equals(keyList.get(0)) ) {
+                            } else {
+                                RealmString tmpHeroSpec = hero.getHeroSpecs().get((level_pivot - 30) / 20);
+                                if (tmpHeroSpec != null) {
+                                    if (tmpHeroSpec.toString().equals(keyList.get(0))) {
 
-                                //Log.d(TAG,((level_pivot-30)/20)+"번째 특성: "+ hero.getHeroSpecs().get((level_pivot-30)/20) + " = " + keyList.get(0));
-                                heroListBuilder.append(String.format("%-4s", hero.getHeroBranch()).replace(' ', '　'))
-                                        .append(BLANK).append(String.format("%-4s", hero.getHeroName()).replace(' ', '　'))
-                                        .append(BLANK).append(String.format("%-4s", (hero.getHeroCost() + 10) + BLANK).replace(' ', '　'))
-                                        .append(searchOneSpec? hero.getHeroSpecValues().get((level_pivot-30)/20):EMPTY).append(CRLF);
-                                count_each ++;
+                                        //Log.d(TAG,((level_pivot-30)/20)+"번째 특성: "+ hero.getHeroSpecs().get((level_pivot-30)/20) + " = " + keyList.get(0));
+                                        heroListBuilder.append(String.format("%-4s", hero.getHeroBranch()).replace(' ', '　'))
+                                                .append(BLANK).append(String.format("%-4s", hero.getHeroName()).replace(' ', '　'))
+                                                .append(BLANK).append(String.format("%-4s", (hero.getHeroCost() + 10) + BLANK).replace(' ', '　'))
+                                                .append(searchOneSpec ? hero.getHeroSpecValues().get((level_pivot - 30) / 20) : EMPTY).append(CRLF);
+                                        count_each++;
+                                    }
+                            }
                             }
                         }
 
@@ -605,8 +600,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                 if(q.replace(BLANK,EMPTY).isEmpty())
                     return null;
 
-                LinkedList<String> rQueue = new LinkedList<>();
-                rQueue.addAll(Arrays.asList(q.split(" ")));
+                LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(" ")));
 
                 StringBuilder lambdaResult = new StringBuilder();
                 while(!rQueue.isEmpty()) {
@@ -616,16 +610,19 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                     if( itemResult.isEmpty() ) return null;
                     for( Item item : itemResult ) {
 
-                        String itemSpecOne;
-                        String itemSpecTwo;
+                        String itemSpecOne = null;
+                        String itemSpecTwo = null;
 
                         lambdaResult.append("[").append(item.getItemSubCate()).append("] ").append(item.getItemName()).append(" (")
                                 .append(item.getItemGrade()).append(")").append(CRLF).append(item.getitemDescription());
 
                         try {
-                            itemSpecOne = item.getItemSpecs().get(0).getStringValue();
+                            RealmString tmpItemSpec = item.getItemSpecs().get(0);
+                            if( tmpItemSpec != null ) {
+                                itemSpecOne = tmpItemSpec.getStringValue();
+                            }
 
-                            if( !itemSpecOne.isEmpty() ) {
+                            if( itemSpecOne != null ) {
                                 try {
                                     lambdaResult.append(CRLF).append(CRLF).append("*").append(itemSpecOne).append(": ")
                                             .append(realm.where(Spec.class).equalTo(Spec.FIELD_NAME, itemSpecOne).findFirst()
@@ -642,9 +639,12 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
 
 
                         try {
-                            itemSpecTwo = item.getItemSpecs().get(1).getStringValue();
+                            RealmString tmpItemSpecTwo = item.getItemSpecs().get(1);
+                            if( tmpItemSpecTwo != null ) {
+                                itemSpecTwo = tmpItemSpecTwo.getStringValue();
+                            }
 
-                            if( !itemSpecTwo.isEmpty() ) {
+                            if( itemSpecTwo != null ) {
 
                                 try {
                                     lambdaResult.append(CRLF).append(CRLF).append("*").append(itemSpecTwo).append(": ")
@@ -1426,7 +1426,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
 
             HandleLocalDB getAgenda = q-> {
                StringBuilder lambdaResult = new StringBuilder();
-               String division = null;
+               String division;
                if( q.contains("섬멸")) {
                    q = q.replace("섬멸전","");
                    q = q.replace("섬멸","");
@@ -1472,7 +1472,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                 lambdaResult.append( new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(date) ).
                         append(BLANK).append(division).append("일정").append(CRLF).append(SEPARATOR);
 
-                RealmResults<Agenda> agendaRealmResults = null;
+                RealmResults<Agenda> agendaRealmResults;
                 if(map.equals("")) {
                     agendaRealmResults = realm.where(Agenda.class).between(Agenda.FIELD_START, dateBeforeInt, dateAfterInt).and()
                             .equalTo(Agenda.FIELD_DIV, division).findAll();
@@ -1495,7 +1495,7 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
                             Date end_date = new Date();
                             end_date.setTime(start_date.getTime() + 6 * 24 * 60 * 60 * 1000);
 
-                            lambdaResult.append(df_md.format(start_date) + "~" + df_md.format(end_date) + BLANK + agenda.getAgendaMap())
+                            lambdaResult.append(df_md.format(start_date)).append("~").append(df_md.format(end_date)).append(BLANK).append(agenda.getAgendaMap())
                                     .append(((start_date.getTime() <= date.getTime())
                                             && (end_date.getTime() + 24 * 60 * 60 * 1000 > date.getTime())) ? " V" : "")
                                     .append(CRLF);
@@ -1593,115 +1593,81 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
 
 
 
+            String result = null;
 
+                    switch (certainCMD) {
+                        case COMMAND_TER:
+                        case COMMAND_MOV:
+                            result = terrainInfoByKey.handle(req);
+                            result = (result == null) ? "잘못된 입력이라옹" : result;
+                            break;
+                        case COMMAND_DESC:
+                            result = descByBranch.handle(req);
+                            result = (result == null) ? descBySpec.handle(req) : result;
+                            result = (result == null) ? descByItem.handle(req) : result;
+                            result = (result == null) ? "?ㅅ?" : result;
+                            break;
+                        case COMMAND_DEST:
+                            result = destinyByKey.handle(req);
+                            break;
+                        case COMMAND_ITEM:
+                            result = itemByKey.handle(req);
+                            result = (result == null) ? "그런 보물 없다냥..." : result;
+                            break;
+                        case COMMAND_AGENDA:
+                            result = getAgenda.handle(req);
+                            break;
+                        case COMMAND_RELATION:
+                            result = relationByKey.handle(req);
+                            break;
+                        case COMMAND_MAGIC_ITEM:
+                            result = magicItemByKey.handle(req);
+                            result = (result == null) ? magicCombByKey.handle(req) : result;
+                            result = (result == null) ? "보패정보 -> 보패조합 검색결과 : 없음" : result;
+                            break;
+                        case COMMAND_COMB:
+                            result = magicCombByKey.handle(req);
+                            break;
+                        case COMMAND_EXTERMINATE:
+                            result = null;
+                            break;
+                        case COMMAND_DOT:
+                            result = dotByPoints.handle(req);
+                            break;
+                        case COMMAND_MEMO:
+                            result = createOrGetMemo.handle(req);
+                            break;
+                        case COMMAND_DEL_MEMO:
+                            result = deleteMemo.handle(req);
+                            break;
+                        case COMMAND_CALC:
+                            try {
+                                org.mozilla.javascript.Context mozillaC = org.mozilla.javascript.Context.enter();
+                                mozillaC.setOptimizationLevel(-1);
+                                Scriptable scope = mozillaC.initSafeStandardObjects();
+                                result = mozillaC.evaluateString(scope, req, "<cmd>", 1, null).toString();
+                            } catch (Exception ignore) {
 
-                String result = null;
+                            }
+                            break;
 
-            switch (certainCMD) {
-                case COMMAND_TER:
-                case COMMAND_MOV:
-                    result = terrainInfoByKey.handle(req);
-                    result = (result==null)? "잘못된 입력이라옹" : result;
-                    break;
-                case COMMAND_DESC :
-                    result = descByBranch.handle(req);
-                    result = (result==null)? descBySpec.handle(req) : result;
-                    result = (result==null)? descByItem.handle(req) : result;
-                    result = (result==null)? "?ㅅ?" : result;
-                    break;
-                case COMMAND_DEST :
-                    result = destinyByKey.handle(req);
-                    break;
-                case COMMAND_ITEM:
-                    result = itemByKey.handle(req);
-                    result = (result==null)? "그런 보물 없다냥..." : result;
-                    break;
-                case COMMAND_AGENDA:
-                    result = getAgenda.handle(req);
-                    break;
-                case COMMAND_RELATION:
-                    result = relationByKey.handle(req);
-                    break;
-                case COMMAND_MAGIC_ITEM:
-                    result = magicItemByKey.handle(req);
-                    result = (result==null)? magicCombByKey.handle(req) : result;
-                    result = (result==null)? "보패정보 -> 보패조합 검색결과 : 없음" : result;
-                    break;
-                case COMMAND_COMB:
-                    result = magicCombByKey.handle(req);
-                    break;
-                case COMMAND_EXTERMINATE:
-                    result = null;
-                    break;
-                case COMMAND_DOT:
-                    result = dotByPoints.handle(req);
-                    break;
-                case COMMAND_MEMO:
-                    result = createOrGetMemo.handle(req);
-                    break;
-                case COMMAND_DEL_MEMO:
-                    result = deleteMemo.handle(req);
-                    break;
-                case COMMAND_CALC:
-                    try {
-                        org.mozilla.javascript.Context mozillaC = org.mozilla.javascript.Context.enter();
-                        mozillaC.setOptimizationLevel(-1);
-                        Scriptable scope = mozillaC.initSafeStandardObjects();
-                        result = mozillaC.evaluateString(scope, req, "<cmd>", 1, null).toString();
-                    } catch (Exception ignore) {
-
+                        case COMMAND_MAGIC:
+                            result = searchMagicByName.handle(req);
+                            result = (result == null) ? searchMagicByBranch.handle(req) : result;
+                            result = (result == null) ? searchMagicByType.handle(req) : result;
+                            result = (result == null) ? "책략 이름 또는 속성을 입력하라옹" : result;
+                            break;
+                        default:
+                            result = heroesByName.handle(req);
+                            result = (result == null) ? heroesBySpec.handle(req) : result;
+                            result = (result == null) ? itemByKey.handle(req) : result;
+                            result = (result == null) ? searchMagicByName.handle(req) : result;
+                            result = (result == null) ? descBySpec.handle(req) : result;
+                            result = (result == null) ? "장수->특성->보물->책략->설명 검색결과: 없음" : result;
                     }
-                    break;
-
-                case COMMAND_MAGIC:
-                    result = searchMagicByName.handle(req);
-                    result = (result==null)? searchMagicByBranch.handle(req) : result;
-                    result = (result==null)? searchMagicByType.handle(req) : result;
-                    result = (result==null)? "책략 이름 또는 속성을 입력하라옹" : result;
-                    break;
-                    default:
-                        result = heroesByName.handle(req);
-                        result = (result==null)? heroesBySpec.handle(req) : result;
-                        result = (result==null)? itemByKey.handle(req) : result;
-                        result = (result==null)? searchMagicByName.handle(req) : result;
-                        result = (result==null)? descBySpec.handle(req) : result;
-                        result = (result==null)? "장수->특성->보물->책략->설명 검색결과: 없음" : result;
-            }
 
 
-        if (isLocalRequest) {
-            result = result == null ? "검색결과가 없다옹" : result;
-
-            StringTokenizer st = new StringTokenizer(result,"," );
-
-            realm.beginTransaction();
-            while( st.hasMoreTokens()) {
-                String tmpRes = st.nextToken();
-
-                if( tmpRes.substring(0,2).equals("\r\n")) {
-                    tmpRes = tmpRes.substring(2);
-                }
-
-                try {
-                    if( tmpRes.substring(tmpRes.length()-2).equals("\r\n")) {
-                        tmpRes = tmpRes.substring(0,tmpRes.length()-2);
-                    }
-                    Conversation conversationRep = new Conversation( null, null,null,"com.fang.starfang",tmpRes);
-                    realm.copyToRealm(conversationRep);
-
-                } catch (NullPointerException | StringIndexOutOfBoundsException | ArrayIndexOutOfBoundsException ignored) {
-                }
-            }
-            realm.commitTransaction();
-
-        } else {
-
-            if (result != null) {
-                KakaoReplier replier = new KakaoReplier(context.get(), sendCat, sbn);
-                replier.execute(result, "[L]");
-            }
-
-        }
+       return result;
 
     }
 
@@ -1718,10 +1684,8 @@ public class LocalDataHandlerCat extends AsyncTask<String, Integer, String> {
         if( !branches.isEmpty() ) {
             Branch branch = branches.size() > 1 ? realm.where(Branch.class).equalTo(Branch.FIELD_NAME, proBranch)
                     .or().contains(Branch.FIELD_NAME2, proBranch).findFirst() : branches.first();
-            try {
+            if(branch != null ) {
                 branchName = branch.getBranchName();
-            } catch( NullPointerException ignore) {
-
             }
         }
         return branchName;

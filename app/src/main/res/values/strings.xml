@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Starfang</string>
 
-    <string name="tab_text_1">검색</string>
+    <string name="tab_text_1">시뮬레이션</string>
     <string name="tab_text_2">대화</string>
     <string name="tab_text_3">냥봇</string>
 
@@ -158,14 +158,22 @@
     <string name="filter_title">필터</string>
     <string name="filter_title_sendCat">작성자</string>
     <string name="filter_title_room">단톡방</string>
-    <string name="filter_title_time">시간</string>
-    <string name="filter_title_conversation">대화</string>
+    <string name="filter_title_time">기간</string>
+    <string name="filter_title_conversation">단어</string>
     <string name="filter_title_package">메신저</string>
-    <string name="filter_button_title_submit">SEARCH</string>
+    <string name="filter_button_title_submit">SUBMIT</string>
+    <string name="filter_button_title_search">SEARCH</string>
     <string name="desc_filter_sendCat">작성자 필터: 필터링할 작성자를 선택하세요.</string>
     <string name="summary_filter">필터 요약</string>
     <string name="desc_no_filter">필터 설정 안됨…</string>
     <string name="sendcat_count_holder">명 선택 됨 :</string>
     <string name="title_filter">FILTER</string>
+    <string name="room_count_holder">개 선택 됨</string>
+    <string name="desc_filter_room">단톡방 필터: 필터링할 단톡방을 선택하세요.</string>
+    <string name="desc_filter_conversation">단어 필터: 쉼표(,)를 이용하여 여러개 입력 가능합니다.</string>
+    <string name="desc_filter">버튼을 길게 누르면 필터 설정, 짧게 누르면 필터 ON/OFF</string>
+    <string name="conversation_holder">입력된 단어:</string>
+    <string name="hint_insert_name">이름 입력</string>
+    <string name="desc_insert_name">단톡방에서 다른봇과 구별되는 이름을 입력하세요. [봇이름]시작냥, [봇이름]정지냥 명령어로 제어가능.</string>
 
 </resources>

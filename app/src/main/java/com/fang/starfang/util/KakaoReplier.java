@@ -27,6 +27,9 @@ public class KakaoReplier extends AsyncTask<String, Integer, String> {
 
     @Override
     protected String doInBackground(String... answers) {
+        if(sbn == null) {
+            return null;
+        }
         Action a = NotificationUtils.getQuickReplyAction(sbn.getNotification(),sbn.getPackageName());
         Log.d(TAG, "REPLY TO " + sbn.getPackageName());
 

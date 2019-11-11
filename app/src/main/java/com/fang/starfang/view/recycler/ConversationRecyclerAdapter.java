@@ -11,10 +11,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fang.starfang.NotificationListener;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Conversation;
-
-import java.lang.ref.WeakReference;
+import com.fang.starfang.view.recycler.Filter.ConversationFilter;
 
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
@@ -24,7 +24,6 @@ public class ConversationRecyclerAdapter
         implements Filterable {
 
     private static final String TAG = "FANG_CONVERSATION";
-    private WeakReference<RecyclerView> recyclerViewWeakReference;
     private Realm realm;
 
     @NonNull
@@ -46,17 +45,11 @@ public class ConversationRecyclerAdapter
 
     }
 
-    public ConversationRecyclerAdapter(Realm realm, RecyclerView recyclerView) {
+    public ConversationRecyclerAdapter(Realm realm) {
         super(realm.where(Conversation.class).findAll(),true);
         Log.d(TAG,"ConversationRecyclerAdapter constructed");
-        realm.addChangeListener(o -> {
-            notifyDataSetChanged();
-            recyclerView.smoothScrollToPosition(getItemCount());
-        });
-        recyclerView.scrollToPosition(getItemCount());
 
         this.realm = realm;
-        this.recyclerViewWeakReference = new WeakReference<>(recyclerView);
     }
 
 
@@ -67,29 +60,65 @@ public class ConversationRecyclerAdapter
 
 
     private class ConversationViewHolder extends RecyclerView.ViewHolder {
-        private TextView sandCatTv;
+        private TextView sendCatTv;
         private TextView catRoomTv;
         private TextView timestampTv;
-        private TextView conversationTv;
+        private TextView conv_conversation;
+
 
         private ConversationViewHolder(View itemView) {
             super(itemView);
 
-            sandCatTv = itemView.findViewById(R.id.conv_sendCat);
+            sendCatTv = itemView.findViewById(R.id.conv_sendCat);
             catRoomTv = itemView.findViewById(R.id.conv_catRoom);
             timestampTv = itemView.findViewById(R.id.conv_timestamp);
-            conversationTv = itemView.findViewById(R.id.conv_conversation);
+            conv_conversation = itemView.findViewById(R.id.conv_conversation);
         }
 
 
 
         private void bind(final Conversation conversation ) {
+
+            if( conversation == null) {
+                return;
+            }
+
             String sendCatStr = conversation.getSendCat();
-            sandCatTv.setText( sendCatStr == null ? "" : sendCatStr );
+            if( sendCatStr == null ) {
+                sendCatTv.setVisibility(View.GONE);
+            } else {
+                sendCatTv.setVisibility(View.VISIBLE);
+                sendCatTv.setText(sendCatStr);
+            }
+
             String catRoomStr = conversation.getCatRoom();
-            catRoomTv.setText( catRoomStr == null ? "" : catRoomStr );
+            if( catRoomStr == null ) {
+                catRoomTv.setVisibility(View.GONE);
+            } else {
+                catRoomTv.setVisibility(View.VISIBLE);
+                catRoomTv.setText( catRoomStr );
+            }
+
             timestampTv.setText(conversation.getTimestamp());
-            conversationTv.setText(conversation.getConversation());
+            conv_conversation.setText(conversation.getConversation());
+
+            String packageStr = conversation.getPackageName();
+
+            if(packageStr != null) {
+                switch (packageStr) {
+                    case NotificationListener.PACKAGE_KAKAO:
+                        conv_conversation.setBackgroundResource(R.drawable.kakao_border);
+                        break;
+                    case NotificationListener.PACKAGE_DISCORD:
+                        conv_conversation.setBackgroundResource(R.drawable.discord_border);
+                        break;
+                    default:
+                        conv_conversation.setBackgroundResource(R.drawable.border);
+                }
+            }
+
+
+
         }
 
 

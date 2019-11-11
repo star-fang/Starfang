@@ -8,10 +8,7 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
 import com.fang.starfang.local.model.realm.Conversation;
-import com.fang.starfang.local.task.LocalDataHandlerCat;
-import com.fang.starfang.local.task.LocalDataHandlerDog;
-
-import java.util.Objects;
+import com.fang.starfang.local.task.PrefixHandler;
 
 import io.realm.Realm;
 
@@ -20,9 +17,11 @@ public class NotificationListener extends NotificationListenerService {
     private static final String TAG = "FANG_LISTENER";
     public static final String PACKAGE_KAKAO = "com.kakao.talk";
     public static final String PACKAGE_DISCORD = "com.discord";
+    public static final String PACKAGE_STARFANG = "com.fang.starfang";
     private static String COMMAND_CAT = "냥";
     private static String COMMAND_DOG = "멍";
     private static String status = "stop";
+    private static String name = "";
 
     public static String getCommandCat() {
         return COMMAND_CAT;
@@ -48,15 +47,25 @@ public class NotificationListener extends NotificationListenerService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        status = (String) Objects.requireNonNull(intent.getExtras()).get("status");
-        Log.d(TAG, "status changed:" + status);
-        if(status.equals("start")) {
-            super.onStartCommand(intent, flags, startId);
-        } else {
-            super.stopSelf();
+        Bundle bundle = intent.getExtras();
+        if( bundle != null ) {
+            String getStatus = (String)intent.getExtras().get("status");
+            if( getStatus != null ) {
+                status = getStatus;
+                Log.d(TAG, "status changed:" + status);
+                if(status.equals("start")) {
+                    super.onStartCommand(intent, flags, startId);
+                } else {
+                    super.stopSelf();
+                }
+            } else {
+                String getName = (String)intent.getExtras().get("name");
+                if( getName != null ) {
+                    name = getName;
+                    Log.d(TAG, "name changed:" + name);
+                }
+            }
         }
-
-
         return START_NOT_STICKY;
     }
 
@@ -103,16 +112,7 @@ public class NotificationListener extends NotificationListenerService {
         }
 
             //Log.d(TAG, sbn.getPackageName() + ">> from: " + from + ", text: " + text + ", room: " + room);
-            try {
-                if (text != null) {
-                    if (text.substring(text.length() - 1).equals(COMMAND_CAT) && text.length() > 2) {
-                        new LocalDataHandlerCat(this, from, room, sbn, false).execute(text);
-                    } else if (text.substring(text.length() - 1).equals(COMMAND_DOG) && text.length() > 2) {
-                        new LocalDataHandlerDog(this, from, sbn, false).execute(text);
-                    }
-                }
-            } catch (NullPointerException ignore) {
-            }
+        new PrefixHandler(this,from,room,sbn,false, name ).execute(text);
 
     }
 
@@ -139,8 +139,7 @@ public class NotificationListener extends NotificationListenerService {
         return status;
     }
 
-
-
-
-
+    public static String getName() {
+        return name;
+    }
 }

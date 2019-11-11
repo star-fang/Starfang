@@ -1,6 +1,5 @@
 package com.fang.starfang.ui.main;
 
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -13,7 +12,7 @@ public class PageViewModel extends ViewModel {
         String str;
         switch(input) {
             case 1:
-                str = "search";
+                str = "simulation";
                 break;
             case 2:
                 str = "conversation";

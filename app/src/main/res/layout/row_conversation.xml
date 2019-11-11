@@ -25,10 +25,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="80dp"
+        android:maxLines="1"
         android:textAlignment="gravity"
-        android:maxLines="1"/>
+        android:textSize="12sp" />
 
     <androidx.cardview.widget.CardView
+        android:layout_marginTop="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         card_view:cardBackgroundColor="@android:color/transparent"
@@ -40,15 +42,15 @@
 
         <TextView
             android:id="@+id/conv_conversation"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:background="@drawable/border"
-            android:backgroundTint="#F0010113"
+            android:gravity="center_vertical"
+            android:minWidth="100dp"
+            android:minHeight="60dp"
             android:singleLine="false"
-            android:textAlignment="gravity"
             android:textColor="@android:color/background_light"
-            tools:text="@tools:sample/lorem[10]" />
+            android:textIsSelectable="true"
+            tools:text="@tools:sample/lorem[0]" />
     </androidx.cardview.widget.CardView>
 
     <TextView

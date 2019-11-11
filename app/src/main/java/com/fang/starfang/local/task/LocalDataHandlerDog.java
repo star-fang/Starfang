@@ -1,16 +1,10 @@
 package com.fang.starfang.local.task;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.model.realm.UnionBranch;
 import com.fang.starfang.local.model.realm.UnionSkill;
-import com.fang.starfang.util.KakaoReplier;
 
-import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,11 +15,7 @@ import io.realm.RealmResults;
 
 
 
-public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
-    private WeakReference<Context> context;
-    private String sendCat;
-    private StatusBarNotification sbn;
-    private boolean isLocalRequest;
+class LocalDataHandlerDog {
 
     private static final String TAG = "LOCAL_HANDLER";
 
@@ -44,26 +34,7 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
     private static final String SEPARATOR = "-------------------------------\n";
     private final static String[] cmdMine = { "동광", "서광", "남광", "북광", "중광" };
 
-    public LocalDataHandlerDog(Context context, String sendCat, StatusBarNotification sbn, boolean isLocalRequest ) {
-        this.context = new WeakReference<>(context);
-        this.sendCat = sendCat;
-        this.sbn = sbn;
-        this.isLocalRequest = isLocalRequest;
-    }
-
-
-    @Override
-    protected String doInBackground(String... strings) {
-        try(Realm realm = Realm.getDefaultInstance()) {
-            handleRequest( strings[0], realm);
-        } catch ( RuntimeException ignore ) {
-
-        }
-        return null;
-    }
-
-
-    private void handleRequest(String req, Realm realm ) {
+    String handleRequest(String req, Realm realm ) {
 
 
             req = req.substring(0, req.length() - 1).trim();
@@ -256,23 +227,7 @@ public class LocalDataHandlerDog extends AsyncTask<String, Integer, String> {
 
             }
 
-        if (isLocalRequest) {
-            result = result == null ? "검색결과가 없다옹" : result;
-            final String substring = result.substring(result.length() - 3);
-            result = substring.equals(",\r\n") || substring.equals("\r\n,") ? result.substring(0,result.length()-4) : result;
-            result = result.replace(",",CRLF);
-
-
-            realm.beginTransaction();
-            Conversation conversationRep = new Conversation(null, null, null, "com.fang.starfang", result);
-            realm.copyToRealm(conversationRep);
-            realm.commitTransaction();
-        } else {
-            if(result != null) {
-                KakaoReplier replier = new KakaoReplier(context.get(),sendCat,sbn);
-                replier.execute(result,"[L]");
-            }
-            }
+        return result;
     }
 
     private interface HandleLocalDB {
