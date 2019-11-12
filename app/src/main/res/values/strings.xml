@@ -174,6 +174,6 @@
     <string name="desc_filter">버튼을 길게 누르면 필터 설정, 짧게 누르면 필터 ON/OFF</string>
     <string name="conversation_holder">입력된 단어:</string>
     <string name="hint_insert_name">이름 입력</string>
-    <string name="desc_insert_name">단톡방에서 다른봇과 구별되는 이름을 입력하세요. [봇이름]시작냥, [봇이름]정지냥 명령어로 제어가능.</string>
+    <string name="desc_insert_name">단톡방에서 다른봇과 구별되는 이름을 입력하세요.(2~4글자)\n\n [봇이름]시작냥, [봇이름]정지냥 명령어로 제어가능.</string>
 
 </resources>

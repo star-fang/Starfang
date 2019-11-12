@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.Destiny;
-import com.fang.starfang.local.model.realm.Spec;
-import com.fang.starfang.local.model.realm.Heroes;
+import com.fang.starfang.local.model.realm.source.Destiny;
+import com.fang.starfang.local.model.realm.source.Spec;
+import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.view.recycler.HeroesRecyclerAdapter;
 
 import io.realm.Realm;
@@ -23,7 +23,7 @@ public class ShowRealmActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_realm_recycler_view);
+        setContentView(R.layout.activity_show_heroes);
 
 
        try {

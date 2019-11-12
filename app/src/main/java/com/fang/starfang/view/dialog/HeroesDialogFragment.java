@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.Heroes;
+import com.fang.starfang.local.model.realm.source.Heroes;
 
 public class HeroesDialogFragment extends DialogFragment {
 

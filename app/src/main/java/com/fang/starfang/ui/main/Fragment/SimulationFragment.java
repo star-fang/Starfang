@@ -10,24 +10,16 @@ import androidx.annotation.NonNull;
 
 import com.fang.starfang.R;
 
-import java.lang.ref.WeakReference;
-
 public class SimulationFragment extends PlaceholderFragment {
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "FANG_SIMULATION_FRAG";
-    private static WeakReference<SimulationFragment> simulationFragmentWeakReference = null;
-    private View child_simulation;
 
-    static SimulationFragment getInstance() {
-        if( simulationFragmentWeakReference == null ) {
+    static SimulationFragment newInstance(int index) {
             SimulationFragment simulationFragment = new SimulationFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt(ARG_SECTION_NUMBER, 1);
+            bundle.putInt(ARG_SECTION_NUMBER, index);
             simulationFragment.setArguments(bundle);
-            simulationFragmentWeakReference = new WeakReference<>(simulationFragment);
-        }
-        return simulationFragmentWeakReference.get();
+        return simulationFragment;
     }
 
     @Override

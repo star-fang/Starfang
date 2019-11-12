@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/conversation_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/row_filter"
+        android:layout_above="@id/conversationEtLayout"
+        style="@style/scrollbar_style"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/row_conversation" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/row_filter"
+        android:background="#66000000"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rect_button"
+            android:fontFamily="@font/krona_one"
+            android:text="@string/title_filter"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:layout_weight="1"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_show_filters"
+            android:layout_width="60dp"
+            android:layout_height="0dp"
+            android:layout_weight="0"
+            android:background="@drawable/ic_keyboard_arrow_down_pink_24dp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/row_filter"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+
+    <RelativeLayout
+        android:id="@+id/inner_column_filter"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/design_default_color_primary_dark"
+        android:orientation="horizontal">
+
+
+        <HorizontalScrollView
+            android:layout_alignParentTop="true"
+            android:id="@+id/scroll_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#30000000"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_filter_sendCat"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/round_button"
+                    android:text="@string/filter_title_sendCat" />
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/button_filter_room"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/round_button"
+                        android:text="@string/filter_title_room"/>
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/button_filter_time"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/round_button"
+                        android:text="@string/filter_title_time"/>
+
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/button_filter_conversation"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/round_button"
+                        android:text="@string/filter_title_conversation"/>
+
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/button_filter_package"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/round_button"
+                        android:text="@string/filter_title_package" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <TextView
+            android:layout_marginStart="10dp"
+
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center_vertical"
+            android:text="@string/desc_filter"
+            android:layout_alignParentBottom="true"/>
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="#66000000"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_hide_filters"
+                android:layout_width="60dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_keyboard_arrow_up_pink_24dp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/inner_column_filter_sendCat"
+            android:animateLayoutChanges="true"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0"
+            android:background="#000000">
+
+            <LinearLayout
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="75dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                >
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_filter_sendCat_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@android:color/background_light"
+                    android:textColor="#FFF"
+                    android:textSize="18sp"
+                    android:gravity="center"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@android:color/background_light"
+                    android:maxLines="1"
+                    android:textColor="#FFF"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:text="@string/sendcat_count_holder"/>
+
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_filter_sendCat_count_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:maxLines="1"
+                        android:background = "#F0FFFFFF"
+                        android:textColor="#000"
+                        android:textSize="14sp"
+                        android:gravity="center"/>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_filter_sendCat_commit"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="5dp"
+                android:textSize="12sp"
+                android:background="@drawable/rect_button"
+                android:fontFamily="@font/krona_one"
+                android:text="@string/filter_button_title_submit"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/design_default_color_primary"
+                android:backgroundTint="@color/design_default_color_primary_dark"
+                android:gravity="center"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_alignParentBottom="true"
+                android:text="@string/desc_filter_sendCat"
+                android:textColor="@android:color/background_light"
+                android:maxLines="1"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/inner_column_filter_room"
+            android:animateLayoutChanges="true"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0"
+            android:background="#000000">
+
+            <LinearLayout
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="75dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                >
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_filter_room_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@android:color/background_light"
+                    android:textColor="#FFF"
+                    android:textSize="18sp"
+                    android:gravity="center"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@android:color/background_light"
+                    android:maxLines="1"
+                    android:textColor="#FFF"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:text="@string/room_count_holder"/>
+
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_filter_room_count_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:maxLines="1"
+                        android:background = "#F0FFFFFF"
+                        android:textColor="#000"
+                        android:textSize="14sp"
+                        android:gravity="center"/>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_filter_room_commit"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/rect_button"
+                android:fontFamily="@font/krona_one"
+                android:text="@string/filter_button_title_submit"
+                android:textSize="12sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/design_default_color_primary"
+                android:backgroundTint="@color/design_default_color_primary_dark"
+                android:gravity="center"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_alignParentBottom="true"
+                android:text="@string/desc_filter_room"
+                android:textColor="@android:color/background_light"
+                android:maxLines="1"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/inner_column_filter_conversation"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0">
+
+            <LinearLayout
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="75dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                >
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@android:color/background_light"
+                    android:maxLines="1"
+                    android:textColor="#FFF"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:text="@string/conversation_holder"/>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_input_filter_conversation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:minWidth="200dp"
+                        android:maxLines="1"
+                        android:background = "#F0FFFFFF"
+                        android:textColor="#000"
+                        android:textSize="14sp"
+                        android:gravity="center"/>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_filter_conversation_commit"
+                android:layout_width="60dp"
+                android:layout_height="45dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="5dp"
+                android:textSize="12sp"
+                android:background="@drawable/rect_button"
+                android:fontFamily="@font/krona_one"
+                android:text="@string/filter_button_title_submit"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/design_default_color_primary"
+                android:backgroundTint="@color/design_default_color_primary_dark"
+                android:gravity="center"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_alignParentBottom="true"
+                android:text="@string/desc_filter_conversation"
+                android:textColor="@android:color/background_light"
+                android:maxLines="1"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/inner_column_filter_package"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0"
+            android:animateLayoutChanges="true">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_input_filter_package"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="50dp"
+                android:background="@drawable/border"
+                android:backgroundTint="@android:color/background_light"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_setting_filter_package"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp" />
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/filter_summary_layout"
+        android:layout_marginBottom="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="100dp"
+        android:layout_below="@id/row_filter"
+        android:layout_alignParentEnd="true"
+        android:background="#66000000"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_summary_filter"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="22dp"
+            android:text="@string/summary_filter"
+            android:background="@color/colorPrimaryDark"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_summary_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:scrollbarAlwaysDrawHorizontalTrack="true"
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="5dp"
+            android:background="#A0FFFFFF"
+
+            >
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_filter_summary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollHorizontally="true"
+                android:text="@string/desc_no_filter"
+                android:textColor="@color/colorPrimaryDark"
+                android:textIsSelectable="true"
+                tools:text="@tools:sample/date/hhmm" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/conversationEtLayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimaryDark">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_conversation"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:background="#30000000"
+            android:text="@string/tab_text_3"/>
+
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/text_conversation"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginEnd="90dp"
+            android:layout_toEndOf="@id/title_conversation"
+            android:focusedByDefault="false"
+            android:background = "#F0FFFFFF"
+            android:textColor="#000"
+            android:hint="@string/et_conversation_hint"
+            tools:targetApi="o" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_clear_conversation"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="14dp"
+            android:layout_toStartOf="@id/button_conversation"
+            android:background="@android:drawable/ic_menu_close_clear_cancel"
+            android:padding="5dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_conversation"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/rect_button"
+            android:fontFamily="@font/krona_one"
+            android:text="@string/filter_button_title_search"
+            android:textSize="13sp" />
+
+    </RelativeLayout>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_scroll_bottom"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@id/conversationEtLayout"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/ic_arrow_downward_black_24dp"
+        android:backgroundTint="@color/design_default_color_primary"
+        android:visibility="gone"/>
+
+
+</RelativeLayout>

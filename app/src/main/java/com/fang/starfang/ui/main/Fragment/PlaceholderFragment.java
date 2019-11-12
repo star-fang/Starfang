@@ -16,8 +16,8 @@ import com.fang.starfang.ui.main.PageViewModel;
  */
 public class PlaceholderFragment extends Fragment {
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "FANG_HOLDER_FRAG";
+    static final String ARG_SECTION_NUMBER = "section_number";
     Activity mActivity;
 
 
@@ -25,13 +25,13 @@ public class PlaceholderFragment extends Fragment {
         PlaceholderFragment fragment;
         switch( index ) {
             case 1:
-                fragment = SimulationFragment.getInstance();
+                fragment = SimulationFragment.newInstance(index);
                 break;
             case 2 :
-                fragment = ConversationFragment.getInstance();
+                fragment = ConversationFragment.newInstance(index);
             break;
             case 3:
-                fragment = SettingFragment.getInstance();
+                fragment = SettingFragment.newInstance(index);
                 break;
             default:
                 fragment = null;

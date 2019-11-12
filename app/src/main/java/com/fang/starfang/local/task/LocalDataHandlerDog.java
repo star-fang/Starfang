@@ -2,8 +2,8 @@ package com.fang.starfang.local.task;
 
 import android.util.Log;
 
-import com.fang.starfang.local.model.realm.UnionBranch;
-import com.fang.starfang.local.model.realm.UnionSkill;
+import com.fang.starfang.local.model.realm.union.UnionBranch;
+import com.fang.starfang.local.model.realm.union.UnionSkill;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

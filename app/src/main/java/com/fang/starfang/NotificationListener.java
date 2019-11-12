@@ -7,7 +7,7 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import com.fang.starfang.local.model.realm.Conversation;
+import com.fang.starfang.local.model.realm.source.Conversation;
 import com.fang.starfang.local.task.PrefixHandler;
 
 import io.realm.Realm;

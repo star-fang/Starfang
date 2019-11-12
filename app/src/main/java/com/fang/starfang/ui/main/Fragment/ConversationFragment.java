@@ -21,13 +21,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.NotificationListener;
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.Conversation;
+import com.fang.starfang.local.model.realm.source.Conversation;
 import com.fang.starfang.local.task.PrefixHandler;
 import com.fang.starfang.view.recycler.ConversationRecyclerAdapter;
 import com.fang.starfang.view.recycler.Filter.ConversationFilter;
@@ -36,7 +35,6 @@ import com.fang.starfang.view.recycler.RoomFilterRecyclerAdapter;
 import com.fang.starfang.view.recycler.SendCatFilterRecyclerAdapter;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,20 +47,15 @@ import io.realm.RealmResults;
 
 public class ConversationFragment extends PlaceholderFragment {
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "FANG_CONV_FRAG";
-    private static WeakReference<ConversationFragment> conversationFragmentWeakReference = null;
-    private View child_conversation;
+    private static final String SUMMARY_TIME_FORMAT = "yyyy년 MM월 dd일";
 
-    static ConversationFragment getInstance() {
-        if( conversationFragmentWeakReference == null ) {
+    static ConversationFragment newInstance(int index) {
             ConversationFragment conversationFragment = new ConversationFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt(ARG_SECTION_NUMBER, 2);
+            bundle.putInt(ARG_SECTION_NUMBER, index);
             conversationFragment.setArguments(bundle);
-            conversationFragmentWeakReference = new WeakReference<>(conversationFragment);
-        }
-        return conversationFragmentWeakReference.get();
+        return conversationFragment;
     }
 
     @Override
@@ -71,9 +64,17 @@ public class ConversationFragment extends PlaceholderFragment {
 
         Log.d(TAG,"_ON CREATE");
 
+    }
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        Log.d(TAG,"_ON CREATE VIEW");
+
         /*대화 파트*/
         Realm realm = Realm.getDefaultInstance();
-        child_conversation = View.inflate(mActivity, R.layout.view_conversation, null );
+        View child_conversation = inflater.inflate(R.layout.fragment_conversation,container,false);
         final RecyclerView recyclerView = child_conversation.findViewById(R.id.conversation_recycler_view);
         final ConversationRecyclerAdapter conversationRecyclerAdapter = new ConversationRecyclerAdapter( realm );
         final View filter_summary_layout = child_conversation.findViewById(R.id.filter_summary_layout);
@@ -84,11 +85,21 @@ public class ConversationFragment extends PlaceholderFragment {
         final ConversationFilter conversationFilter = ((ConversationFilter)conversationRecyclerAdapter.getFilter());
         final ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
         conversationFilter.filter("on");
+
         realm.removeAllChangeListeners();
         realm.addChangeListener(o -> {
             conversationRecyclerAdapter.notifyDataSetChanged();
-            recyclerView.scrollToPosition(conversationRecyclerAdapter.getItemCount()-1);
             Log.d(TAG,"realm changed!");
+            int itemPosition = layoutManager.findLastVisibleItemPosition();
+            int itemLastPosition = (conversationRecyclerAdapter.getItemCount() - 1);
+            if( itemLastPosition < 0 ) {
+                return;
+            }
+
+            if( itemPosition > itemLastPosition - 4 ) {
+                recyclerView.scrollToPosition(conversationRecyclerAdapter.getItemCount()-1);
+            }
+
         });
 
         final AppCompatTextView title_conversation = child_conversation.findViewById(R.id.title_conversation);
@@ -101,6 +112,7 @@ public class ConversationFragment extends PlaceholderFragment {
         final View scroll_summary_filter = child_conversation.findViewById(R.id.scroll_summary_filter);
         final AppCompatButton button_hide_filters = child_conversation.findViewById(R.id.button_hide_filters);
         final AppCompatButton button_show_filters = child_conversation.findViewById(R.id.button_show_filters);
+        final AppCompatButton button_scroll_bottom = child_conversation.findViewById(R.id.button_scroll_bottom);
         final View row_filter = child_conversation.findViewById(R.id.row_filter);
         buildConstraintDoc( realm, text_filter_summary);
 
@@ -110,6 +122,44 @@ public class ConversationFragment extends PlaceholderFragment {
             } else {
                 changeLayoutSize(scroll_summary_filter,dip2pix(mActivity,120), 0);
             }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                                             @Override
+                                             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                                                 super.onScrollStateChanged(recyclerView, newState);
+                                                 RecyclerView.Adapter adapter = recyclerView.getAdapter();
+                                                 if(adapter == null) {
+                                                     return;
+                                                 }
+                                                 int itemLastPosition = (adapter.getItemCount() - 1);
+                                                 if(itemLastPosition < 0 ) {
+                                                     return;
+                                                 }
+                                                 if(newState == RecyclerView.SCROLL_STATE_IDLE ) {
+                                                     int itemPosition = layoutManager.findLastVisibleItemPosition();
+                                                     if( itemPosition == itemLastPosition ) {
+                                                         button_scroll_bottom.setVisibility( View.GONE );
+                                                     } else if( itemLastPosition > 3 ) {
+                                                         if( itemPosition <  itemLastPosition - 3 ) {
+                                                             button_scroll_bottom.setVisibility( View.VISIBLE );
+                                                         }
+                                                     }
+                                                 }
+                                             }
+                                         }
+
+        );
+        button_scroll_bottom.setOnClickListener( v -> {
+            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+            if(adapter == null ) {
+                return;
+            }
+
+            int itemCount = adapter.getItemCount();
+            Log.d(TAG,"count: " + itemCount);
+            recyclerView.scrollToPosition(itemCount - 1);
+            button_scroll_bottom.setVisibility( View.GONE );
         });
 
         final View.OnClickListener searchButton_default_listener = v -> {
@@ -458,21 +508,7 @@ public class ConversationFragment extends PlaceholderFragment {
         });
 
         /*대화 파트 끝*/
-    }
-
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        Log.d(TAG,"_ON CREATE VIEW");
-
-        View root = inflater.inflate(R.layout.fragment_main, container, false);
-
-        final ConstraintLayout constraintLayout = root.findViewById(R.id.constraintLayout);
-        constraintLayout.removeAllViews();
-        constraintLayout.addView(child_conversation);
-
-        return root;
+        return child_conversation;
 
     }
 
@@ -544,7 +580,7 @@ public class ConversationFragment extends PlaceholderFragment {
 
     private void buildConstraintDoc(Realm realm, AppCompatTextView summaryView) {
         ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(SUMMARY_TIME_FORMAT, Locale.KOREA);
         String[] cs_cats = filterObject.getSendCats();
         String[] cs_rooms = filterObject.getRooms();
         long time_after = filterObject.getTime_after();

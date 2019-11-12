@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.NotificationListener;
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.Conversation;
+import com.fang.starfang.local.model.realm.source.Conversation;
 import com.fang.starfang.view.recycler.Filter.ConversationFilter;
 
 import io.realm.Realm;

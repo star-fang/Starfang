@@ -14,31 +14,22 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.fang.starfang.NotificationListener;
 import com.fang.starfang.R;
 import com.fang.starfang.local.task.RealmSyncTask;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.lang.ref.WeakReference;
-
 public class SettingFragment extends PlaceholderFragment {
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "FANG_SETTING_FRAG";
-    private static WeakReference<SettingFragment> settingFragmentWeakReference = null;
-    private View child_setting;
 
-    static SettingFragment getInstance() {
-        if( settingFragmentWeakReference == null ) {
+    static SettingFragment newInstance(int index) {
             SettingFragment settingFragment = new SettingFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt(ARG_SECTION_NUMBER, 3);
+            bundle.putInt(ARG_SECTION_NUMBER, index);
             settingFragment.setArguments(bundle);
-            settingFragmentWeakReference = new WeakReference<>(settingFragment);
-        }
-        return settingFragmentWeakReference.get();
+        return settingFragment;
     }
 
     @Override
@@ -46,8 +37,18 @@ public class SettingFragment extends PlaceholderFragment {
         super.onCreate(savedInstanceState);
 
         Log.d(TAG,"_ON CREATE");
+
+    }
+
+
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        Log.d(TAG,"_ON CREATE VIEW");
+
         /*냥봇 설정 파트*/
-        child_setting = View.inflate(mActivity, R.layout.view_setting, null );
+        final View child_setting = inflater.inflate(R.layout.fragment_setting,container,false);
         final Switch switch_bot = child_setting.findViewById(R.id.notifications_start);
         final EditText text_address = child_setting.findViewById(R.id.text_address);
         final Button button_sync_all = child_setting.findViewById(R.id.start_sync_key_all);
@@ -97,22 +98,8 @@ public class SettingFragment extends PlaceholderFragment {
             }
         });
 
-    }
 
-
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        Log.d(TAG,"_ON CREATE VIEW");
-
-        View root = inflater.inflate(R.layout.fragment_main, container, false);
-
-        final ConstraintLayout constraintLayout = root.findViewById(R.id.constraintLayout);
-        constraintLayout.removeAllViews();
-        constraintLayout.addView(child_setting);
-
-        return root;
+        return child_setting;
 
     }
 
