@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.NotificationListener;
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.source.Conversation;
+import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.view.recycler.Filter.ConversationFilter;
 
 import io.realm.Realm;
@@ -31,14 +31,14 @@ public class ConversationRecyclerAdapter
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         //Log.d(TAG,"onCreateViewHolder");
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_conversation,viewGroup,false);
-        return new ConversationRecyclerAdapter.ConversationViewHolder(view);
+        return new ConversationViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
-        ConversationRecyclerAdapter.ConversationViewHolder conversationViewHolder =
-                (ConversationRecyclerAdapter.ConversationViewHolder) viewHolder;
+        ConversationViewHolder conversationViewHolder =
+                (ConversationViewHolder) viewHolder;
 
         Conversation conversation = getItem(i);
         conversationViewHolder.bind(conversation);

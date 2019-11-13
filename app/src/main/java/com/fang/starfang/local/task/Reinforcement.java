@@ -14,9 +14,10 @@ public class Reinforcement {
         public static Reinforcement getInstance() {
             return (instance == null)? (instance = new Reinforcement()) : instance;
         }
-        public String reinforce(Item item, int statIndex, String reinValStr) {
+        int reinforce(Item item, int statIndex, String reinValStr) {
             String gradeStr = item.getItemGrade();
             int reinVal = NumberUtils.toInt(reinValStr,0);
+            reinVal = reinVal < 0 ? 0 : reinVal > 12 ? 12 : reinVal;
             int grade = NumberUtils.toInt(gradeStr,7);
             if(  gradeStr.equals("연의") )
                 grade = 0;
@@ -44,8 +45,7 @@ public class Reinforcement {
             plusStat = plusMandA ? ReinforcementValueSevenMandA[reinVal] : plusStat;
             plusStat = plusAssistVal ? ReinforcementValueSevenAssist[reinVal] : plusStat;
 
-            int basicStat = NumberUtils.toInt(item.getItemStats().get(statIndex).toString(), 0);
-            return (basicStat + plusStat) + " (+" + plusStat + ")";
+            return plusStat;
         }
 
     }

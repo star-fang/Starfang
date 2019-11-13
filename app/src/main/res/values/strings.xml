@@ -152,7 +152,8 @@
     <string name="progress_condition">상태</string>
     <string name="progress_db">DB</string>
     <string name="progress_message">메세지</string>
-    <string name="host_address_1">http://clavis.ivyro.net</string>
+    <string name="host_address_1">http://192.168.25.4</string>
+    <string name="host_address_2">http://clavis.ivyro.net</string>
     <string name="pref_title_sync_kor">동기화</string>
     <string name="pref_title_sync_host">SYNC HOST</string>
     <string name="filter_title">필터</string>
@@ -175,5 +176,6 @@
     <string name="conversation_holder">입력된 단어:</string>
     <string name="hint_insert_name">이름 입력</string>
     <string name="desc_insert_name">단톡방에서 다른봇과 구별되는 이름을 입력하세요.(2~4글자)\n\n [봇이름]시작냥, [봇이름]정지냥 명령어로 제어가능.</string>
+    <string name="desc_weapon_image">무기 이미지</string>
 
 </resources>

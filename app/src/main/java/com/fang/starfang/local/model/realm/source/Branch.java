@@ -1,5 +1,8 @@
 package com.fang.starfang.local.model.realm.source;
 
+import com.fang.starfang.local.model.realm.primitive.RealmInteger;
+import com.fang.starfang.local.model.realm.primitive.RealmString;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
@@ -19,25 +22,25 @@ public class Branch extends RealmObject {
 
 
     private String branchName;
-    private RealmList<String> branchStatGGs; // growth grades 공정방순사
+    private RealmList<RealmString> branchStatGGs; // growth grades 공정방순사
     private int branchHP;
     private int branchMP;
     private int branchEP;
-    private RealmList<String> branchPasvSpecs; // passive specs
-    private RealmList<String> branchPasvSpecValues; // passive spec values
+    private RealmList<RealmString> branchPasvSpecs; // passive specs
+    private RealmList<RealmString> branchPasvSpecValues; // passive spec values
     private int branchMoving;
     private String branchWeaponSubCate;
     private String branchArmorSubCate;
-    private RealmList<String> branchSpecs; // 10, 15, 20 ,25
-    private RealmList<String> branchSpecValues; // 10, 15, 20 ,25
-    private RealmList<String> branchHiddenStats; // 공정방순사
+    private RealmList<RealmString> branchSpecs; // 10, 15, 20 ,25
+    private RealmList<RealmString> branchSpecValues; // 10, 15, 20 ,25
+    private RealmList<Double> branchHiddenStats; // 공정방순사
     private String branchName2;
     private String branchMagic;
 
 
 
     public String getBranchName() {return branchName;}
-    public RealmList<String> getBranchStatGGs() {return branchStatGGs;}
+    public RealmList<RealmString> getBranchStatGGs() {return branchStatGGs;}
     public int getBranchHP() {return branchHP;}
     public int getBranchMP() {return branchMP;}
     public int getBranchEP() {return branchEP;}
@@ -50,10 +53,10 @@ public class Branch extends RealmObject {
         str += INIT_MOVING + branchMoving + "\r\n";
         return str;
     }
-    public RealmList<String> getBranchPasvSpecs() {return branchPasvSpecs;}
-    public RealmList<String> getBranchPasvSpecValues() {return branchPasvSpecValues;}
-    public RealmList<String> getBranchSpecs() {return branchSpecs;}
-    public RealmList<String> getBranchSpecValues() {return branchSpecValues;}
+    public RealmList<RealmString> getBranchPasvSpecs() {return branchPasvSpecs;}
+    public RealmList<RealmString> getBranchPasvSpecValues() {return branchPasvSpecValues;}
+    public RealmList<RealmString> getBranchSpecs() {return branchSpecs;}
+    public RealmList<RealmString> getBranchSpecValues() {return branchSpecValues;}
     public String getBranchName2() {return branchName2;}
     public String getBranchMagic() {return branchMagic;}
 

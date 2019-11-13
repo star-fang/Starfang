@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="60dp"
+    android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_hero_branch"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="1dp"
+                    tools:text="경기병"
+                    android:gravity="center"
+                    android:background="#000"/>
+
+                <TextView
+                    android:id="@+id/text_hero_name"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="1dp"
+                    tools:text="하후돈"
+                    android:gravity="center"
+                    android:background="#000"/>
+
+
+</LinearLayout>

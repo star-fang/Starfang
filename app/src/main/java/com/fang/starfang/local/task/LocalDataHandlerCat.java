@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.source.Agenda;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Destiny;
@@ -71,7 +72,7 @@ class LocalDataHandlerCat {
     private static final String EMPTY = "";
     private static final String DASH = "-";
     private static final String COMMA = ",";
-    private static final String SEPARATOR = "-------------------------------\n";
+    private static final String SEPARATOR = "----------------------------\n";
     private static final String RANGE_EMPTY = "□";
     private static final String RANGE_FULL = "■";
 
@@ -619,7 +620,7 @@ class LocalDataHandlerCat {
                         try {
                             RealmString tmpItemSpec = item.getItemSpecs().get(0);
                             if( tmpItemSpec != null ) {
-                                itemSpecOne = tmpItemSpec.getStringValue();
+                                itemSpecOne = tmpItemSpec.toString();
                             }
 
                             if( itemSpecOne != null ) {
@@ -627,7 +628,7 @@ class LocalDataHandlerCat {
                                     lambdaResult.append(CRLF).append(CRLF).append("*").append(itemSpecOne).append(": ")
                                             .append(realm.where(Spec.class).equalTo(Spec.FIELD_NAME, itemSpecOne).findFirst()
                                                     .getSpecDescription().replace("n(%)","n%")
-                                                    .replace("n%", item.getItemSpecValues().get(0).getStringValue()));
+                                                    .replace("n%", item.getItemSpecValues().get(0).toString()));
                                 } catch (NullPointerException e) {
                                     lambdaResult.append("*").append(itemSpecOne);
                                 }
@@ -641,7 +642,7 @@ class LocalDataHandlerCat {
                         try {
                             RealmString tmpItemSpecTwo = item.getItemSpecs().get(1);
                             if( tmpItemSpecTwo != null ) {
-                                itemSpecTwo = tmpItemSpecTwo.getStringValue();
+                                itemSpecTwo = tmpItemSpecTwo.toString();
                             }
 
                             if( itemSpecTwo != null ) {
@@ -650,7 +651,7 @@ class LocalDataHandlerCat {
                                     lambdaResult.append(CRLF).append(CRLF).append("*").append(itemSpecTwo).append(": ")
                                             .append(realm.where(Spec.class).equalTo(Spec.FIELD_NAME, itemSpecTwo).findFirst()
                                                     .getSpecDescription().replace("n(%)","n%")
-                                                    .replace("n%", item.getItemSpecValues().get(1).getStringValue()));
+                                                    .replace("n%", item.getItemSpecValues().get(1).toString()));
                                 } catch (NullPointerException e) {
                                     lambdaResult.append("*").append(itemSpecTwo);
                                 }
@@ -676,8 +677,7 @@ class LocalDataHandlerCat {
                 if(q.replace(BLANK,EMPTY).isEmpty())
                     return null;
 
-                LinkedList<String> rQueue = new LinkedList<>();
-                rQueue.addAll(Arrays.asList(q.split(" ")));
+                LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(" ")));
 
                 StringBuilder lambdaResult = new StringBuilder();
                 while(!rQueue.isEmpty()) {
@@ -697,20 +697,24 @@ class LocalDataHandlerCat {
 
                         lambdaResult.append("*부대 효과").append(CRLF);
                         for (int i = 0; i < Branch.INIT_PASVS.length; i++) {
-                            String val = branch.getBranchPasvSpecValues().get(i);
-                            lambdaResult.append(Branch.INIT_PASVS[i]).append(": ")
-                                    .append(branch.getBranchPasvSpecs()
-                                            .get(i)).append(BLANK)
-                                    .append(val == null ? EMPTY : val).append(CRLF);
+                            lambdaResult.append(Branch.INIT_PASVS[i]).append(": ").append(branch.getBranchPasvSpecs().get(i));
+                            RealmString BranchPasvSpecValueRealmString = branch.getBranchPasvSpecValues().get(i);
+                            if( BranchPasvSpecValueRealmString != null ) {
+                                String val = BranchPasvSpecValueRealmString.toString();
+                                lambdaResult.append(BLANK).append(val);
+                            }
+                            lambdaResult.append(CRLF);
                         }
 
                         lambdaResult.append("*장수 효과").append(CRLF);
                         for (Branch.INIT_SPECS spec : Branch.INIT_SPECS.values()) {
-                            String val = branch.getBranchSpecValues().get(spec.ordinal());
-                            lambdaResult.append(spec.name()).append(": ")
-                                    .append(branch.getBranchSpecs()
-                                            .get(spec.ordinal())).append(BLANK)
-                                    .append(val == null ? EMPTY : val).append(CRLF);
+                            lambdaResult.append(spec.name()).append(": ").append(branch.getBranchSpecs().get(spec.ordinal()));
+                            RealmString BranchSpecValuesRealmString = branch.getBranchSpecValues().get(spec.ordinal());
+                            if( BranchSpecValuesRealmString != null) {
+                                String val = BranchSpecValuesRealmString.toString();
+                                lambdaResult.append(BLANK).append(val);
+                            }
+                            lambdaResult.append(CRLF);
                         }
                         lambdaResult.append(COMMA).append(CRLF);
                     }
@@ -937,19 +941,32 @@ class LocalDataHandlerCat {
                                 .append(item.getItemName()).append(BLANK).append("(").
                                 append(item.getItemGrade()).append(")").append(CRLF);
                         for (int i = 0; i < Item.INIT_STATS.length; i++) {
+                            RealmInteger itemStatRealmInteger = item.getItemStats().get(i);
+                            int baseStat = itemStatRealmInteger == null? 0 : itemStatRealmInteger.toInt();
 
-                            String stat = reinfOrGRD.isEmpty() ? item.getItemStats().get(i).toString() :
-                                    Reinforcement.getInstance().reinforce(item,i,reinfOrGRD);
-                            if(!stat.isEmpty() && !stat.equals(DASH))
+                            int plusStat = 0;
+                            if( !reinfOrGRD.isEmpty() ) {
+                                plusStat = Reinforcement.getInstance().reinforce(item,i,reinfOrGRD);
+                                baseStat += plusStat;
+                            }
+
+                            String stat = baseStat == 0 ? null : plusStat == 0 ? ( baseStat + "" ) : baseStat + " (+" + plusStat + ")" ;
+
+
+                            if(stat != null)
                                 lambdaResult.append(Item.INIT_STATS[i]).append(": ").append(stat).append(CRLF);
                         }
                         String restriction = item.getItemRestriction();
                         if(restriction == null )  {
                             ItemCate sub_cate = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_SUB_CATE,item.getItemSubCate()).findFirst();
-                            restriction = sub_cate.getItemRestriction();
+                            if( sub_cate != null) {
+                                restriction = sub_cate.getItemRestriction();
+                            }
                         }
 
-                        lambdaResult.append("제한　: ").append(restriction).append(CRLF);
+                        if(restriction != null) {
+                            lambdaResult.append("제한　: ").append(restriction).append(CRLF);
+                        }
 
                         for (int i = 0; i < item.getItemSpecValues().size(); i++) {
                             String itemSpec = item.getItemSpecs().get(i).toString();
@@ -1180,8 +1197,9 @@ class LocalDataHandlerCat {
                         lambdaResult.append(COMMA);
                     }
                 } else {
-                    if(q.length()<2)
+                    if(q.length()<2) {
                         return "접두사 또는 효과를 2글자 이상 입력하게냥";
+                    }
                     RealmResults<MagicItemPRFX> prfxNames =  realm.where(MagicItemPRFX.class).contains(MagicItemPRFX.FIELD_NAME,q).findAll();
 
                     if(!prfxNames.isEmpty()) {

@@ -1,5 +1,6 @@
 package com.fang.starfang.local.model.realm.source;
 
+import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 
 import io.realm.RealmList;
@@ -23,7 +24,7 @@ public class Item extends RealmObject {
     private String itemNameNoBlank;
     private String itemGrade;
     private String itemSubCate;
-    private RealmList<RealmString> itemStats; // 공정방순사,이동력
+    private RealmList<RealmInteger> itemStats; // 공정방순사,이동력
     private RealmList<RealmString> itemSpecs;
     private RealmList<RealmString> itemSpecValues;
     private String itemDescription;
@@ -34,7 +35,7 @@ public class Item extends RealmObject {
     public String getItemSubCate() {return itemSubCate;}
     public String getitemDescription() {return itemDescription;}
     public String getItemRestriction() {return itemRestriction;}
-    public RealmList<RealmString> getItemStats() {return itemStats;}
+    public RealmList<RealmInteger> getItemStats() {return itemStats;}
     public RealmList<RealmString> getItemSpecs() {return itemSpecs;}
     public RealmList<RealmString> getItemSpecValues() {return itemSpecValues;}
     public void setItemNameNoBlank(String itemNameNoBlank) {this.itemNameNoBlank=itemNameNoBlank;}

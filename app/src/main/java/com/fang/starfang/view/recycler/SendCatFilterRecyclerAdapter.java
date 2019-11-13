@@ -11,7 +11,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.source.Conversation;
+import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.view.recycler.Filter.ConversationFilterObject;
 
 import io.realm.Realm;

@@ -3,7 +3,7 @@ package com.fang.starfang.view.recycler.Filter;
 import android.widget.Filter;
 
 
-import com.fang.starfang.local.model.realm.source.Conversation;
+import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.view.recycler.ConversationRecyclerAdapter;
 
 import io.realm.Case;

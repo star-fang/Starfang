@@ -3,9 +3,10 @@ package com.fang.starfang.local.model.realm.simulator;
 import com.fang.starfang.local.model.realm.source.MagicItemPRFX;
 import com.fang.starfang.local.model.realm.source.MagicItemSFX;
 
+import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class MagicItemSim {
+public class MagicItemSim extends RealmObject {
 
     @PrimaryKey
     private String magicItemID;

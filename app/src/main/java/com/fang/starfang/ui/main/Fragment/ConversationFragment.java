@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.NotificationListener;
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.source.Conversation;
+import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.task.PrefixHandler;
 import com.fang.starfang.view.recycler.ConversationRecyclerAdapter;
 import com.fang.starfang.view.recycler.Filter.ConversationFilter;
@@ -74,7 +74,7 @@ public class ConversationFragment extends PlaceholderFragment {
 
         /*대화 파트*/
         Realm realm = Realm.getDefaultInstance();
-        View child_conversation = inflater.inflate(R.layout.fragment_conversation,container,false);
+        final View child_conversation = inflater.inflate(R.layout.fragment_conversation,container,false);
         final RecyclerView recyclerView = child_conversation.findViewById(R.id.conversation_recycler_view);
         final ConversationRecyclerAdapter conversationRecyclerAdapter = new ConversationRecyclerAdapter( realm );
         final View filter_summary_layout = child_conversation.findViewById(R.id.filter_summary_layout);
@@ -124,7 +124,8 @@ public class ConversationFragment extends PlaceholderFragment {
             }
         });
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(
+                new RecyclerView.OnScrollListener() {
                                              @Override
                                              public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                                                  super.onScrollStateChanged(recyclerView, newState);

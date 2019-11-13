@@ -1,5 +1,7 @@
 package com.fang.starfang.local.model.realm.primitive;
 
+import androidx.annotation.NonNull;
+
 import io.realm.RealmObject;
 
 /**
@@ -20,19 +22,10 @@ public class RealmString extends RealmObject {
         this.stringValue =  stringValue;
     }
 
-    public String getStringValue() {
-        return stringValue;
-    }
-
-    public void setStringValue(String stringValue) {
-        this.stringValue = stringValue;
-    }
-
+    @NonNull
     @Override
     public String toString() {
         return stringValue;
     }
-
-    public boolean isEmpty() { return stringValue.isEmpty(); }
 
 }

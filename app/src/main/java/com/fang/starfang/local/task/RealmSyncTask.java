@@ -12,12 +12,14 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.source.Agenda;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Destiny;
@@ -49,6 +51,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -67,7 +70,7 @@ import io.realm.RealmObject;
 
 public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
-    private final static String TAG = "FANG_REALM";
+    private final static String TAG = "FANG_SYNC";
     private final static String REALM_BASE_URL = "/fangcat/convertToRealm/";
     private final static String GET_JSON_PHP = "convertToJSON.php";
     private WeakReference<Context> context;
@@ -98,9 +101,12 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                         return false;
                     }
                 });
-        // register the deserializer
+
         gsonBuilder.registerTypeAdapter(new TypeToken<RealmList<RealmString>>() {
         }.getType(), new RealmStringDeserializer());
+
+        gsonBuilder.registerTypeAdapter(new TypeToken<RealmList<RealmInteger>>() {
+        }.getType(), new RealmIntegerDeserializer());
 
         gson = gsonBuilder.create();
 
@@ -179,12 +185,17 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
             }
         };
 
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                6000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
 
         requestQueue.add(jsonObjectRequest);
 
 
         try {
-            JSONObject jsonObject = requestFuture.get(3, TimeUnit.SECONDS);
+            JSONObject jsonObject = requestFuture.get(5, TimeUnit.SECONDS);
             //Log.d(TAG,jsonObject.toString());
 
                 Realm realm = Realm.getDefaultInstance();
@@ -255,21 +266,29 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                                 try {
                                     String json = jsonArray.get(i).toString();
                                     Spec spec = gson.fromJson(json,Spec.class);
-
+                                    spec.setSpecNameNoBlank(spec.getSpecName().replace(" ",""));
                                     realm.copyToRealm(spec);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
-
-                            for(Spec spec : realm.where(Spec.class).findAll())
-                                spec.setSpecNameNoBlank(spec.getSpecName().replace(" ",""));
                             // 검색용 공백 제거 column 생성
                             Log.d(TAG, "SYNC Spec REALM COMPLETE!");
                             break;
                         case Branch.PREF_TABLE:
                             realm.delete(Branch.class);
-                            realm.createAllFromJson(Branch.class, jsonArray);
+
+                            for(int i = 0; i < jsonArray.length(); i++ ) {
+                                try {
+                                    String json = jsonArray.get(i).toString();
+                                    Branch branch = gson.fromJson(json,Branch.class);
+
+                                    realm.copyToRealm(branch);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
                             Log.d(TAG, "SYNC Branch REALM COMPLETE!");
                             break;
                         case Item.PREF_TABLE:
@@ -278,14 +297,12 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                                 try {
                                     String json = jsonArray.get(i).toString();
                                     Item item = gson.fromJson(json,Item.class);
+                                    item.setItemNameNoBlank(item.getItemName().replace(" ",""));
                                     realm.copyToRealm(item);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
-                            for(Item item : realm.where(Item.class).findAll())
-                                item.setItemNameNoBlank(item.getItemName().replace(" ",""));
-                            // 검색용 공백 제거 column 생성
                             Log.d(TAG, "SYNC Item REALM COMPLETE!");
                             break;
                         case ItemCate.PREF_TABLE:
@@ -295,7 +312,15 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                             break;
                         case ItemReinforcement.PREF_TABLE:
                             realm.delete(ItemReinforcement.class);
-                            realm.createAllFromJson(ItemReinforcement.class, jsonArray);
+                            for(int i = 0; i < jsonArray.length(); i++ ) {
+                                try {
+                                    String json = jsonArray.get(i).toString();
+                                    ItemReinforcement itemReinforcement = gson.fromJson(json,ItemReinforcement.class);
+                                    realm.copyToRealm(itemReinforcement);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                             Log.d(TAG, "SYNC ItemReinforcement REALM COMPLETE!");
                             break;
                         case Relation.PREF_TABLE:
@@ -467,11 +492,38 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
             return realmStrings;
         }
+
+        private String getNullAsEmptyString(JsonElement jsonElement) {
+            return jsonElement.isJsonNull() ? "" : jsonElement.getAsString();
+        }
     }
 
-    private String getNullAsEmptyString(JsonElement jsonElement) {
-        return jsonElement.isJsonNull() ? "" : jsonElement.getAsString();
+
+
+    public class RealmIntegerDeserializer implements
+            JsonDeserializer<RealmList<RealmInteger>> {
+
+        @Override
+        public RealmList<RealmInteger> deserialize(JsonElement json, Type typeOfT,
+                                                  JsonDeserializationContext context) throws JsonParseException {
+
+            RealmList<RealmInteger> realmIntegers = new RealmList<>();
+            JsonArray stringList = json.getAsJsonArray();
+
+            for (JsonElement integerElement : stringList) {
+                realmIntegers.add(new RealmInteger(getNullAsZeroInt(integerElement)));
+            }
+
+            return realmIntegers;
+        }
+
+        private int getNullAsZeroInt(JsonElement jsonElement) {
+            String valueStr = jsonElement.isJsonNull() ? "" : jsonElement.getAsString();
+            return NumberUtils.toInt(valueStr,0);
+        }
     }
+
+
 
 
 }

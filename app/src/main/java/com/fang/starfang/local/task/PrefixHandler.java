@@ -6,7 +6,7 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
 import com.fang.starfang.NotificationListener;
-import com.fang.starfang.local.model.realm.source.Conversation;
+import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.model.realm.RoomCommand;
 import com.fang.starfang.util.KakaoReplier;
 

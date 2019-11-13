@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="60dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/text_hero_cost"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        android:textSize="15sp"
+        tools:text="11"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_lineage"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        android:textSize="15sp"
+        tools:text="난세간웅"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_stat1"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        tools:text="90"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_stat2"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        tools:text="64"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_stat3"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        tools:text="77"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_stat4"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        tools:text="94"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_stat5"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        tools:text="66"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_spec1"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        android:textSize="15sp"
+        tools:text="연속공격 강화"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_spec_val1"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        tools:text="50%"
+        android:gravity="center_vertical"/>
+
+
+    <TextView
+        android:id="@+id/text_hero_spec2"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        android:textSize="15sp"
+        tools:text="전화위복"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_spec_val2"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        tools:text=""
+        android:gravity="center_vertical"/>
+
+
+    <TextView
+        android:id="@+id/text_hero_spec3"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        android:textSize="15sp"
+        tools:text="주동 공격"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_spec_val3"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        tools:text=""
+        android:gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/text_hero_spec4"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        android:textSize="15sp"
+        tools:text="역전용사"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_spec_val4"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        tools:text=""
+        android:gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/text_hero_spec_vice"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        android:textSize="15sp"
+        tools:text="시장 특화"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_hero_spec_lord"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#000"
+        tools:text="명품 상점 보조"
+        android:gravity="center_vertical"/>
+
+</LinearLayout>

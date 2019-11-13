@@ -1,5 +1,6 @@
 package com.fang.starfang.view.recycler;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +21,21 @@ import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class HeroesRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
+public class HeroesFixedRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
 
+    private final String TAG  = "FANG_HERO_FIX";
     private Realm realm;
-    private FragmentManager fragmentManager;
+
+
+    public HeroesFixedRecyclerAdapter(Realm realm) {
+        super(realm.where(Heroes.class).findAll(),false);
+        this.realm = realm;
+    }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_heroes,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_heroes_fixed,viewGroup,false);
 
         return new HeroesViewHolder(view);
     }
@@ -38,14 +45,17 @@ public class HeroesRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, Recy
 
         HeroesViewHolder heroesViewHolder = (HeroesViewHolder) viewHolder;
 
-        heroesViewHolder.bind(getItem(i));
+        Heroes hero = getItem(i);
+        if(hero != null) {
+            heroesViewHolder.bind(hero);
+        }
 
 
     }
 
 
 
-    public void filterResults( String cs ) {
+    private void filterResults( String cs ) {
         cs = (cs == null) ? null : cs.toLowerCase().trim();
         RealmQuery<Heroes> query = realm.where(Heroes.class);
         if( !(cs == null || "".equals(cs))) {
@@ -62,18 +72,12 @@ public class HeroesRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, Recy
 
 
 
-    public HeroesRecyclerAdapter(Realm realm, FragmentManager fragmentManager) {
-        super(realm.where(Heroes.class).findAll(),false);
-        this.realm = realm;
-        this.fragmentManager = fragmentManager;
-
-    }
 
 
 
     private class HeroesFilter extends Filter {
-        private final HeroesRecyclerAdapter adapter;
-        private HeroesFilter(HeroesRecyclerAdapter adapter) {
+        private final HeroesFixedRecyclerAdapter adapter;
+        private HeroesFilter(HeroesFixedRecyclerAdapter adapter) {
             super();
             this.adapter = adapter;
         }
@@ -92,34 +96,25 @@ public class HeroesRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, Recy
 
 
 
-    public class HeroesViewHolder extends RecyclerView.ViewHolder {
-        public TextView hero_no;
-        public TextView hero_line;
-        public TextView hero_name;
-        public TextView hero_cost;
+    private class HeroesViewHolder extends RecyclerView.ViewHolder {
+        private TextView text_hero_branch;
+        private TextView text_hero_name;
 
-        public HeroesViewHolder(View itemView) {
+        private HeroesViewHolder(View itemView) {
             super(itemView);
 
-            hero_no = (TextView)itemView.findViewById(R.id.hero_no);
-            hero_line = (TextView)itemView.findViewById(R.id.hero_line);
-            hero_name = (TextView)itemView.findViewById(R.id.hero_name);
-            hero_cost = (TextView)itemView.findViewById(R.id.hero_cost);
+            text_hero_branch = itemView.findViewById(R.id.text_hero_branch);
+            text_hero_name = itemView.findViewById(R.id.text_hero_name);
 
         }
 
 
 
-        public void bind(final Heroes hero ) {
-            hero_no.setText(String.valueOf(hero.getHeroNo()));
-            hero_line.setText(hero.getHeroBranch());
-            hero_name.setText(hero.getHeroName());
-            hero_cost.setText(String.valueOf(hero.getHeroCost() + 10));
-            itemView.setOnClickListener(v -> {
-                HeroesDialogFragment fragment = HeroesDialogFragment.newInstance(hero);
-                fragment.show(fragmentManager,"dialog");
-
-            });
+        private void bind(final Heroes hero ) {
+            String branch = hero.getHeroBranch();
+            text_hero_branch.setText(hero.getHeroBranch());
+            text_hero_name.setText(hero.getHeroName());
+            text_hero_branch.setOnClickListener(v -> Log.d(TAG, branch + " clicked"));
         }
     }
 
