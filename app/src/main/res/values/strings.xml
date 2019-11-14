@@ -177,5 +177,20 @@
     <string name="hint_insert_name">이름 입력</string>
     <string name="desc_insert_name">단톡방에서 다른봇과 구별되는 이름을 입력하세요.(2~4글자)\n\n [봇이름]시작냥, [봇이름]정지냥 명령어로 제어가능.</string>
     <string name="desc_weapon_image">무기 이미지</string>
+    <string name="table_header_cost">최종 COST</string>
+    <string name="table_header_lineage">계보</string>
+    <string name="table_header_stat1">무</string>
+    <string name="table_header_stat2">지</string>
+    <string name="table_header_stat3">통</string>
+    <string name="table_header_stat4">민</string>
+    <string name="table_header_stat5">행</string>
+    <string name="table_header_spec1">Lv30 특성</string>
+    <string name="table_header_spec2">Lv50 특성</string>
+    <string name="table_header_spec3">Lv70 특성</string>
+    <string name="table_header_spec4">Lv90 특성</string>
+    <string name="table_header_spec5">태수 효과</string>
+    <string name="table_header_spec6">군주 효과</string>
+    <string name="table_header_name">이름</string>
+    <string name="table_header_branch">병종</string>
 
 </resources>

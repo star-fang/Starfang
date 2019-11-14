@@ -1,24 +1,25 @@
 package com.fang.starfang.ui.main.Fragment;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.view.recycler.DiagonalScrollRecyclerView;
 import com.fang.starfang.view.recycler.HeroesFixedRecyclerAdapter;
 import com.fang.starfang.view.recycler.HeroesFloatingRecyclerAdapter;
 
 import io.realm.Realm;
+import io.realm.Sort;
 
 public class SimulationFragment extends PlaceholderFragment {
 
@@ -38,6 +39,7 @@ public class SimulationFragment extends PlaceholderFragment {
         Log.d(TAG,"_ON CREATE");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
@@ -46,47 +48,62 @@ public class SimulationFragment extends PlaceholderFragment {
 
         Realm realm = Realm.getDefaultInstance();
         final View child_setting = inflater.inflate(R.layout.fragment_simulation, container, false);
-        final HorizontalScrollView scroll_hero_header_floating = child_setting.findViewById(R.id.scroll_hero_header_floating);
         final RecyclerView recycler_view_hero_fixed = child_setting.findViewById(R.id.recycler_view_hero_fixed);
-        final LinearLayout hero_content_layout = child_setting.findViewById(R.id.hero_content_layout);
-        //final RecyclerView recycler_view_hero_floating = child_setting.findViewById(R.id.recycler_view_hero_floating);
+        final RecyclerView recycler_view_hero_floating = child_setting.findViewById(R.id.recycler_view_hero_floating);
         final HeroesFloatingRecyclerAdapter heroesFloatingRecyclerAdapter = new HeroesFloatingRecyclerAdapter(realm);
         final HeroesFixedRecyclerAdapter heroesFixedRecyclerAdapter = new HeroesFixedRecyclerAdapter(realm);
         final LinearLayoutManager layoutManager_fixed = new LinearLayoutManager(mActivity);
-        final GridLayoutManager layoutManager_floating = new GridLayoutManager(mActivity,10);
+        final LinearLayoutManager layoutManager_floating = new LinearLayoutManager(mActivity);
+        final DiagonalScrollRecyclerView recycler_view_hero_content = child_setting.findViewById(R.id.recycler_view_hero_content);
 
-
-        DiagonalScrollRecyclerView diagonalScrollRecyclerView = new DiagonalScrollRecyclerView(mActivity);
-        diagonalScrollRecyclerView.setRecyclerViewLayoutManager(layoutManager_floating);
-        diagonalScrollRecyclerView.setRecyclerViewAdapter(heroesFloatingRecyclerAdapter);
-        hero_content_layout.addView(diagonalScrollRecyclerView);
+        recycler_view_hero_floating.setLayoutManager(layoutManager_floating);
+        recycler_view_hero_floating.setAdapter(heroesFloatingRecyclerAdapter);
+        recycler_view_hero_content.setRecyclerView(recycler_view_hero_floating);
 
         recycler_view_hero_fixed.setLayoutManager(layoutManager_fixed);
         recycler_view_hero_fixed.setAdapter(heroesFixedRecyclerAdapter);
 
+        boolean touchOnStartHeader = false;
+        boolean touchOnTopHeader = false;
 
-        //recycler_view_hero_floating.setLayoutManager(layoutManager_floating);
-        //recycler_view_hero_floating.setAdapter(heroesFloatingRecyclerAdapter);
+        recycler_view_hero_floating.addOnScrollListener(
+                new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        recycler_view_hero_fixed.scrollBy(0,dy);
+                        Log.d(TAG,"right scroll by y :" +dy);
+                    }
+                }
+        );
 
         recycler_view_hero_fixed.addOnScrollListener(
                 new RecyclerView.OnScrollListener() {
                     @Override
-                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                        super.onScrollStateChanged(recyclerView, newState);
-                        RecyclerView.Adapter adapter = recyclerView.getAdapter();
-                        if(adapter == null) {
-                            return;
-                        }
-                        int itemLastPosition = (adapter.getItemCount() - 1);
-                        if(itemLastPosition < 0 ) {
-                            return;
-                        }
-                        if(newState == RecyclerView.SCROLL_STATE_DRAGGING ) {
-                            Log.d(TAG, "scrolling...");
-                        }
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                       // diagonalScrollRecyclerView.getRecyclerView().scrollBy(0,dy);
+                        Log.d(TAG,"left scroll by y :"+dy);
                     }
                 }
         );
+
+        final View table_header_branch = child_setting.findViewById(R.id.table_header_branch);
+        table_header_branch.setOnClickListener( v -> {
+                    heroesFloatingRecyclerAdapter.sort(Heroes.FIELD_BRANCH, Sort.ASCENDING);
+                    heroesFixedRecyclerAdapter.sort(Heroes.FIELD_BRANCH, Sort.ASCENDING);
+                }
+        );
+
+        final  View table_header_name = child_setting.findViewById(R.id.table_header_name);
+        table_header_name.setOnClickListener( v -> {
+            heroesFloatingRecyclerAdapter.sort(Heroes.FIELD_NAME, Sort.ASCENDING);
+            heroesFixedRecyclerAdapter.sort(Heroes.FIELD_NAME, Sort.ASCENDING);
+        });
+
+
+
+
 
 
 

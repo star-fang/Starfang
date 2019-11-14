@@ -113,7 +113,7 @@ public class ConversationRecyclerAdapter
                         conv_conversation.setBackgroundResource(R.drawable.discord_border);
                         break;
                     default:
-                        conv_conversation.setBackgroundResource(R.drawable.border);
+                        conv_conversation.setBackgroundResource(R.drawable.round_border);
                 }
             }
 

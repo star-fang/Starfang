@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFCFD8DC"
+    android:background="#FFF"
     android:orientation="vertical">
 
     <LinearLayout
@@ -30,183 +30,199 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/row_hero_header"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        >
 
-        <TextView
-            android:layout_width="60dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="1dp"
-            android:background="#000"
-            android:gravity="center"
-            android:text="병종"
-            android:textSize="18sp" />
+            android:orientation="vertical"
+            android:background="@drawable/right_border_black_2px"
+            android:layout_marginTop="1dp">
 
-        <TextView
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
-            android:background="#000"
-            android:gravity="center"
-            android:text="이름"
-            android:textSize="18sp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/bottom_border_black_2px"
+                >
 
-        <HorizontalScrollView
-            android:id="@+id/scroll_hero_header_floating"
+                <TextView
+                    android:id="@+id/table_header_branch"
+                    android:layout_width="45dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/table_header_branch"
+                    android:textColor="#000"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/table_header_name"
+                    android:layout_width="45dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="1dp"
+                    android:gravity="center"
+                    android:text="@string/table_header_name"
+                    android:textColor="#000"
+                    android:textSize="15sp" />
+
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_hero_fixed"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/row_heroes_fixed" />
+        </LinearLayout>
+
+
+        <com.fang.starfang.view.recycler.DiagonalScrollRecyclerView
+            android:id="@+id/recycler_view_hero_content"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="40dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/bottom_border_black_2px"
                     android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="최종 COST" />
+                    >
 
-                <TextView
-                    android:layout_width="80dp"
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/table_header_cost"
+                        android:textColor="#000"
+                        android:layout_marginStart="1dp"/>
+
+                    <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_lineage"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_stat1" />
+
+                    <TextView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_stat2" />
+
+                    <TextView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_stat3" />
+
+                    <TextView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_stat4" />
+
+                    <TextView
+                        android:layout_width="25dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_stat5" />
+
+                    <TextView
+                        android:layout_width="161dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_spec1"
+                        android:textSize="15sp" />
+
+
+                    <TextView
+                        android:layout_width="161dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_spec2"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="161dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_spec3"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="161dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_spec4"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_spec5"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:textColor="#000"
+                        android:gravity="center"
+                        android:text="@string/table_header_spec6" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_hero_floating"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="계보"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="무" />
-
-                <TextView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="지" />
-
-                <TextView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="통" />
-
-                <TextView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="민" />
-
-                <TextView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="행" />
-
-                <TextView
-                    android:layout_width="161dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="Lv30 특성"
-                    android:textSize="15sp" />
-
-
-                <TextView
-                    android:layout_width="161dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="Lv50 특성"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="161dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="Lv70 특성"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="161dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="Lv90 특성"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center"
-                    android:text="태수 효과"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:background="#000"
-                    android:gravity="center_vertical"
-                    android:text="군주 효과" />
+                    android:scrollbars="vertical"
+                    tools:listitem="@layout/row_heroes_floating" />
 
             </LinearLayout>
-        </HorizontalScrollView>
+
+        </com.fang.starfang.view.recycler.DiagonalScrollRecyclerView>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/hero_content_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_hero_fixed"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            tools:listitem="@layout/row_heroes_fixed" />
-    </LinearLayout>
-
-
 </LinearLayout>
 

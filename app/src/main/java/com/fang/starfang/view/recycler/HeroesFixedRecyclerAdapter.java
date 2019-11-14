@@ -20,13 +20,13 @@ import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
-public class HeroesFixedRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
+public class HeroesFixedRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> {
 
     private final String TAG  = "FANG_HERO_FIX";
     private Realm realm;
-
-
     public HeroesFixedRecyclerAdapter(Realm realm) {
         super(realm.where(Heroes.class).findAll(),false);
         this.realm = realm;
@@ -49,50 +49,12 @@ public class HeroesFixedRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes,
         if(hero != null) {
             heroesViewHolder.bind(hero);
         }
-
-
     }
 
-
-
-    private void filterResults( String cs ) {
-        cs = (cs == null) ? null : cs.toLowerCase().trim();
-        RealmQuery<Heroes> query = realm.where(Heroes.class);
-        if( !(cs == null || "".equals(cs))) {
-            query.contains(Heroes.FIELD_NAME,cs, Case.INSENSITIVE);
-        }
-        updateData(query.findAll());
+    public void sort(String field, Sort sort) {
+        updateData(realm.where(Heroes.class).sort(field, sort).findAll());
     }
 
-    @Override
-    public Filter getFilter() {
-        return new HeroesFilter(this);
-    }
-
-
-
-
-
-
-
-    private class HeroesFilter extends Filter {
-        private final HeroesFixedRecyclerAdapter adapter;
-        private HeroesFilter(HeroesFixedRecyclerAdapter adapter) {
-            super();
-            this.adapter = adapter;
-        }
-
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            return new FilterResults();
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            adapter.filterResults(constraint.toString());
-
-        }
-    }
 
 
 

@@ -23,15 +23,15 @@ import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> {
 
-    private Realm realm;
+    Realm realm;
 
     public HeroesFloatingRecyclerAdapter(Realm realm) {
         super(realm.where(Heroes.class).findAll(),false);
         this.realm = realm;
-
     }
 
     @NonNull
@@ -52,6 +52,10 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
             heroesViewHolder.bind(hero);
 
         }
+    }
+
+    public void sort(String field, Sort sort) {
+        updateData(realm.where(Heroes.class).sort(field, sort).findAll());
     }
 
 

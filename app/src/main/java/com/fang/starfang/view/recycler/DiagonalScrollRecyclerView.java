@@ -4,16 +4,12 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.fang.starfang.R;
 
 public class DiagonalScrollRecyclerView extends HorizontalScrollView {
     private static final String TAG = "FANG_DSR";
@@ -25,20 +21,12 @@ public class DiagonalScrollRecyclerView extends HorizontalScrollView {
 
     public DiagonalScrollRecyclerView(Context context) {
         super(context);
-        constructViews(context);
     }
 
     public DiagonalScrollRecyclerView(Context context, AttributeSet attrs ) {
         super(context, attrs);
-        constructViews(context);
     }
 
-    private void constructViews(Context context) {
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        recyclerView = (RecyclerView)LayoutInflater.from(context).inflate(R.layout.recycler_view_hero_floating,this,false);
-        setLayoutParams(params);
-        addView(recyclerView);
-    }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
@@ -108,6 +96,10 @@ public class DiagonalScrollRecyclerView extends HorizontalScrollView {
 
     interface  CoordinatesClickListener {
         void clickCoordinates(float x, float y);
+    }
+
+    public void setRecyclerView( RecyclerView view ) {
+        recyclerView = view;
     }
 
     public void setRecyclerViewLayoutManager( RecyclerView.LayoutManager manager ) {

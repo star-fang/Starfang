@@ -439,7 +439,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="50dp"
-                android:background="@drawable/border"
+                android:background="@drawable/round_border"
                 android:backgroundTint="@android:color/background_light"
                 android:textColor="@color/colorPrimaryDark" />
 
