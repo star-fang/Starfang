@@ -18,6 +18,7 @@ public class Heroes extends RealmObject {
     public static final String FIELD_BRANCH = "heroBranch";
     public static final String FIELD_LINEAGE = "heroLineage";
     public static final String FIELD_COST = "heroCost";
+    public static final String FIELD_STATS = "heroStats";
     public static final String INIT_DYNASTY = "인연";
     public static final String INIT_LINEAGE = "계보";
     public static final String INIT_COST = "COST";

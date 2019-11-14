@@ -28,11 +28,11 @@ import com.fang.starfang.NotificationListener;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.task.PrefixHandler;
-import com.fang.starfang.view.recycler.ConversationRecyclerAdapter;
-import com.fang.starfang.view.recycler.Filter.ConversationFilter;
-import com.fang.starfang.view.recycler.Filter.ConversationFilterObject;
-import com.fang.starfang.view.recycler.RoomFilterRecyclerAdapter;
-import com.fang.starfang.view.recycler.SendCatFilterRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.ConversationRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.filter.ConversationFilter;
+import com.fang.starfang.ui.main.recycler.filter.ConversationFilterObject;
+import com.fang.starfang.ui.main.recycler.adapter.RoomFilterRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.SendCatFilterRecyclerAdapter;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
@@ -192,14 +192,17 @@ public class ConversationFragment extends PlaceholderFragment {
         button_clear_conversation.setOnClickListener( v -> text_conversation.setText(""));
 
         final View.OnClickListener showButton_default_listener = v -> {
+            button_show_filters.setVisibility(View.GONE);
+            button_hide_filters.setVisibility(View.VISIBLE);
             changeLayoutSize(row_filter,-5,dip2pix(mActivity,100));
-            changeLayouWeight(button_show_filters,0.0f);
-            button_show_filters.setOnClickListener(null);
         };
+
+        button_show_filters.setOnClickListener(showButton_default_listener);
+
         final View.OnClickListener hideButton_default_listener = v -> {
+            button_hide_filters.setVisibility(View.GONE);
+            button_show_filters.setVisibility(View.VISIBLE);
             changeLayoutSize(row_filter,-5,0);
-            changeLayouWeight(button_show_filters,1.0f);
-            button_show_filters.setOnClickListener(showButton_default_listener);
         };
         button_hide_filters.setOnClickListener(hideButton_default_listener);
 

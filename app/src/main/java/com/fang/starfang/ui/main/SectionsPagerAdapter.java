@@ -10,10 +10,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.fang.starfang.R;
-import com.fang.starfang.ui.main.Fragment.ConversationFragment;
 import com.fang.starfang.ui.main.Fragment.PlaceholderFragment;
-import com.fang.starfang.ui.main.Fragment.SettingFragment;
-import com.fang.starfang.ui.main.Fragment.SimulationFragment;
 
 
 /**

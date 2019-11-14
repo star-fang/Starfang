@@ -67,6 +67,7 @@ import java.util.concurrent.TimeoutException;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.exceptions.RealmPrimaryKeyConstraintException;
 
 public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
@@ -196,10 +197,8 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
         try {
             JSONObject jsonObject = requestFuture.get(5, TimeUnit.SECONDS);
-            //Log.d(TAG,jsonObject.toString());
 
                 Realm realm = Realm.getDefaultInstance();
-                try {
                     jsonResult[0] = jsonObject.get("status").toString();
                     jsonResult[1] = jsonObject.get("message").toString();
 
@@ -211,23 +210,13 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                     }
                     realm.commitTransaction();
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-
-                }
-
                 if(jsonResult[0].equals("latest") || jsonResult[0].equals("fail") ) {
 
                     return jsonResult;
                 }
 
 
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = jsonObject.getJSONArray("data");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+               JSONArray jsonArray = jsonObject.getJSONArray("data");
 
                 if (jsonArray!=null) {
 
@@ -242,13 +231,9 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                         case Heroes.PREF_TABLE:
                             realm.delete(Heroes.class);
                             for(int i = 0; i < jsonArray.length(); i++ ) {
-                                try {
                                     String json = jsonArray.get(i).toString();
                                     Heroes hero = gson.fromJson(json,Heroes.class);
                                     realm.copyToRealm(hero);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
                             }
                             Log.d(TAG, "SYNC Hero REALM COMPLETE!");
                             break;
@@ -263,14 +248,10 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                             realm.delete(Spec.class);
 
                             for(int i = 0; i < jsonArray.length(); i++ ) {
-                                try {
                                     String json = jsonArray.get(i).toString();
                                     Spec spec = gson.fromJson(json,Spec.class);
                                     spec.setSpecNameNoBlank(spec.getSpecName().replace(" ",""));
                                     realm.copyToRealm(spec);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
                             }
                             // 검색용 공백 제거 column 생성
                             Log.d(TAG, "SYNC Spec REALM COMPLETE!");
@@ -279,14 +260,9 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                             realm.delete(Branch.class);
 
                             for(int i = 0; i < jsonArray.length(); i++ ) {
-                                try {
                                     String json = jsonArray.get(i).toString();
                                     Branch branch = gson.fromJson(json,Branch.class);
-
                                     realm.copyToRealm(branch);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
                             }
 
                             Log.d(TAG, "SYNC Branch REALM COMPLETE!");
@@ -294,14 +270,10 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                         case Item.PREF_TABLE:
                             realm.delete(Item.class);
                             for(int i = 0; i < jsonArray.length(); i++ ) {
-                                try {
                                     String json = jsonArray.get(i).toString();
                                     Item item = gson.fromJson(json,Item.class);
                                     item.setItemNameNoBlank(item.getItemName().replace(" ",""));
                                     realm.copyToRealm(item);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
                             }
                             Log.d(TAG, "SYNC Item REALM COMPLETE!");
                             break;
@@ -313,13 +285,9 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                         case ItemReinforcement.PREF_TABLE:
                             realm.delete(ItemReinforcement.class);
                             for(int i = 0; i < jsonArray.length(); i++ ) {
-                                try {
                                     String json = jsonArray.get(i).toString();
                                     ItemReinforcement itemReinforcement = gson.fromJson(json,ItemReinforcement.class);
                                     realm.copyToRealm(itemReinforcement);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
                             }
                             Log.d(TAG, "SYNC ItemReinforcement REALM COMPLETE!");
                             break;
@@ -331,13 +299,9 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                         case MagicItemCombination.PREF_TABLE:
                             realm.delete(MagicItemCombination.class);
                             for(int i = 0; i < jsonArray.length(); i++ ) {
-                                try {
                                     String json = jsonArray.get(i).toString();
                                     MagicItemCombination comb = gson.fromJson(json,MagicItemCombination.class);
                                     realm.copyToRealm(comb);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
                             }
                             Log.d(TAG, "SYNC MagicItemCombination REALM COMPLETE!");
                             break;
@@ -407,6 +371,11 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
             Log.d(TAG,e.toString());
             jsonResult[0] = "fail";
             jsonResult[1] = "시간 초과";
+
+        } catch (JSONException | RealmPrimaryKeyConstraintException e) {
+            Log.d(TAG,e.toString());
+            jsonResult[0] = "fail";
+            jsonResult[1] = "파싱 오류";
         }
         return jsonResult;
     }

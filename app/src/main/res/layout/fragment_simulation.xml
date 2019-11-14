@@ -1,54 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/simulataion_et_layout"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimaryDark"
         android:orientation="horizontal">
 
+        <Spinner
+            android:layout_alignParentStart="true"
+            android:id="@+id/simulataion_hero_spinner"
+            android:layout_width="85dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/rect_button"
+            android:gravity="center"/>
+
         <EditText
-            android:id="@+id/et_search"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="5dp"
-            android:layout_weight="7"
+            android:layout_toEndOf="@id/simulataion_hero_spinner"
+            android:id="@+id/simulation_et_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="85dp"
             android:autofillHints=""
             android:focusedByDefault="false"
             android:hint="@string/et_search_hint"
+            android:background="#FFF"
+            android:textColor="#000"
             android:inputType="textNoSuggestions"
             tools:targetApi="o" />
 
-        <ExpandableListView
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="2" />
-    </LinearLayout>
+        <Button
+            android:id="@+id/button_search_hero"
+            android:layout_alignParentEnd="true"
+            android:layout_width="75dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/rect_button"
+            android:fontFamily="@font/krona_one"
+            android:textSize="12sp"
+            android:text="@string/filter_button_title_search" />
+
+
+    </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/simulation_content_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        >
+        android:layout_above="@id/simulataion_bt_layout"
+        android:layout_below="@id/simulataion_et_layout"
+        android:background="#E6E6E6"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_marginTop="1dp"
             android:background="@drawable/right_border_black_2px"
-            android:layout_marginTop="1dp">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:orientation="horizontal"
                 android:layout_marginStart="5dp"
                 android:background="@drawable/bottom_border_black_2px"
-                >
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/table_header_branch"
@@ -81,7 +107,7 @@
         </LinearLayout>
 
 
-        <com.fang.starfang.view.recycler.DiagonalScrollRecyclerView
+        <com.fang.starfang.ui.main.recycler.DiagonalScrollRecyclerView
             android:id="@+id/recycler_view_hero_content"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -94,75 +120,74 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:orientation="horizontal"
-                    android:background="@drawable/bottom_border_black_2px"
                     android:layout_marginTop="1dp"
-                    >
+                    android:background="@drawable/bottom_border_black_2px"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="40dp"
                         android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
                         android:gravity="center"
                         android:text="@string/table_header_cost"
-                        android:textColor="#000"
-                        android:layout_marginStart="1dp"/>
+                        android:textColor="#000" />
 
                     <TextView
                         android:layout_width="80dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
                         android:text="@string/table_header_lineage"
+                        android:textColor="#000"
                         android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="25dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
-                        android:text="@string/table_header_stat1" />
+                        android:text="@string/table_header_stat1"
+                        android:textColor="#000" />
 
                     <TextView
                         android:layout_width="25dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
-                        android:text="@string/table_header_stat2" />
+                        android:text="@string/table_header_stat2"
+                        android:textColor="#000" />
 
                     <TextView
                         android:layout_width="25dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
-                        android:text="@string/table_header_stat3" />
+                        android:text="@string/table_header_stat3"
+                        android:textColor="#000" />
 
                     <TextView
                         android:layout_width="25dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
-                        android:text="@string/table_header_stat4" />
+                        android:text="@string/table_header_stat4"
+                        android:textColor="#000" />
 
                     <TextView
                         android:layout_width="25dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
-                        android:text="@string/table_header_stat5" />
+                        android:text="@string/table_header_stat5"
+                        android:textColor="#000" />
 
                     <TextView
                         android:layout_width="161dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
                         android:text="@string/table_header_spec1"
+                        android:textColor="#000"
                         android:textSize="15sp" />
 
 
@@ -170,45 +195,45 @@
                         android:layout_width="161dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
                         android:text="@string/table_header_spec2"
+                        android:textColor="#000"
                         android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="161dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
                         android:text="@string/table_header_spec3"
+                        android:textColor="#000"
                         android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="161dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
                         android:text="@string/table_header_spec4"
+                        android:textColor="#000"
                         android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="100dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
                         android:text="@string/table_header_spec5"
+                        android:textColor="#000"
                         android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="100dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="1dp"
-                        android:textColor="#000"
                         android:gravity="center"
-                        android:text="@string/table_header_spec6" />
+                        android:text="@string/table_header_spec6"
+                        android:textColor="#000" />
 
                 </LinearLayout>
 
@@ -221,8 +246,47 @@
 
             </LinearLayout>
 
-        </com.fang.starfang.view.recycler.DiagonalScrollRecyclerView>
+        </com.fang.starfang.ui.main.recycler.DiagonalScrollRecyclerView>
 
     </LinearLayout>
-</LinearLayout>
+
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:id="@+id/simulataion_bt_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:weightSum="10"
+        android:gravity="center"
+        android:background="#000">
+
+        <Button
+            android:layout_marginStart="5dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:text="보패 관리"
+            android:background="@drawable/rect_button"
+            />
+
+        <Button
+            android:layout_marginStart="5dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:text="보물 제작/강화"
+            android:background="@drawable/rect_button"
+            />
+
+        <Button
+            android:layout_marginStart="5dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:text="데미지 계산"
+            android:background="@drawable/rect_button"
+            />
+
+    </LinearLayout>
+</RelativeLayout>
 

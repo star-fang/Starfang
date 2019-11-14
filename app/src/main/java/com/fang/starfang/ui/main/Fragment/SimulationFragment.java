@@ -1,22 +1,25 @@
 package com.fang.starfang.ui.main.Fragment;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Heroes;
-import com.fang.starfang.view.recycler.DiagonalScrollRecyclerView;
-import com.fang.starfang.view.recycler.HeroesFixedRecyclerAdapter;
-import com.fang.starfang.view.recycler.HeroesFloatingRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.DiagonalScrollRecyclerView;
+import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.filter.HeroFilter;
 
 import io.realm.Realm;
 import io.realm.Sort;
@@ -39,7 +42,6 @@ public class SimulationFragment extends PlaceholderFragment {
         Log.d(TAG,"_ON CREATE");
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
@@ -47,14 +49,14 @@ public class SimulationFragment extends PlaceholderFragment {
         Log.d(TAG,"_ON CREATE VIEW");
 
         Realm realm = Realm.getDefaultInstance();
-        final View child_setting = inflater.inflate(R.layout.fragment_simulation, container, false);
-        final RecyclerView recycler_view_hero_fixed = child_setting.findViewById(R.id.recycler_view_hero_fixed);
-        final RecyclerView recycler_view_hero_floating = child_setting.findViewById(R.id.recycler_view_hero_floating);
+        final View child_sim = inflater.inflate(R.layout.fragment_simulation, container, false);
+        final RecyclerView recycler_view_hero_fixed = child_sim.findViewById(R.id.recycler_view_hero_fixed);
+        final RecyclerView recycler_view_hero_floating = child_sim.findViewById(R.id.recycler_view_hero_floating);
         final HeroesFloatingRecyclerAdapter heroesFloatingRecyclerAdapter = new HeroesFloatingRecyclerAdapter(realm);
         final HeroesFixedRecyclerAdapter heroesFixedRecyclerAdapter = new HeroesFixedRecyclerAdapter(realm);
         final LinearLayoutManager layoutManager_fixed = new LinearLayoutManager(mActivity);
         final LinearLayoutManager layoutManager_floating = new LinearLayoutManager(mActivity);
-        final DiagonalScrollRecyclerView recycler_view_hero_content = child_setting.findViewById(R.id.recycler_view_hero_content);
+        final DiagonalScrollRecyclerView recycler_view_hero_content = child_sim.findViewById(R.id.recycler_view_hero_content);
 
         recycler_view_hero_floating.setLayoutManager(layoutManager_floating);
         recycler_view_hero_floating.setAdapter(heroesFloatingRecyclerAdapter);
@@ -88,17 +90,36 @@ public class SimulationFragment extends PlaceholderFragment {
                 }
         );
 
-        final View table_header_branch = child_setting.findViewById(R.id.table_header_branch);
+        final View table_header_branch = child_sim.findViewById(R.id.table_header_branch);
         table_header_branch.setOnClickListener( v -> {
-                    heroesFloatingRecyclerAdapter.sort(Heroes.FIELD_BRANCH, Sort.ASCENDING);
-                    heroesFixedRecyclerAdapter.sort(Heroes.FIELD_BRANCH, Sort.ASCENDING);
+                    heroesFloatingRecyclerAdapter.setSort(Heroes.FIELD_BRANCH, Sort.ASCENDING);
+                    heroesFixedRecyclerAdapter.setSort(Heroes.FIELD_BRANCH, Sort.ASCENDING);
                 }
         );
 
-        final  View table_header_name = child_setting.findViewById(R.id.table_header_name);
+        final  View table_header_name = child_sim.findViewById(R.id.table_header_name);
         table_header_name.setOnClickListener( v -> {
-            heroesFloatingRecyclerAdapter.sort(Heroes.FIELD_NAME, Sort.ASCENDING);
-            heroesFixedRecyclerAdapter.sort(Heroes.FIELD_NAME, Sort.ASCENDING);
+            heroesFloatingRecyclerAdapter.setSort(Heroes.FIELD_NAME, Sort.ASCENDING);
+            heroesFixedRecyclerAdapter.setSort(Heroes.FIELD_NAME, Sort.ASCENDING);
+        });
+
+        final Spinner simulataion_hero_spinner = child_sim.findViewById(R.id.simulataion_hero_spinner);
+        ArrayAdapter searchOptionAdapter = ArrayAdapter.createFromResource(mActivity,
+                R.array.option_search_heroes, android.R.layout.simple_spinner_dropdown_item);
+        simulataion_hero_spinner.setAdapter(searchOptionAdapter);
+
+        final EditText simulation_et_search = child_sim.findViewById(R.id.simulation_et_search);
+
+        final Button button_search_hero = child_sim.findViewById(R.id.button_search_hero);
+        button_search_hero.setOnClickListener( v-> {
+            String cs = simulation_et_search.getText().toString();
+            HeroFilter floatingFilter = (HeroFilter)heroesFloatingRecyclerAdapter.getFilter();
+            floatingFilter.setCsFieldPosition(simulataion_hero_spinner.getSelectedItemPosition());
+            floatingFilter.filter(cs);
+
+            HeroFilter fixedFilter = (HeroFilter)heroesFixedRecyclerAdapter.getFilter();
+            fixedFilter.setCsFieldPosition(simulataion_hero_spinner.getSelectedItemPosition());
+            fixedFilter.filter(cs);
         });
 
 
@@ -112,7 +133,7 @@ public class SimulationFragment extends PlaceholderFragment {
 
 
 
-        return child_setting;
+        return child_sim;
 
     }
 

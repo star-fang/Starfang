@@ -17,31 +17,89 @@
 
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_below="@id/row_toggle_buttons"
+        android:id="@+id/filter_summary_layout"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/row_filter"
-        android:background="#66000000"
+        android:layout_marginBottom="200dp"
         android:layout_alignParentEnd="true"
+        android:background="#66000000"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="60dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rect_button"
-            android:fontFamily="@font/krona_one"
-            android:text="@string/title_filter"
-            android:gravity="center"
-            android:textSize="12sp"
-            android:layout_weight="1"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button_show_filters"
-            android:layout_width="60dp"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll_summary_filter"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0"
-            android:background="@drawable/ic_keyboard_arrow_down_pink_24dp"/>
+            >
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="5dp"
+                android:background="#E0FFFFFF"
+
+                >
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_filter_summary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollHorizontally="true"
+                    android:text="@string/desc_no_filter"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textIsSelectable="true"
+                    tools:text="@tools:sample/date/hhmm" />
+            </LinearLayout>
+
+            </HorizontalScrollView>
+        </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/row_toggle_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/row_filter"
+        android:background="#30000000"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_summary_filter"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:text="@string/title_filter"
+            android:fontFamily="@font/krona_one"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:background="@drawable/rect_button"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_show_filters"
+        android:layout_marginTop="5dp"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:background="@drawable/ic_keyboard_arrow_down_pink_24dp"/>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_hide_filters"
+            android:layout_marginTop="5dp"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:visibility="gone"
+            android:background="@drawable/ic_keyboard_arrow_up_pink_24dp" />
+
+    </LinearLayout>
+
 
 
     <LinearLayout
@@ -63,9 +121,10 @@
 
 
         <HorizontalScrollView
+            android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
             android:id="@+id/scroll_filter"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#30000000"
             >
@@ -142,30 +201,12 @@
 
         <TextView
             android:layout_marginStart="10dp"
-
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:text="@string/desc_filter"
             android:layout_alignParentBottom="true"/>
 
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:background="#66000000"
-            android:orientation="vertical">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_hide_filters"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:background="@drawable/ic_keyboard_arrow_up_pink_24dp" />
-
-        </LinearLayout>
 
     </RelativeLayout>
 
@@ -456,57 +497,6 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/filter_summary_layout"
-        android:layout_marginBottom="200dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minWidth="100dp"
-        android:layout_below="@id/row_filter"
-        android:layout_alignParentEnd="true"
-        android:background="#66000000"
-        android:orientation="vertical">
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button_summary_filter"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="22dp"
-            android:text="@string/summary_filter"
-            android:background="@color/colorPrimaryDark"
-            android:gravity="center"
-            android:layout_gravity="center"/>
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll_summary_filter"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:scrollbarAlwaysDrawHorizontalTrack="true"
-        >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="5dp"
-            android:background="#A0FFFFFF"
-
-            >
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_filter_summary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scrollHorizontally="true"
-                android:text="@string/desc_no_filter"
-                android:textColor="@color/colorPrimaryDark"
-                android:textIsSelectable="true"
-                tools:text="@tools:sample/date/hhmm" />
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-
-    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/conversationEtLayout"
