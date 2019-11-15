@@ -9,28 +9,30 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Heroes;
+import com.fang.starfang.ui.main.dialog.HeroesDialogFragment;
 import com.fang.starfang.ui.main.recycler.filter.HeroFilter;
 
-import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
+import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class HeroesFixedRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
 
     private final String TAG  = "FANG_HERO_FIX";
-    private Realm realm;
     private String sort_field;
     private Sort sort;
+    private FragmentManager fragmentManager;
 
-    public HeroesFixedRecyclerAdapter(Realm realm) {
-        super(realm.where(Heroes.class).findAll(),false);
-        this.realm = realm;
+    public HeroesFixedRecyclerAdapter(RealmResults<Heroes> realmResults, FragmentManager fragmentManager) {
+        super(realmResults,false);
         sort = null;
         sort_field = null;
+        this.fragmentManager = fragmentManager;
     }
 
     @NonNull
@@ -67,7 +69,7 @@ public class HeroesFixedRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes,
 
     @Override
     public Filter getFilter() {
-        return new HeroFilter(this, realm);
+        return new HeroFilter(this);
     }
 
     private class HeroesViewHolder extends RecyclerView.ViewHolder {
@@ -89,6 +91,8 @@ public class HeroesFixedRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes,
             text_hero_branch.setText(hero.getHeroBranch());
             text_hero_name.setText(hero.getHeroName());
             text_hero_branch.setOnClickListener(v -> Log.d(TAG, branch + " clicked"));
+            text_hero_name.setOnClickListener(v-> HeroesDialogFragment.newInstance(hero.getHeroNo()).show(fragmentManager,TAG));
+
         }
     }
 

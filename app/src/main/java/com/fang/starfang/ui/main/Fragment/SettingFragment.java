@@ -40,6 +40,12 @@ public class SettingFragment extends PlaceholderFragment {
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG, "_ON DESTROY VIEW");
+    }
+
 
     @Override
     public View onCreateView(

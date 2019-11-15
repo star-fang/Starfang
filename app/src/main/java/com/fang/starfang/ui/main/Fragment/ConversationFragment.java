@@ -42,6 +42,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
@@ -49,6 +50,7 @@ public class ConversationFragment extends PlaceholderFragment {
 
     private static final String TAG = "FANG_CONV_FRAG";
     private static final String SUMMARY_TIME_FORMAT = "yyyy년 MM월 dd일";
+    private RealmChangeListener<Realm> realmChangeListener;
 
     static ConversationFragment newInstance(int index) {
             ConversationFragment conversationFragment = new ConversationFragment();
@@ -64,14 +66,23 @@ public class ConversationFragment extends PlaceholderFragment {
 
         Log.d(TAG,"_ON CREATE");
 
+
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Realm realm = Realm.getDefaultInstance();
+        realm.removeChangeListener(realmChangeListener);
+        Log.d(TAG, "_ON DESTROY VIEW : remove realm listener");
+    }
+
 
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         Log.d(TAG,"_ON CREATE VIEW");
-
         /*대화 파트*/
         Realm realm = Realm.getDefaultInstance();
         final View child_conversation = inflater.inflate(R.layout.fragment_conversation,container,false);
@@ -86,8 +97,7 @@ public class ConversationFragment extends PlaceholderFragment {
         final ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
         conversationFilter.filter("on");
 
-        realm.removeAllChangeListeners();
-        realm.addChangeListener(o -> {
+        realmChangeListener = o -> {
             conversationRecyclerAdapter.notifyDataSetChanged();
             Log.d(TAG,"realm changed!");
             int itemPosition = layoutManager.findLastVisibleItemPosition();
@@ -99,8 +109,8 @@ public class ConversationFragment extends PlaceholderFragment {
             if( itemPosition > itemLastPosition - 4 ) {
                 recyclerView.scrollToPosition(conversationRecyclerAdapter.getItemCount()-1);
             }
-
-        });
+        };
+        realm.addChangeListener(realmChangeListener);
 
         final AppCompatTextView title_conversation = child_conversation.findViewById(R.id.title_conversation);
         final AppCompatEditText text_conversation = child_conversation.findViewById(R.id.text_conversation);

@@ -4,77 +4,210 @@
     android:layout_width="wrap_content"
     android:layout_height="50dp"
     android:orientation="horizontal"
-    android:layout_marginTop="1dp"
     android:background="@drawable/bottom_border_gray_1px">
 
     <TextView
-        android:id="@+id/text_hero_cost"
+        android:id="@+id/text_hero_level"
         android:layout_width="40dp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
         android:textSize="15sp"
         tools:text="11"
-        android:gravity="center"/>
-
+        android:gravity="center"
+        android:background="@drawable/end_border_gray_1px"/>
     <TextView
-        android:id="@+id/text_hero_lineage"
-        android:layout_width="80dp"
+        android:id="@+id/text_hero_cost_cur"
+        android:layout_width="30dp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
         android:textSize="15sp"
-        tools:text="난세간웅"
+        tools:text="15"
         android:gravity="center"/>
+
+    <TextView
+        android:layout_width="5dp"
+        android:layout_height="match_parent"
+        android:textColor="#000"
+        android:text="@string/value_by_max_holder"
+        android:gravity="center"/>
+
+
+    <TextView
+        android:id="@+id/text_hero_cost"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:textColor="#000"
+        android:textSize="15sp"
+        tools:text="21"
+        android:gravity="center"
+        android:background="@drawable/end_border_gray_1px"/>
+
+
+    <LinearLayout
+        android:id="@+id/row_hero_stat"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@drawable/end_border_gray_1px">
+
+        <LinearLayout
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="1dp"
+            android:layout_gravity="center">
+
 
     <TextView
         android:id="@+id/text_hero_stat1"
-        android:layout_width="25dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
         android:textColor="#000"
-        tools:text="90"
-        android:gravity="center"/>
+        tools:text="200"
+        android:gravity="center"
+        />
 
+            <TextView
+                android:id="@+id/text_hero_plus_stat1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="#F00"
+                tools:text="(+125)"
+                android:textSize="12sp"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="1dp"
+            android:layout_gravity="center">
     <TextView
         android:id="@+id/text_hero_stat2"
-        android:layout_width="25dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
         android:textColor="#000"
-        tools:text="64"
+        tools:text="164"
         android:gravity="center"/>
 
-    <TextView
-        android:id="@+id/text_hero_stat3"
-        android:layout_width="25dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        tools:text="77"
-        android:gravity="center"/>
+            <TextView
+                android:id="@+id/text_hero_plus_stat2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="#F00"
+                tools:text="(+105)"
+                android:textSize="12sp"
+                android:gravity="center"/>
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/text_hero_stat4"
-        android:layout_width="25dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        tools:text="94"
-        android:gravity="center"/>
+        <LinearLayout
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="1dp"
+            android:layout_gravity="center">
+            <TextView
+                android:id="@+id/text_hero_stat3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="#000"
+                tools:text="104"
+                android:gravity="center"/>
 
-    <TextView
-        android:id="@+id/text_hero_stat5"
-        android:layout_width="25dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        tools:text="66"
-        android:gravity="center"/>
+            <TextView
+                android:id="@+id/text_hero_plus_stat3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="#F00"
+                tools:text="(+95)"
+                android:textSize="12sp"
+                android:gravity="center"/>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="1dp"
+            android:layout_gravity="center">
+            <TextView
+                android:id="@+id/text_hero_stat4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="#000"
+                tools:text="54"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/text_hero_plus_stat4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="#F00"
+                tools:text="(+15)"
+                android:textSize="12sp"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="1dp"
+            android:layout_gravity="center">
+            <TextView
+                android:id="@+id/text_hero_stat5"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="#000"
+                tools:text="124"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/text_hero_plus_stat5"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="#F00"
+                tools:text="(+12)"
+                android:textSize="12sp"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_hero_stat_sum"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="1dp"
+            android:textColor="#000"
+            tools:text="360"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:textColor="#000"
+            android:text="@string/value_by_max_holder"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/text_hero_stat_sum_total"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:textColor="#000"
+            tools:text="500"
+            android:gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@drawable/end_border_gray_1px">
     <TextView
         android:id="@+id/text_hero_spec1"
-        android:layout_width="100dp"
+        android:layout_width="70dp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
@@ -84,17 +217,23 @@
 
     <TextView
         android:id="@+id/text_hero_spec_val1"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
+        android:textSize="12sp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
         tools:text="50%"
         android:gravity="center"/>
+    </LinearLayout>
 
-
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@drawable/end_border_gray_1px">
     <TextView
         android:id="@+id/text_hero_spec2"
-        android:layout_width="100dp"
+        android:layout_width="70dp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
@@ -104,17 +243,24 @@
 
     <TextView
         android:id="@+id/text_hero_spec_val2"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
+        android:textSize="12sp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
         tools:text=""
         android:gravity="center"/>
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@drawable/end_border_gray_1px">
 
     <TextView
         android:id="@+id/text_hero_spec3"
-        android:layout_width="100dp"
+        android:layout_width="70dp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
@@ -124,16 +270,23 @@
 
     <TextView
         android:id="@+id/text_hero_spec_val3"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
+        android:textSize="12sp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
         tools:text=""
         android:gravity="center"/>
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@drawable/end_border_gray_1px">
     <TextView
         android:id="@+id/text_hero_spec4"
-        android:layout_width="100dp"
+        android:layout_width="70dp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
@@ -143,30 +296,46 @@
 
     <TextView
         android:id="@+id/text_hero_spec_val4"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
+        android:textSize="12sp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
         tools:text=""
         android:gravity="center"/>
+    </LinearLayout>
+
 
     <TextView
-        android:id="@+id/text_hero_spec_vice"
-        android:layout_width="100dp"
+        android:id="@+id/text_hero_spec5"
+        android:layout_width="70dp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
         android:textSize="15sp"
         tools:text="시장 특화"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:background="@drawable/end_border_gray_1px"/>
 
     <TextView
-        android:id="@+id/text_hero_spec_lord"
-        android:layout_width="100dp"
+        android:id="@+id/text_hero_spec6"
+        android:layout_width="70dp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:textColor="#000"
         tools:text="명품 상점 보조"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:background="@drawable/end_border_gray_1px"/>
+
+    <TextView
+        android:id="@+id/text_hero_lineage"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="1dp"
+        android:textColor="#000"
+        android:textSize="15sp"
+        tools:text="난세간웅"
+        android:gravity="center"
+        android:background="@drawable/end_border_gray_1px"/>
 
 </LinearLayout>

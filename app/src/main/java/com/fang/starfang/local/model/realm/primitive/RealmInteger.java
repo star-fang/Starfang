@@ -17,6 +17,10 @@ public class RealmInteger extends RealmObject {
 
     public int toInt() { return intValue; }
 
+    public void setIntValue(int intValue) {
+        this.intValue = intValue;
+    }
+
     @NonNull
     @Override
     public String toString() {

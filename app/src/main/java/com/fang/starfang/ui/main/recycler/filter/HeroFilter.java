@@ -1,6 +1,5 @@
 package com.fang.starfang.ui.main.recycler.filter;
 
-import android.view.View;
 import android.widget.Filter;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,13 +20,11 @@ import io.realm.Sort;
 public class HeroFilter extends Filter {
 
     private RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> adapter;
-    private Realm realm;
     private int cs_field_position;
 
-    public HeroFilter(RealmRecyclerViewAdapter adapter, Realm realm) {
+    public HeroFilter(RealmRecyclerViewAdapter adapter) {
         super();
         this.adapter = adapter;
-        this.realm = realm;
         cs_field_position = 0;
     }
 
@@ -51,6 +48,7 @@ public class HeroFilter extends Filter {
             return;
         }
 
+        Realm realm = Realm.getDefaultInstance();
         RealmQuery<Heroes> query = realm.where(Heroes.class);
 
         switch(cs_field_position ) {

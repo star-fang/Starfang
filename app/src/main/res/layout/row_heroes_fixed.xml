@@ -5,7 +5,6 @@
     android:layout_height="50dp"
     android:orientation="horizontal"
     android:layout_marginStart="5dp"
-    android:layout_marginTop="1dp"
     android:background="@drawable/bottom_border_gray_1px">
 
                 <TextView
@@ -28,6 +27,8 @@
                     android:textColor="#000"
                     android:textSize="13sp"
                     />
+
+
 
 
 </LinearLayout>

@@ -16,17 +16,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Heroes;
-import com.fang.starfang.ui.main.recycler.DiagonalScrollRecyclerView;
+import com.fang.starfang.ui.main.recycler.custom.DiagonalScrollRecyclerView;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRecyclerAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRecyclerAdapter;
 import com.fang.starfang.ui.main.recycler.filter.HeroFilter;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.Sort;
 
 public class SimulationFragment extends PlaceholderFragment {
 
     private static final String TAG = "FANG_SIMULATION_FRAG";
+    private RealmChangeListener<Realm> realmChangeListener;
 
     static SimulationFragment newInstance(int index) {
             SimulationFragment simulationFragment = new SimulationFragment();
@@ -43,6 +45,14 @@ public class SimulationFragment extends PlaceholderFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Realm realm = Realm.getDefaultInstance();
+        realm.removeChangeListener(realmChangeListener);
+        Log.d(TAG, "_ON DESTROY VIEW : realm change listener removed");
+    }
+
+    @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -52,11 +62,18 @@ public class SimulationFragment extends PlaceholderFragment {
         final View child_sim = inflater.inflate(R.layout.fragment_simulation, container, false);
         final RecyclerView recycler_view_hero_fixed = child_sim.findViewById(R.id.recycler_view_hero_fixed);
         final RecyclerView recycler_view_hero_floating = child_sim.findViewById(R.id.recycler_view_hero_floating);
-        final HeroesFloatingRecyclerAdapter heroesFloatingRecyclerAdapter = new HeroesFloatingRecyclerAdapter(realm);
-        final HeroesFixedRecyclerAdapter heroesFixedRecyclerAdapter = new HeroesFixedRecyclerAdapter(realm);
+        final HeroesFloatingRecyclerAdapter heroesFloatingRecyclerAdapter = new HeroesFloatingRecyclerAdapter(realm.where(Heroes.class).findAll(),mActivity);
+        final HeroesFixedRecyclerAdapter heroesFixedRecyclerAdapter = new HeroesFixedRecyclerAdapter(realm.where(Heroes.class).findAll(), getFragmentManager());
         final LinearLayoutManager layoutManager_fixed = new LinearLayoutManager(mActivity);
         final LinearLayoutManager layoutManager_floating = new LinearLayoutManager(mActivity);
         final DiagonalScrollRecyclerView recycler_view_hero_content = child_sim.findViewById(R.id.recycler_view_hero_content);
+
+        realmChangeListener = o -> {
+            heroesFloatingRecyclerAdapter.notifyDataSetChanged();
+            heroesFixedRecyclerAdapter.notifyDataSetChanged();
+            Log.d(TAG,"realm changed!");
+        };
+        realm.addChangeListener(realmChangeListener);
 
         recycler_view_hero_floating.setLayoutManager(layoutManager_floating);
         recycler_view_hero_floating.setAdapter(heroesFloatingRecyclerAdapter);
@@ -65,16 +82,13 @@ public class SimulationFragment extends PlaceholderFragment {
         recycler_view_hero_fixed.setLayoutManager(layoutManager_fixed);
         recycler_view_hero_fixed.setAdapter(heroesFixedRecyclerAdapter);
 
-        boolean touchOnStartHeader = false;
-        boolean touchOnTopHeader = false;
-
         recycler_view_hero_floating.addOnScrollListener(
                 new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                         super.onScrolled(recyclerView, dx, dy);
                         recycler_view_hero_fixed.scrollBy(0,dy);
-                        Log.d(TAG,"right scroll by y :" +dy);
+                       // Log.d(TAG,"right scroll by y :" +dy);
                     }
                 }
         );
@@ -85,7 +99,7 @@ public class SimulationFragment extends PlaceholderFragment {
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                         super.onScrolled(recyclerView, dx, dy);
                        // diagonalScrollRecyclerView.getRecyclerView().scrollBy(0,dy);
-                        Log.d(TAG,"left scroll by y :"+dy);
+                     //   Log.d(TAG,"left scroll by y :"+dy);
                     }
                 }
         );
