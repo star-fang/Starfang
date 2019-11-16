@@ -17,6 +17,7 @@ public class Heroes extends RealmObject {
     public static final String FIELD_SPECS = "heroSpecs";
     public static final String FIELD_BRANCH = "heroBranch";
     public static final String FIELD_LINEAGE = "heroLineage";
+    public static final String FIELD_BRANCH_ID = "branchNo";
     public static final String FIELD_COST = "heroCost";
     public static final String FIELD_STATS = "heroStats";
     public static final String INIT_DYNASTY = "인연";
@@ -36,6 +37,9 @@ public class Heroes extends RealmObject {
     private RealmList<RealmString> heroSpecValues;
     private String heroDestiny;
     private String heroName2;
+    private int branchNo;
+
+
 
     public int getHeroCost() {
         return heroCost;
@@ -99,4 +103,7 @@ public class Heroes extends RealmObject {
         this.heroNo = heroNo;
     }
 
+    public int getBranchNo() {
+        return branchNo;
+    }
 }

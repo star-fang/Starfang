@@ -198,4 +198,22 @@
     <string name="title_stat5">행운</string>
     <string name="table_header_specs_unique">고유 특성</string>
     <string name="table_header_specs_branch">병종 특성</string>
+    <string name="row_title_spec6">군주</string>
+    <string name="row_title_spec5">태수</string>
+    <string name="row_title_spec4">Lv90</string>
+    <string name="row_title_spec3">Lv70</string>
+    <string name="row_title_spec2">Lv50</string>
+    <string name="row_title_spec1">Lv30</string>
+    <string name="row_title_branch_spec5">Lv25</string>
+    <string name="row_title_branch_spec4">Lv20</string>
+    <string name="row_title_branch_spec3">Lv15</string>
+    <string name="row_title_branch_spec2">Lv10</string>
+    <string name="row_title_branch_spec1">Lv01</string>
+    <string name="row_title_cost_init">초기:</string>
+    <string name="row_title_cost_cur">현재:</string>
+    <string name="row_title_cost_fin">최종:</string>
+    <string name="title_calc_damage">데미지 계산</string>
+    <string name="title_manage_item">보물 제작/강화</string>
+    <string name="title_manage_magic_item">보패 관리</string>
+    <string name="holder_plus_stat_sum">교본 합:</string>
 </resources>
