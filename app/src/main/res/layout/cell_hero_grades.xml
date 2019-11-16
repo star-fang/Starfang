@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/end_border_gray_1dp">
+
+    <LinearLayout
+        android:id="@+id/row_hero_grade1"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:orientation="horizontal"
+        >
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/_1"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_name1"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textSize="13sp"
+            tools:text="선기병" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_cost1"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            tools:text="15" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/row_hero_grade2"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/_2"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_name2"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textSize="13sp"
+            tools:text="진기병" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_cost2"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            tools:text="18" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/row_hero_grade3"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/_3"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_name3"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textSize="13sp"
+            tools:text="용기병" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_cost3"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            tools:text="20" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/row_hero_grade4"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/_4"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_name4"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textSize="13sp"
+            tools:text="폭기병" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_cost4"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            tools:text="11" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/row_hero_grade5"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/_5"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_name5"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textSize="13sp"
+            tools:text="효기병" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_cost5"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            tools:text="11" />
+    </LinearLayout>
+
+</LinearLayout>

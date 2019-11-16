@@ -38,6 +38,7 @@ public class Heroes extends RealmObject {
     private String heroDestiny;
     private String heroName2;
     private int branchNo;
+    private String heroPersonality;
 
 
 
@@ -105,5 +106,9 @@ public class Heroes extends RealmObject {
 
     public int getBranchNo() {
         return branchNo;
+    }
+
+    public String getHeroPersonality() {
+        return heroPersonality;
     }
 }

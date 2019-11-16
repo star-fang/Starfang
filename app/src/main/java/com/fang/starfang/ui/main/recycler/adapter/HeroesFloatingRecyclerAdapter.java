@@ -2,7 +2,6 @@ package com.fang.starfang.ui.main.recycler.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatCheckedTextView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,7 +46,6 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_heroes_floating,viewGroup,false);
-        View uniqueSpecView  = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cell_specs_unique,viewGroup,false);;
         return new HeroesFloatingViewHolder(view);
     }
 
@@ -82,35 +81,51 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
 
 
     private class HeroesFloatingViewHolder extends RecyclerView.ViewHolder {
-        private AppCompatTextView text_hero_cost_init;
-        private AppCompatTextView text_hero_cost_cur;
-        private AppCompatTextView text_hero_cost_fin;
+        private View[] row_hero_grade;
+        private AppCompatTextView[] text_hero_grade_name;
+        private AppCompatTextView[] text_hero_grade_cost;
         private AppCompatTextView text_hero_lineage;
         private AppCompatTextView[] text_hero_stat;
         private AppCompatTextView[] text_hero_plus_stat;
-        private AppCompatTextView[] text_hero_spec_unique;
-        private AppCompatTextView[] text_hero_spec_branch;
+        private AppCompatCheckedTextView[] text_hero_spec_unique;
+        private AppCompatCheckedTextView[] text_hero_spec_branch;
         private AppCompatTextView text_hero_stat_sum;
         private AppCompatTextView text_hero_stat_sum_total;
+        private View cell_specs_unique;
+        private View cell_specs_branch;
+        private View cell_hero_stats;
 
         private HeroesFloatingViewHolder(View itemView) {
             super(itemView);
 
-            text_hero_cost_init = itemView.findViewById(R.id.text_hero_cost_init);
-            text_hero_cost_cur = itemView.findViewById(R.id.text_hero_cost_cur);
-            text_hero_cost_fin = itemView.findViewById(R.id.text_hero_cost_fin);
+            row_hero_grade = new View[5];
+            text_hero_grade_name = new AppCompatTextView[5];
+            text_hero_grade_cost = new AppCompatTextView[5];
             text_hero_lineage = itemView.findViewById(R.id.text_hero_lineage);
             text_hero_stat = new AppCompatTextView[5];
             text_hero_plus_stat = new AppCompatTextView[5];
-            text_hero_spec_unique = new AppCompatTextView[6];
-            text_hero_spec_branch = new AppCompatTextView[5];
+            text_hero_spec_unique = new AppCompatCheckedTextView[6];
+            text_hero_spec_branch = new AppCompatCheckedTextView[5];
             text_hero_stat_sum = itemView.findViewById(R.id.text_hero_stat_sum);
             text_hero_stat_sum_total = itemView.findViewById(R.id.text_hero_stat_sum_total);
+            cell_specs_unique = itemView.findViewById(R.id.cell_specs_unique);
+            cell_specs_branch = itemView.findViewById(R.id.cell_specs_branch);
+            cell_hero_stats = itemView.findViewById(R.id.cell_hero_stats);
+
             String id = "id";
             String packageName = context.getPackageName();
             Resources resources = context.getResources();
             for(int i = 0; i < 6; i++ ) {
                 if( i < 5) {
+                    int gradeRowID = resources.getIdentifier
+                            ("row_hero_grade" + (i + 1), id, packageName);
+                    row_hero_grade[i] = itemView.findViewById(gradeRowID);
+                    int gradeNameID = resources.getIdentifier
+                            ("text_hero_grade_name" + (i + 1), id, packageName);
+                    text_hero_grade_name[i] = itemView.findViewById(gradeNameID);
+                    int gradeCostID = resources.getIdentifier
+                            ("text_hero_grade_cost" + (i + 1), id, packageName);
+                    text_hero_grade_cost[i] = itemView.findViewById(gradeCostID);
                     int statID = resources.getIdentifier
                             ("text_hero_stat" + (i + 1), id, packageName);
                     text_hero_stat[i] = itemView.findViewById(statID);
@@ -143,40 +158,41 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
 
             RealmList<RealmString> branchSpecs = null;
             RealmList<RealmString> branchSpecVals = null;
+            RealmList<RealmString> branchGrades = null;
 
             int heroGrade = 1;
             int cost_init = hero.getHeroCost();
             if(heroSim != null) {
                 heroGrade = heroSim.getHeroGrade();
                 heroPlusStats = heroSim.getHeroStatsUp();
-                int plus_cost = COST_PLUS_BY_UPGRADE[heroSim.getHeroGrade()-1];
-                switch ( plus_cost ) {
-                    case 10:
-                        text_hero_cost_cur.setTextColor(Color.parseColor("#000FFF"));
-                        break;
-                    case 8:
-                        text_hero_cost_cur.setTextColor(Color.parseColor("#00498C"));
-                        break;
-                        default:
-                            text_hero_cost_cur.setTextColor(Color.parseColor("#000000"));
-                }
-                text_hero_cost_cur.setText(String.valueOf( plus_cost + cost_init));
-            } else {
-                text_hero_cost_cur.setText(String.valueOf(cost_init));
             }
 
-            text_hero_cost_init.setText(String.valueOf(cost_init));
-            text_hero_cost_fin.setText(String.valueOf(cost_init+10));
             text_hero_lineage.setText(hero.getHeroLineage());
 
             if(branch != null) {
                 branchSpecs = branch.getBranchSpecs();
                 branchSpecVals = branch.getBranchSpecValues();
+                branchGrades = branch.getBranchGrade();
             }
 
             int plusStatSum = 0;
             for(int i = 0; i < 6; i ++ ) {
                 if( i < 5 ) {
+                    int plus_cost = COST_PLUS_BY_UPGRADE[i];
+                    text_hero_grade_cost[i].setText(String.valueOf(cost_init + plus_cost));
+                    String gradeName = "";
+                    if(branchGrades != null) {
+                        RealmString branchGrade = branchGrades.get(i);
+                        if(branchGrade != null) {
+                            gradeName = branchGrade.toString();
+                        }
+                    }
+                    text_hero_grade_name[i].setText(gradeName);
+                    if(i == heroGrade - 1 ) {
+                        row_hero_grade[i].setBackgroundResource(R.drawable.rect_checked);
+                    } else {
+                        row_hero_grade[i].setBackgroundResource(0);
+                    }
                     RealmInteger heroStat = heroStats.get(i);
                     text_hero_plus_stat[i].setVisibility(View.GONE);
                     if(heroStat != null) {

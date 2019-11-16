@@ -216,4 +216,15 @@
     <string name="title_manage_item">보물 제작/강화</string>
     <string name="title_manage_magic_item">보패 관리</string>
     <string name="holder_plus_stat_sum">교본 합:</string>
+    <string name="title_weapon_holder">무기</string>
+    <string name="title_shield_holder">방어구</string>
+    <string name="title_aid_holder">보조구</string>
+    <string name="title_spec_score_holder">효과 점수:</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_4">4</string>
+    <string name="_5">5</string>
+    <string name="table_header_item">아이템</string>
+    <string name="table_header_grade">승급단계</string>
 </resources>

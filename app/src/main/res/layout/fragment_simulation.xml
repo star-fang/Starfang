@@ -56,21 +56,21 @@
         android:layout_height="match_parent"
         android:layout_above="@id/simulataion_bt_layout"
         android:layout_below="@id/simulataion_et_layout"
-        android:background="@drawable/top_bottom_border_black_1px"
+        android:background="@drawable/top_bottom_border_black_1dp"
         android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="1dp"
-            android:background="@drawable/right_border_black_2px"
+            android:background="@drawable/right_border_black_2dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginStart="5dp"
-                android:background="@drawable/bottom_border_black_2px"
+                android:background="@drawable/bottom_border_black_2dp"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -109,16 +109,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_marginTop="1dp"
-                    android:background="@drawable/bottom_border_black_2px"
+                    android:background="@drawable/bottom_border_black_2dp"
                     android:orientation="horizontal">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
+                        android:text="@string/table_header_grade"
+                        android:layout_marginBottom="2dp"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
                         android:text="@string/table_header_cost"
+                        android:textSize="13sp"
                         android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1px"/>
+                        android:background="@drawable/end_border_gray_1dp"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="100dp"
@@ -126,7 +134,7 @@
                         android:gravity="center"
                         android:text="@string/title_stat"
                         android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1px"/>
+                        android:background="@drawable/end_border_gray_1dp"/>
 
 
 
@@ -136,8 +144,7 @@
                         android:gravity="center"
                         android:text="@string/table_header_specs_unique"
                         android:textSize="15sp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1px"/>
+                        android:layout_marginBottom="2dp"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="200dp"
@@ -146,7 +153,16 @@
                         android:text="@string/table_header_specs_branch"
                         android:textSize="15sp"
                         android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1px"/>
+                        android:background="@drawable/end_border_gray_1dp"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="180dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/table_header_item"
+                        android:textSize="15sp"
+                        android:layout_marginBottom="2dp"
+                        android:background="@drawable/end_border_gray_1dp"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="80dp"
@@ -155,7 +171,7 @@
                         android:text="@string/table_header_lineage"
                         android:textSize="15sp"
                         android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1px"/>
+                        android:background="@drawable/end_border_gray_1dp"/>
 
                 </LinearLayout>
 
