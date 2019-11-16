@@ -5,17 +5,6 @@
     <string name="tab_text_2">대화</string>
     <string name="tab_text_3">냥봇</string>
 
-
-    <string name="pref_header_information">Information</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
     <string name="pref_title_sync_table_to_realm">DB 테이블 선택</string>
     <string-array name="pref_list_table">
         <item>장수 정보</item>
@@ -81,18 +70,6 @@
         <item>-1</item>
     </string-array>
 
-    <string-array name="list_preference_entries">
-        <item>Entry 1</item>
-        <item>Entry 2</item>
-        <item>Entry 3</item>
-    </string-array>
-
-    <string-array name="list_preference_entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
     <string-array name="option_search_heroes">
         <item>이름</item>
         <item>병종</item>
@@ -101,6 +78,16 @@
         <item>스탯</item>
         <item>특성</item>
     </string-array>
+
+    <string-array name="list_stats">
+        <item>@string/title_stat1</item>
+        <item>@string/title_stat2</item>
+        <item>@string/title_stat3</item>
+        <item>@string/title_stat4</item>
+        <item>@string/title_stat5</item>
+    </string-array>
+
+
 
     <string-array name="multi_select_list_preference_default_value" />
 
@@ -186,26 +173,15 @@
     <string name="hint_insert_name">검색</string>
     <string name="desc_insert_name">단톡방에서 다른봇과 구별되는 이름을 입력하세요.(2~4글자)\n\n [봇이름]시작냥, [봇이름]정지냥 명령어로 제어가능.</string>
     <string name="desc_weapon_image">무기 이미지</string>
-    <string name="table_header_cost">COST\n현재/최종</string>
+    <string name="table_header_cost">COST</string>
     <string name="table_header_lineage">계보</string>
-    <string name="table_header_spec1">Lv30 특성</string>
-    <string name="table_header_spec2">Lv50 특성</string>
-    <string name="table_header_spec3">Lv70 특성</string>
-    <string name="table_header_spec4">Lv90 특성</string>
-    <string name="table_header_spec5">태수 효과</string>
-    <string name="table_header_spec6">군주 효과</string>
     <string name="table_header_name">이름</string>
     <string name="table_header_branch">병종</string>
     <string name="slot_grade_holder">단계</string>
-    <string name="slot_level_holder">LV.</string>
+    <string name="slot_level_holder">Lv.</string>
     <string name="value_by_max_holder">/</string>
     <string name="reinforcement_plus">+</string>
     <string name="dialog_title_plus_stat">교본</string>
-    <string name="title_stat_1">무력</string>
-    <string name="title_stat_2">지력</string>
-    <string name="title_stat_3">통솔</string>
-    <string name="title_stat_4">민첩</string>
-    <string name="title_stat_5">행운</string>
     <string name="subtitle_plus_stat">훈련 교본</string>
     <string name="title_item">보물</string>
     <string name="title_magic_item">보패</string>
@@ -214,5 +190,12 @@
     <string name="title_level_kor">레벨</string>
     <string name="title_grade_kor">승급 단계</string>
     <string name="table_header_stat_sum">교본\n합계</string>
-
+    <string name="title_stat">스탯 / 교본</string>
+    <string name="title_stat1">무력</string>
+    <string name="title_stat2">지력</string>
+    <string name="title_stat3">통솔</string>
+    <string name="title_stat4">민첩</string>
+    <string name="title_stat5">행운</string>
+    <string name="table_header_specs_unique">고유 특성</string>
+    <string name="table_header_specs_branch">병종 특성</string>
 </resources>

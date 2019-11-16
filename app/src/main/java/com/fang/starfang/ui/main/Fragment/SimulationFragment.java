@@ -82,34 +82,30 @@ public class SimulationFragment extends PlaceholderFragment {
         recycler_view_hero_fixed.setLayoutManager(layoutManager_fixed);
         recycler_view_hero_fixed.setAdapter(heroesFixedRecyclerAdapter);
 
-        recycler_view_hero_floating.addOnScrollListener(
-                new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        super.onScrolled(recyclerView, dx, dy);
-                        recycler_view_hero_fixed.scrollBy(0,dy);
-                       // Log.d(TAG,"right scroll by y :" +dy);
-                    }
-                }
-        );
+        final RecyclerView.OnScrollListener[] heroRecyclerViewLiteners =
+                new RecyclerView.OnScrollListener[2];
+        heroRecyclerViewLiteners[0] = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                recycler_view_hero_fixed.removeOnScrollListener(heroRecyclerViewLiteners[1]);
+                recycler_view_hero_fixed.scrollBy(0,dy);
+                recycler_view_hero_fixed.addOnScrollListener(heroRecyclerViewLiteners[1]);
+            }
+        };
 
-        recycler_view_hero_fixed.addOnScrollListener(
-                new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        super.onScrolled(recyclerView, dx, dy);
-                       // diagonalScrollRecyclerView.getRecyclerView().scrollBy(0,dy);
-                     //   Log.d(TAG,"left scroll by y :"+dy);
-                    }
-                }
-        );
+        heroRecyclerViewLiteners[1] = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                recycler_view_hero_floating.removeOnScrollListener(heroRecyclerViewLiteners[0]);
+                recycler_view_hero_floating.scrollBy(0,dy);
+                recycler_view_hero_floating.addOnScrollListener(heroRecyclerViewLiteners[0]);
+            }
+        };
 
-        final View table_header_branch = child_sim.findViewById(R.id.table_header_branch);
-        table_header_branch.setOnClickListener( v -> {
-                    heroesFloatingRecyclerAdapter.setSort(Heroes.FIELD_BRANCH, Sort.ASCENDING);
-                    heroesFixedRecyclerAdapter.setSort(Heroes.FIELD_BRANCH, Sort.ASCENDING);
-                }
-        );
+        recycler_view_hero_floating.addOnScrollListener(heroRecyclerViewLiteners[0]);
+        recycler_view_hero_fixed.addOnScrollListener(heroRecyclerViewLiteners[1]);
 
         final  View table_header_name = child_sim.findViewById(R.id.table_header_name);
         table_header_name.setOnClickListener( v -> {

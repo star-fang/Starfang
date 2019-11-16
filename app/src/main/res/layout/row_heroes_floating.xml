@@ -2,337 +2,155 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="50dp"
+    android:layout_height="120dp"
     android:orientation="horizontal"
     android:background="@drawable/bottom_border_gray_1px">
 
-    <TextView
-        android:id="@+id/text_hero_level"
-        android:layout_width="40dp"
+    <LinearLayout
+        android:layout_width="60dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        android:textSize="15sp"
-        tools:text="11"
-        android:gravity="center"
-        android:background="@drawable/end_border_gray_1px"/>
-    <TextView
-        android:id="@+id/text_hero_cost_cur"
-        android:layout_width="30dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        android:textSize="15sp"
-        tools:text="15"
-        android:gravity="center"/>
+        android:orientation="vertical"
+        android:background="@drawable/end_border_gray_1px"
+        android:gravity="center">
 
-    <TextView
-        android:layout_width="5dp"
-        android:layout_height="match_parent"
-        android:textColor="#000"
-        android:text="@string/value_by_max_holder"
-        android:gravity="center"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text="초기:"
+                android:gravity="center"/>
 
-    <TextView
-        android:id="@+id/text_hero_cost"
-        android:layout_width="30dp"
-        android:layout_height="match_parent"
-        android:textColor="#000"
-        android:textSize="15sp"
-        tools:text="21"
-        android:gravity="center"
-        android:background="@drawable/end_border_gray_1px"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_cost_init"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            tools:text="11"/>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text="현재:"
+                android:gravity="center"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_hero_cost_cur"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                tools:text="11"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text="최종:"
+                android:gravity="center"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_hero_cost_fin"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                tools:text="11"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/row_hero_stat"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:background="@drawable/end_border_gray_1px">
 
-        <LinearLayout
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="1dp"
-            android:layout_gravity="center">
-
-
-    <TextView
-        android:id="@+id/text_hero_stat1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="#000"
-        tools:text="200"
-        android:gravity="center"
-        />
-
-            <TextView
-                android:id="@+id/text_hero_plus_stat1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="#F00"
-                tools:text="(+125)"
-                android:textSize="12sp"
-                android:gravity="center"/>
-        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_hero_stats"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:scrollbars="none"
+            tools:listitem="@layout/row_heroes_stats" />
 
         <LinearLayout
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="1dp"
-            android:layout_gravity="center">
-    <TextView
-        android:id="@+id/text_hero_stat2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="#000"
-        tools:text="164"
-        android:gravity="center"/>
-
-            <TextView
-                android:id="@+id/text_hero_plus_stat2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="#F00"
-                tools:text="(+105)"
-                android:textSize="12sp"
-                android:gravity="center"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="1dp"
-            android:layout_gravity="center">
-            <TextView
-                android:id="@+id/text_hero_stat3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="#000"
-                tools:text="104"
-                android:gravity="center"/>
-
-            <TextView
-                android:id="@+id/text_hero_plus_stat3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="#F00"
-                tools:text="(+95)"
-                android:textSize="12sp"
-                android:gravity="center"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="1dp"
-            android:layout_gravity="center">
-            <TextView
-                android:id="@+id/text_hero_stat4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="#000"
-                tools:text="54"
-                android:gravity="center"/>
-
-            <TextView
-                android:id="@+id/text_hero_plus_stat4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="#F00"
-                tools:text="(+15)"
-                android:textSize="12sp"
-                android:gravity="center"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="1dp"
-            android:layout_gravity="center">
-            <TextView
-                android:id="@+id/text_hero_stat5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="#000"
-                tools:text="124"
-                android:gravity="center"/>
-
-            <TextView
-                android:id="@+id/text_hero_plus_stat5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="#F00"
-                tools:text="(+12)"
-                android:textSize="12sp"
-                android:gravity="center"/>
-        </LinearLayout>
-
-        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="#30000000">
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_stat_sum"
-            android:layout_width="30dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="1dp"
-            android:textColor="#000"
             tools:text="360"
             android:gravity="center"/>
 
-        <TextView
-            android:layout_width="5dp"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="#000"
             android:text="@string/value_by_max_holder"
             android:gravity="center"/>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_stat_sum_total"
             android:layout_width="30dp"
             android:layout_height="match_parent"
-            android:textColor="#000"
             tools:text="500"
             android:gravity="center"/>
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:background="@drawable/end_border_gray_1px">
-    <TextView
-        android:id="@+id/text_hero_spec1"
-        android:layout_width="70dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        android:textSize="15sp"
-        tools:text="연속공격 강화"
-        android:gravity="center"/>
-
-    <TextView
-        android:id="@+id/text_hero_spec_val1"
-        android:layout_width="50dp"
-        android:textSize="12sp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        tools:text="50%"
-        android:gravity="center"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:background="@drawable/end_border_gray_1px">
-    <TextView
-        android:id="@+id/text_hero_spec2"
-        android:layout_width="70dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        android:textSize="15sp"
-        tools:text="전화위복"
-        android:gravity="center"/>
-
-    <TextView
-        android:id="@+id/text_hero_spec_val2"
-        android:layout_width="50dp"
-        android:textSize="12sp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        tools:text=""
-        android:gravity="center"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:background="@drawable/end_border_gray_1px">
-
-    <TextView
-        android:id="@+id/text_hero_spec3"
-        android:layout_width="70dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        android:textSize="15sp"
-        tools:text="주동 공격"
-        android:gravity="center"/>
-
-    <TextView
-        android:id="@+id/text_hero_spec_val3"
-        android:layout_width="50dp"
-        android:textSize="12sp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        tools:text=""
-        android:gravity="center"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:background="@drawable/end_border_gray_1px">
-    <TextView
-        android:id="@+id/text_hero_spec4"
-        android:layout_width="70dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        android:textSize="15sp"
-        tools:text="역전용사"
-        android:gravity="center"/>
-
-    <TextView
-        android:id="@+id/text_hero_spec_val4"
-        android:layout_width="50dp"
-        android:textSize="12sp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        tools:text=""
-        android:gravity="center"/>
+        </LinearLayout>
     </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/text_hero_spec5"
-        android:layout_width="70dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_hero_specs_unique"
+        android:layout_width="200dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        android:textSize="15sp"
-        tools:text="시장 특화"
-        android:gravity="center"
+        android:scrollbars="none"
+        tools:listitem="@layout/row_heroes_specs_unique"
         android:background="@drawable/end_border_gray_1px"/>
 
-    <TextView
-        android:id="@+id/text_hero_spec6"
-        android:layout_width="70dp"
+    <LinearLayout
+        android:layout_width="200dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:textColor="#000"
-        tools:text="명품 상점 보조"
-        android:gravity="center"
-        android:background="@drawable/end_border_gray_1px"/>
+        android:background="@drawable/end_border_gray_1px">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_hero_specs_branch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            tools:listitem="@layout/row_heroes_specs_branch"/>
+    </LinearLayout>
 
-    <TextView
+
+
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_hero_lineage"
         android:layout_width="80dp"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
-        android:textColor="#000"
         android:textSize="15sp"
         tools:text="난세간웅"
         android:gravity="center"

@@ -9,15 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
+import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.recycler.filter.HeroFilter;
 
@@ -83,42 +84,23 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
 
 
     private class HeroesFloatingViewHolder extends RecyclerView.ViewHolder {
-        private TextView text_hero_level;
-        private TextView text_hero_cost_cur;
-        private TextView text_hero_cost;
-        private TextView text_hero_lineage;
-        private TextView[] text_hero_plus_stats = new TextView[Heroes.INIT_STATS.length];
-        private TextView[] text_hero_stats = new TextView[Heroes.INIT_STATS.length];
-        private TextView[] text_hero_specs  = new TextView[Heroes.INIT_SPECS.length];
-        private TextView[] text_hero_spec_vals = new TextView[Heroes.INIT_SPECS.length - 2];
-
+        private AppCompatTextView text_hero_cost_init;
+        private AppCompatTextView text_hero_cost_cur;
+        private AppCompatTextView text_hero_cost_fin;
+        private AppCompatTextView text_hero_lineage;
+        private RecyclerView recycler_view_hero_stats;
+        private RecyclerView recycler_view_hero_specs_unique;
+        private RecyclerView recycler_view_hero_specs_branch;
 
         private HeroesFloatingViewHolder(View itemView) {
             super(itemView);
-
-            text_hero_level = itemView.findViewById(R.id.text_hero_level);
+            text_hero_cost_init = itemView.findViewById(R.id.text_hero_cost_init);
             text_hero_cost_cur = itemView.findViewById(R.id.text_hero_cost_cur);
-            text_hero_cost = itemView.findViewById(R.id.text_hero_cost);
+            text_hero_cost_fin = itemView.findViewById(R.id.text_hero_cost_fin);
             text_hero_lineage = itemView.findViewById(R.id.text_hero_lineage);
-
-            Context context = contextWeakReference.get();
-            Resources resources = context.getResources();
-            String packageName = context.getPackageName();
-            for (int i = 0; i < Heroes.INIT_STATS.length; i++) {
-                text_hero_stats[i] = itemView.findViewById(resources.getIdentifier("text_hero_stat" + (i + 1), "id", packageName));
-                text_hero_plus_stats[i] = itemView.findViewById(resources.getIdentifier("text_hero_plus_stat" + (i + 1), "id", packageName));
-
-            }
-
-            for( int i = 0; i < Heroes.INIT_SPECS.length; i++) {
-                text_hero_specs[i] = itemView.findViewById(resources.getIdentifier("text_hero_spec" + (i + 1), "id", packageName));
-            }
-
-
-            for( int i = 0; i < Heroes.INIT_SPECS.length - 2; i++ ) {
-                text_hero_spec_vals[i] = itemView.findViewById(resources.getIdentifier("text_hero_spec_val" + (i + 1), "id", packageName));
-            }
-
+            recycler_view_hero_stats = itemView.findViewById(R.id.recycler_view_hero_stats);
+            recycler_view_hero_specs_unique = itemView.findViewById(R.id.recycler_view_hero_specs_unique);
+            recycler_view_hero_specs_branch = itemView.findViewById(R.id.recycler_view_hero_specs_branch);
         }
 
 
@@ -127,9 +109,11 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
 
             Realm realm = Realm.getDefaultInstance();
             HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, hero.getHeroNo()).findFirst();
+            RealmList<RealmInteger> heroStats = hero.getHeroStats();
+            RealmList<RealmInteger> heroPlusStats = null;
             int cost_init = hero.getHeroCost();
             if(heroSim != null) {
-                text_hero_level.setText(String.valueOf(heroSim.getHeroLevel()));
+                heroPlusStats = heroSim.getHeroStatsUp();
                 int plus_cost = COST_PLUS_BY_UPGRADE[heroSim.getHeroGrade()-1];
                 switch ( plus_cost ) {
                     case 10:
@@ -143,61 +127,34 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
                 }
                 text_hero_cost_cur.setText(String.valueOf( plus_cost + cost_init));
             } else {
-                text_hero_level.setText("1");
                 text_hero_cost_cur.setText(String.valueOf(cost_init));
             }
-
-            text_hero_cost.setText(String.valueOf(cost_init+10));
+            text_hero_cost_init.setText(String.valueOf(cost_init));
+            text_hero_cost_fin.setText(String.valueOf(cost_init+10));
             text_hero_lineage.setText(hero.getHeroLineage());
-            RealmList<RealmInteger> heroStats = hero.getHeroStats();
-            if(heroStats != null ) {
-                for(int  i = 0; i < Heroes.INIT_STATS.length; i++) {
-                    RealmInteger stat = heroStats.get(i);
-                    if(stat != null) {
-                        text_hero_stats[i].setText(stat.toString());
-                        if(heroSim != null) {
-                            RealmList<RealmInteger> heroPlusStats = heroSim.getHeroStatsUp();
-                            if( heroPlusStats != null ) {
-                                RealmInteger plusStat = heroPlusStats.get(i);
-                                if( plusStat != null ) {
-                                    if( plusStat.toInt() > 0) {
-                                        String plusStatStr = "(+" + plusStat.toString() + ")";
-                                        text_hero_stats[i].setText(String.valueOf(stat.toInt() + plusStat.toInt()));
-                                        text_hero_plus_stats[i].setText(plusStatStr);
-                                        text_hero_plus_stats[i].setVisibility(View.VISIBLE);
-                                    } else {
-                                        text_hero_plus_stats[i].setVisibility(View.GONE);
-                                    }
-                                }
-                            }
-                        } else {
-                            text_hero_plus_stats[i].setVisibility(View.GONE);
-                        }
-                    }
-                }
-            }
 
-
+            HeroesStatsRecyclerAdapter heroesStatsRecyclerAdapter= new HeroesStatsRecyclerAdapter(contextWeakReference.get(), heroStats, heroPlusStats);
+            recycler_view_hero_stats.setLayoutManager(new LinearLayoutManager(contextWeakReference.get()));
+            recycler_view_hero_stats.setAdapter(heroesStatsRecyclerAdapter);
 
             RealmList<RealmString> heroSpecs = hero.getHeroSpecs();
-            if(heroSpecs != null) {
-                for (int i = 0; i < Heroes.INIT_SPECS.length; i++) {
-                    RealmString spec = heroSpecs.get(i);
-                    if (spec != null) {
-                        text_hero_specs[i].setText(spec.toString());
-                    }
-                }
+            RealmList<RealmString> heroSepcVals = hero.getHeroSpecValues();
+            HeroesUniqueSpecsRecyclerAdapter heroesUniqueSpecsRecyclerAdapter= new HeroesUniqueSpecsRecyclerAdapter(contextWeakReference.get(), heroSpecs, heroSepcVals);
+            recycler_view_hero_specs_unique.setLayoutManager(new LinearLayoutManager(contextWeakReference.get()));
+            recycler_view_hero_specs_unique.setAdapter(heroesUniqueSpecsRecyclerAdapter);
+
+            Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_NAME, hero.getHeroBranch()).findFirst();
+            if(branch != null) {
+                RealmList<RealmString> branchSepcs = branch.getBranchSpecs();
+                RealmList<RealmString> branchSepcVals = branch.getBranchSpecValues();
+                HeroesBranchSpecsRecyclerAdapter heroesBranchSpecsRecyclerAdapter = new HeroesBranchSpecsRecyclerAdapter(contextWeakReference.get(), branchSepcs, branchSepcVals);
+                recycler_view_hero_specs_branch.setLayoutManager(new LinearLayoutManager(contextWeakReference.get()));
+                recycler_view_hero_specs_branch.setAdapter(heroesBranchSpecsRecyclerAdapter);
+                recycler_view_hero_specs_branch.setVisibility(View.VISIBLE);
+            } else {
+                recycler_view_hero_specs_branch.setVisibility(View.GONE);
             }
 
-            RealmList<RealmString> heroSepcVals = hero.getHeroSpecValues();
-            if(heroSepcVals != null ) {
-                for (int i = 0; i < Heroes.INIT_SPECS.length - 2; i++) {
-                    RealmString specVal = heroSepcVals.get(i);
-                    if (specVal != null) {
-                        text_hero_spec_vals[i].setText(specVal.toString());
-                    }
-                }
-            }
 
 
 

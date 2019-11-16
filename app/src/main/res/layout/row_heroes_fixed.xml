@@ -1,30 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="50dp"
-    android:orientation="horizontal"
+    android:layout_width="50dp"
+    android:layout_height="120dp"
+    android:orientation="vertical"
     android:layout_marginStart="5dp"
-    android:background="@drawable/bottom_border_gray_1px">
+    android:background="@drawable/bottom_border_gray_1px"
+    android:gravity="center">
 
-                <TextView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="bottom">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:text="@string/slot_level_holder"
+            android:textAlignment="textEnd"
+            android:textSize="13sp"
+            />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_hero_level"
+        android:layout_width="25dp"
+        android:layout_height="wrap_content"
+        tools:text="90"
+        android:textAlignment="textStart"
+        android:textSize="13sp"
+        />
+
+    </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_hero_branch"
-                    android:layout_width="45dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
                     tools:text="경기병"
                     android:gravity="center"
-                    android:textColor="#000"
                     android:textSize="13sp"
                     />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_hero_name"
-                    android:layout_width="45dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
                     android:layout_marginStart="1dp"
                     tools:text="하후돈"
                     android:gravity="center"
-                    android:textColor="#000"
                     android:textSize="13sp"
                     />
 

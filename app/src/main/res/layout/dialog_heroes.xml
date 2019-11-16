@@ -164,11 +164,11 @@
                 android:layout_height="30dp"
                 android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/title_stat_1"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/title_stat1" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="40dp"
@@ -227,7 +227,7 @@
                     android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@string/title_stat_2"/>
+                    android:text="@string/title_stat2"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="40dp"
@@ -286,7 +286,7 @@
                         android:layout_width="40dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/title_stat_3"/>
+                        android:text="@string/title_stat3"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="40dp"
@@ -345,7 +345,7 @@
                     android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@string/title_stat_4"/>
+                    android:text="@string/title_stat4"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="40dp"
@@ -404,7 +404,7 @@
                     android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@string/title_stat_5"/>
+                    android:text="@string/title_stat5"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="40dp"

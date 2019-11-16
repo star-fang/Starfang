@@ -22,7 +22,7 @@ public class HeroFilter extends Filter {
     private RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> adapter;
     private int cs_field_position;
 
-    public HeroFilter(RealmRecyclerViewAdapter adapter) {
+    public HeroFilter(RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> adapter) {
         super();
         this.adapter = adapter;
         cs_field_position = 0;
