@@ -8,99 +8,142 @@
     android:background="@drawable/end_border_gray_1dp">
 
         <LinearLayout
+            android:id="@+id/row_hero_spec_branch1"
             android:layout_width="match_parent"
             android:layout_height="19dp"
             android:orientation="horizontal">
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="35dp"
+                android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:textSize="13sp"
                 android:text="@string/row_title_branch_spec1"/>
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_branch1"
-                android:layout_width="match_parent"
+                android:layout_width="120dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
                 android:gravity="center"
                 android:textSize="13sp"
-                tools:text="유혹책략 강화" />
+                android:maxLines="1"
+                tools:text="유혹 책략 명중률 증가" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_hero_spec_branch_val1"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="13sp"
+                tools:text="15%" />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/row_hero_spec_branch2"
             android:layout_width="match_parent"
             android:layout_height="19dp"
             android:orientation="horizontal">
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="35dp"
+                android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:textSize="13sp"
                 android:text="@string/row_title_branch_spec2"/>
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_branch2"
-                android:layout_width="match_parent"
+                android:layout_width="120dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
                 android:gravity="center"
                 android:textSize="13sp"
-                tools:text="유혹책략 강화" />
+                tools:text="공격 범위 변경" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_hero_spec_branch_val2"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="13sp"
+                tools:text="[몰우전]" />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/row_hero_spec_branch3"
             android:layout_width="match_parent"
             android:layout_height="19dp"
             android:orientation="horizontal">
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="35dp"
+                android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:textSize="13sp"
                 android:text="@string/row_title_branch_spec3"/>
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_branch3"
-                android:layout_width="match_parent"
+                android:layout_width="120dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
                 android:gravity="center"
                 android:textSize="13sp"
                 tools:text="유혹책략 강화" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_hero_spec_branch_val3"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="13sp"
+                tools:text="120%" />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/row_hero_spec_branch4"
             android:layout_width="match_parent"
             android:layout_height="19dp"
             android:orientation="horizontal">
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="35dp"
+                android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:textSize="13sp"
                 android:text="@string/row_title_branch_spec4"/>
 
-            <androidx.appcompat.widget.AppCompatCheckedTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_branch4"
-                android:layout_width="match_parent"
+                android:layout_width="120dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
                 android:gravity="center"
                 android:textSize="13sp"
-                tools:text="유혹책략 강화" />
+                tools:text="주동 공격" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_hero_spec_branch_val4"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="13sp"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/row_hero_spec_branch5"
             android:layout_width="match_parent"
             android:layout_height="19dp"
             android:orientation="horizontal">
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="35dp"
+                android:layout_width="30dp"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/row_title_branch_spec5"/>
-
-            <androidx.appcompat.widget.AppCompatCheckedTextView
-                android:id="@+id/text_hero_spec_branch5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
                 android:gravity="center"
                 android:textSize="13sp"
-                tools:text="유혹책략 강화" />
+                android:text="@string/row_title_branch_spec5"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_hero_spec_branch5"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="13sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_hero_spec_branch_val5"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="13sp" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

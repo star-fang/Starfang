@@ -144,7 +144,8 @@
                         android:gravity="center"
                         android:text="@string/table_header_specs_unique"
                         android:textSize="15sp"
-                        android:layout_marginBottom="2dp"/>
+                        android:layout_marginBottom="2dp"
+                        android:background="@drawable/end_dotted_border_gray_1dp"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="200dp"

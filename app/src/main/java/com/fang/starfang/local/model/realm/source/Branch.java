@@ -15,8 +15,6 @@ public class Branch extends RealmObject {
     public static final String[] INIT_STATS = {"공","정","방","순","사"};
     public static final String[] INIT_PASVS = {"승급2","승급3","승급4"};
 
-
-
     public enum INIT_SPECS {Lv01,Lv10,Lv15,Lv20,Lv25}
     public static final String INIT_HP = "HP";
     public static final String INIT_MP = "MP";

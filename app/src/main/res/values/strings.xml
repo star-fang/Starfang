@@ -227,4 +227,5 @@
     <string name="_5">5</string>
     <string name="table_header_item">아이템</string>
     <string name="table_header_grade">승급단계</string>
+    <string name="dialog_grade_unit_holder">단계</string>
 </resources>
