@@ -25,17 +25,17 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.Sort;
 
-public class SimulationFragment extends PlaceholderFragment {
+public class HeroesFragment extends PlaceholderFragment {
 
-    private static final String TAG = "FANG_SIMULATION_FRAG";
+    private static final String TAG = "FANG_HEROES_FRAG";
     private RealmChangeListener<Realm> realmChangeListener;
 
-    static SimulationFragment newInstance(int index) {
-            SimulationFragment simulationFragment = new SimulationFragment();
+    static HeroesFragment newInstance(int index) {
+            HeroesFragment heroesFragment = new HeroesFragment();
             Bundle bundle = new Bundle();
             bundle.putInt(ARG_SECTION_NUMBER, index);
-            simulationFragment.setArguments(bundle);
-        return simulationFragment;
+            heroesFragment.setArguments(bundle);
+        return heroesFragment;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class SimulationFragment extends PlaceholderFragment {
         Log.d(TAG,"_ON CREATE VIEW");
 
         Realm realm = Realm.getDefaultInstance();
-        final View child_sim = inflater.inflate(R.layout.fragment_simulation, container, false);
+        final View child_sim = inflater.inflate(R.layout.fragment_heroes, container, false);
         final RecyclerView recycler_view_hero_fixed = child_sim.findViewById(R.id.recycler_view_hero_fixed);
         final RecyclerView recycler_view_hero_floating = child_sim.findViewById(R.id.recycler_view_hero_floating);
         final HeroesFloatingRecyclerAdapter heroesFloatingRecyclerAdapter = new HeroesFloatingRecyclerAdapter(realm.where(Heroes.class).findAll(),mActivity);

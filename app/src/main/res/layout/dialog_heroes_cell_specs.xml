@@ -17,14 +17,14 @@
         android:id="@+id/recycler_view_hero_grades"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ogq4_background"
         tools:itemCount="2"
-        tools:listitem="@layout/dialog_heroes_cell_spec_cell" />
+        tools:listitem="@layout/dialog_heroes_cell_spec" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"

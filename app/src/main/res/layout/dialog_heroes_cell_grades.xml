@@ -23,7 +23,7 @@
             android:id="@+id/recycler_view_pasv_grades"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/dialog_heroes_cell_spec_cell"
+            tools:listitem="@layout/dialog_heroes_cell_spec"
             tools:itemCount = "2"
             android:background="@color/ogq14_background"
             android:layout_marginBottom="5dp"/>

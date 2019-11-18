@@ -25,7 +25,7 @@ public class PlaceholderFragment extends Fragment {
         PlaceholderFragment fragment;
         switch( index ) {
             case 1:
-                fragment = SimulationFragment.newInstance(index);
+                fragment = HeroesFragment.newInstance(index);
                 break;
             case 2 :
                 fragment = ConversationFragment.newInstance(index);

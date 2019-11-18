@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Starfang</string>
 
-    <string name="tab_text_1">시뮬레이션</string>
+    <string name="tab_text_1">장수</string>
     <string name="tab_text_2">대화</string>
     <string name="tab_text_3">냥봇</string>
 

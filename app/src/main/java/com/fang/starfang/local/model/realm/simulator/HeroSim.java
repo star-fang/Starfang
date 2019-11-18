@@ -5,6 +5,10 @@ import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Spec;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -21,14 +25,13 @@ import io.realm.annotations.PrimaryKey;
 public class HeroSim extends RealmObject {
 
     public static final String FIELD_ID = "heroNo";
-
+    private static final Integer[] SPEC_LEVELS = {1, 10, 15, 20, 25, 30, 50, 70, 90};
     @PrimaryKey
     private int heroNo;   // 장수 고유 번호
     private int heroLevel; // 1 ~ 99
     private int heroGrade; // 1(~20),2(~40),3(~60),4(~80),5(~99)
-    private RealmList<RealmInteger> heroStatsUp;      // 교본작
-    private RealmList<Spec> heroSpecsChecked; //  체크된 효과 (~3개)
-    private RealmList<RealmString> heroSpecValuesChecked; // 체크된 효과수치( ~3개)
+    private RealmList<RealmInteger> heroStatsUp; // 교본작
+    private RealmList<Integer> heroSpecsChecked; //  체크된 효과 인덱스 (~3개)
     private RealmList<MagicItemSim> heroMagicItemsSlot1; // 보패 슬롯1
     private RealmList<MagicItemSim> heroMagicItemsSlot2; // 보패 슬롯2
     private RealmList<ItemSim> heroItemSlot;  // 무기 방어구 보조구
@@ -46,7 +49,6 @@ public class HeroSim extends RealmObject {
             heroStatsUp.add(new RealmInteger(0));
         }
         this.heroSpecsChecked = null;
-        this.heroSpecValuesChecked = null;
         this.heroMagicItemsSlot1 = null;
         this.heroMagicItemsSlot2 = null;
         this.heroItemSlot = null;
@@ -79,21 +81,41 @@ public class HeroSim extends RealmObject {
         }
     }
 
-    public RealmList<Spec> getHeroSpecsChecked() {
+    public RealmList<Integer> getHeroSpecsChecked() {
         return heroSpecsChecked;
     }
 
-    public void setHeroSpecsChecked(RealmList<Spec> heroSpecsChecked) {
+    public ArrayList<Integer> getCheckedLevels() {
+        ArrayList<Integer> levels = new ArrayList<>();
+        if(heroSpecsChecked != null) {
+            for( Integer index : heroSpecsChecked ) {
+                try {
+                    levels.add(SPEC_LEVELS[index]);
+                } catch (ArrayIndexOutOfBoundsException ignored) {
+
+                }
+            }
+        }
+        return levels;
+    }
+
+    public void setHeroSpecsChecked(RealmList<Integer> heroSpecsChecked) {
         this.heroSpecsChecked = heroSpecsChecked;
     }
 
-    public RealmList<RealmString> getHeroSpecValuesChecked() {
-        return heroSpecValuesChecked;
+    public void updateSepcsChecked( ArrayList<Integer> levels) {
+        heroSpecsChecked.clear();
+        if(levels != null) {
+            for( Integer level : levels) {
+                heroSpecsChecked.add(levelToIndex(level));
+            }
+        }
     }
 
-    public void setHeroSpecValuesChecked(RealmList<RealmString> heroSpecValuesChecked) {
-        this.heroSpecValuesChecked = heroSpecValuesChecked;
+    private Integer levelToIndex(int level) {
+        return Arrays.asList(SPEC_LEVELS).indexOf(level);
     }
+
 
     public RealmList<MagicItemSim> getHeroMagicItemsSlot1() {
         return heroMagicItemsSlot1;

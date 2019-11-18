@@ -8,6 +8,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatCheckedTextView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,12 +28,13 @@ implements Filterable {
     private ArrayList<String> specsFiltered;
     private ArrayList<String> specVals;
     private ArrayList<String> specValsFiltered;
+    private ArrayList<Integer> checkedLevels;
     private boolean pasv;
 
     @NonNull
     @Override
     public SpecsRecyclerViewAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_heroes_cell_spec_cell,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_heroes_cell_spec,viewGroup,false);
         return new SpecsRecyclerViewAdapter.SpecsRecyclerViewAdapterViewHolder(view);
     }
 
@@ -48,7 +50,7 @@ implements Filterable {
 
 
     public SpecsRecyclerViewAdapter(ArrayList<String> titles, ArrayList<String> specs
-            ,ArrayList<String> specVals , boolean pasv) {
+            ,ArrayList<String> specVals, ArrayList<Integer> checkedLevels , boolean pasv) {
 
         this.titles = titles;
         this.titlesFiltered = titles;
@@ -57,8 +59,9 @@ implements Filterable {
         this.specVals = specVals;
         this.specValsFiltered = specVals;
         this.pasv = pasv;
+        this.checkedLevels = checkedLevels;
 
-        Log.d(TAG, "SpecsRecyclerViewAdapter constructed");
+        Log.d(TAG, "constructed");
     }
 
     @Override
@@ -118,7 +121,6 @@ implements Filterable {
                         }
                     }
                 }
-
                 notifyDataSetChanged();
             }
         };
@@ -130,21 +132,46 @@ implements Filterable {
 
 
     class SpecsRecyclerViewAdapterViewHolder extends RecyclerView.ViewHolder {
-        private AppCompatTextView text_title_pasv_spec_grade;
-        private AppCompatTextView text_pasv_spec_grade;
-        private AppCompatTextView text_pasv_spec_val_grade;
+        private AppCompatTextView text_cell_title_spec;
+        private AppCompatCheckedTextView button_cell_spec;
 
         private SpecsRecyclerViewAdapterViewHolder(View itemView) {
             super(itemView);
-            text_title_pasv_spec_grade = itemView.findViewById(R.id.text_title_pasv_spec_grade);
-            text_pasv_spec_grade = itemView.findViewById(R.id.text_pasv_spec_grade);
-            text_pasv_spec_val_grade = itemView.findViewById(R.id.text_pasv_spec_val_grade);
+            text_cell_title_spec = itemView.findViewById(R.id.text_cell_title_spec);
+            button_cell_spec = itemView.findViewById(R.id.button_cell_spec);
         }
 
-        private void bind(int position) {
-            text_title_pasv_spec_grade.setText(titlesFiltered.get(position));
-            text_pasv_spec_grade.setText(specsFiltered.get(position));
-            text_pasv_spec_val_grade.setText(specValsFiltered.get(position));
+        private void bind(final int position) {
+            final String titleStr = titlesFiltered.get(position);
+            text_cell_title_spec.setText(titleStr);
+            String buttonStr = specsFiltered.get(position) + "\n" + specValsFiltered.get(position);
+            button_cell_spec.setText(buttonStr);
+            if( pasv ) {
+                button_cell_spec.setBackgroundResource(R.drawable.rect_button);
+                button_cell_spec.setOnClickListener(null);
+            } else {
+                Integer titleInteger = NumberUtils.toInt(titleStr.replaceAll("[^0-9]",""),0);
+                if(checkedLevels.contains(titleInteger)) {
+                    button_cell_spec.setChecked(true);
+                    button_cell_spec.setBackgroundResource(R.drawable.rect_checked);
+                } else {
+                    button_cell_spec.setChecked(false);
+                    button_cell_spec.setBackgroundResource(R.drawable.rect_button);
+                }
+
+                button_cell_spec.setEnabled(true);
+                button_cell_spec.setOnClickListener( v -> {
+                    if(button_cell_spec.isChecked()) {
+                        button_cell_spec.setChecked(false);
+                        button_cell_spec.setBackgroundResource(R.drawable.rect_button);
+                        checkedLevels.remove(titleInteger);
+                    } else if( checkedLevels.size() < 3 ){
+                        button_cell_spec.setChecked(true);
+                        button_cell_spec.setBackgroundResource(R.drawable.rect_checked);
+                        checkedLevels.add(titleInteger);
+                    }
+                });
+            }
         }
     }
 

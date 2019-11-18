@@ -6,10 +6,10 @@
         android:orientation="vertical"
         android:gravity="center_horizontal"
     android:layout_margin = "2dp"
-        android:background="#000000">
+        android:background="#30000000">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_title_pasv_spec_grade"
+            android:id="@+id/text_cell_title_spec"
             android:layout_width="match_parent"
             android:layout_height="15dp"
             android:gravity="center"
@@ -19,22 +19,13 @@
             tools:text="승급3" />
 
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_pasv_spec_grade"
+        <androidx.appcompat.widget.AppCompatCheckedTextView
+            android:id="@+id/button_cell_spec"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="3dp"
+            android:layout_height="match_parent"
+            android:textAlignment="center"
             android:gravity="center"
             android:textSize="12sp"
-            tools:text="유혹 책략 명중률 증가" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_pasv_spec_val_grade"
-            android:layout_width="wrap_content"
-            android:layout_height="15dp"
-            android:layout_marginTop="2dp"
-            android:gravity="center"
-            android:textSize="12sp"
-            tools:text="[몰우전]" />
-
+            android:background="@drawable/rect_button"
+            tools:text="유혹 책략 명중률 증가\n[몰우전]" />
 </LinearLayout>

@@ -216,9 +216,9 @@ public class HeroesDialogFragment extends DialogFragment {
                 }
             }
 
-
-            final SpecsRecyclerViewAdapter pasvAdapter = new SpecsRecyclerViewAdapter(titles_pasv,specs_pasv,specVals_pasv, true);
-            final SpecsRecyclerViewAdapter heroAdapter = new SpecsRecyclerViewAdapter(titles,specs,specVals, false);
+            ArrayList<Integer> checkedSpecLevels = heroSim.getCheckedLevels();
+            final SpecsRecyclerViewAdapter pasvAdapter = new SpecsRecyclerViewAdapter(titles_pasv,specs_pasv,specVals_pasv, null, true);
+            final SpecsRecyclerViewAdapter heroAdapter = new SpecsRecyclerViewAdapter(titles,specs,specVals, checkedSpecLevels, false);
             recycler_view_pasv_grades.setAdapter(pasvAdapter);
             recycler_view_hero_grades.setAdapter(heroAdapter);
 
@@ -387,6 +387,7 @@ public class HeroesDialogFragment extends DialogFragment {
                 realm.beginTransaction();
                 heroSim.setHeroGrade(seekbar_hero_grade.getProgress() + 1);
                 heroSim.setHeroLevel(seekbar_hero_level.getProgress() + 1);
+                heroSim.updateSepcsChecked(checkedSpecLevels);
                 for (int i = 0; i < Heroes.INIT_STATS.length; i++) {
                     heroSim.setHeroStatsUp(seekbar_hero_stat[i].getProgress(), i);
                 }
