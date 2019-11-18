@@ -1,8 +1,10 @@
 package com.fang.starfang;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.viewpager.widget.ViewPager;
 
 import com.fang.starfang.ui.main.SectionsPagerAdapter;
@@ -25,9 +27,13 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
         FloatingActionButton fab = findViewById(R.id.fab);
+        AppCompatButton fab_setting = findViewById(R.id.fab_setting);
 
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
+
+        Intent intent = new Intent(this, SettingAcitivity.class);
+        fab_setting.setOnClickListener( view -> startActivity(intent));
 
     }
 }

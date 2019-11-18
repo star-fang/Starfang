@@ -54,7 +54,6 @@
         android:id="@+id/simulation_content_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/simulataion_bt_layout"
         android:layout_below="@id/simulataion_et_layout"
         android:background="@drawable/top_bottom_border_black_1dp"
         android:orientation="horizontal">
@@ -190,43 +189,6 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_alignParentBottom="true"
-        android:id="@+id/simulataion_bt_layout"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:weightSum="10"
-        android:gravity="center"
-        android:background="#000"
-        >
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_marginStart="5dp"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:text="@string/title_manage_magic_item"
-            android:background="@drawable/rect_button"
-            />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_marginStart="5dp"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:text="@string/title_manage_item"
-            android:background="@drawable/rect_button"
-            />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_marginStart="5dp"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:text="@string/title_calc_damage"
-            android:background="@drawable/rect_button"
-            />
-
-    </LinearLayout>
 </RelativeLayout>
 

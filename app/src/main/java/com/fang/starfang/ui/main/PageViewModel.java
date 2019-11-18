@@ -17,9 +17,6 @@ public class PageViewModel extends ViewModel {
             case 2:
                 str = "conversation";
                 break;
-            case 3:
-                str = "reply";
-                break;
                 default:
                     str = "error";
         }

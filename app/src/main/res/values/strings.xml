@@ -188,7 +188,7 @@
     <string name="title_slot1">slot 1</string>
     <string name="title_slot2">slot 2</string>
     <string name="title_level_kor">레벨</string>
-    <string name="title_grade_kor">승급 단계</string>
+    <string name="title_grade_kor">승급</string>
     <string name="table_header_stat_sum">교본\n합계</string>
     <string name="title_stat">스탯 / 교본</string>
     <string name="title_stat1">무력</string>

@@ -30,9 +30,6 @@ public class PlaceholderFragment extends Fragment {
             case 2 :
                 fragment = ConversationFragment.newInstance(index);
             break;
-            case 3:
-                fragment = SettingFragment.newInstance(index);
-                break;
             default:
                 fragment = null;
         }

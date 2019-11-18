@@ -2,108 +2,31 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="300dp"
+    android:layout_width="210dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_margin="5dp"
     android:background="#30000000"
     android:gravity="center">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:orientation="horizontal">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/title_grade_kor"/>
-            <androidx.appcompat.widget.AppCompatSeekBar
-                android:id="@+id/seekbar_hero_grade"
-                android:layout_width="190dp"
-                android:layout_height="match_parent"
-                android:max="4"
-                />
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_seekbar_hero_grade_value"
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent"
-                    android:textSize="12sp"
-                    tools:text="4"
-                    android:gravity="center"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent"
-                    android:textSize="12sp"
-                    android:text="@string/dialog_grade_unit_holder"
-                    android:gravity="center"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:orientation="horizontal">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/title_level_kor"/>
-
-            <androidx.appcompat.widget.AppCompatSeekBar
-                android:id="@+id/seekbar_hero_level"
-                android:layout_width="190dp"
-                android:layout_height="match_parent"
-                android:max="98"
-                />
-
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_seekbar_hero_level_value"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:textSize="12sp"
-                android:gravity="center"
-                tools:text="80"/>
-
-        </LinearLayout>
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
         >
-
         <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
             android:gravity="center"
             android:text="패시브 효과"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_pasv_grades"
-            android:layout_width="290dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:listitem="@layout/dialog_heroes_cell_spec_cell"
             tools:itemCount = "2"
             android:background="@color/ogq14_background"
             android:layout_marginBottom="5dp"/>
-
-
 
     </LinearLayout>
 </LinearLayout>

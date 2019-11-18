@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:weightSum="2"
+    android:baselineAligned="false">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+
+        <include
+            android:id="@+id/dialog_heroes_cell_level"
+            layout="@layout/dialog_heroes_cell_level" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="1"
+        android:fadeScrollbars="false"
+        android:scrollbarThumbVertical="@drawable/scrollbar_thumb">
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexDirection="column"
+            app:flexWrap="wrap"
+            app:justifyContent="center">
+
+
+            <include
+                android:id="@+id/dialog_heroes_cell_stats"
+                layout="@layout/dialog_heroes_cell_stats" />
+
+            <include
+                android:id="@+id/dialog_heroes_cell_grades"
+                layout="@layout/dialog_heroes_cell_grades" />
+
+            <include
+                android:id="@+id/dialog_heroes_cell_specs"
+                layout="@layout/dialog_heroes_cell_specs" />
+
+
+        </com.google.android.flexbox.FlexboxLayout>
+
+
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="250dp"
+    android:layout_height="150dp"
+    android:layout_margin="5dp"
+    android:background="#30000000"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/title_stat1"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_base_plus_stat1"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            tools:text="100" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekbar_hero_stat1"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-3dp"
+            android:layout_marginEnd="-3dp"
+            android:progressTint="#FF0900"
+            android:thumbTint="#FF0900"
+            tools:progress="70" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_seekbar_hero_stat1_cur"
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textSize="12sp"
+                tools:text="60" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/title_stat2"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_base_plus_stat2"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            tools:text="80" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekbar_hero_stat2"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-3dp"
+            android:layout_marginEnd="-3dp"
+            android:progressTint="#FF1600"
+            android:thumbTint="#FF1600"
+            tools:progress="90" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_seekbar_hero_stat2_cur"
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textSize="12sp"
+                tools:text="80" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/title_stat3"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_base_plus_stat3"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            tools:text="66" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekbar_hero_stat3"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-3dp"
+            android:layout_marginEnd="-3dp"
+            android:progressTint="#0019FF"
+            android:thumbTint="#0019FF"
+            tools:progress="100" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_seekbar_hero_stat3_cur"
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textSize="12sp"
+                tools:text="55" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/title_stat4"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_base_plus_stat4"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            tools:text="22" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekbar_hero_stat4"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-3dp"
+            android:layout_marginEnd="-3dp"
+            android:progressTint="#FFF300"
+            android:thumbTint="#FFF300"
+            tools:progress="20" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_seekbar_hero_stat4_cur"
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textSize="12sp"
+                tools:text="50" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/title_stat5"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_base_plus_stat5"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            tools:text="66" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekbar_hero_stat5"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-3dp"
+            android:layout_marginEnd="-3dp"
+            android:progressTint="#FF00CB"
+            android:thumbTint="#FF00CB"
+            tools:progress="60" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_seekbar_hero_stat5_cur"
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textSize="12sp"
+                tools:text="10" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="15dp"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/subtitle_plus_stat"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_sum_of_plus_stat_cur"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:textSize="12sp"
+            tools:text="255" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center"
+            android:text="@string/value_by_max_holder"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_sum_of_plus_stat_max"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="12sp"
+            tools:text="400" />
+
+
+    </LinearLayout>
+</LinearLayout>

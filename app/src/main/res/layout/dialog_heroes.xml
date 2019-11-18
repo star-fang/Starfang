@@ -1,81 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:minWidth="300dp"
-    android:minHeight="400dp">
+    android:orientation="vertical"
+    android:weightSum="2">
 
     <LinearLayout
-        android:id="@+id/header_hero_dialog"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:gravity="center"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    <include
+        android:id="@+id/dialog_heroes_cell_level"
+        layout="@layout/dialog_heroes_cell_level" />
+    </LinearLayout>
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
         android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/dialog_title_branch"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            tools:text="전차계"
-            android:gravity="center"
-            android:textSize="20sp"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/dialog_title_branch_grade"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textSize="20sp"
-            tools:text="철거병"
-            android:gravity="center"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/dialog_title_name"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            tools:text="고순"
-            android:textSize="20sp"/>
+
+            <include
+                android:id="@+id/dialog_heroes_cell_stats"
+                layout="@layout/dialog_heroes_cell_stats" />
+
+            <include
+                android:id="@+id/dialog_heroes_cell_grades"
+                layout="@layout/dialog_heroes_cell_grades" />
+
+            <include
+                android:id="@+id/dialog_heroes_cell_specs"
+                layout="@layout/dialog_heroes_cell_specs" />
+
+
 
     </LinearLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/header_hero_dialog"
-        android:layout_margin="5dp">
-
-    <com.google.android.flexbox.FlexboxLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:flexDirection="row"
-        app:flexWrap="wrap"
-        app:justifyContent="center"
-        >
-
-        <include
-            layout="@layout/dialog_heroes_cell_grades"
-            android:id="@+id/dialog_heroes_cell_grades"/>
-
-        <include
-            layout="@layout/dialog_heroes_cell_specs"
-            android:id="@+id/dialog_heroes_cell_specs"/>
-
-        <include
-            layout="@layout/dialog_heroes_cell_stats"
-            android:id="@+id/dialog_heroes_cell_stats" />
-
-
-
-    </com.google.android.flexbox.FlexboxLayout>
-
-
-    </androidx.core.widget.NestedScrollView>
-
-</RelativeLayout>
+    </HorizontalScrollView>
+</LinearLayout>

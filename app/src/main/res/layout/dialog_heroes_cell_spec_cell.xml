@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="96dp"
-        android:layout_height="wrap_content"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:orientation="vertical"
         android:gravity="center_horizontal"
     android:layout_margin = "2dp"
-        android:background="#CC000000">
+        android:background="#000000">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_title_pasv_spec_grade"
             android:layout_width="match_parent"
+            android:layout_height="15dp"
             android:gravity="center"
-            android:layout_height="wrap_content"
-            tools:text="승급3: 검술가"
             android:maxLines="1"
-            android:textSize="13sp"
-            />
+            android:textSize="12sp"
+            android:background="#000"
+            tools:text="승급3" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_pasv_spec_grade"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
-            tools:text="유혹 책략 명중률 증가"
-            android:textSize="12sp"
+            android:layout_marginTop="3dp"
             android:gravity="center"
-            />
+            android:textSize="12sp"
+            tools:text="유혹 책략 명중률 증가" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_pasv_spec_val_grade"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="[몰우전]"
-            android:textSize="13sp"
+            android:layout_height="15dp"
+            android:layout_marginTop="2dp"
             android:gravity="center"
-            />
+            android:textSize="12sp"
+            tools:text="[몰우전]" />
 
 </LinearLayout>

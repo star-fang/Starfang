@@ -240,7 +240,6 @@ public class HeroesDialogFragment extends DialogFragment {
             final int numberOfStats = Heroes.INIT_STATS.length;
             final AppCompatTextView[] text_base_plus_stat = new AppCompatTextView[numberOfStats];
             final AppCompatTextView[] text_seekbar_hero_stat_cur = new AppCompatTextView[numberOfStats];
-            final AppCompatTextView[] text_seekbar_hero_stat_mx = new AppCompatTextView[numberOfStats];
             final AppCompatSeekBar[] seekbar_hero_stat = new AppCompatSeekBar[numberOfStats];
 
             int sum_of_plus_stat_cur_int = 0;
@@ -248,8 +247,6 @@ public class HeroesDialogFragment extends DialogFragment {
                 seekbar_hero_stat[i] = view.findViewById(getResources().getIdentifier("seekbar_hero_stat" + (i + 1), "id", mActivity.getPackageName()));
                 text_base_plus_stat[i] = view.findViewById(getResources().getIdentifier("text_base_plus_stat" + (i + 1), "id", mActivity.getPackageName()));
                 text_seekbar_hero_stat_cur[i] = view.findViewById(getResources().getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_cur", "id", mActivity.getPackageName()));
-                text_seekbar_hero_stat_mx[i] = view.findViewById(getResources().getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_mx", "id", mActivity.getPackageName()));
-                text_seekbar_hero_stat_mx[i].setText(String.valueOf(maxPlusStat));
 
                 seekbar_hero_stat[i].setMax(maxPlusStat);
                 RealmInteger baseStat = heroBaseStats.get(i);
@@ -327,7 +324,6 @@ public class HeroesDialogFragment extends DialogFragment {
                             (hero.getHeroCost() + 16) * 5;
                     int sumOfMax = 0;
                     for (int i = 0; i < numberOfStats; i++) {
-                        text_seekbar_hero_stat_mx[i].setText(String.valueOf(maxPlusStat));
                         seekbar_hero_stat[i].setMax(maxPlusStat);
                         sumOfMax += maxPlusStat;
                     }
