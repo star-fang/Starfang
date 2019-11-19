@@ -25,6 +25,7 @@ import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.recycler.adapter.SpecsRecyclerViewAdapter;
+import com.fang.starfang.util.ScreenUtils;
 
 import java.util.ArrayList;
 
@@ -113,8 +114,9 @@ public class HeroesDialogFragment extends DialogFragment {
 
             final RecyclerView recycler_view_pasv_grades = view.findViewById(R.id.recycler_view_pasv_grades);
             final RecyclerView recycler_view_hero_grades = view.findViewById(R.id.recycler_view_hero_grades);
-            recycler_view_pasv_grades.setLayoutManager(new GridLayoutManager(mActivity,3));
-            recycler_view_hero_grades.setLayoutManager(new GridLayoutManager(mActivity,3));
+            int calculateNoOfColumns = ScreenUtils.calculateNoOfColumns(mActivity,65);
+            recycler_view_pasv_grades.setLayoutManager(new GridLayoutManager(mActivity, calculateNoOfColumns));
+            recycler_view_hero_grades.setLayoutManager(new GridLayoutManager(mActivity, calculateNoOfColumns));
 
             RealmList<RealmString> heroSpecs = hero.getHeroSpecs();   // 0 ~ 3 : pick & 4,5 : pasv
             RealmList<RealmString> heroSpecVals = hero.getHeroSpecValues(); // 0 ~ 3
@@ -216,9 +218,10 @@ public class HeroesDialogFragment extends DialogFragment {
                 }
             }
 
+            final AppCompatTextView text_dialog_heroes_cell_specs_total= view.findViewById(R.id.text_dialog_heroes_cell_specs_total);
             ArrayList<Integer> checkedSpecLevels = heroSim.getCheckedLevels();
-            final SpecsRecyclerViewAdapter pasvAdapter = new SpecsRecyclerViewAdapter(titles_pasv,specs_pasv,specVals_pasv, null, true);
-            final SpecsRecyclerViewAdapter heroAdapter = new SpecsRecyclerViewAdapter(titles,specs,specVals, checkedSpecLevels, false);
+            final SpecsRecyclerViewAdapter pasvAdapter = new SpecsRecyclerViewAdapter(titles_pasv,specs_pasv,specVals_pasv, null, true, null);
+            final SpecsRecyclerViewAdapter heroAdapter = new SpecsRecyclerViewAdapter(titles,specs,specVals, checkedSpecLevels, false, text_dialog_heroes_cell_specs_total);
             recycler_view_pasv_grades.setAdapter(pasvAdapter);
             recycler_view_hero_grades.setAdapter(heroAdapter);
 

@@ -105,6 +105,7 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
         private View[] row_hero_spec_branch;
         private AppCompatTextView[] text_hero_spec_branch;
         private AppCompatTextView[] text_hero_spec_branch_val;
+        private AppCompatTextView text_spec_score_total;
         private AppCompatTextView text_hero_stat_sum;
         private AppCompatTextView text_hero_stat_sum_total;
         private View cell_specs_unique;
@@ -126,6 +127,7 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
             row_hero_spec_branch = new View[5];
             text_hero_spec_branch = new AppCompatTextView[5];
             text_hero_spec_branch_val = new AppCompatTextView[5];
+            text_spec_score_total = itemView.findViewById(R.id.text_spec_score_total);
             text_hero_stat_sum = itemView.findViewById(R.id.text_hero_stat_sum);
             text_hero_stat_sum_total = itemView.findViewById(R.id.text_hero_stat_sum_total);
             cell_specs_unique = itemView.findViewById(R.id.cell_specs_unique);
@@ -197,14 +199,18 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
             RealmList<RealmString> branchSpecs = null;
             RealmList<RealmString> branchSpecVals = null;
             RealmList<RealmString> branchGrades = null;
+            RealmList<Integer> checkedSpecsIndexes = null;
 
             int heroGrade = 1;
             int cost_init = hero.getHeroCost();
+            String sumOfSpecScores = "0";
             if(heroSim != null) {
                 heroGrade = heroSim.getHeroGrade();
                 heroPlusStats = heroSim.getHeroStatsUp();
+                sumOfSpecScores = heroSim.getSumOfSpecScores();
+                checkedSpecsIndexes = heroSim.getHeroSpecsChecked();
             }
-
+            text_spec_score_total.setText(sumOfSpecScores);
             text_hero_lineage.setText(hero.getHeroLineage());
 
             if(branch != null) {
@@ -212,7 +218,6 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
                 branchSpecVals = branch.getBranchSpecValues();
                 branchGrades = branch.getBranchGrade();
             }
-
             int plusStatSum = 0;
             for(int i = 0; i < 6; i ++ ) {
                 if( i < 5 ) {
@@ -256,6 +261,7 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
                     String branchSpecStr = "";
                     String branchSpecValStr = "";
                     if( branchSpecs != null) {
+                        // 0 ~ 4
                         RealmString branchSpec = branchSpecs.get(i);
                         if( branchSpec != null ) {
                             branchSpecStr = branchSpec.toString();
@@ -267,7 +273,13 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
                             }
                         }
                     }
-
+                    int bgResourceNumber = 0;
+                    if( checkedSpecsIndexes != null ) {
+                        if( checkedSpecsIndexes.contains(i)) {
+                            bgResourceNumber = R.drawable.rect_checked;
+                        }
+                    }
+                    row_hero_spec_branch[i].setBackgroundResource(bgResourceNumber);
                     text_hero_spec_branch[i].setText(branchSpecStr);
                     text_hero_spec_branch_val[i].setText(branchSpecValStr);
                 } // end if ( i < 5 )
@@ -278,6 +290,16 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
                 if(heroSpec != null) {
                     heroSpecStr = heroSpec.toString();
                     if( i < 4 ) {
+
+                        // 5 ~ 8
+                        int bgResourceNumber = 0;
+                        if( checkedSpecsIndexes != null ) {
+                            if( checkedSpecsIndexes.contains(i + 5)) {
+                                bgResourceNumber = R.drawable.rect_checked;
+                            }
+                        }
+                        row_hero_spec_unique[i].setBackgroundResource(bgResourceNumber);
+
                         RealmString heroSpecVal = heroSpecVals.get(i);
                         if(heroSpecVal != null) {
                             heroSpecValStr = heroSpecVal.toString();
@@ -291,7 +313,7 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
             text_hero_stat_sum.setText(String.valueOf(plusStatSum));
             text_hero_stat_sum_total.setText(String.valueOf(heroGrade * 100));
 
-        }
+        } // end bind()
     }
 
 }

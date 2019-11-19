@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckedTextView;
@@ -13,6 +14,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.simulator.HeroSim;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -30,6 +32,9 @@ implements Filterable {
     private ArrayList<String> specValsFiltered;
     private ArrayList<Integer> checkedLevels;
     private boolean pasv;
+    private TextView resultView;
+    private static final int[] RESTRICT_PICK_SPECS_BY_GRADE = {1,1,2,2,3};
+
 
     @NonNull
     @Override
@@ -50,7 +55,7 @@ implements Filterable {
 
 
     public SpecsRecyclerViewAdapter(ArrayList<String> titles, ArrayList<String> specs
-            ,ArrayList<String> specVals, ArrayList<Integer> checkedLevels , boolean pasv) {
+            ,ArrayList<String> specVals, ArrayList<Integer> checkedLevels , boolean pasv, TextView resultView) {
 
         this.titles = titles;
         this.titlesFiltered = titles;
@@ -60,6 +65,7 @@ implements Filterable {
         this.specValsFiltered = specVals;
         this.pasv = pasv;
         this.checkedLevels = checkedLevels;
+        this.resultView = resultView;
 
         Log.d(TAG, "constructed");
     }
@@ -165,14 +171,24 @@ implements Filterable {
                         button_cell_spec.setChecked(false);
                         button_cell_spec.setBackgroundResource(R.drawable.rect_button);
                         checkedLevels.remove(titleInteger);
+                        resultView.setText(getCurSumOfScores());
                     } else if( checkedLevels.size() < 3 ){
                         button_cell_spec.setChecked(true);
                         button_cell_spec.setBackgroundResource(R.drawable.rect_checked);
                         checkedLevels.add(titleInteger);
+                        resultView.setText(getCurSumOfScores());
                     }
                 });
             }
         }
+    }
+
+    private String getCurSumOfScores() {
+        int sum = 0;
+        for( int level : checkedLevels ) {
+            sum += HeroSim.getSpecScoreByLevel(level);
+        }
+        return String.valueOf(sum);
     }
 
 }

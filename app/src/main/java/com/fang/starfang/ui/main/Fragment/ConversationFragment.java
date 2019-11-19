@@ -1,18 +1,14 @@
 package com.fang.starfang.ui.main.Fragment;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -33,6 +29,7 @@ import com.fang.starfang.ui.main.recycler.filter.ConversationFilter;
 import com.fang.starfang.ui.main.recycler.filter.ConversationFilterObject;
 import com.fang.starfang.ui.main.recycler.adapter.RoomFilterRecyclerAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.SendCatFilterRecyclerAdapter;
+import com.fang.starfang.util.ScreenUtils;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
@@ -130,7 +127,7 @@ public class ConversationFragment extends PlaceholderFragment {
             if( scroll_summary_filter.getLayoutParams().height == 0 ) {
                 changeLayoutSize(scroll_summary_filter, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             } else {
-                changeLayoutSize(scroll_summary_filter,dip2pix(mActivity,120), 0);
+                changeLayoutSize(scroll_summary_filter, ScreenUtils.dip2pix(mActivity,120), 0);
             }
         });
 
@@ -193,7 +190,7 @@ public class ConversationFragment extends PlaceholderFragment {
                 text_conversation.setText("");
 
             } else {
-                hideSoftKeyboard(mActivity);
+                ScreenUtils.hideSoftKeyboard(mActivity);
             }
 
 
@@ -204,7 +201,7 @@ public class ConversationFragment extends PlaceholderFragment {
         final View.OnClickListener showButton_default_listener = v -> {
             button_show_filters.setVisibility(View.GONE);
             button_hide_filters.setVisibility(View.VISIBLE);
-            changeLayoutSize(row_filter,-5,dip2pix(mActivity,100));
+            changeLayoutSize(row_filter,-5,ScreenUtils.dip2pix(mActivity,100));
         };
 
         button_show_filters.setOnClickListener(showButton_default_listener);
@@ -454,7 +451,7 @@ public class ConversationFragment extends PlaceholderFragment {
         button_filter_conversation.setOnLongClickListener( v -> {
             filterObject.setCheckConv(true);
             text_conversation.addTextChangedListener(textWatcher_conversation);
-            showSoftKeyboard(mActivity, text_conversation);
+            ScreenUtils.showSoftKeyboard(mActivity, text_conversation);
             changeLayouWeight(inner_column_filter,0.0f);
             changeLayouWeight(inner_column_filter_conversation,1.0f);
             title_conversation.setText(R.string.filter_title_conversation);
@@ -486,7 +483,7 @@ public class ConversationFragment extends PlaceholderFragment {
 
         button_filter_conversation_commit.setOnClickListener( view -> {
 
-            hideSoftKeyboard(mActivity);
+            ScreenUtils.hideSoftKeyboard(mActivity);
             String text = text_input_filter_conversation.getText().toString();
             text= text.trim();
             text_conversation.removeTextChangedListener(textWatcher_conversation);
@@ -565,32 +562,7 @@ public class ConversationFragment extends PlaceholderFragment {
 
 
 
-    private static int dip2pix(@NonNull Context context, int dip) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip,
-                context.getResources().getDisplayMetrics());
-    }
 
-
-    private void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager =
-                (InputMethodManager) activity.getSystemService(
-                        Activity.INPUT_METHOD_SERVICE);
-
-        View focusedView = activity.getCurrentFocus();
-
-        if (focusedView != null) {
-            inputMethodManager.hideSoftInputFromWindow(
-                    focusedView.getWindowToken(), 0);
-        }
-    }
-
-    private void showSoftKeyboard(Activity activiry, View view) {
-        if (view.requestFocus()) {
-            InputMethodManager imm = (InputMethodManager)
-                    activiry.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
-        }
-    }
 
     private void buildConstraintDoc(Realm realm, AppCompatTextView summaryView) {
         ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
