@@ -15,7 +15,7 @@
 
         <include
             android:id="@+id/dialog_heroes_cell_level"
-            layout="@layout/dialog_heroes_cell_level" />
+            layout="@layout/dialog_heroes_cell_main" />
     </LinearLayout>
 
     <ScrollView

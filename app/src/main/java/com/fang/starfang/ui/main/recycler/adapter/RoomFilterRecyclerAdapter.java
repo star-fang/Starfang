@@ -52,7 +52,7 @@ public class RoomFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conversa
         countText.setText(String.valueOf(filterObject.getRoomCount()));
         listText.setText(filterObject.getRoomJoinString(10));
 
-        Log.d(TAG, "RoomFilterRecyclerAdapter constructed");
+        Log.d(TAG, "constructed");
     }
 
 

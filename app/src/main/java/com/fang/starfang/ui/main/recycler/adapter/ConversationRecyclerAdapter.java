@@ -47,7 +47,7 @@ public class ConversationRecyclerAdapter
 
     public ConversationRecyclerAdapter(Realm realm) {
         super(realm.where(Conversation.class).findAll(),true);
-        Log.d(TAG,"ConversationRecyclerAdapter constructed");
+        Log.d(TAG,"constructed");
 
         this.realm = realm;
     }

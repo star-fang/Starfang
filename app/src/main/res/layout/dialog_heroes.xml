@@ -12,7 +12,7 @@
         android:layout_weight="1">
     <include
         android:id="@+id/dialog_heroes_cell_level"
-        layout="@layout/dialog_heroes_cell_level" />
+        layout="@layout/dialog_heroes_cell_main" />
     </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"

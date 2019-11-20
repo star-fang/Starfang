@@ -51,7 +51,7 @@ public class SendCatFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conve
         countText.setText(String.valueOf(filterObject.getSendCatCount()));
         listText.setText(filterObject.getSendCatJoinString(10));
 
-        Log.d(TAG, "SendCatFilterRecyclerAdapter constructed");
+        Log.d(TAG, "constructed");
     }
 
 

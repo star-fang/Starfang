@@ -51,7 +51,7 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
         this.context = context;
         sort_field = null;
         sort = null;
-        Log.d(TAG,"HeroesFloatingRecyclerAdapter constructed" );
+        Log.d(TAG,"constructed" );
     }
 
     @NonNull

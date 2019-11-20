@@ -34,7 +34,7 @@ public class RecyclerViewAdapterRef extends RecyclerView.Adapter<RecyclerViewAda
 
     public RecyclerViewAdapterRef() {
 
-        Log.d(TAG, "SpecsRecyclerViewAdapter constructed");
+        Log.d(TAG, "constructed");
     }
 
     static class RecyclerViewAdapterRefViewHolder extends RecyclerView.ViewHolder {
