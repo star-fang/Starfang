@@ -17,7 +17,7 @@ import com.fang.starfang.ui.main.recycler.filter.ConversationFilterObject;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class RoomFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conversation, RecyclerView.ViewHolder> {
+public class RoomFilterRealmAdapter extends RealmRecyclerViewAdapter<Conversation, RecyclerView.ViewHolder> {
     //   implements Filterable {
 
     private static final String TAG = "FANG_FILTER_ROOM";
@@ -28,23 +28,22 @@ public class RoomFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conversa
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_filter_room,viewGroup,false);
-        return new RoomFilterRecyclerAdapter.RoomFilterViewHolder(view);
+        return new RoomFilterRealmAdapter.RoomFilterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
-        RoomFilterRecyclerAdapter.RoomFilterViewHolder roomFilterViewHolder =
-                (RoomFilterRecyclerAdapter.RoomFilterViewHolder) viewHolder;
+        RoomFilterRealmAdapter.RoomFilterViewHolder roomFilterViewHolder =
+                (RoomFilterRealmAdapter.RoomFilterViewHolder) viewHolder;
 
         Conversation conversation = getItem(i);
         roomFilterViewHolder.bind(conversation);
 
     }
 
-    public RoomFilterRecyclerAdapter(Realm realm, View view) {
+    public RoomFilterRealmAdapter(Realm realm, View view) {
         super(realm.where(Conversation.class).isNotNull(Conversation.FIELD_ROOM).distinct(Conversation.FIELD_ROOM).findAll(),true);
-        realm.addChangeListener(o -> notifyDataSetChanged());
         countText = view.findViewById(R.id.text_filter_room_count);
         listText = view.findViewById(R.id.text_filter_room_count_desc);
 

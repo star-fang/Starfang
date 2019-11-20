@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
@@ -24,7 +26,10 @@ import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
-import com.fang.starfang.ui.main.recycler.adapter.SpecsRecyclerViewAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.PowersRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.SpecsRecycleAdapter;
 import com.fang.starfang.util.ScreenUtils;
 
 import java.util.ArrayList;
@@ -37,6 +42,7 @@ public class HeroesDialogFragment extends DialogFragment {
     private static final String TAG = "FANG_HERO_DIALOG";
     private Activity mActivity;
     private static final int[] MAX_LEVEL_BY_GRADE = {20,40,60,80,99};
+    private Realm realm;
 
     public static HeroesDialogFragment newInstance( int heroNo  ) {
 
@@ -53,13 +59,14 @@ public class HeroesDialogFragment extends DialogFragment {
         Bundle args = new Bundle();
         args.putInt("heroNo",heroNo);
         heroesDialogFragment.setArguments(args);
+        realm.close();
 
         return heroesDialogFragment;
 
     }
 
     public  HeroesDialogFragment() {
-
+        Log.d(TAG, "constructed");
     }
 
     @Override
@@ -82,7 +89,7 @@ public class HeroesDialogFragment extends DialogFragment {
             heroNo = getArguments().getInt("heroNo");
         }
 
-        Realm realm  = Realm.getDefaultInstance();
+        realm  = Realm.getDefaultInstance();
         Heroes hero = realm.where(Heroes.class).equalTo(Heroes.FIELD_ID,heroNo).findFirst();
         HeroSim heroSim = realm.where(HeroSim.class).equalTo(Heroes.FIELD_ID,heroNo).findFirst();
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
@@ -114,16 +121,18 @@ public class HeroesDialogFragment extends DialogFragment {
 
             final RecyclerView recycler_view_pasv_grades = view.findViewById(R.id.recycler_view_pasv_grades);
             final RecyclerView recycler_view_hero_grades = view.findViewById(R.id.recycler_view_hero_grades);
+            final RecyclerView recycler_view_dialog_heroes_cell_power = view.findViewById(R.id.recycler_view_dialog_heroes_cell_power);
             int calculateNoOfColumns = ScreenUtils.calculateNoOfColumns(mActivity,65);
             recycler_view_pasv_grades.setLayoutManager(new GridLayoutManager(mActivity, calculateNoOfColumns));
             recycler_view_hero_grades.setLayoutManager(new GridLayoutManager(mActivity, calculateNoOfColumns));
-
+            recycler_view_dialog_heroes_cell_power.setLayoutManager(new LinearLayoutManager(mActivity));
             RealmList<RealmString> heroSpecs = hero.getHeroSpecs();   // 0 ~ 3 : pick & 4,5 : pasv
             RealmList<RealmString> heroSpecVals = hero.getHeroSpecValues(); // 0 ~ 3
             RealmList<RealmString> branchSpecs = null; // 0 ~ 4
             RealmList<RealmString> branchSpecVals = null; // 0 ~ 4
             RealmList<RealmString> branchPasvSpecs = null; // 0 ~ 2
             RealmList<RealmString> branchPasvSpecVals = null; // 0 ~ 2
+            RealmList<RealmString> branchSpecGGs = null;
 
             ArrayList<String> titles_pasv = new ArrayList<>(); // 0 ~ 4
             ArrayList<String> specs_pasv = new ArrayList<>();
@@ -143,6 +152,7 @@ public class HeroesDialogFragment extends DialogFragment {
                 branchSpecVals = branch.getBranchSpecValues();
                 branchPasvSpecs = branch.getBranchPasvSpecs();
                 branchPasvSpecVals = branch.getBranchPasvSpecValues();
+                branchSpecGGs = branch.getBranchStatGGs();
             }
             if(branchPasvSpecs != null) {
                 for (int i = 0; i < 3; i++) {
@@ -220,22 +230,23 @@ public class HeroesDialogFragment extends DialogFragment {
 
             final AppCompatTextView text_dialog_heroes_cell_specs_total= view.findViewById(R.id.text_dialog_heroes_cell_specs_total);
             ArrayList<Integer> checkedSpecLevels = heroSim.getCheckedLevels();
-            final SpecsRecyclerViewAdapter pasvAdapter = new SpecsRecyclerViewAdapter(titles_pasv,specs_pasv,specVals_pasv, null, true, null);
-            final SpecsRecyclerViewAdapter heroAdapter = new SpecsRecyclerViewAdapter(titles,specs,specVals, checkedSpecLevels, false, text_dialog_heroes_cell_specs_total);
+            final SpecsRecycleAdapter pasvAdapter = new SpecsRecycleAdapter(titles_pasv,specs_pasv,specVals_pasv, null, true, null);
+            final SpecsRecycleAdapter heroAdapter = new SpecsRecycleAdapter(titles,specs,specVals, checkedSpecLevels, false, text_dialog_heroes_cell_specs_total);
             recycler_view_pasv_grades.setAdapter(pasvAdapter);
             recycler_view_hero_grades.setAdapter(heroAdapter);
 
-            //pasvAdapter.getFilter().filter((curGrade + 1)+"");
-            //heroAdapter.getFilter().filter(( curLevel + 1 ) + "");
-
-
-
+            pasvAdapter.getFilter().filter((curGrade + 1)+"");
+            heroAdapter.getFilter().filter(( curLevel + 1 ) + "");
 
             int maxPlusStat = (curGrade < 4) ? MAX_LEVEL_BY_GRADE[curGrade] :
                     (hero.getHeroCost() + 16) * 5;
 
             RealmList<RealmInteger> heroBaseStats = hero.getHeroStats();
             RealmList<RealmInteger> heroPlusStats = heroSim.getHeroStatsUp();
+
+            ArrayList<Integer> heroStatsUpList = heroSim.getHeroStatsUpList();
+            final PowersRecyclerAdapter powerAdapter = new PowersRecyclerAdapter(branchSpecGGs,heroBaseStats,heroStatsUpList,curLevel);
+            recycler_view_dialog_heroes_cell_power.setAdapter(powerAdapter);
 
             final AppCompatTextView text_sum_of_plus_stat_cur = view.findViewById(R.id.text_sum_of_plus_stat_cur);
             final AppCompatTextView text_sum_of_plus_stat_max = view.findViewById(R.id.text_sum_of_plus_stat_max);
@@ -283,7 +294,8 @@ public class HeroesDialogFragment extends DialogFragment {
                         } else {
                             text_sum_of_plus_stat_cur.setText(String.valueOf(sumOfCur));
                             text_seekbar_hero_stat_cur[finalI].setText(String.valueOf(progress));
-
+                            heroStatsUpList.set(finalI,progress);
+                            powerAdapter.notifyDataSetChanged();
                             RealmInteger baseStat = heroBaseStats.get(finalI);
                             if (baseStat != null) {
                                 int basePlusProgressInt = baseStat.toInt() + progress;
@@ -359,6 +371,8 @@ public class HeroesDialogFragment extends DialogFragment {
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) { // 0 ~ 98
                     int curGrade = seekbar_hero_grade.getProgress(); // 0 ~ 4
                     int curLevel = progress + 1; // 1 ~ 99;
+                    powerAdapter.setLevel(curLevel);
+                    powerAdapter.notifyDataSetChanged();
                     //if(( curLevel ) % 5 == 0 || curLevel == 1) {
                         heroAdapter.getFilter().filter(curLevel+"");
                    //}
@@ -396,6 +410,16 @@ public class HeroesDialogFragment extends DialogFragment {
                 }
                 realm.commitTransaction();
 
+                HeroesFixedRealmAdapter fixedInstance = HeroesFixedRealmAdapter.getInstance();
+                if(fixedInstance != null ) {
+                    fixedInstance.notifyDataSetChanged();
+                }
+                HeroesFloatingRealmAdapter floatingInstance = HeroesFloatingRealmAdapter.getInstance();
+                if( floatingInstance != null ) {
+                    floatingInstance.notifyDataSetChanged();
+                }
+
+
             }).setNegativeButton("취소", null);
 
 
@@ -420,5 +444,11 @@ public class HeroesDialogFragment extends DialogFragment {
            }
        }
    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        realm.close();
+        super.onDismiss(dialog);
+    }
 
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="65dp"
+    android:layout_height="65dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_margin = "2dp"
+    android:background="#30000000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:orientation="horizontal"
+        android:background="#000"
+        android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:text="@string/grade_star" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_cell_title_item_grade"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:gravity="center"
+            android:textSize="13sp"
+            tools:text="전용"
+            android:layout_marginEnd="3dp"/>
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:text="@string/reinforcement_plus"
+            android:visibility="gone"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_cell_title_item_reinforcement"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:textSize="13sp"
+        tools:text="12"
+        android:visibility="gone"/>
+    </LinearLayout>
+    <androidx.appcompat.widget.AppCompatCheckedTextView
+        android:id="@+id/button_cell_item_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textSize="13sp"
+        android:background="@drawable/rect_button"
+        tools:text="관우의\n청룡언월도" />
+</LinearLayout>

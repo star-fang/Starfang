@@ -24,11 +24,11 @@ import com.fang.starfang.NotificationListener;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.task.PrefixHandler;
-import com.fang.starfang.ui.main.recycler.adapter.ConversationRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.ConversationRealmAdapter;
 import com.fang.starfang.ui.main.recycler.filter.ConversationFilter;
 import com.fang.starfang.ui.main.recycler.filter.ConversationFilterObject;
-import com.fang.starfang.ui.main.recycler.adapter.RoomFilterRecyclerAdapter;
-import com.fang.starfang.ui.main.recycler.adapter.SendCatFilterRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.RoomFilterRealmAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.SendCatFilterRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -48,6 +48,7 @@ public class ConversationFragment extends PlaceholderFragment {
     private static final String TAG = "FANG_CONV_FRAG";
     private static final String SUMMARY_TIME_FORMAT = "yyyy년 MM월 dd일";
     private RealmChangeListener<Realm> realmChangeListener;
+    private Realm realm;
 
     static ConversationFragment newInstance(int index) {
             ConversationFragment conversationFragment = new ConversationFragment();
@@ -69,8 +70,8 @@ public class ConversationFragment extends PlaceholderFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Realm realm = Realm.getDefaultInstance();
         realm.removeChangeListener(realmChangeListener);
+        realm.close();
         Log.d(TAG, "_ON DESTROY VIEW : remove realm listener");
     }
 
@@ -81,10 +82,10 @@ public class ConversationFragment extends PlaceholderFragment {
             Bundle savedInstanceState) {
         Log.d(TAG,"_ON CREATE VIEW");
         /*대화 파트*/
-        Realm realm = Realm.getDefaultInstance();
+        realm = Realm.getDefaultInstance();
         final View child_conversation = inflater.inflate(R.layout.fragment_conversation,container,false);
         final RecyclerView recyclerView = child_conversation.findViewById(R.id.conversation_recycler_view);
-        final ConversationRecyclerAdapter conversationRecyclerAdapter = new ConversationRecyclerAdapter( realm );
+        final ConversationRealmAdapter conversationRecyclerAdapter = new ConversationRealmAdapter( realm );
         final View filter_summary_layout = child_conversation.findViewById(R.id.filter_summary_layout);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
         recyclerView.setLayoutManager(layoutManager);
@@ -213,7 +214,7 @@ public class ConversationFragment extends PlaceholderFragment {
         };
         button_hide_filters.setOnClickListener(hideButton_default_listener);
 
-        final SendCatFilterRecyclerAdapter sendCatFilterRecyclerAdapter = new SendCatFilterRecyclerAdapter(realm, child_conversation);
+        final SendCatFilterRealmAdapter sendCatFilterRecyclerAdapter = new SendCatFilterRealmAdapter(realm, child_conversation);
         final AppCompatButton button_filter_sendCat =  child_conversation.findViewById(R.id.button_filter_sendCat);
         final View inner_column_filter_sendCat = child_conversation.findViewById(R.id.inner_column_filter_sendCat);
         final AppCompatButton button_filter_sendCat_commit = child_conversation.findViewById(R.id.button_filter_sendCat_commit);
@@ -221,9 +222,15 @@ public class ConversationFragment extends PlaceholderFragment {
         if( filterObject.isCatChecked()) {
             button_filter_sendCat.setBackgroundResource(R.drawable.round_button_checked);
         }
+
+        final RealmChangeListener<Realm> sendcatChangeLisnter = o -> {
+            sendCatFilterRecyclerAdapter.notifyDataSetChanged();
+            Log.d(TAG,"sendcatChangeLisnter : realm changed");
+        };
         button_filter_sendCat.setOnLongClickListener( view -> {
             filter_summary_layout.setVisibility(View.INVISIBLE);
             recyclerView.setAdapter(sendCatFilterRecyclerAdapter);
+            realm.addChangeListener(sendcatChangeLisnter);
             changeLayouWeight(inner_column_filter,0.0f);
             changeLayouWeight(inner_column_filter_sendCat,1.0f);
             title_conversation.setText(R.string.filter_title_sendCat);
@@ -264,7 +271,7 @@ public class ConversationFragment extends PlaceholderFragment {
             }
             filterObject.setCheckCat(check);
             recyclerView.setAdapter(conversationRecyclerAdapter);
-
+            realm.removeChangeListener(sendcatChangeLisnter);
             changeLayouWeight(inner_column_filter,1.0f);
             changeLayouWeight(inner_column_filter_sendCat,0.0f);
             buildConstraintDoc( realm, text_filter_summary);
@@ -272,7 +279,7 @@ public class ConversationFragment extends PlaceholderFragment {
 
         });
 
-        final RoomFilterRecyclerAdapter roomFilterRecyclerAdapter = new RoomFilterRecyclerAdapter(realm, child_conversation);
+        final RoomFilterRealmAdapter roomFilterRecyclerAdapter = new RoomFilterRealmAdapter(realm, child_conversation);
         final AppCompatButton button_filter_room =  child_conversation.findViewById(R.id.button_filter_room);
         final View inner_column_filter_room = child_conversation.findViewById(R.id.inner_column_filter_room);
         final AppCompatButton button_filter_room_commit = child_conversation.findViewById(R.id.button_filter_room_commit);
@@ -280,9 +287,16 @@ public class ConversationFragment extends PlaceholderFragment {
         if( filterObject.isRoomChecked()) {
             button_filter_room.setBackgroundResource(R.drawable.round_button_checked);
         }
+
+        RealmChangeListener<Realm> roomChangeLisnter = o -> {
+            roomFilterRecyclerAdapter.notifyDataSetChanged();
+            Log.d(TAG,"roomChangeLisnter : realm changed");
+        };
+
         button_filter_room.setOnLongClickListener( view -> {
             filter_summary_layout.setVisibility(View.INVISIBLE);
             recyclerView.setAdapter(roomFilterRecyclerAdapter);
+            realm.addChangeListener(roomChangeLisnter);
             changeLayouWeight(inner_column_filter,0.0f);
             changeLayouWeight(inner_column_filter_room,1.0f);
             title_conversation.setText(R.string.filter_title_room);
@@ -323,6 +337,7 @@ public class ConversationFragment extends PlaceholderFragment {
             }
             filterObject.setCheckRoom(check);
             recyclerView.setAdapter(conversationRecyclerAdapter);
+            realm.removeChangeListener(roomChangeLisnter);
 
             changeLayouWeight(inner_column_filter,1.0f);
             changeLayouWeight(inner_column_filter_room,0.0f);

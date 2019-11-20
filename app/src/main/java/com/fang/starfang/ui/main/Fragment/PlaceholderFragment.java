@@ -27,9 +27,12 @@ public class PlaceholderFragment extends Fragment {
             case 1:
                 fragment = HeroesFragment.newInstance(index);
                 break;
-            case 2 :
+            case 2:
+                fragment = ItemsFragment.newInstance(index);
+                break;
+            case 3:
                 fragment = ConversationFragment.newInstance(index);
-            break;
+                break;
             default:
                 fragment = null;
         }

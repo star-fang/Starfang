@@ -23,10 +23,9 @@ import com.fang.starfang.ui.main.recycler.filter.HeroFilter;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
-import io.realm.RealmResults;
 import io.realm.Sort;
 
-public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
+public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
 
     private static final String R_ROW_HERO_HRADE = "row_hero_grade";
     private static final String R_TEXT_HERO_GRADE_NAME = "text_hero_grade_name";
@@ -43,15 +42,26 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
     private static final String TAG = "FANG_FLOATING_ADAPTER";
     private String sort_field;
     private Sort sort;
-    private Context context;
     private final static int[] COST_PLUS_BY_UPGRADE = {0,3,5,8,10};
+    private Realm realm;
+    private final static String ID_STR = "id";
+    private String packageName;
+    private Resources resources;
+    private static HeroesFloatingRealmAdapter instance = null;
 
-    public HeroesFloatingRecyclerAdapter(RealmResults<Heroes> realmResults, Context context) {
-        super(realmResults,false);
-        this.context = context;
-        sort_field = null;
-        sort = null;
+    public static HeroesFloatingRealmAdapter getInstance() {
+        return instance;
+    }
+
+    public HeroesFloatingRealmAdapter(Realm realm, Context context) {
+        super(realm.where(Heroes.class).findAll().sort(Heroes.FIELD_NAME).sort(Heroes.FIELD_COST).sort(Heroes.FIELD_BRANCH),false);
+        this.realm = realm;
+        this.sort_field = null;
+        this.sort = null;
+        this.packageName = context.getPackageName();
+        this.resources = context.getResources();
         Log.d(TAG,"constructed" );
+        instance = this;
     }
 
     @NonNull
@@ -114,7 +124,6 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
 
         private HeroesFloatingViewHolder(View itemView) {
             super(itemView);
-
             row_hero_grade = new View[5];
             text_hero_grade_name = new AppCompatTextView[5];
             text_hero_grade_cost = new AppCompatTextView[5];
@@ -133,61 +142,54 @@ public class HeroesFloatingRecyclerAdapter extends RealmRecyclerViewAdapter<Hero
             cell_specs_unique = itemView.findViewById(R.id.cell_specs_unique);
             cell_specs_branch = itemView.findViewById(R.id.cell_specs_branch);
             cell_hero_stats = itemView.findViewById(R.id.cell_hero_stats);
-            String id = "id";
-            String packageName = context.getPackageName();
-            Resources resources = context.getResources();
+
             for(int i = 0; i < 6; i++ ) {
                 if( i < 5) {
-
-
                     int gradeRowID = resources.getIdentifier
-                            (R_ROW_HERO_HRADE + (i + 1), id, packageName);
+                            (R_ROW_HERO_HRADE + (i + 1), ID_STR, packageName);
                     row_hero_grade[i] = itemView.findViewById(gradeRowID);
                     int gradeNameID = resources.getIdentifier
-                            ( R_TEXT_HERO_GRADE_NAME + (i + 1), id, packageName);
+                            ( R_TEXT_HERO_GRADE_NAME + (i + 1), ID_STR, packageName);
                     text_hero_grade_name[i] = itemView.findViewById(gradeNameID);
                     int gradeCostID = resources.getIdentifier
-                            ( R_TEXT_HERO_GRADE_COST + (i + 1), id, packageName);
+                            ( R_TEXT_HERO_GRADE_COST + (i + 1), ID_STR, packageName);
                     text_hero_grade_cost[i] = itemView.findViewById(gradeCostID);
                     int statID = resources.getIdentifier
-                            ( R_TEXT_HERO_STAT + (i + 1), id, packageName);
+                            ( R_TEXT_HERO_STAT + (i + 1), ID_STR, packageName);
                     text_hero_stat[i] = itemView.findViewById(statID);
                     int plusStatID = resources.getIdentifier
-                            ( R_TEXT_HERO_STAT_PLUS + (i + 1), id, packageName);
+                            ( R_TEXT_HERO_STAT_PLUS + (i + 1), ID_STR, packageName);
                     text_hero_plus_stat[i] = itemView.findViewById(plusStatID);
 
                     int branchRowID = resources.getIdentifier
-                            ( R_ROW_HERO_SPEC_BRANCH + (i + 1), id, packageName);
+                            ( R_ROW_HERO_SPEC_BRANCH + (i + 1), ID_STR, packageName);
 
                     int branchSpecID = resources.getIdentifier
-                            ( R_TEXT_HERO_SEPC_BRANCH + (i + 1), id, packageName);
+                            ( R_TEXT_HERO_SEPC_BRANCH + (i + 1), ID_STR, packageName);
 
                     int branchSpecValID = resources.getIdentifier
-                            ( R_TEXT_HERO_SEPC_BRANCH_VAL + (i + 1), id, packageName);
+                            ( R_TEXT_HERO_SEPC_BRANCH_VAL + (i + 1), ID_STR, packageName);
                     row_hero_spec_branch[i] = itemView.findViewById(branchRowID);
                     text_hero_spec_branch[i] = itemView.findViewById(branchSpecID);
                     text_hero_spec_branch_val[i] = itemView.findViewById(branchSpecValID);
                 }
 
                 int uniqueRowID = resources.getIdentifier
-                        (R_ROW_HERO_SPEC_UNIQUE + (i + 1), id, packageName);
+                        (R_ROW_HERO_SPEC_UNIQUE + (i + 1), ID_STR, packageName);
 
                 int uniqueSpecID = resources.getIdentifier
-                        (R_TEXT_HERO_SEPC_UNIQUE + (i + 1), id, packageName);
+                        (R_TEXT_HERO_SEPC_UNIQUE + (i + 1), ID_STR, packageName);
 
                 int uniqueSpecValID = resources.getIdentifier
-                        (R_TEXT_HERO_SEPC_UNIQUE_VAL + (i + 1), id, packageName);
+                        (R_TEXT_HERO_SEPC_UNIQUE_VAL + (i + 1), ID_STR, packageName);
                 row_hero_spec_unique[i] = itemView.findViewById(uniqueRowID);
                 text_hero_spec_unique[i] = itemView.findViewById(uniqueSpecID);
                 text_hero_spec_unique_val[i] = itemView.findViewById(uniqueSpecValID);
             }
         }
 
-
-
         private void bind(final Heroes hero ) {
 
-            Realm realm = Realm.getDefaultInstance();
             HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, hero.getHeroNo()).findFirst();
             Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_ID,hero.getBranchNo()).findFirst();
             RealmList<RealmInteger> heroStats = hero.getHeroStats();

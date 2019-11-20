@@ -20,7 +20,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 
-public class SpecsRecyclerViewAdapter extends RecyclerView.Adapter<SpecsRecyclerViewAdapter.SpecsRecyclerViewAdapterViewHolder>
+public class SpecsRecycleAdapter extends RecyclerView.Adapter<SpecsRecycleAdapter.SpecsRecyclerViewAdapterViewHolder>
 implements Filterable {
 
     private static final String TAG = "FANG_SPEC_ADAPTER";
@@ -40,7 +40,7 @@ implements Filterable {
     @Override
     public SpecsRecyclerViewAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_heroes_cell_spec,viewGroup,false);
-        return new SpecsRecyclerViewAdapter.SpecsRecyclerViewAdapterViewHolder(view);
+        return new SpecsRecycleAdapter.SpecsRecyclerViewAdapterViewHolder(view);
     }
 
     @Override
@@ -54,8 +54,8 @@ implements Filterable {
     }
 
 
-    public SpecsRecyclerViewAdapter(ArrayList<String> titles, ArrayList<String> specs
-            ,ArrayList<String> specVals, ArrayList<Integer> checkedLevels , boolean pasv, TextView resultView) {
+    public SpecsRecycleAdapter(ArrayList<String> titles, ArrayList<String> specs
+            , ArrayList<String> specVals, ArrayList<Integer> checkedLevels , boolean pasv, TextView resultView) {
 
         this.titles = titles;
         this.titlesFiltered = titles;

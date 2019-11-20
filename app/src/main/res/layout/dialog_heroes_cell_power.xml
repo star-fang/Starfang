@@ -5,30 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="30dp">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_dialog_heroes_cell_power_name"
         android:layout_width="40dp"
         android:layout_height="match_parent"
         android:gravity="center"
         tools:text="공격력"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_dialog_heroes_cell_power_grade"
         android:layout_width="30dp"
         android:layout_height="match_parent"
         android:gravity="center"
         tools:text="A"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_dialog_heroes_cell_power_rate"
-        android:layout_width="30dp"
+        android:layout_width="50dp"
         android:layout_height="match_parent"
         android:gravity="center"
         tools:text="2.5"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_dialog_heroes_cell_power"
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="match_parent"
         android:gravity="center"
         tools:text="1220"/>

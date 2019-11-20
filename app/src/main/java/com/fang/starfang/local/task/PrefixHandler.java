@@ -185,6 +185,7 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
                 replier.execute(result, botName);
             }
         }
+        realm.close();
     }
 
     private boolean checkStop(Realm realm) {

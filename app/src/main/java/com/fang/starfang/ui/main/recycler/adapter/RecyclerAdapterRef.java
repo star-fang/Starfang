@@ -8,10 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.R;
 
-
-public class RecyclerViewAdapterRef extends RecyclerView.Adapter<RecyclerViewAdapterRef.RecyclerViewAdapterRefViewHolder> {
+public class RecyclerAdapterRef extends RecyclerView.Adapter<RecyclerAdapterRef.RecyclerViewAdapterRefViewHolder> {
 
     private static final String TAG = "FANG_SPEC_ADAPTER";
 
@@ -19,7 +17,7 @@ public class RecyclerViewAdapterRef extends RecyclerView.Adapter<RecyclerViewAda
     @Override
     public RecyclerViewAdapterRefViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(0,viewGroup,false);
-        return new RecyclerViewAdapterRef.RecyclerViewAdapterRefViewHolder(view);
+        return new RecyclerAdapterRef.RecyclerViewAdapterRefViewHolder(view);
     }
 
     @Override
@@ -32,7 +30,7 @@ public class RecyclerViewAdapterRef extends RecyclerView.Adapter<RecyclerViewAda
         return 0;
     }
 
-    public RecyclerViewAdapterRef() {
+    public RecyclerAdapterRef() {
 
         Log.d(TAG, "constructed");
     }

@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.source.Heroes;
-import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRecyclerAdapter;
-import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -89,12 +89,12 @@ public class HeroFilter extends Filter {
 
         Sort sort = null;
         String field = null;
-        if( adapter instanceof HeroesFloatingRecyclerAdapter) {
-            sort = ((HeroesFloatingRecyclerAdapter) adapter).getCurSort();
-            field = ((HeroesFloatingRecyclerAdapter) adapter).getCurSortField();
-        } else if( adapter instanceof HeroesFixedRecyclerAdapter) {
-            sort = ((HeroesFixedRecyclerAdapter) adapter).getCurSort();
-            field = ((HeroesFixedRecyclerAdapter) adapter).getCurSortField();
+        if( adapter instanceof HeroesFloatingRealmAdapter) {
+            sort = ((HeroesFloatingRealmAdapter) adapter).getCurSort();
+            field = ((HeroesFloatingRealmAdapter) adapter).getCurSortField();
+        } else if( adapter instanceof HeroesFixedRealmAdapter) {
+            sort = ((HeroesFixedRealmAdapter) adapter).getCurSort();
+            field = ((HeroesFixedRealmAdapter) adapter).getCurSortField();
         }
 
         if(sort != null && field != null) {

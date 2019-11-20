@@ -9,6 +9,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -32,6 +33,7 @@ public class HeroSim extends RealmObject {
     private static final Double[] GROWTH_RATES_INIT = {2.5, 2.0, 1.5, 1.0, 0.5};
     private static int[] GROWTH_RATES_OFFSETS = {0,50,70,90,110,200};
     private static Double[] GROWTH_RATES_COEFS = {0.005,0.05,0.025,0.0125,0.0001};
+    public static final String[] POWERS_KOR = {"공격력","정신력","방어력","순발력","사기"};
     @PrimaryKey
     private int heroNo;   // 장수 고유 번호
     private int heroLevel; // 1 ~ 99
@@ -89,6 +91,16 @@ public class HeroSim extends RealmObject {
         if( integerAtPostion != null) {
             integerAtPostion.setIntValue(statUp);
         }
+    }
+
+    public ArrayList<Integer> getHeroStatsUpList() {
+        ArrayList<Integer> statsUp = new ArrayList<>();
+        if(heroStatsUp != null) {
+            for( RealmInteger stat : heroStatsUp) {
+                statsUp.add( stat.toInt() );
+            }
+        }
+        return statsUp;
     }
 
     public RealmList<Integer> getHeroSpecsChecked() {

@@ -19,7 +19,7 @@ import com.fang.starfang.ui.main.recycler.filter.ConversationFilter;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class ConversationRecyclerAdapter
+public class ConversationRealmAdapter
         extends RealmRecyclerViewAdapter<Conversation, RecyclerView.ViewHolder>
         implements Filterable {
 
@@ -29,7 +29,6 @@ public class ConversationRecyclerAdapter
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        //Log.d(TAG,"onCreateViewHolder");
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_conversation,viewGroup,false);
         return new ConversationViewHolder(view);
     }
@@ -45,10 +44,9 @@ public class ConversationRecyclerAdapter
 
     }
 
-    public ConversationRecyclerAdapter(Realm realm) {
+    public ConversationRealmAdapter(Realm realm) {
         super(realm.where(Conversation.class).findAll(),true);
         Log.d(TAG,"constructed");
-
         this.realm = realm;
     }
 

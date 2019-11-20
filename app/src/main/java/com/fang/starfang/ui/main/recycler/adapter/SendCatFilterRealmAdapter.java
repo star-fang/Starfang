@@ -17,7 +17,7 @@ import com.fang.starfang.ui.main.recycler.filter.ConversationFilterObject;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class SendCatFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conversation, RecyclerView.ViewHolder> {
+public class SendCatFilterRealmAdapter extends RealmRecyclerViewAdapter<Conversation, RecyclerView.ViewHolder> {
      //   implements Filterable {
     private static final String TAG = "FANG_FILTER_SENDCAT";
     private AppCompatTextView countText;
@@ -27,23 +27,22 @@ public class SendCatFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conve
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_filter_sendcat,viewGroup,false);
-        return new SendCatFilterRecyclerAdapter.SendCatFilterViewHolder(view);
+        return new SendCatFilterRealmAdapter.SendCatFilterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
-        SendCatFilterRecyclerAdapter.SendCatFilterViewHolder sendCatFilterViewHolder =
-                (SendCatFilterRecyclerAdapter.SendCatFilterViewHolder) viewHolder;
+        SendCatFilterRealmAdapter.SendCatFilterViewHolder sendCatFilterViewHolder =
+                (SendCatFilterRealmAdapter.SendCatFilterViewHolder) viewHolder;
 
         Conversation conversation = getItem(i);
         sendCatFilterViewHolder.bind(conversation);
 
     }
 
-    public SendCatFilterRecyclerAdapter(Realm realm, View view) {
+    public SendCatFilterRealmAdapter(Realm realm, View view) {
         super(realm.where(Conversation.class).isNotNull(Conversation.FIELD_SENDCAT).distinct(Conversation.FIELD_SENDCAT).findAll(),true);
-        realm.addChangeListener(o -> notifyDataSetChanged());
         countText = view.findViewById(R.id.text_filter_sendCat_count);
         listText = view.findViewById(R.id.text_filter_sendCat_count_desc);
 
@@ -52,6 +51,7 @@ public class SendCatFilterRecyclerAdapter extends RealmRecyclerViewAdapter<Conve
         listText.setText(filterObject.getSendCatJoinString(10));
 
         Log.d(TAG, "constructed");
+
     }
 
 

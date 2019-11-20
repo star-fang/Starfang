@@ -17,18 +17,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.recycler.custom.DiagonalScrollRecyclerView;
-import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRecyclerAdapter;
-import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
 import com.fang.starfang.ui.main.recycler.filter.HeroFilter;
 
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.Sort;
 
 public class HeroesFragment extends PlaceholderFragment {
 
     private static final String TAG = "FANG_HEROES_FRAG";
-    private RealmChangeListener<Realm> realmChangeListener;
+    private Realm realm;
 
     static HeroesFragment newInstance(int index) {
             HeroesFragment heroesFragment = new HeroesFragment();
@@ -41,15 +40,14 @@ public class HeroesFragment extends PlaceholderFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"_ON CREATE");
+        //Log.d(TAG,"_ON CREATE");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Realm realm = Realm.getDefaultInstance();
-        realm.removeChangeListener(realmChangeListener);
-        Log.d(TAG, "_ON DESTROY VIEW : realm change listener removed");
+        realm.close();
+        Log.d(TAG, "_ON DESTROY VIEW : realm instance closed");
     }
 
     @Override
@@ -57,23 +55,15 @@ public class HeroesFragment extends PlaceholderFragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         Log.d(TAG,"_ON CREATE VIEW");
-
-        Realm realm = Realm.getDefaultInstance();
+        realm = Realm.getDefaultInstance();
         final View child_sim = inflater.inflate(R.layout.fragment_heroes, container, false);
         final RecyclerView recycler_view_hero_fixed = child_sim.findViewById(R.id.recycler_view_hero_fixed);
         final RecyclerView recycler_view_hero_floating = child_sim.findViewById(R.id.recycler_view_hero_floating);
-        final HeroesFloatingRecyclerAdapter heroesFloatingRecyclerAdapter = new HeroesFloatingRecyclerAdapter(realm.where(Heroes.class).findAll(),mActivity);
-        final HeroesFixedRecyclerAdapter heroesFixedRecyclerAdapter = new HeroesFixedRecyclerAdapter(realm.where(Heroes.class).findAll(), getFragmentManager());
+        final HeroesFloatingRealmAdapter heroesFloatingRecyclerAdapter = new HeroesFloatingRealmAdapter(realm,mActivity);
+        final HeroesFixedRealmAdapter heroesFixedRecyclerAdapter = new HeroesFixedRealmAdapter(realm, getFragmentManager());
         final LinearLayoutManager layoutManager_fixed = new LinearLayoutManager(mActivity);
         final LinearLayoutManager layoutManager_floating = new LinearLayoutManager(mActivity);
         final DiagonalScrollRecyclerView recycler_view_hero_content = child_sim.findViewById(R.id.recycler_view_hero_content);
-
-        realmChangeListener = o -> {
-            heroesFloatingRecyclerAdapter.notifyDataSetChanged();
-            heroesFixedRecyclerAdapter.notifyDataSetChanged();
-            Log.d(TAG,"realm changed!");
-        };
-        realm.addChangeListener(realmChangeListener);
 
         recycler_view_hero_floating.setLayoutManager(layoutManager_floating);
         recycler_view_hero_floating.setAdapter(heroesFloatingRecyclerAdapter);

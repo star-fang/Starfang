@@ -4,6 +4,8 @@
     <string name="tab_text_1">장수</string>
     <string name="tab_text_2">대화</string>
     <string name="tab_text_3">냥봇</string>
+    <string name="tab_text_4">보물</string>
+    <string name="tab_text_5">보패</string>
 
     <string name="pref_title_sync_table_to_realm">DB 테이블 선택</string>
     <string-array name="pref_list_table">
@@ -228,4 +230,5 @@
     <string name="table_header_item">아이템</string>
     <string name="table_header_grade">승급단계</string>
     <string name="dialog_grade_unit_holder">단계</string>
+    <string name="grade_star">★</string>
 </resources>

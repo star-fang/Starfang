@@ -20,21 +20,28 @@ import com.fang.starfang.ui.main.recycler.filter.HeroFilter;
 
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
-import io.realm.RealmResults;
 import io.realm.Sort;
 
-public class HeroesFixedRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
+public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
 
     private final String TAG  = "FANG_HERO_FIX";
     private String sort_field;
     private Sort sort;
     private FragmentManager fragmentManager;
+    private Realm realm;
+    private static HeroesFixedRealmAdapter instance = null;
 
-    public HeroesFixedRecyclerAdapter(RealmResults<Heroes> realmResults, FragmentManager fragmentManager) {
-        super(realmResults,false);
+    public static HeroesFixedRealmAdapter getInstance() {
+        return instance;
+    }
+
+    public HeroesFixedRealmAdapter(Realm realm, FragmentManager fragmentManager) {
+        super(realm.where(Heroes.class).findAll().sort(Heroes.FIELD_NAME).sort(Heroes.FIELD_COST).sort(Heroes.FIELD_BRANCH),false);
+        this.realm = realm;
         sort = null;
         sort_field = null;
         this.fragmentManager = fragmentManager;
+        instance = this;
     }
 
     @NonNull
@@ -81,13 +88,10 @@ public class HeroesFixedRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes,
 
         private HeroesViewHolder(View itemView) {
             super(itemView);
-
             text_hero_branch = itemView.findViewById(R.id.text_hero_branch);
             text_hero_name = itemView.findViewById(R.id.text_hero_name);
             text_hero_level = itemView.findViewById(R.id.text_hero_level);
         }
-
-
 
         private void bind(final Heroes hero ) {
             String branch = hero.getHeroBranch();
@@ -95,7 +99,6 @@ public class HeroesFixedRecyclerAdapter extends RealmRecyclerViewAdapter<Heroes,
             text_hero_name.setText(hero.getHeroName());
             text_hero_branch.setOnClickListener(v -> Log.d(TAG, branch + " clicked"));
             text_hero_name.setOnClickListener(v-> HeroesDialogFragment.newInstance(hero.getHeroNo()).show(fragmentManager,TAG));
-            Realm realm = Realm.getDefaultInstance();
             HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID,hero.getHeroNo()).findFirst();
             if(heroSim != null) {
                 text_hero_level.setText(String.valueOf(heroSim.getHeroLevel()));

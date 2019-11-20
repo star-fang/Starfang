@@ -4,7 +4,7 @@ import android.widget.Filter;
 
 
 import com.fang.starfang.local.model.realm.Conversation;
-import com.fang.starfang.ui.main.recycler.adapter.ConversationRecyclerAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.ConversationRealmAdapter;
 
 import io.realm.Case;
 import io.realm.Realm;
@@ -14,11 +14,11 @@ import io.realm.RealmResults;
 public class ConversationFilter extends Filter {
 
     //private static final String TAG = "FANG_FILTER";
-    private final ConversationRecyclerAdapter adapter;
+    private final ConversationRealmAdapter adapter;
     private Realm realm;
 
 
-    public ConversationFilter(ConversationRecyclerAdapter adapter, Realm realm) {
+    public ConversationFilter(ConversationRealmAdapter adapter, Realm realm) {
         super();
         this.adapter = adapter;
         this.realm = realm;

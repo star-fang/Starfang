@@ -12,6 +12,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,13 +30,28 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
         FloatingActionButton fab = findViewById(R.id.fab);
-        AppCompatButton fab_setting = findViewById(R.id.fab_setting);
+        AppCompatButton button_setting = findViewById(R.id.button_setting);
+        AppCompatButton button_check_realm = findViewById(R.id.button_check_realm);
 
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
 
         Intent intent = new Intent(this, SettingAcitivity.class);
-        fab_setting.setOnClickListener( view -> startActivity(intent));
+        button_setting.setOnClickListener( view -> startActivity(intent));
+
+        button_check_realm.setOnClickListener(view -> {
+            RealmConfiguration config = Realm.getDefaultConfiguration();
+            if( config != null ) {
+                int count = Realm.getGlobalInstanceCount(config);
+                Snackbar.make(view, "Count of realm instances : " + count, Snackbar.LENGTH_LONG).show();
+            } else {
+                Snackbar.make(view, "Error: realm configuration is null ", Snackbar.LENGTH_LONG).show();
+            }
+
+
+        });
+
+
 
     }
 }
