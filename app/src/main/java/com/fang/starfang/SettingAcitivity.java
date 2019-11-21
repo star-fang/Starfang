@@ -1,11 +1,13 @@
 package com.fang.starfang;
 
+import android.app.ActionBar;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -18,12 +20,27 @@ import com.google.android.material.snackbar.Snackbar;
 public class SettingAcitivity extends AppCompatActivity {
 
     private static final String TAG = "FANG_SETTING_ACTIVITY";
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"_ON CREATE");
 
         setContentView(R.layout.activity_setting);
+
+        ActionBar actionBar = getActionBar();
+        if( actionBar != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
 
         /*냥봇 설정 파트*/

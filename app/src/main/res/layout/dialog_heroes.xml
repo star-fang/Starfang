@@ -12,7 +12,7 @@
         android:layout_weight="1">
     <include
         android:id="@+id/dialog_heroes_cell_level"
-        layout="@layout/dialog_heroes_cell_main" />
+        layout="@layout/dialog_heroes_main" />
     </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
@@ -30,15 +30,15 @@
 
             <include
                 android:id="@+id/dialog_heroes_cell_stats"
-                layout="@layout/dialog_heroes_cell_stats" />
+                layout="@layout/dialog_heroes_stats" />
 
             <include
                 android:id="@+id/dialog_heroes_cell_grades"
-                layout="@layout/dialog_heroes_cell_grades" />
+                layout="@layout/dialog_heroes_grades" />
 
             <include
                 android:id="@+id/dialog_heroes_cell_specs"
-                layout="@layout/dialog_heroes_cell_specs" />
+                layout="@layout/dialog_heroes_specs" />
 
 
 

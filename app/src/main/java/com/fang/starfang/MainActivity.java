@@ -31,13 +31,24 @@ public class MainActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
         FloatingActionButton fab = findViewById(R.id.fab);
         AppCompatButton button_setting = findViewById(R.id.button_setting);
+        AppCompatButton button_start_conversation = findViewById(R.id.button_start_conversation);
         AppCompatButton button_check_realm = findViewById(R.id.button_check_realm);
 
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
 
-        Intent intent = new Intent(this, SettingAcitivity.class);
-        button_setting.setOnClickListener( view -> startActivity(intent));
+
+        button_setting.setOnClickListener(
+                view -> {
+                    Intent intent = new Intent(this, SettingAcitivity.class);
+                    startActivity(intent);
+                } );
+
+        button_start_conversation.setOnClickListener(
+                view -> {
+                    Intent intent = new Intent(this, ConversationActivity.class);
+                    startActivity(intent);
+                } );
 
         button_check_realm.setOnClickListener(view -> {
             RealmConfiguration config = Realm.getDefaultConfiguration();
@@ -47,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Snackbar.make(view, "Error: realm configuration is null ", Snackbar.LENGTH_LONG).show();
             }
-
-
         });
 
 

@@ -42,15 +42,14 @@ public class RoomFilterRealmAdapter extends RealmRecyclerViewAdapter<Conversatio
 
     }
 
-    public RoomFilterRealmAdapter(Realm realm, View view) {
+    public RoomFilterRealmAdapter(Realm realm, AppCompatTextView countText, AppCompatTextView listText ) {
         super(realm.where(Conversation.class).isNotNull(Conversation.FIELD_ROOM).distinct(Conversation.FIELD_ROOM).findAll(),true);
-        countText = view.findViewById(R.id.text_filter_room_count);
-        listText = view.findViewById(R.id.text_filter_room_count_desc);
+        this.countText = countText;
+        this.listText = listText;
 
         ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
         countText.setText(String.valueOf(filterObject.getRoomCount()));
         listText.setText(filterObject.getRoomJoinString(10));
-
         Log.d(TAG, "constructed");
     }
 

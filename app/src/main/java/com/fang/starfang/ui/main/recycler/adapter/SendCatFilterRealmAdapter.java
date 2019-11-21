@@ -41,18 +41,21 @@ public class SendCatFilterRealmAdapter extends RealmRecyclerViewAdapter<Conversa
 
     }
 
-    public SendCatFilterRealmAdapter(Realm realm, View view) {
+    public SendCatFilterRealmAdapter(Realm realm, AppCompatTextView countText, AppCompatTextView listText) {
         super(realm.where(Conversation.class).isNotNull(Conversation.FIELD_SENDCAT).distinct(Conversation.FIELD_SENDCAT).findAll(),true);
-        countText = view.findViewById(R.id.text_filter_sendCat_count);
-        listText = view.findViewById(R.id.text_filter_sendCat_count_desc);
+        this.countText = countText;
+        this.listText = listText;
 
         ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
         countText.setText(String.valueOf(filterObject.getSendCatCount()));
         listText.setText(filterObject.getSendCatJoinString(10));
 
         Log.d(TAG, "constructed");
-
     }
+
+
+
+
 
 
 /*

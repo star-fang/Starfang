@@ -28,9 +28,21 @@
 
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_check_realm"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="end"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@id/button_start_conversation"
+                android:background="@drawable/ic_sentiment_satisfied_black_24dp"
+                android:backgroundTint="#FFF" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:layout_alignParentTop="true"
                 android:layout_toStartOf="@id/button_setting"
-                android:id="@+id/button_check_realm"
+                android:id="@+id/button_start_conversation"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="end"

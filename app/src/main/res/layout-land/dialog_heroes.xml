@@ -15,7 +15,7 @@
 
         <include
             android:id="@+id/dialog_heroes_cell_level"
-            layout="@layout/dialog_heroes_cell_main" />
+            layout="@layout/dialog_heroes_main" />
     </LinearLayout>
 
     <ScrollView
@@ -39,15 +39,15 @@
 
             <include
                 android:id="@+id/dialog_heroes_cell_stats"
-                layout="@layout/dialog_heroes_cell_stats" />
+                layout="@layout/dialog_heroes_stats" />
 
             <include
                 android:id="@+id/dialog_heroes_cell_grades"
-                layout="@layout/dialog_heroes_cell_grades" />
+                layout="@layout/dialog_heroes_grades" />
 
             <include
                 android:id="@+id/dialog_heroes_cell_specs"
-                layout="@layout/dialog_heroes_cell_specs" />
+                layout="@layout/dialog_heroes_specs" />
 
 
         </com.google.android.flexbox.FlexboxLayout>

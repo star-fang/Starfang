@@ -28,7 +28,7 @@ public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAd
     @NonNull
     @Override
     public PowersRecyclerAdapter.PowersRecyclerViewAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_heroes_cell_power,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_heroes_power,viewGroup,false);
         return new PowersRecyclerAdapter.PowersRecyclerViewAdapterViewHolder(view);
     }
 

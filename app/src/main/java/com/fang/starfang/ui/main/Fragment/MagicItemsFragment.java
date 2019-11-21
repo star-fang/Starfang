@@ -7,25 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.fragment.app.FragmentManager;
 
 import com.fang.starfang.R;
-import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
 
 import io.realm.Realm;
 
-public class ItemsFragment extends PlaceholderFragment {
+public class MagicItemsFragment extends PlaceholderFragment {
 
-    private static final String TAG = "FANG_ITEM_FRAG";
+    private static final String TAG = "FANG_MAGIC_ITEM_FRAG";
     private Realm realm;
 
-    static ItemsFragment newInstance(int index) {
-        ItemsFragment itemsFragment = new ItemsFragment();
+    static MagicItemsFragment newInstance(int index) {
+        MagicItemsFragment magicItemsFragment = new MagicItemsFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_SECTION_NUMBER, index);
-        itemsFragment.setArguments(bundle);
-        return itemsFragment;
+        magicItemsFragment.setArguments(bundle);
+        return magicItemsFragment;
     }
 
     @Override
@@ -48,23 +45,7 @@ public class ItemsFragment extends PlaceholderFragment {
         Log.d(TAG,"_ON CREATE VIEW");
 
         realm = Realm.getDefaultInstance();
-        final View view = inflater.inflate(R.layout.fragment_items, container, false);
-        AppCompatButton button_add_item = view.findViewById(R.id.button_add_item);
-        button_add_item.setOnClickListener( v -> {
-            FragmentManager manager = getFragmentManager();
-            if (manager != null) {
-                AddItemDialogFragment.newInstance().show(manager,TAG);
-            }
-        });
-
-
-
-
-
-
-
-
-
+        final View view = inflater.inflate(R.layout.fragment_magic_item, container, false);
 
         return view;
 

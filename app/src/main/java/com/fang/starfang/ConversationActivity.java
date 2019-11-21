@@ -1,12 +1,13 @@
-package com.fang.starfang.ui.main.Fragment;
+package com.fang.starfang;
 
+import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
@@ -14,14 +15,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.NotificationListener;
-import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.task.PrefixHandler;
 import com.fang.starfang.ui.main.recycler.adapter.ConversationRealmAdapter;
@@ -43,96 +43,86 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
-public class ConversationFragment extends PlaceholderFragment {
+public class ConversationActivity extends AppCompatActivity {
 
     private static final String TAG = "FANG_CONV_FRAG";
     private static final String SUMMARY_TIME_FORMAT = "yyyy년 MM월 dd일";
     private RealmChangeListener<Realm> realmChangeListener;
     private Realm realm;
 
-    static ConversationFragment newInstance(int index) {
-            ConversationFragment conversationFragment = new ConversationFragment();
-            Bundle bundle = new Bundle();
-            bundle.putInt(ARG_SECTION_NUMBER, index);
-            conversationFragment.setArguments(bundle);
-        return conversationFragment;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        realm = Realm.getDefaultInstance();
+        realm.addChangeListener(realmChangeListener);
+        Log.d(TAG,"_on Restart : add change listener to new realm instance");
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Log.d(TAG,"_ON CREATE");
-
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    protected void onStop() {
+        super.onStop();
         realm.removeChangeListener(realmChangeListener);
         realm.close();
-        Log.d(TAG, "_ON DESTROY VIEW : remove realm listener");
+        Log.d(TAG,"_on Stop : remove realm change listener / realm closed");
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        Log.d(TAG,"_ON CREATE VIEW");
-        /*대화 파트*/
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG,"_ON CREATE");
+        setContentView(R.layout.activity_conversation);
         realm = Realm.getDefaultInstance();
-        final View child_conversation = inflater.inflate(R.layout.fragment_conversation,container,false);
-        final RecyclerView recyclerView = child_conversation.findViewById(R.id.conversation_recycler_view);
+
+
+        ActionBar actionBar = getActionBar();
+        if( actionBar != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        final RecyclerView conversation_recycler_view = findViewById(R.id.conversation_recycler_view);
         final ConversationRealmAdapter conversationRecyclerAdapter = new ConversationRealmAdapter( realm );
-        final View filter_summary_layout = child_conversation.findViewById(R.id.filter_summary_layout);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(conversationRecyclerAdapter);
-        recyclerView.scrollToPosition(conversationRecyclerAdapter.getItemCount() - 1);
+        final View filter_summary_layout = findViewById(R.id.filter_summary_layout);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        conversation_recycler_view.setLayoutManager(layoutManager);
+        conversation_recycler_view.setAdapter(conversationRecyclerAdapter);
+        conversation_recycler_view.scrollToPosition(conversationRecyclerAdapter.getItemCount() - 1);
         final ConversationFilter conversationFilter = ((ConversationFilter)conversationRecyclerAdapter.getFilter());
         final ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
         conversationFilter.filter("on");
 
-        realmChangeListener = o -> {
-            conversationRecyclerAdapter.notifyDataSetChanged();
-            Log.d(TAG,"realm changed!");
-            int itemPosition = layoutManager.findLastVisibleItemPosition();
-            int itemLastPosition = (conversationRecyclerAdapter.getItemCount() - 1);
-            if( itemLastPosition < 0 ) {
-                return;
-            }
-
-            if( itemPosition > itemLastPosition - 4 ) {
-                recyclerView.scrollToPosition(conversationRecyclerAdapter.getItemCount()-1);
-            }
-        };
-        realm.addChangeListener(realmChangeListener);
-
-        final AppCompatTextView title_conversation = child_conversation.findViewById(R.id.title_conversation);
-        final AppCompatEditText text_conversation = child_conversation.findViewById(R.id.text_conversation);
-        final AppCompatButton button_conversation = child_conversation.findViewById(R.id.button_conversation);
-        final AppCompatButton button_clear_conversation = child_conversation.findViewById(R.id.button_clear_conversation);
-        final View inner_column_filter = child_conversation.findViewById((R.id.inner_column_filter));
-        final AppCompatTextView text_filter_summary = child_conversation.findViewById(R.id.text_filter_summary);
-        final AppCompatButton button_summary_filter = child_conversation.findViewById(R.id.button_summary_filter);
-        final View scroll_summary_filter = child_conversation.findViewById(R.id.scroll_summary_filter);
-        final AppCompatButton button_hide_filters = child_conversation.findViewById(R.id.button_hide_filters);
-        final AppCompatButton button_show_filters = child_conversation.findViewById(R.id.button_show_filters);
-        final AppCompatButton button_scroll_bottom = child_conversation.findViewById(R.id.button_scroll_bottom);
-        final View row_filter = child_conversation.findViewById(R.id.row_filter);
+        final AppCompatTextView title_conversation = findViewById(R.id.title_conversation);
+        final AppCompatEditText text_conversation = findViewById(R.id.text_conversation);
+        final AppCompatButton button_conversation = findViewById(R.id.button_conversation);
+        final AppCompatButton button_clear_conversation = findViewById(R.id.button_clear_conversation);
+        final View inner_column_filter = findViewById((R.id.inner_column_filter));
+        final AppCompatTextView text_filter_summary = findViewById(R.id.text_filter_summary);
+        final AppCompatButton button_summary_filter = findViewById(R.id.button_summary_filter);
+        final View scroll_summary_filter = findViewById(R.id.scroll_summary_filter);
+        final AppCompatButton button_hide_filters = findViewById(R.id.button_hide_filters);
+        final AppCompatButton button_show_filters = findViewById(R.id.button_show_filters);
+        final AppCompatButton button_scroll_bottom = findViewById(R.id.button_scroll_bottom);
+        final View row_filter = findViewById(R.id.row_filter);
         buildConstraintDoc( realm, text_filter_summary);
 
         button_summary_filter.setOnClickListener(v -> {
             if( scroll_summary_filter.getLayoutParams().height == 0 ) {
                 changeLayoutSize(scroll_summary_filter, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             } else {
-                changeLayoutSize(scroll_summary_filter, ScreenUtils.dip2pix(mActivity,120), 0);
+                changeLayoutSize(scroll_summary_filter, ScreenUtils.dip2pix(this,120), 0);
             }
         });
 
-        recyclerView.addOnScrollListener(
+        conversation_recycler_view.addOnScrollListener(
                 new RecyclerView.OnScrollListener() {
                                              @Override
                                              public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -160,14 +150,14 @@ public class ConversationFragment extends PlaceholderFragment {
 
         );
         button_scroll_bottom.setOnClickListener( v -> {
-            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+            RecyclerView.Adapter adapter = conversation_recycler_view.getAdapter();
             if(adapter == null ) {
                 return;
             }
 
             int itemCount = adapter.getItemCount();
             Log.d(TAG,"count: " + itemCount);
-            recyclerView.scrollToPosition(itemCount - 1);
+            conversation_recycler_view.scrollToPosition(itemCount - 1);
             button_scroll_bottom.setVisibility( View.GONE );
         });
 
@@ -182,16 +172,16 @@ public class ConversationFragment extends PlaceholderFragment {
 
             if( botMode.equals(title_conversation.getText().toString() )) {
                 if(text.length() > 1 ) {
-                    new PrefixHandler(mActivity,null,null, null,true, NotificationListener.getName() ).execute(text);
+                    new PrefixHandler(this,null,null, null,true, NotificationListener.getName() ).execute(text);
                 } else {
                     int itemCount = conversationRecyclerAdapter.getItemCount();
                     Log.d(TAG,"count: " + itemCount);
-                    recyclerView.scrollToPosition(itemCount - 1);
+                    conversation_recycler_view.scrollToPosition(itemCount - 1);
                 }
                 text_conversation.setText("");
 
             } else {
-                ScreenUtils.hideSoftKeyboard(mActivity);
+                ScreenUtils.hideSoftKeyboard(this);
             }
 
 
@@ -202,7 +192,7 @@ public class ConversationFragment extends PlaceholderFragment {
         final View.OnClickListener showButton_default_listener = v -> {
             button_show_filters.setVisibility(View.GONE);
             button_hide_filters.setVisibility(View.VISIBLE);
-            changeLayoutSize(row_filter,-5,ScreenUtils.dip2pix(mActivity,100));
+            changeLayoutSize(row_filter,-5,ScreenUtils.dip2pix(this,100));
         };
 
         button_show_filters.setOnClickListener(showButton_default_listener);
@@ -213,24 +203,21 @@ public class ConversationFragment extends PlaceholderFragment {
             changeLayoutSize(row_filter,-5,0);
         };
         button_hide_filters.setOnClickListener(hideButton_default_listener);
-
-        final SendCatFilterRealmAdapter sendCatFilterRecyclerAdapter = new SendCatFilterRealmAdapter(realm, child_conversation);
-        final AppCompatButton button_filter_sendCat =  child_conversation.findViewById(R.id.button_filter_sendCat);
-        final View inner_column_filter_sendCat = child_conversation.findViewById(R.id.inner_column_filter_sendCat);
-        final AppCompatButton button_filter_sendCat_commit = child_conversation.findViewById(R.id.button_filter_sendCat_commit);
+        final SendCatFilterRealmAdapter sendCatFilterRealmAdapter =
+                new SendCatFilterRealmAdapter(realm,
+                        findViewById(R.id.text_filter_sendCat_count),
+                        findViewById(R.id.text_filter_sendCat_count_desc));
+        final AppCompatButton button_filter_sendCat =  findViewById(R.id.button_filter_sendCat);
+        final View inner_column_filter_sendCat = findViewById(R.id.inner_column_filter_sendCat);
+        final AppCompatButton button_filter_sendCat_commit = findViewById(R.id.button_filter_sendCat_commit);
 
         if( filterObject.isCatChecked()) {
             button_filter_sendCat.setBackgroundResource(R.drawable.round_button_checked);
         }
 
-        final RealmChangeListener<Realm> sendcatChangeLisnter = o -> {
-            sendCatFilterRecyclerAdapter.notifyDataSetChanged();
-            Log.d(TAG,"sendcatChangeLisnter : realm changed");
-        };
         button_filter_sendCat.setOnLongClickListener( view -> {
             filter_summary_layout.setVisibility(View.INVISIBLE);
-            recyclerView.setAdapter(sendCatFilterRecyclerAdapter);
-            realm.addChangeListener(sendcatChangeLisnter);
+            conversation_recycler_view.setAdapter(sendCatFilterRealmAdapter);
             changeLayouWeight(inner_column_filter,0.0f);
             changeLayouWeight(inner_column_filter_sendCat,1.0f);
             title_conversation.setText(R.string.filter_title_sendCat);
@@ -242,17 +229,17 @@ public class ConversationFragment extends PlaceholderFragment {
                 filterObject.setCheckCat(false);
                 conversationFilter.filter("on");
                 button_filter_sendCat.setBackgroundResource(R.drawable.round_button);
-                Snackbar.make(child_conversation,"작성자 필터 OFF",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view,"작성자 필터 OFF",Snackbar.LENGTH_SHORT).show();
             } else {
                 filterObject.setCheckCat(true);
                 conversationFilter.filter("on");
                 boolean check = filterObject.getSendCatCount()>0;
                 if( check ) {
                     button_filter_sendCat.setBackgroundResource(R.drawable.round_button_checked);
-                    Snackbar.make(child_conversation,"작성자 필터 ON",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"작성자 필터 ON",Snackbar.LENGTH_SHORT).show();
                 } else {
                     filterObject.setCheckCat(false);
-                    Snackbar.make(child_conversation,"길게 눌러서 필터 설정 하세요",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"길게 눌러서 필터 설정 하세요",Snackbar.LENGTH_SHORT).show();
                 }
             }
             buildConstraintDoc( realm, text_filter_summary);
@@ -264,39 +251,35 @@ public class ConversationFragment extends PlaceholderFragment {
             boolean check = filterObject.getSendCatCount()>0;
             if( check ) {
                 button_filter_sendCat.setBackgroundResource(R.drawable.round_button_checked);
-                Snackbar.make(child_conversation,"작성자 필터 ON",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view,"작성자 필터 ON",Snackbar.LENGTH_SHORT).show();
             } else {
                 button_filter_sendCat.setBackgroundResource(R.drawable.round_button);
-                Snackbar.make(child_conversation,"작성자 필터 OFF",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view,"작성자 필터 OFF",Snackbar.LENGTH_SHORT).show();
             }
             filterObject.setCheckCat(check);
-            recyclerView.setAdapter(conversationRecyclerAdapter);
-            realm.removeChangeListener(sendcatChangeLisnter);
+            conversation_recycler_view.setAdapter(conversationRecyclerAdapter);
             changeLayouWeight(inner_column_filter,1.0f);
             changeLayouWeight(inner_column_filter_sendCat,0.0f);
             buildConstraintDoc( realm, text_filter_summary);
             title_conversation.setText(R.string.tab_text_3);
 
         });
-
-        final RoomFilterRealmAdapter roomFilterRecyclerAdapter = new RoomFilterRealmAdapter(realm, child_conversation);
-        final AppCompatButton button_filter_room =  child_conversation.findViewById(R.id.button_filter_room);
-        final View inner_column_filter_room = child_conversation.findViewById(R.id.inner_column_filter_room);
-        final AppCompatButton button_filter_room_commit = child_conversation.findViewById(R.id.button_filter_room_commit);
+        final RoomFilterRealmAdapter roomFilterRealmAdapter =
+                new RoomFilterRealmAdapter(realm,
+                        findViewById(R.id.text_filter_room_count),
+                        findViewById(R.id.text_filter_room_count_desc));
+        final AppCompatButton button_filter_room =  findViewById(R.id.button_filter_room);
+        final View inner_column_filter_room = findViewById(R.id.inner_column_filter_room);
+        final AppCompatButton button_filter_room_commit = findViewById(R.id.button_filter_room_commit);
 
         if( filterObject.isRoomChecked()) {
             button_filter_room.setBackgroundResource(R.drawable.round_button_checked);
         }
 
-        RealmChangeListener<Realm> roomChangeLisnter = o -> {
-            roomFilterRecyclerAdapter.notifyDataSetChanged();
-            Log.d(TAG,"roomChangeLisnter : realm changed");
-        };
 
         button_filter_room.setOnLongClickListener( view -> {
             filter_summary_layout.setVisibility(View.INVISIBLE);
-            recyclerView.setAdapter(roomFilterRecyclerAdapter);
-            realm.addChangeListener(roomChangeLisnter);
+            conversation_recycler_view.setAdapter(roomFilterRealmAdapter);
             changeLayouWeight(inner_column_filter,0.0f);
             changeLayouWeight(inner_column_filter_room,1.0f);
             title_conversation.setText(R.string.filter_title_room);
@@ -308,17 +291,17 @@ public class ConversationFragment extends PlaceholderFragment {
                 filterObject.setCheckRoom(false);
                 conversationFilter.filter("on");
                 button_filter_room.setBackgroundResource(R.drawable.round_button);
-                Snackbar.make(child_conversation,"단톡방 필터 OFF",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view,"단톡방 필터 OFF",Snackbar.LENGTH_SHORT).show();
             } else {
                 filterObject.setCheckRoom(true);
                 conversationFilter.filter("on");
                 boolean check = filterObject.getRoomCount()>0;
                 if( check ) {
                     button_filter_room.setBackgroundResource(R.drawable.round_button_checked);
-                    Snackbar.make(child_conversation,"단톡방 필터 ON",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"단톡방 필터 ON",Snackbar.LENGTH_SHORT).show();
                 } else {
                     filterObject.setCheckRoom(false);
-                    Snackbar.make(child_conversation,"길게 눌러서 필터 설정 하세요",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"길게 눌러서 필터 설정 하세요",Snackbar.LENGTH_SHORT).show();
                 }
             }
             buildConstraintDoc( realm, text_filter_summary);
@@ -330,14 +313,13 @@ public class ConversationFragment extends PlaceholderFragment {
             boolean check = filterObject.getRoomCount()>0;
             if( check ) {
                 button_filter_room.setBackgroundResource(R.drawable.round_button_checked);
-                Snackbar.make(child_conversation,"단톡방 필터 ON",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view,"단톡방 필터 ON",Snackbar.LENGTH_SHORT).show();
             } else {
                 button_filter_room.setBackgroundResource(R.drawable.round_button);
-                Snackbar.make(child_conversation,"단톡방 필터 OFF",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view,"단톡방 필터 OFF",Snackbar.LENGTH_SHORT).show();
             }
             filterObject.setCheckRoom(check);
-            recyclerView.setAdapter(conversationRecyclerAdapter);
-            realm.removeChangeListener(roomChangeLisnter);
+            conversation_recycler_view.setAdapter(conversationRecyclerAdapter);
 
             changeLayouWeight(inner_column_filter,1.0f);
             changeLayouWeight(inner_column_filter_room,0.0f);
@@ -346,7 +328,7 @@ public class ConversationFragment extends PlaceholderFragment {
 
         });
 
-        final AppCompatButton button_filter_time =  child_conversation.findViewById(R.id.button_filter_time);
+        final AppCompatButton button_filter_time = findViewById(R.id.button_filter_time);
 
         if( filterObject.isTimeChecked()) {
             button_filter_time.setBackgroundResource(R.drawable.round_button_checked);
@@ -354,7 +336,7 @@ public class ConversationFragment extends PlaceholderFragment {
         button_filter_time.setOnLongClickListener( v -> {
             Calendar calendar = Calendar.getInstance();
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(mActivity,
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                     R.style.DatePickerDialogTheme, null,
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
@@ -370,8 +352,7 @@ public class ConversationFragment extends PlaceholderFragment {
                                 conversationFilter.filter("on");
                                 buildConstraintDoc( realm, text_filter_summary);
                                 button_filter_time.setBackgroundResource(R.drawable.round_button_checked);
-                                Snackbar.make(child_conversation,"기간 필터 ON",Snackbar.LENGTH_SHORT).show();
-
+                                //Snackbar.make(child_conversation,"기간 필터 ON",Snackbar.LENGTH_SHORT).show();
                                 allowClose = true;
                             });
 
@@ -412,32 +393,32 @@ public class ConversationFragment extends PlaceholderFragment {
 
             return true;
         } );
-        button_filter_time.setOnClickListener( v -> {
+        button_filter_time.setOnClickListener( view -> {
             boolean checked = filterObject.isTimeChecked();
             if(checked) {
                 filterObject.setCheckTime(false);
                 conversationFilter.filter("on");
                 button_filter_time.setBackgroundResource(R.drawable.round_button);
-                Snackbar.make(child_conversation,"기간 필터 OFF",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view,"기간 필터 OFF",Snackbar.LENGTH_SHORT).show();
             } else {
                 filterObject.setCheckTime(true);
                 conversationFilter.filter("on");
                 boolean check = filterObject.getTime_before() >= 0;
                 if( check ) {
                     button_filter_time.setBackgroundResource(R.drawable.round_button_checked);
-                    Snackbar.make(child_conversation,"기간 필터 ON",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"기간 필터 ON",Snackbar.LENGTH_SHORT).show();
                 } else {
                     filterObject.setCheckTime(false);
-                    Snackbar.make(child_conversation,"길게 눌러서 필터 설정 하세요",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"길게 눌러서 필터 설정 하세요",Snackbar.LENGTH_SHORT).show();
                 }
             }
             buildConstraintDoc( realm, text_filter_summary);
         });
 
-        final AppCompatButton button_filter_conversation =  child_conversation.findViewById(R.id.button_filter_conversation);
-        final RelativeLayout inner_column_filter_conversation = child_conversation.findViewById(R.id.inner_column_filter_conversation);
-        final AppCompatTextView text_input_filter_conversation = child_conversation.findViewById(R.id.text_input_filter_conversation);
-        final AppCompatButton button_filter_conversation_commit =  child_conversation.findViewById(R.id.button_filter_conversation_commit);
+        final AppCompatButton button_filter_conversation =  findViewById(R.id.button_filter_conversation);
+        final RelativeLayout inner_column_filter_conversation = findViewById(R.id.inner_column_filter_conversation);
+        final AppCompatTextView text_input_filter_conversation = findViewById(R.id.text_input_filter_conversation);
+        final AppCompatButton button_filter_conversation_commit =  findViewById(R.id.button_filter_conversation_commit);
         final TextWatcher textWatcher_conversation = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -466,30 +447,30 @@ public class ConversationFragment extends PlaceholderFragment {
         button_filter_conversation.setOnLongClickListener( v -> {
             filterObject.setCheckConv(true);
             text_conversation.addTextChangedListener(textWatcher_conversation);
-            ScreenUtils.showSoftKeyboard(mActivity, text_conversation);
+            ScreenUtils.showSoftKeyboard(this, text_conversation);
             changeLayouWeight(inner_column_filter,0.0f);
             changeLayouWeight(inner_column_filter_conversation,1.0f);
             title_conversation.setText(R.string.filter_title_conversation);
             return true;
         } );
 
-        button_filter_conversation.setOnClickListener( v-> {
+        button_filter_conversation.setOnClickListener( view -> {
             boolean checked = filterObject.isConvChecked();
             if(checked) {
                 filterObject.setCheckConv(false);
                 conversationFilter.filter("on");
                 button_filter_conversation.setBackgroundResource(R.drawable.round_button);
-                Snackbar.make(child_conversation,"단어 필터 OFF",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view,"단어 필터 OFF",Snackbar.LENGTH_SHORT).show();
             } else {
                 filterObject.setCheckConv(true);
                 conversationFilter.filter("on");
                 boolean check = filterObject.getConvCount() > 0;
                 if( check ) {
                     button_filter_conversation.setBackgroundResource(R.drawable.round_button_checked);
-                    Snackbar.make(child_conversation,"단어 필터 ON",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"단어 필터 ON",Snackbar.LENGTH_SHORT).show();
                 } else {
                     filterObject.setCheckConv(false);
-                    Snackbar.make(child_conversation,"길게 눌러서 필터 설정 하세요",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"길게 눌러서 필터 설정 하세요",Snackbar.LENGTH_SHORT).show();
                 }
             }
             buildConstraintDoc( realm, text_filter_summary);
@@ -498,7 +479,7 @@ public class ConversationFragment extends PlaceholderFragment {
 
         button_filter_conversation_commit.setOnClickListener( view -> {
 
-            ScreenUtils.hideSoftKeyboard(mActivity);
+            ScreenUtils.hideSoftKeyboard(this);
             String text = text_input_filter_conversation.getText().toString();
             text= text.trim();
             text_conversation.removeTextChangedListener(textWatcher_conversation);
@@ -508,18 +489,18 @@ public class ConversationFragment extends PlaceholderFragment {
                 filterObject.setCheckConv(false);
                 filterObject.setConversations(new String[]{});
                 button_filter_conversation.setBackgroundResource(R.drawable.round_button);
-                Snackbar.make(child_conversation,"단어 필터 OFF",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view,"단어 필터 OFF",Snackbar.LENGTH_SHORT).show();
             } else {
                 //filterObject.setCheckConv(true);
                 filterObject.setConversations(text.split(","));
                 conversationFilter.filter("on");
                 if( filterObject.getConvCount() > 0) {
                     button_filter_conversation.setBackgroundResource(R.drawable.round_button_checked);
-                    Snackbar.make(child_conversation,"단어 필터 ON",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"단어 필터 ON",Snackbar.LENGTH_SHORT).show();
                 } else {
                     filterObject.setCheckConv(false);
                     button_filter_conversation.setBackgroundResource(R.drawable.round_button);
-                    Snackbar.make(child_conversation,"단어 필터 OFF",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"단어 필터 OFF",Snackbar.LENGTH_SHORT).show();
 
                 }
             }
@@ -533,10 +514,24 @@ public class ConversationFragment extends PlaceholderFragment {
 
         });
 
-        /*대화 파트 끝*/
-        return child_conversation;
+        realmChangeListener = o -> {
+            conversationRecyclerAdapter.notifyDataSetChanged();
+            sendCatFilterRealmAdapter.notifyDataSetChanged();
+            roomFilterRealmAdapter.notifyDataSetChanged();
+            Log.d(TAG,"realm changed!");
+            int itemPosition = layoutManager.findLastVisibleItemPosition();
+            int itemLastPosition = (conversationRecyclerAdapter.getItemCount() - 1);
+            if( itemLastPosition < 0 ) {
+                return;
+            }
 
-    }
+            if( itemPosition > itemLastPosition - 4 ) {
+                conversation_recycler_view.scrollToPosition(conversationRecyclerAdapter.getItemCount()-1);
+            }
+        };
+        realm.addChangeListener(realmChangeListener);
+
+    } // end onCreate
 
     private long getDateValueFromDatePicker(DatePicker picker) {
         Calendar calendar_gregorian = new GregorianCalendar(

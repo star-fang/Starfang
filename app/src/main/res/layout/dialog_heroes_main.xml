@@ -61,7 +61,7 @@
             android:id="@+id/recycler_view_dialog_heroes_cell_power"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/dialog_heroes_cell_power"
+            tools:listitem="@layout/dialog_heroes_power"
             tools:itemCount="5"/>
         <LinearLayout
             android:layout_marginStart="10dp"
