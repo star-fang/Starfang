@@ -12,20 +12,23 @@
         android:layout_alignParentTop="true"
         android:orientation="horizontal">
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatButton
             android:layout_alignParentStart="true"
-            android:id="@+id/simulataion_hero_spinner"
-            android:layout_width="85dp"
+            android:id="@+id/button_filter_hero"
+            android:layout_width="75dp"
             android:layout_height="match_parent"
+            android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
+            android:text="@string/title_filter"
+            android:fontFamily="@font/krona_one"
+            android:background="@drawable/rect_button"
             android:gravity="center"/>
 
         <EditText
-            android:layout_toEndOf="@id/simulataion_hero_spinner"
+            android:layout_toEndOf="@id/button_filter_hero"
             android:id="@+id/simulation_et_search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
             android:layout_marginEnd="85dp"
             android:autofillHints=""
             android:focusedByDefault="false"

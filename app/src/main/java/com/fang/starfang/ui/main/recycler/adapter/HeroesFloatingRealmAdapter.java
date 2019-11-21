@@ -18,14 +18,14 @@ import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
-import com.fang.starfang.ui.main.recycler.filter.HeroFilter;
+import com.fang.starfang.ui.main.recycler.filter.HeroSimFilter;
 
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.Sort;
 
-public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
+public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, RecyclerView.ViewHolder> implements Filterable {
 
     private static final String R_ROW_HERO_HRADE = "row_hero_grade";
     private static final String R_TEXT_HERO_GRADE_NAME = "text_hero_grade_name";
@@ -40,8 +40,6 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<Heroes,
     private static final String R_TEXT_HERO_SEPC_UNIQUE_VAL =  "text_hero_spec_unique_val";
 
     private static final String TAG = "FANG_FLOATING_ADAPTER";
-    private String sort_field;
-    private Sort sort;
     private final static int[] COST_PLUS_BY_UPGRADE = {0,3,5,8,10};
     private Realm realm;
     private final static String ID_STR = "id";
@@ -54,10 +52,9 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<Heroes,
     }
 
     public HeroesFloatingRealmAdapter(Realm realm, Context context) {
-        super(realm.where(Heroes.class).findAll().sort(Heroes.FIELD_NAME).sort(Heroes.FIELD_COST).sort(Heroes.FIELD_BRANCH),false);
+        super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME).
+                sort(HeroSim.FIELD_GRADE,Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING),false);
         this.realm = realm;
-        this.sort_field = null;
-        this.sort = null;
         this.packageName = context.getPackageName();
         this.resources = context.getResources();
         Log.d(TAG,"constructed" );
@@ -76,29 +73,19 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<Heroes,
 
         HeroesFloatingViewHolder heroesViewHolder = (HeroesFloatingViewHolder) viewHolder;
 
-        Heroes hero = getItem(i);
-        if( hero != null ) {
-            heroesViewHolder.bind(hero);
+        HeroSim heroSim = getItem(i);
+        if( heroSim != null ) {
+            heroesViewHolder.bind(heroSim);
 
         }
     }
 
-    public void setSort(String field, Sort sort) {
-        this.sort_field = field;
-        this.sort = sort;
-    }
 
-    public String getCurSortField() {
-        return  sort_field;
-    }
 
-    public Sort getCurSort() {
-        return  sort;
-    }
 
     @Override
     public Filter getFilter() {
-        return new HeroFilter(this );
+        return new HeroSimFilter(this );
     }
 
 
@@ -188,12 +175,11 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<Heroes,
             }
         }
 
-        private void bind(final Heroes hero ) {
+        private void bind(final HeroSim heroSim ) {
 
-            HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, hero.getHeroNo()).findFirst();
+            Heroes hero = heroSim.getHero();
             Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_ID,hero.getBranchNo()).findFirst();
             RealmList<RealmInteger> heroStats = hero.getHeroStats();
-            RealmList<RealmInteger> heroPlusStats = null;
 
             RealmList<RealmString> heroSpecs = hero.getHeroSpecs();
             RealmList<RealmString> heroSpecVals = hero.getHeroSpecValues();
@@ -201,17 +187,12 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<Heroes,
             RealmList<RealmString> branchSpecs = null;
             RealmList<RealmString> branchSpecVals = null;
             RealmList<RealmString> branchGrades = null;
-            RealmList<Integer> checkedSpecsIndexes = null;
 
-            int heroGrade = 1;
             int cost_init = hero.getHeroCost();
-            String sumOfSpecScores = "0";
-            if(heroSim != null) {
-                heroGrade = heroSim.getHeroGrade();
-                heroPlusStats = heroSim.getHeroStatsUp();
-                sumOfSpecScores = heroSim.getSumOfSpecScores();
-                checkedSpecsIndexes = heroSim.getHeroSpecsChecked();
-            }
+            int  heroGrade = heroSim.getHeroGrade();
+            String sumOfSpecScores = String.valueOf(heroSim.getHeroSpecScoreSum());
+            RealmList<RealmInteger> heroPlusStats = heroSim.getHeroPlusStats();
+            RealmList<Integer>  checkedSpecsIndexes = heroSim.getHeroSpecsChecked();
             text_spec_score_total.setText(sumOfSpecScores);
             text_hero_lineage.setText(hero.getHeroLineage());
 

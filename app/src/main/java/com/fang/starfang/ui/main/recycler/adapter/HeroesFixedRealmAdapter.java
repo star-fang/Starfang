@@ -16,13 +16,13 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.dialog.HeroesDialogFragment;
-import com.fang.starfang.ui.main.recycler.filter.HeroFilter;
+import com.fang.starfang.ui.main.recycler.filter.HeroSimFilter;
 
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.Sort;
 
-public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
+public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, RecyclerView.ViewHolder> implements Filterable {
 
     private final String TAG  = "FANG_HERO_FIX";
     private String sort_field;
@@ -36,7 +36,8 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<Heroes, Re
     }
 
     public HeroesFixedRealmAdapter(Realm realm, FragmentManager fragmentManager) {
-        super(realm.where(Heroes.class).findAll().sort(Heroes.FIELD_NAME).sort(Heroes.FIELD_COST).sort(Heroes.FIELD_BRANCH),false);
+        super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME).
+                sort(HeroSim.FIELD_GRADE,Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING),false);
         this.realm = realm;
         sort = null;
         sort_field = null;
@@ -57,9 +58,9 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<Heroes, Re
 
         HeroesViewHolder heroesViewHolder = (HeroesViewHolder) viewHolder;
 
-        Heroes hero = getItem(i);
-        if(hero != null) {
-            heroesViewHolder.bind(hero);
+        HeroSim heroSim = getItem(i);
+        if(heroSim != null) {
+            heroesViewHolder.bind(heroSim);
         }
     }
 
@@ -78,7 +79,7 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<Heroes, Re
 
     @Override
     public Filter getFilter() {
-        return new HeroFilter(this);
+        return new HeroSimFilter(this);
     }
 
     private class HeroesViewHolder extends RecyclerView.ViewHolder {
@@ -93,18 +94,14 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<Heroes, Re
             text_hero_level = itemView.findViewById(R.id.text_hero_level);
         }
 
-        private void bind(final Heroes hero ) {
+        private void bind(final HeroSim heroSim ) {
+            Heroes hero = heroSim.getHero();
             String branch = hero.getHeroBranch();
             text_hero_branch.setText(hero.getHeroBranch());
             text_hero_name.setText(hero.getHeroName());
             text_hero_branch.setOnClickListener(v -> Log.d(TAG, branch + " clicked"));
             text_hero_name.setOnClickListener(v-> HeroesDialogFragment.newInstance(hero.getHeroNo()).show(fragmentManager,TAG));
-            HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID,hero.getHeroNo()).findFirst();
-            if(heroSim != null) {
-                text_hero_level.setText(String.valueOf(heroSim.getHeroLevel()));
-            } else {
-                text_hero_level.setText("1");
-            }
+            text_hero_level.setText(String.valueOf(heroSim.getHeroLevel()));
 
         }
     }

@@ -5,24 +5,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.recycler.custom.DiagonalScrollRecyclerView;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
-import com.fang.starfang.ui.main.recycler.filter.HeroFilter;
+import com.fang.starfang.ui.main.recycler.filter.HeroSimFilter;
 
 import io.realm.Realm;
-import io.realm.Sort;
 
 public class HeroesFragment extends PlaceholderFragment {
 
@@ -98,27 +95,21 @@ public class HeroesFragment extends PlaceholderFragment {
         recycler_view_hero_fixed.addOnScrollListener(heroRecyclerViewLiteners[1]);
 
         final  View table_header_name = child_sim.findViewById(R.id.table_header_name);
-        table_header_name.setOnClickListener( v -> {
-            heroesFloatingRecyclerAdapter.setSort(Heroes.FIELD_NAME, Sort.ASCENDING);
-            heroesFixedRecyclerAdapter.setSort(Heroes.FIELD_NAME, Sort.ASCENDING);
-        });
 
-        final Spinner simulataion_hero_spinner = child_sim.findViewById(R.id.simulataion_hero_spinner);
-        ArrayAdapter searchOptionAdapter = ArrayAdapter.createFromResource(mActivity,
-                R.array.option_search_heroes, android.R.layout.simple_spinner_dropdown_item);
-        simulataion_hero_spinner.setAdapter(searchOptionAdapter);
+        final AppCompatButton simulataion_hero_spinner = child_sim.findViewById(R.id.button_filter_hero);
+        //ArrayAdapter searchOptionAdapter = ArrayAdapter.createFromResource(mActivity,
+          //      R.array.option_search_heroes, android.R.layout.simple_spinner_dropdown_item);
+        //simulataion_hero_spinner.setAdapter(searchOptionAdapter);
 
         final EditText simulation_et_search = child_sim.findViewById(R.id.simulation_et_search);
 
         final Button button_search_hero = child_sim.findViewById(R.id.button_search_hero);
         button_search_hero.setOnClickListener( v-> {
             String cs = simulation_et_search.getText().toString();
-            HeroFilter floatingFilter = (HeroFilter)heroesFloatingRecyclerAdapter.getFilter();
-            floatingFilter.setCsFieldPosition(simulataion_hero_spinner.getSelectedItemPosition());
+            HeroSimFilter floatingFilter = (HeroSimFilter)heroesFloatingRecyclerAdapter.getFilter();
             floatingFilter.filter(cs);
 
-            HeroFilter fixedFilter = (HeroFilter)heroesFixedRecyclerAdapter.getFilter();
-            fixedFilter.setCsFieldPosition(simulataion_hero_spinner.getSelectedItemPosition());
+            HeroSimFilter fixedFilter = (HeroSimFilter)heroesFixedRecyclerAdapter.getFilter();
             fixedFilter.filter(cs);
         });
 

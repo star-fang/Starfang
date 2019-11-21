@@ -1,15 +1,10 @@
 package com.fang.starfang.local.model.realm.simulator;
 
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
-import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.source.Heroes;
-import com.fang.starfang.local.model.realm.source.Spec;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -27,6 +22,9 @@ import io.realm.annotations.PrimaryKey;
 public class HeroSim extends RealmObject {
 
     public static final String FIELD_ID = "heroNo";
+    public static final String FIELD_HERO = "hero";
+    public static final String FIELD_GRADE = "heroGrade";
+    public static final String FIELD_LEVEL = "heroLevel";
     private static final Integer[] SPEC_LEVELS = {1, 10, 15, 20, 25, 30, 50, 70, 90};
     private static final Integer[] SPEC_SCORES_BY_LEVEL_INDEX = {2,6,14,24,48,36,48,72,84};
     private static final String[] GROWTH_RATES_GRADE = {"S", "A", "B", "C", "D"};
@@ -34,32 +32,45 @@ public class HeroSim extends RealmObject {
     private static int[] GROWTH_RATES_OFFSETS = {0,50,70,90,110,200};
     private static Double[] GROWTH_RATES_COEFS = {0.005,0.05,0.025,0.0125,0.0001};
     public static final String[] POWERS_KOR = {"공격력","정신력","방어력","순발력","사기"};
+
     @PrimaryKey
-    private int heroNo;   // 장수 고유 번호
+    private int heroNo;
+    private Heroes hero;
     private int heroLevel; // 1 ~ 99
     private int heroGrade; // 1(~20),2(~40),3(~60),4(~80),5(~99)
-    private RealmList<RealmInteger> heroStatsUp; // 교본작
+    private RealmList<RealmInteger> heroPlusStats; // 교본작
     private RealmList<Integer> heroSpecsChecked; //  체크된 효과 인덱스 (~3개)
     private RealmList<MagicItemSim> heroMagicItemsSlot1; // 보패 슬롯1
     private RealmList<MagicItemSim> heroMagicItemsSlot2; // 보패 슬롯2
     private RealmList<ItemSim> heroItemSlot;  // 무기 방어구 보조구
+    private RealmList<RealmInteger> heroPowers;
+    private int heroPowerSum;
+    private int heroPlusStatSum;
+    private int heroSpecScoreSum;
 
     public HeroSim() {
 
     }
 
-    public HeroSim(int heroNo) {
-        this.heroNo = heroNo;
+    public HeroSim(Heroes hero) {
+        this.heroNo = hero.getHeroNo();
+        this.hero = hero;
         this.heroLevel = 1;
         this.heroGrade = 1;
-        this.heroStatsUp = new RealmList<>();
+        this.heroPlusStats = new RealmList<>();
         for( int i = 0; i < Heroes.INIT_STATS.length; i++ ) {
-            heroStatsUp.add(new RealmInteger(0));
+            heroPlusStats.add(new RealmInteger(0));
         }
         this.heroSpecsChecked = null;
         this.heroMagicItemsSlot1 = null;
         this.heroMagicItemsSlot2 = null;
         this.heroItemSlot = null;
+        this.heroPowers = new RealmList<>();
+        for( int i = 0; i < Heroes.INIT_STATS.length; i++ ) {
+            heroPowers.add(new RealmInteger(0));
+        }
+        this.heroPowerSum = 0;
+        this.heroPlusStatSum = 0;
     }
 
     public static Integer getSpecScoreByLevel( int level ) {
@@ -82,21 +93,38 @@ public class HeroSim extends RealmObject {
         this.heroGrade = heroGrade;
     }
 
-    public RealmList<RealmInteger> getHeroStatsUp() {
-        return heroStatsUp;
+    public RealmList<RealmInteger> getHeroPlusStats() {
+        return heroPlusStats;
     }
 
-    public void setHeroStatsUp(int statUp, int position) {
-        RealmInteger integerAtPostion = this.heroStatsUp.get(position);
-        if( integerAtPostion != null) {
-            integerAtPostion.setIntValue(statUp);
+    public ArrayList<Integer> getHeroPowersList() {
+        ArrayList<Integer> powers = new ArrayList<>();
+        if(heroPowers != null) {
+            for( RealmInteger power : heroPowers) {
+                powers.add( power.toInt());
+            }
+        }
+        return powers;
+    }
+
+    public void setHeroPowers(int power, int position) {
+        RealmInteger integerAtPosition = this.heroPowers.get(position);
+        if( integerAtPosition != null ) {
+            integerAtPosition.setIntValue(power);
         }
     }
 
-    public ArrayList<Integer> getHeroStatsUpList() {
+    public void setHeroPlusStats(int statUp, int position) {
+        RealmInteger integerAtPosition = this.heroPlusStats.get(position);
+        if( integerAtPosition != null) {
+            integerAtPosition.setIntValue(statUp);
+        }
+    }
+
+    public ArrayList<Integer> getHeroPlusStatList() {
         ArrayList<Integer> statsUp = new ArrayList<>();
-        if(heroStatsUp != null) {
-            for( RealmInteger stat : heroStatsUp) {
+        if(heroPlusStats != null) {
+            for( RealmInteger stat : heroPlusStats) {
                 statsUp.add( stat.toInt() );
             }
         }
@@ -107,7 +135,7 @@ public class HeroSim extends RealmObject {
         return heroSpecsChecked;
     }
 
-    public ArrayList<Integer> getCheckedLevels() {
+    public ArrayList<Integer> getCheckedLevelList() {
         ArrayList<Integer> levels = new ArrayList<>();
         if(heroSpecsChecked != null) {
             for( Integer index : heroSpecsChecked ) {
@@ -121,27 +149,13 @@ public class HeroSim extends RealmObject {
         return levels;
     }
 
-    public void setHeroSpecsChecked(RealmList<Integer> heroSpecsChecked) {
-        this.heroSpecsChecked = heroSpecsChecked;
-    }
-
-    public void updateSepcsChecked( ArrayList<Integer> levels) {
+    public void updateSpecsChecked( ArrayList<Integer> levels) {
         heroSpecsChecked.clear();
         if(levels != null) {
             for( Integer level : levels) {
-                heroSpecsChecked.add(levelToIndex(level));
+                heroSpecsChecked.add( levelToIndex(level));
             }
         }
-    }
-
-    public String getSumOfSpecScores() {
-        int sum = 0;
-        if(heroSpecsChecked != null) {
-            for(Integer index : heroSpecsChecked ) {
-                sum += SPEC_SCORES_BY_LEVEL_INDEX[index];
-            }
-        }
-        return String.valueOf(sum);
     }
 
     private Integer levelToIndex(int level) {
@@ -165,11 +179,6 @@ public class HeroSim extends RealmObject {
         this.heroMagicItemsSlot2 = heroMagicItemsSlot2;
     }
 
-
-    public int getHeroNo() {
-        return heroNo;
-    }
-
     public RealmList<ItemSim> getHeroItemSlot() {
         return heroItemSlot;
     }
@@ -189,5 +198,45 @@ public class HeroSim extends RealmObject {
             );
         } // end for
         return rate;
+    }
+
+    public void setHero( Heroes hero ) {
+        this.hero = hero;
+    }
+    public Heroes getHero() {
+        return hero;
+    }
+
+
+    public int getHeroNo() {
+        return heroNo;
+    }
+
+    public void setHeroNo(int heroNo) {
+        this.heroNo = heroNo;
+    }
+
+    public int getHeroPowerSum() {
+        return heroPowerSum;
+    }
+
+    public void setHeroPowerSum(int heroPowerSum) {
+        this.heroPowerSum = heroPowerSum;
+    }
+
+    public int getHeroPlusStatSum() {
+        return heroPlusStatSum;
+    }
+
+    public void setHeroPlusStatSum(int heroPlusStatSum) {
+        this.heroPlusStatSum = heroPlusStatSum;
+    }
+
+    public int getHeroSpecScoreSum() {
+        return heroSpecScoreSum;
+    }
+
+    public void setHeroSpecScoreSum(int heroSpecScoreSum) {
+        this.heroSpecScoreSum = heroSpecScoreSum;
     }
 }

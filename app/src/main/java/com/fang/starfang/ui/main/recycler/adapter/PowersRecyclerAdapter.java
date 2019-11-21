@@ -28,7 +28,7 @@ public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAd
     @NonNull
     @Override
     public PowersRecyclerAdapter.PowersRecyclerViewAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_heroes_power,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_heroes_cell_power,viewGroup,false);
         return new PowersRecyclerAdapter.PowersRecyclerViewAdapterViewHolder(view);
     }
 
@@ -88,7 +88,7 @@ public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAd
             int statSum = heroBaseStatInt + heroStatUp;
             double growthRate = HeroSim.calcGrowthRateByStatAndGrade(statSum, branchStatGGsStr);
             text_dialog_heroes_cell_power_rate.setText(String.valueOf(growthRate));
-            double power = (double)Math.max(0,heroStatUp - 100) +  statSum / 2.0  + level * growthRate;
+            int power = (int)Math.floor(Math.max(0,heroStatUp - 100) +  statSum / 2.0  + level * growthRate);
             text_dialog_heroes_cell_power.setText(String.valueOf(power));
         }
     }

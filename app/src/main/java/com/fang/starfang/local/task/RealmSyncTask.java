@@ -20,6 +20,7 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
+import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.source.Agenda;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Destiny;
@@ -233,7 +234,14 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                             for(int i = 0; i < jsonArray.length(); i++ ) {
                                     String json = jsonArray.get(i).toString();
                                     Heroes hero = gson.fromJson(json,Heroes.class);
-                                    realm.copyToRealm(hero);
+                                    //realm.copyToRealm(hero);
+                                    HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID,hero.getHeroNo()).findFirst();
+                                    if(heroSim == null ) {
+                                        heroSim = new HeroSim(hero);
+                                        realm.copyToRealm(heroSim);
+                                    } else {
+                                        heroSim.setHero(hero);
+                                    }
                             }
                             Log.d(TAG, "SYNC Hero REALM COMPLETE!");
                             break;

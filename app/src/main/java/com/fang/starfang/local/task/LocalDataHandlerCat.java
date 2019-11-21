@@ -57,15 +57,15 @@ class LocalDataHandlerCat {
         COMMAND_DEST,COMMAND_TER,COMMAND_MOV,COMMAND_DESC,
         COMMAND_ITEM,COMMAND_AGENDA,COMMAND_MAGIC_ITEM,
         COMMAND_RELATION,COMMAND_EXTERMINATE,COMMAND_DOT,COMMAND_COMB,
-        COMMAND_CALC, COMMAND_MAGIC, COMMAND_MEMO, COMMAND_DEL_MEMO, COMMAND_DEFAULT }
+        COMMAND_CALC, COMMAND_MAGIC, COMMAND_MEMO, COMMAND_DEL_MEMO,COMMAND_DESC_CAT, COMMAND_DEFAULT }
     private static final String[] COMMAND_CERTAIN = {
             "인연","지형","소모","설명",
             "보물","일정","보패",
-            "상성","퇴치","도트","조합","계산","책략","메모","삭제"};
+            "상성","퇴치","도트","조합","계산","책략","메모","삭제","냥"};
 
 
-    private static final String[] PRFX_COMMAND = {"","","이동력","","","","","병종","","","보패","","","","메모"};
-    private static final String[] SFX_COMMAND = {"","상성","","","","","","","","","","","","",""};
+    private static final String[] PRFX_COMMAND = {"","","이동력","","","","","병종","","","보패","","","","메모",""};
+    private static final String[] SFX_COMMAND = {"","상성","","","","","","","","","","","","","",""};
 
     private static final String CRLF = "\r\n";
     private static final String BLANK = " ";
@@ -242,6 +242,10 @@ class LocalDataHandlerCat {
 
                             }
 
+                            String personality = tmpHero.getHeroPersonality();
+                            if( personality != null ) {
+                                lambdaResult.append("성격: ").append(personality).append(CRLF);
+                            }
                             lambdaResult.append(COMMA);
                         }
                     }
@@ -688,6 +692,20 @@ class LocalDataHandlerCat {
                     if (branchResult.isEmpty()) return null;
                     for (Branch branch : branchResult) {
                         lambdaResult.append(branch.getBranchName()).append(CRLF);
+                        RealmList<RealmString> brachGrades = branch.getBranchGrade();
+
+                        if(brachGrades != null ) {
+                            int branchGradeSize = brachGrades.size();
+                            for(int i = 0; i < branchGradeSize; i++ ) {
+                                RealmString branchGrade = brachGrades.get(i);
+                                if(branchGrade != null ) {
+                                    lambdaResult.append(branchGrade.toString()).
+                                            append(i < branchGradeSize - 1 ? "→" : "");
+                                }
+                            }
+                            lambdaResult.append(CRLF);
+                        }
+
                         for (int i = 0; i < Branch.INIT_STATS.length; i++)
                             lambdaResult.append(Branch.INIT_STATS[i])
                                     .append(branch.getBranchStatGGs()
@@ -730,8 +748,7 @@ class LocalDataHandlerCat {
                 if(q.replace(BLANK,EMPTY).isEmpty())
                     return "병종 지형을 입력하라옹!";
 
-                LinkedList<String> rQueue = new LinkedList<>();
-                rQueue.addAll(Arrays.asList(q.split(" ")));
+                LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(" ")));
 
                 boolean isTerCMD = (finalCertainCMD == COMMAND_CERTAIN_ENUM.COMMAND_TER);
                 StringBuilder lambdaResult = new StringBuilder();
@@ -1620,6 +1637,7 @@ class LocalDataHandlerCat {
                             result = (result == null) ? "잘못된 입력이라옹" : result;
                             break;
                         case COMMAND_DESC:
+                        case COMMAND_DESC_CAT:
                             result = descByBranch.handle(req);
                             result = (result == null) ? descBySpec.handle(req) : result;
                             result = (result == null) ? descByItem.handle(req) : result;

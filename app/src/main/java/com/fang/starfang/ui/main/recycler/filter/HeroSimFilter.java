@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
+import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
@@ -17,12 +18,12 @@ import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.Sort;
 
-public class HeroFilter extends Filter {
+public class HeroSimFilter extends Filter {
 
-    private RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> adapter;
+    private RealmRecyclerViewAdapter<HeroSim, RecyclerView.ViewHolder> adapter;
     private int cs_field_position;
 
-    public HeroFilter(RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> adapter) {
+    public HeroSimFilter(RealmRecyclerViewAdapter<HeroSim, RecyclerView.ViewHolder> adapter) {
         super();
         this.adapter = adapter;
         cs_field_position = 0;
@@ -49,7 +50,7 @@ public class HeroFilter extends Filter {
         }
 
         Realm realm = Realm.getDefaultInstance();
-        RealmQuery<Heroes> query = realm.where(Heroes.class);
+        RealmQuery<HeroSim> query = realm.where(HeroSim.class);
 
         switch(cs_field_position ) {
             case 0:
@@ -87,19 +88,7 @@ public class HeroFilter extends Filter {
 
 
 
-        Sort sort = null;
-        String field = null;
-        if( adapter instanceof HeroesFloatingRealmAdapter) {
-            sort = ((HeroesFloatingRealmAdapter) adapter).getCurSort();
-            field = ((HeroesFloatingRealmAdapter) adapter).getCurSortField();
-        } else if( adapter instanceof HeroesFixedRealmAdapter) {
-            sort = ((HeroesFixedRealmAdapter) adapter).getCurSort();
-            field = ((HeroesFixedRealmAdapter) adapter).getCurSortField();
-        }
 
-        if(sort != null && field != null) {
-            query.sort(field,sort);
-        }
         adapter.updateData(query.findAll());
     }
 }

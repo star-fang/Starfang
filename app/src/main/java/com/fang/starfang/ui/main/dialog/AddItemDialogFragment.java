@@ -52,7 +52,7 @@ public class AddItemDialogFragment extends DialogFragment {
         View view = View.inflate(mActivity, R.layout.dialog_add_item, null);
         realm = Realm.getDefaultInstance();
         final RecyclerView recycler_view_all_items = view.findViewById(R.id.recycler_view_all_items);
-        recycler_view_all_items.setLayoutManager(new GridLayoutManager(mActivity, ScreenUtils.calculateNoOfColumns(mActivity,80)));
+        recycler_view_all_items.setLayoutManager(new GridLayoutManager(mActivity, ScreenUtils.calculateNoOfColumns(mActivity,80.0)));
         ItemsRealmAdapter itemsRealmAdapter = new ItemsRealmAdapter(realm);
         recycler_view_all_items.setAdapter(itemsRealmAdapter);
 

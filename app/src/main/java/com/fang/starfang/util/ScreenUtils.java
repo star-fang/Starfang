@@ -38,9 +38,14 @@ public class ScreenUtils {
         }
     }
 
-    public static int calculateNoOfColumns(Context context, float columnWidthDp) {
+    public static int calculateNoOfColumns(Context context, double columnWidthDp) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
-        return (int) (screenWidthDp / columnWidthDp + 0.5);
+        double screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
+        double screenHeightDp = displayMetrics.heightPixels / displayMetrics.density;
+        double noOfColumns = ( 0.9 * screenWidthDp / columnWidthDp);
+        if(screenWidthDp >= screenHeightDp*(4.0/3.0)) {
+            noOfColumns /= 2.0;
+        }
+        return (int)Math.floor(noOfColumns);
     }
 }
