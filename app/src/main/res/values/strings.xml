@@ -211,4 +211,6 @@
         "개 조합: 특성조합 수가 너무 많다냥..특성이름을 자세하게 입력해보라냥\n"
         "eg. 공격냥(X) 주동공격(O)"
     </string>
+    <string name="equals">=</string>
+    <string name="branch_grade_suffix_kor">계</string>
 </resources>

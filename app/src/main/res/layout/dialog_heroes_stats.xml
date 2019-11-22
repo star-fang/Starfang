@@ -41,8 +41,8 @@
             android:id="@+id/seekbar_hero_stat1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:progressTint="#FF0900"
-            android:thumbTint="#FF0900"
+            android:progressTint="@color/colorStat1"
+            android:thumbTint="@color/colorStat1"
             tools:progress="70" />
 
 
@@ -92,8 +92,8 @@
             android:id="@+id/seekbar_hero_stat2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:progressTint="#FF1600"
-            android:thumbTint="#FF1600"
+            android:progressTint="@color/colorStat2"
+            android:thumbTint="@color/colorStat2"
             tools:progress="70" />
 
 
@@ -143,8 +143,8 @@
             android:id="@+id/seekbar_hero_stat3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:progressTint="#0019FF"
-            android:thumbTint="#0019FF"
+            android:progressTint="@color/colorStat3"
+            android:thumbTint="@color/colorStat3"
             tools:progress="70" />
 
 
@@ -194,8 +194,8 @@
             android:id="@+id/seekbar_hero_stat4"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:progressTint="#FFF300"
-            android:thumbTint="#FFF300"
+            android:progressTint="@color/colorStat4"
+            android:thumbTint="@color/colorStat4"
             tools:progress="70" />
 
 
@@ -245,8 +245,8 @@
             android:id="@+id/seekbar_hero_stat5"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:progressTint="#800080"
-            android:thumbTint="#800080"
+            android:progressTint="@color/colorStat5"
+            android:thumbTint="@color/colorStat5"
             tools:progress="70" />
 
 

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="100dp"
+    android:layout_height="match_parent"
+    android:background="@drawable/end_border_gray_1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="2dp">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/power1" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_power_grade1"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            tools:text="A"
+            android:gravity="center"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_power1"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            tools:text="1220"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="2dp">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/power2" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_power_grade2"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            tools:text="C"
+            android:gravity="center"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_power2"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            tools:text="320"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="18dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="2dp">
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="45dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/power3" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_hero_power_grade3"
+        android:layout_width="15dp"
+        android:layout_height="match_parent"
+        tools:text="B"
+        android:gravity="center"/>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_hero_power3"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        tools:text="800"
+        android:gravity="center" />
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="2dp">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/power4" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_power_grade4"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            tools:text="C"
+            android:gravity="center"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_power4"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            tools:text="550"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="2dp">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/power5" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_power_grade5"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            tools:text="S"
+            android:gravity="center"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_power5"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            tools:text="1300"
+            android:gravity="center" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#30000000"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="3dp"
+            android:gravity="center"
+            android:text="@string/sum_kor" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_power_sum"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="1dp"
+            android:gravity="center"
+            tools:text="3300" />
+
+    </LinearLayout>
+</LinearLayout>

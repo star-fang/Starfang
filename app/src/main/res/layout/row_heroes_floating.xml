@@ -7,6 +7,10 @@
     android:background="@drawable/bottom_border_gray_1dp">
 
     <include
+        layout="@layout/cell_hero_powers"
+        android:id="@+id/cell_hero_powers"/>
+
+    <include
         layout="@layout/cell_hero_grades"
         android:id="@+id/cell_hero_grades"/>
 

@@ -97,6 +97,10 @@ public class HeroSim extends RealmObject {
         return heroPlusStats;
     }
 
+    public RealmList<RealmInteger> getHeroPowers() {
+        return heroPowers;
+    }
+
     public ArrayList<Integer> getHeroPowersList() {
         ArrayList<Integer> powers = new ArrayList<>();
         if(heroPowers != null) {
