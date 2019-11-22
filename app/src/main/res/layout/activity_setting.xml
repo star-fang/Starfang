@@ -26,7 +26,7 @@
             android:id="@+id/text_notification_start"
             android:layout_width="80dp"
             android:layout_height="20dp"
-            android:text="@string/pref_title_notifications_start"
+            android:text="@string/start_bot"
             android:textAlignment="center"/>
 
 
@@ -59,7 +59,7 @@
             android:layout_below="@id/notifications_setting"
             android:layout_alignParentBottom="true"
             android:gravity="center_horizontal"
-            android:text="@string/pref_title_notifications_setting" />
+            android:text="@string/notifications_setting" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -87,7 +87,7 @@
             android:layout_below="@id/start_sync_key_all"
             android:layout_alignParentBottom="true"
             android:gravity="center_horizontal"
-            android:text="@string/pref_title_sync_kor" />
+            android:text="@string/sync_kor" />
     </RelativeLayout>
 
 
@@ -111,7 +111,7 @@
             android:layout_height="50dp"
             android:maxLines="1"
             android:padding="10dp"
-            android:hint="@string/hint_insert_name"
+            android:hint="@string/insert_name_kor"
             android:inputType="text"/>
         <Button
             android:id="@+id/button_insert_name"
@@ -123,7 +123,7 @@
             android:layout_width="60dp"
             android:layout_height="50dp"
             android:background="@drawable/rect_button"
-            android:text="@string/filter_button_title_submit"/>
+            android:text="@string/submit"/>
 
         <TextView
             android:background="#30000000"

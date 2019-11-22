@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="전투력"/>
+                android:text="@string/power_kor"/>
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_dialog_heroes_cell_power_sum"
                 android:layout_width="match_parent"
@@ -110,7 +110,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/title_grade_kor"
+                android:text="@string/branch_grade_kor"
                 android:layout_weight="3"/>
 
 
@@ -125,7 +125,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="@string/dialog_grade_unit_holder"
+                android:text="@string/grade_kor"
                 android:gravity="center"
                 android:layout_weight="3"/>
 
@@ -152,7 +152,7 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/title_level_kor" />
+            android:text="@string/level_kor" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_seekbar_hero_level_value"

@@ -21,16 +21,10 @@ import io.realm.Sort;
 public class HeroSimFilter extends Filter {
 
     private RealmRecyclerViewAdapter<HeroSim, RecyclerView.ViewHolder> adapter;
-    private int cs_field_position;
 
     public HeroSimFilter(RealmRecyclerViewAdapter<HeroSim, RecyclerView.ViewHolder> adapter) {
         super();
         this.adapter = adapter;
-        cs_field_position = 0;
-    }
-
-    public void setCsFieldPosition( int position) {
-        this.cs_field_position = position;
     }
 
 
@@ -49,44 +43,10 @@ public class HeroSimFilter extends Filter {
             return;
         }
 
+        cs = cs.trim();
         Realm realm = Realm.getDefaultInstance();
-        RealmQuery<HeroSim> query = realm.where(HeroSim.class);
-
-        switch(cs_field_position ) {
-            case 0:
-                query.contains(Heroes.FIELD_NAME,cs).or().contains(Heroes.FIELD_NAME2,cs);
-                break;
-            case 1:
-                query.contains(Heroes.FIELD_BRANCH,cs);
-                break;
-            case 2:
-                cs = cs.replaceAll("[^0-9]","");
-                query.equalTo(Heroes.FIELD_COST, NumberUtils.toInt(cs,0));
-                break;
-            case 3:
-                query.contains(Heroes.FIELD_LINEAGE,cs);
-                break;
-            case 4:
-                cs = cs.replaceAll("[^0-9]","");
-                query.equalTo(Heroes.FIELD_STATS + "." + RealmInteger.VALUE, NumberUtils.toInt(cs,0));
-                break;
-            case 5:
-                query.contains(Heroes.FIELD_SPECS + "." + RealmString.VALUE,cs);
-                break;
-                default:
-        }
-
-        /*
-        <item>이름</item>
-        <item>병종</item>
-        <item>Cost</item>
-        <item>계보</item>
-        <item>스탯</item>
-        <item>특성</item>
-         */
-
-
-
+        RealmQuery<HeroSim> query = realm.where(HeroSim.class).contains(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME, cs).or()
+                .contains(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME2,cs);
 
 
         adapter.updateData(query.findAll());

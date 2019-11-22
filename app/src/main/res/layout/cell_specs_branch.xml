@@ -17,7 +17,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_branch_spec1"/>
+                android:text="@string/branch_spec1"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_branch1"
@@ -46,7 +46,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_branch_spec2"/>
+                android:text="@string/branch_spec2"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_branch2"
@@ -74,7 +74,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_branch_spec3"/>
+                android:text="@string/branch_spec3"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_branch3"
@@ -102,7 +102,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_branch_spec4"/>
+                android:text="@string/branch_spec4"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_branch4"
@@ -129,7 +129,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_branch_spec5"/>
+                android:text="@string/branch_spec5"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_branch5"
@@ -155,7 +155,7 @@
             android:layout_height="match_parent"
             android:gravity="end"
             android:textSize="15sp"
-            android:text="@string/title_spec_score_holder"/>
+            android:text="@string/spec_score"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_spec_score_total"

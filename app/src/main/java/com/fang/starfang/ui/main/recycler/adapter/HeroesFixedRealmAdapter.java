@@ -9,6 +9,7 @@ import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.util.Pair;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +19,9 @@ import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.dialog.HeroesDialogFragment;
 import com.fang.starfang.ui.main.recycler.filter.HeroSimFilter;
 
+import java.util.ArrayList;
+
+import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.Sort;
@@ -25,8 +29,6 @@ import io.realm.Sort;
 public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, RecyclerView.ViewHolder> implements Filterable {
 
     private final String TAG  = "FANG_HERO_FIX";
-    private String sort_field;
-    private Sort sort;
     private FragmentManager fragmentManager;
     private Realm realm;
     private static HeroesFixedRealmAdapter instance = null;
@@ -39,8 +41,6 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, R
         super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME).
                 sort(HeroSim.FIELD_GRADE,Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING),false);
         this.realm = realm;
-        sort = null;
-        sort_field = null;
         this.fragmentManager = fragmentManager;
         instance = this;
     }
@@ -64,17 +64,18 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, R
         }
     }
 
-    public void setSort(String field, Sort sort) {
-        this.sort_field = field;
-        this.sort = sort;
-    }
+    public void sort(ArrayList<Pair<String, Sort>> sortPairs) {
+        OrderedRealmCollection<HeroSim> realmCollection = this.getData();
+        for( Pair<String, Sort> pair : sortPairs) {
+            String cs = pair.first;
+            Sort sort = pair.second;
+            if(realmCollection != null && cs != null && sort != null ) {
+                realmCollection = realmCollection.sort(cs, sort);
+            }
 
-    public String getCurSortField() {
-        return  sort_field;
-    }
+        }
+        updateData(realmCollection);
 
-    public Sort getCurSort() {
-        return  sort;
     }
 
     @Override

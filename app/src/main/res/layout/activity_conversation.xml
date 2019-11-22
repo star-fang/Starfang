@@ -74,7 +74,7 @@
             android:id="@+id/button_summary_filter"
             android:layout_width="60dp"
             android:layout_height="40dp"
-            android:text="@string/title_filter"
+            android:text="@string/filter"
             android:fontFamily="@font/krona_one"
             android:textSize="12sp"
             android:maxLines="1"
@@ -144,7 +144,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/round_button"
-                    android:text="@string/filter_title_sendCat" />
+                    android:text="@string/filter_send_cat" />
 
 
                     <androidx.appcompat.widget.AppCompatButton
@@ -156,7 +156,7 @@
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/round_button"
-                        android:text="@string/filter_title_room"/>
+                        android:text="@string/filter_room"/>
 
 
                     <androidx.appcompat.widget.AppCompatButton
@@ -168,7 +168,7 @@
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/round_button"
-                        android:text="@string/filter_title_time"/>
+                        android:text="@string/filter_time"/>
 
 
 
@@ -181,7 +181,7 @@
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/round_button"
-                        android:text="@string/filter_title_conversation"/>
+                        android:text="@string/filter_conversation"/>
 
 
 
@@ -194,7 +194,7 @@
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/round_button"
-                        android:text="@string/filter_title_package" />
+                        android:text="@string/filter_package" />
 
             </LinearLayout>
         </HorizontalScrollView>
@@ -278,7 +278,7 @@
                 android:textSize="12sp"
                 android:background="@drawable/rect_button"
                 android:fontFamily="@font/krona_one"
-                android:text="@string/filter_button_title_submit"
+                android:text="@string/submit"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -365,7 +365,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/rect_button"
                 android:fontFamily="@font/krona_one"
-                android:text="@string/filter_button_title_submit"
+                android:text="@string/submit"
                 android:textSize="12sp" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -445,7 +445,7 @@
                 android:textSize="12sp"
                 android:background="@drawable/rect_button"
                 android:fontFamily="@font/krona_one"
-                android:text="@string/filter_button_title_submit"
+                android:text="@string/submit"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -528,7 +528,7 @@
             android:focusedByDefault="false"
             android:background = "#F0FFFFFF"
             android:textColor="#000"
-            android:hint="@string/et_conversation_hint"
+            android:hint="@string/search_kor"
             tools:targetApi="o" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -551,7 +551,7 @@
             android:layout_marginEnd="5dp"
             android:background="@drawable/rect_button"
             android:fontFamily="@font/krona_one"
-            android:text="@string/filter_button_title_search"
+            android:text="@string/search"
             android:textSize="13sp" />
 
     </RelativeLayout>

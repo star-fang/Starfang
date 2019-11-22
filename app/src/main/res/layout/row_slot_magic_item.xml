@@ -4,17 +4,20 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/grade_kor"
+            android:textSize="12sp"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             tools:text="3"
             android:textSize="12sp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/slot_grade_holder"
-            android:textSize="12sp"/>
+
         <TextView
             android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
@@ -34,7 +37,7 @@
             android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/slot_level_holder"
+            android:text="@string/level"
             android:textSize="12sp"/>
 
         <TextView

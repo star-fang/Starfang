@@ -220,7 +220,7 @@ public class ConversationActivity extends AppCompatActivity {
             conversation_recycler_view.setAdapter(sendCatFilterRealmAdapter);
             changeLayouWeight(inner_column_filter,0.0f);
             changeLayouWeight(inner_column_filter_sendCat,1.0f);
-            title_conversation.setText(R.string.filter_title_sendCat);
+            title_conversation.setText(R.string.filter_send_cat);
             return true;
         });
         button_filter_sendCat.setOnClickListener( view -> {
@@ -282,7 +282,7 @@ public class ConversationActivity extends AppCompatActivity {
             conversation_recycler_view.setAdapter(roomFilterRealmAdapter);
             changeLayouWeight(inner_column_filter,0.0f);
             changeLayouWeight(inner_column_filter_room,1.0f);
-            title_conversation.setText(R.string.filter_title_room);
+            title_conversation.setText(R.string.filter_room);
             return true;
         });
         button_filter_room.setOnClickListener( view -> {
@@ -450,7 +450,7 @@ public class ConversationActivity extends AppCompatActivity {
             ScreenUtils.showSoftKeyboard(this, text_conversation);
             changeLayouWeight(inner_column_filter,0.0f);
             changeLayouWeight(inner_column_filter_conversation,1.0f);
-            title_conversation.setText(R.string.filter_title_conversation);
+            title_conversation.setText(R.string.filter_conversation);
             return true;
         } );
 

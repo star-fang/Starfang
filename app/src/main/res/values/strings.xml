@@ -7,7 +7,6 @@
     <string name="tab_text_4">보물</string>
     <string name="tab_text_5">보패</string>
 
-    <string name="pref_title_sync_table_to_realm">DB 테이블 선택</string>
     <string-array name="pref_list_table">
         <item>장수 정보</item>
         <item>병종 정보</item>
@@ -49,63 +48,136 @@
         <item>17</item>
     </string-array>
 
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data and sync</string>
-
-    <string name="pref_title_sync">선택</string>
-    <string name="pref_default_sync_db">냥</string>
-
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
+    <string-array name="option_sort_heroes">
+        <item>@string/name_kor</item>
+        <item>@string/branch_kor</item>
+        <item>@string/cost</item>
+        <item>@string/lineage_kor</item>
+        <item>@string/personality_kor</item>
+        <item>@string/level_kor</item>
+        <item>@string/stat_kor</item>
+        <item>@string/power_kor</item>
+        <item>@string/spec_score</item>
     </string-array>
 
-    <string-array name="option_search_heroes">
-        <item>이름</item>
-        <item>병종</item>
-        <item>Cost</item>
-        <item>계보</item>
-        <item>스탯</item>
-        <item>특성</item>
+    <string-array name="option_sort_stat_prefix">
+        <item>교본작 전</item>
+        <item>교본작 후</item>
+        <item>교본</item>
     </string-array>
 
-    <string-array name="list_stats">
-        <item>@string/title_stat1</item>
-        <item>@string/title_stat2</item>
-        <item>@string/title_stat3</item>
-        <item>@string/title_stat4</item>
-        <item>@string/title_stat5</item>
+    <string-array name="option_sort_stat">
+        <item>@string/sum_kor</item>
+        <item>@string/stat1</item>
+        <item>@string/stat2</item>
+        <item>@string/stat3</item>
+        <item>@string/stat4</item>
+        <item>@string/stat5</item>
+    </string-array>
+
+    <string-array name="option_sort_power">
+        <item>@string/sum_kor</item>
+        <item>@string/power1</item>
+        <item>@string/power2</item>
+        <item>@string/power3</item>
+        <item>@string/power4</item>
+        <item>@string/power5</item>
     </string-array>
 
 
+    <string name="notifications">Notifications</string>
+    <string name="start_bot">냥봇 시작</string>
+    <string name="notifications_setting">권한 설정</string>
 
-    <string-array name="multi_select_list_preference_default_value" />
+    <string name="insert_name_kor">이름 입력</string>
 
-    <string name="pref_title_system_sync_settings">System sync settings</string>
+    <string name="final_cost_kor">최종COST</string>
+    <string name="lineage_kor">계보</string>
+    <string name="progress_condition">상태</string>
+    <string name="progress_db">DB</string>
+    <string name="progress_message">메세지</string>
+    <string name="host_address_2">http://192.168.25.4</string>
+    <string name="host_address_1">http://clavis.ivyro.net</string>
+    <string name="sync_kor">동기화</string>
+    <string name="sync_host">SYNC HOST</string>
+    <string name="filter_kor">필터</string>
+    <string name="filter_send_cat">작성자</string>
+    <string name="filter_room">단톡방</string>
+    <string name="filter_time">기간</string>
+    <string name="filter_conversation">단어</string>
+    <string name="filter_package">메신저</string>
+    <string name="submit">SUBMIT</string>
+    <string name="search">SEARCH</string>
+    <string name="desc_filter_sendCat">작성자 필터: 필터링할 작성자를 선택하세요.</string>
+    <string name="filter_summary">필터 요약</string>
+    <string name="desc_no_filter">필터 설정 안됨…</string>
+    <string name="sendcat_count_holder">명 선택 됨 :</string>
+    <string name="filter">FILTER</string>
+    <string name="room_count_holder">개 선택 됨</string>
+    <string name="desc_filter_room">단톡방 필터: 필터링할 단톡방을 선택하세요.</string>
+    <string name="desc_filter_conversation">단어 필터: 쉼표(,)를 이용하여 여러개 입력 가능합니다.</string>
+    <string name="desc_filter">버튼을 길게 누르면 필터 설정, 짧게 누르면 필터 ON/OFF</string>
+    <string name="search_kor">검색</string>
+    <string name="conversation_holder">입력된 단어:</string>
+    <string name="desc_insert_name">단톡방에서 다른봇과 구별되는 이름을 입력하세요.(2~4글자)\n\n [봇이름]시작냥, [봇이름]정지냥 명령어로 제어가능.</string>
+    <string name="sum_kor">합계</string>
+    <string name="stat1">무력</string>
+    <string name="stat2">지력</string>
+    <string name="stat3">통솔</string>
+    <string name="stat4">민첩</string>
+    <string name="stat5">행운</string>
+    <string name="power1">공격력</string>
+    <string name="power2">정신력</string>
+    <string name="power3">방어력</string>
+    <string name="power4">순발력</string>
+    <string name="power5">사기</string>
+    <string name="unique_spec">고유 특성</string>
+    <string name="branch_spec">병종 특성</string>
+    <string name="spec6">군주</string>
+    <string name="spec5">태수</string>
+    <string name="spec4">Lv90</string>
+    <string name="spec3">Lv70</string>
+    <string name="spec2">Lv50</string>
+    <string name="spec1">Lv30</string>
+    <string name="branch_spec5">Lv25</string>
+    <string name="branch_spec4">Lv20</string>
+    <string name="branch_spec3">Lv15</string>
+    <string name="branch_spec2">Lv10</string>
+    <string name="branch_spec1">Lv01</string>
+    <string name="plus_stat_sum">교본 합</string>
 
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
+    <string name="weapon">무기</string>
+    <string name="shield">방어구</string>
+    <string name="aid">보조구</string>
+    <string name="spec_score">효과 점수</string>
 
-    <string name="pref_title_notifications_start">냥봇 시작</string>
-    <string name="pref_title_notifications_setting">권한 설정</string>
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
 
-    <string name="title_activity_show_realm">Database</string>
-    <string name="title_activity_Setting">Setting</string>
+    <string name="branch_grade_kor">승급</string>
+    <string name="grade_kor">단계</string>
+    <string name="level_kor">레벨</string>
+    <string name="name_kor">이름</string>
+    <string name="branch_kor">병종</string>
+    <string name="personality_kor">성격</string>
+    <string name="cost">COST</string>
+    <string name="stat_kor">스탯</string>
+    <string name="item_kor">보물</string>
+
+    <string name="level">Lv.</string>
+
+    <string name="plus">+</string>
+    <string name="star_filled">★</string>
+    <string name="slash">/</string>
+    <string name="passive_spec_kor">패시브 효과</string>
+    <string name="power_kor">전투력</string>
+    <string name="hero_spec_kor">장수 효과</string>
 
     <string name="description">
-        "냥봇 19.09.19 설명 \n"
+        "냥봇 19.11.22 설명 \n"
 
         "*폰트: 나눔바른고딕™ 최적화\n"
         "*소스코드: github.com/star-fang/Starfang\n\n"
@@ -122,113 +194,21 @@
 			"    조건3) 코스트\n"
             "      [숫자] + [~]\n"
 			"    조건4) 계보 4자리\n"
-        "03. 효과설명: [효과] + '설명 냥'\n"
+        "03. 설명: [효과]or[병종]or[보물] + '냥 냥'\n"
 		"04. 책략정보: [책략] + '책략 냥'\n"
-        "05. 병종설명: [병종] + '설명 냥'\n"
-		"06. 보패조합: [접미사]or[조합효과] + '조합 냥'\n"
-		"07. 보패정보: [접두사]or[접미사] + '보패 냥'\n"
-		"08. 지형상성: [병종] + [지형] + '지형 냥'\n"
-		"09. 병종상성: [병종] + [병종] + '상성 냥'\n"
-        "10. 이동력소모: [병종] + [지형] + '소모 냥'\n"
-        "11. 보물검색: [보물이름]or[효과] + '보물 냥'\n"
-        "12. 일정: [날짜4자리]or[맵] + '섬멸'or'경쟁' + '일정 냥'\n"
-        "13. 인연: [인연]or[장수] + '인연 냥'\n"
-        "14. 약탈시간계산: [광] + [수량] + '약탈(보조) 멍'\n"
-        "15. 약탈자정보: [시:분] + [광] + '약탈당함 멍'\n"
-        "16. 수식계산: [수식] + '계산 냥' \n\n" </string>
-    <string name="desc_tooManyComb">
+		"05. 보패조합: [접미사]or[조합효과] + '조합 냥'\n"
+		"06. 보패정보: [접두사]or[접미사] + '보패 냥'\n"
+		"07. 지형상성: [병종] + [지형] + '지형 냥'\n"
+		"08. 병종상성: [병종] + [병종] + '상성 냥'\n"
+        "09. 이동력소모: [병종] + [지형] + '소모 냥'\n"
+        "10. 보물검색: [보물이름]or[효과] + '보물 냥'\n"
+        "11. 일정: [날짜4자리]or[맵] + '섬멸'or'경쟁' + '일정 냥'\n"
+        "12. 인연: [인연]or[장수] + '인연 냥'\n"
+        "13. 약탈시간계산: [광] + [수량] + '약탈(보조) 멍'\n"
+        "14. 약탈자정보: [시:분] + [광] + '약탈당함 멍'\n"
+        "15. 수식계산: [수식] + '계산 냥' \n\n" </string>
+    <string name="desc_too_many_combs">
         "개 조합: 특성조합 수가 너무 많다냥..특성이름을 자세하게 입력해보라냥\n"
         "eg. 공격냥(X) 주동공격(O)"
     </string>
-    <string name="action_settings">Settings</string>
-    <string name="et_search_hint">이름입력</string>
-    <string name="et_conversation_hint">검색</string>
-    <string name="dialog_hero_title_name">이름</string>
-    <string name="dialog_hero_title_branch">계열</string>
-    <string name="dialog_hero_title_cost">최종COST</string>
-    <string name="dialog_hero_title_lineage">계보</string>
-    <string name="progress_condition">상태</string>
-    <string name="progress_db">DB</string>
-    <string name="progress_message">메세지</string>
-    <string name="host_address_2">http://192.168.25.4</string>
-    <string name="host_address_1">http://clavis.ivyro.net</string>
-    <string name="pref_title_sync_kor">동기화</string>
-    <string name="pref_title_sync_host">SYNC HOST</string>
-    <string name="filter_title">필터</string>
-    <string name="filter_title_sendCat">작성자</string>
-    <string name="filter_title_room">단톡방</string>
-    <string name="filter_title_time">기간</string>
-    <string name="filter_title_conversation">단어</string>
-    <string name="filter_title_package">메신저</string>
-    <string name="filter_button_title_submit">SUBMIT</string>
-    <string name="filter_button_title_search">SEARCH</string>
-    <string name="desc_filter_sendCat">작성자 필터: 필터링할 작성자를 선택하세요.</string>
-    <string name="summary_filter">필터 요약</string>
-    <string name="desc_no_filter">필터 설정 안됨…</string>
-    <string name="sendcat_count_holder">명 선택 됨 :</string>
-    <string name="title_filter">FILTER</string>
-    <string name="room_count_holder">개 선택 됨</string>
-    <string name="desc_filter_room">단톡방 필터: 필터링할 단톡방을 선택하세요.</string>
-    <string name="desc_filter_conversation">단어 필터: 쉼표(,)를 이용하여 여러개 입력 가능합니다.</string>
-    <string name="desc_filter">버튼을 길게 누르면 필터 설정, 짧게 누르면 필터 ON/OFF</string>
-    <string name="conversation_holder">입력된 단어:</string>
-    <string name="hint_insert_name">검색</string>
-    <string name="desc_insert_name">단톡방에서 다른봇과 구별되는 이름을 입력하세요.(2~4글자)\n\n [봇이름]시작냥, [봇이름]정지냥 명령어로 제어가능.</string>
-    <string name="desc_weapon_image">무기 이미지</string>
-    <string name="table_header_cost">COST</string>
-    <string name="table_header_lineage">계보</string>
-    <string name="table_header_name">이름</string>
-    <string name="table_header_branch">병종</string>
-    <string name="slot_grade_holder">단계</string>
-    <string name="slot_level_holder">Lv.</string>
-    <string name="value_by_max_holder">/</string>
-    <string name="reinforcement_plus">+</string>
-    <string name="dialog_title_plus_stat">교본</string>
-    <string name="subtitle_plus_stat">훈련 교본</string>
-    <string name="title_item">보물</string>
-    <string name="title_magic_item">보패</string>
-    <string name="title_slot1">slot 1</string>
-    <string name="title_slot2">slot 2</string>
-    <string name="title_level_kor">레벨</string>
-    <string name="title_grade_kor">승급</string>
-    <string name="table_header_stat_sum">교본\n합계</string>
-    <string name="title_stat">스탯 / 교본</string>
-    <string name="title_stat1">무력</string>
-    <string name="title_stat2">지력</string>
-    <string name="title_stat3">통솔</string>
-    <string name="title_stat4">민첩</string>
-    <string name="title_stat5">행운</string>
-    <string name="table_header_specs_unique">고유 특성</string>
-    <string name="table_header_specs_branch">병종 특성</string>
-    <string name="row_title_spec6">군주</string>
-    <string name="row_title_spec5">태수</string>
-    <string name="row_title_spec4">Lv90</string>
-    <string name="row_title_spec3">Lv70</string>
-    <string name="row_title_spec2">Lv50</string>
-    <string name="row_title_spec1">Lv30</string>
-    <string name="row_title_branch_spec5">Lv25</string>
-    <string name="row_title_branch_spec4">Lv20</string>
-    <string name="row_title_branch_spec3">Lv15</string>
-    <string name="row_title_branch_spec2">Lv10</string>
-    <string name="row_title_branch_spec1">Lv01</string>
-    <string name="row_title_cost_init">초기:</string>
-    <string name="row_title_cost_cur">현재:</string>
-    <string name="row_title_cost_fin">최종:</string>
-    <string name="title_calc_damage">데미지 계산</string>
-    <string name="title_manage_item">보물 제작/강화</string>
-    <string name="title_manage_magic_item">보패 관리</string>
-    <string name="holder_plus_stat_sum">교본 합:</string>
-    <string name="title_weapon_holder">무기</string>
-    <string name="title_shield_holder">방어구</string>
-    <string name="title_aid_holder">보조구</string>
-    <string name="title_spec_score_holder">효과 점수:</string>
-    <string name="_1">1</string>
-    <string name="_2">2</string>
-    <string name="_3">3</string>
-    <string name="_4">4</string>
-    <string name="_5">5</string>
-    <string name="table_header_item">아이템</string>
-    <string name="table_header_grade">승급단계</string>
-    <string name="dialog_grade_unit_holder">단계</string>
-    <string name="grade_star">★</string>
 </resources>

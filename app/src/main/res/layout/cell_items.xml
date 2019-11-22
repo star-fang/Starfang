@@ -15,7 +15,7 @@
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/title_weapon_holder"
+            android:text="@string/weapon"
             android:textSize="13sp"
             />
         <androidx.appcompat.widget.AppCompatTextView
@@ -44,7 +44,7 @@
             android:layout_height="match_parent"
             android:textSize="13sp"
             android:gravity="center"
-            android:text="@string/title_shield_holder"
+            android:text="@string/shield"
             />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_item_shield_reinforcement"
@@ -72,7 +72,7 @@
             android:layout_height="match_parent"
             android:textSize="13sp"
             android:gravity="center"
-            android:text="@string/title_aid_holder"/>
+            android:text="@string/aid"/>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_item_aid_reinforcement"
             android:layout_marginStart="2dp"

@@ -17,7 +17,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_spec1"/>
+                android:text="@string/spec1"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_unique1"
@@ -45,7 +45,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_spec2"/>
+                android:text="@string/spec2"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_unique2"
@@ -72,7 +72,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_spec3"/>
+                android:text="@string/spec3"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_unique3"
@@ -100,7 +100,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_spec4"/>
+                android:text="@string/spec4"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_unique4"
@@ -128,7 +128,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_spec5"/>
+                android:text="@string/spec5"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_unique5"
@@ -155,7 +155,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:text="@string/row_title_spec6"/>
+                android:text="@string/spec6"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_spec_unique6"

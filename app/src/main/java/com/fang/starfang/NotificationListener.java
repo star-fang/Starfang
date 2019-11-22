@@ -18,8 +18,8 @@ public class NotificationListener extends NotificationListenerService {
     public static final String PACKAGE_KAKAO = "com.kakao.talk";
     public static final String PACKAGE_DISCORD = "com.discord";
     public static final String PACKAGE_STARFANG = "com.fang.starfang";
-    private static String COMMAND_CAT = "냥";
-    private static String COMMAND_DOG = "멍";
+    private static final String COMMAND_CAT = "냥";
+    private static final String COMMAND_DOG = "멍";
     private static String status = "stop";
     private static String name = "";
 

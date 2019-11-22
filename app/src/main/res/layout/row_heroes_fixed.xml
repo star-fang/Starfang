@@ -17,7 +17,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="25dp"
             android:layout_height="wrap_content"
-            android:text="@string/slot_level_holder"
+            android:text="@string/level"
             android:textAlignment="textEnd"
             android:textSize="13sp"
             />

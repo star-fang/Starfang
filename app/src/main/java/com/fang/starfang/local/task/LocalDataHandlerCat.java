@@ -431,7 +431,7 @@ class LocalDataHandlerCat {
                 Log.d( TAG,"rowSize:" + rowSize + " colSize:" + colSize );
 
                     if( rowSize > 500)
-                        return rowSize + context.get().getResources().getString(R.string.desc_tooManyComb);
+                        return rowSize + context.get().getResources().getString(R.string.desc_too_many_combs);
                 }
                 StringBuilder lambdaResult = new StringBuilder();
 

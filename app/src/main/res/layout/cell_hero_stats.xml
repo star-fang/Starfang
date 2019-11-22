@@ -15,7 +15,7 @@
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="end"
-                android:text="@string/title_stat1"
+                android:text="@string/stat1"
                 android:textSize="14sp" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_stat1"
@@ -42,7 +42,7 @@
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="end"
-                android:text="@string/title_stat2"
+                android:text="@string/stat2"
                 android:textSize="14sp" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_stat2"
@@ -69,7 +69,7 @@
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="end"
-                android:text="@string/title_stat3"
+                android:text="@string/stat3"
                 android:textSize="14sp" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_stat3"
@@ -96,7 +96,7 @@
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="end"
-                android:text="@string/title_stat4"
+                android:text="@string/stat4"
                 android:textSize="14sp" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_stat4"
@@ -123,7 +123,7 @@
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="end"
-                android:text="@string/title_stat5"
+                android:text="@string/stat5"
                 android:textSize="14sp" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_stat5"
@@ -152,9 +152,10 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginEnd="3dp"
                 android:gravity="center"
                 android:textSize="12sp"
-                android:text="@string/holder_plus_stat_sum" />
+                android:text="@string/plus_stat_sum" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_stat_sum"
@@ -169,7 +170,7 @@
                 android:layout_width="7dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/value_by_max_holder" />
+                android:text="@string/slash" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_stat_sum_total"

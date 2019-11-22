@@ -10,6 +10,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
@@ -20,6 +21,9 @@ import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.recycler.filter.HeroSimFilter;
 
+import java.util.ArrayList;
+
+import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
@@ -81,6 +85,18 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
     }
 
 
+    public void sort(ArrayList<Pair<String, Sort>> sortPairs) {
+        OrderedRealmCollection<HeroSim> realmCollection = this.getData();
+        for( Pair<String, Sort> pair : sortPairs) {
+            String cs = pair.first;
+            Sort sort = pair.second;
+            if(realmCollection != null && cs != null && sort != null ) {
+                realmCollection = realmCollection.sort(cs, sort);
+            }
+
+        }
+        updateData(realmCollection);
+    }
 
 
     @Override

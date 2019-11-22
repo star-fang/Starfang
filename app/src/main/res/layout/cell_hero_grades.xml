@@ -17,7 +17,7 @@
             android:layout_width="15dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/_1"/>
+            android:text="@string/one"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_grade_name1"
@@ -45,7 +45,7 @@
             android:layout_width="15dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/_2"/>
+            android:text="@string/two"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_grade_name2"
@@ -73,7 +73,7 @@
             android:layout_width="15dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/_3"/>
+            android:text="@string/three"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_grade_name3"
@@ -101,7 +101,7 @@
             android:layout_width="15dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/_4"/>
+            android:text="@string/four"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_grade_name4"
@@ -129,7 +129,7 @@
             android:layout_width="15dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/_5"/>
+            android:text="@string/five"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_grade_name5"

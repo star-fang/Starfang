@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/grade_star" />
+            android:text="@string/star_filled" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/reinforcement_plus"
+            android:text="@string/plus"
             android:visibility="gone"/>
 
     <androidx.appcompat.widget.AppCompatTextView

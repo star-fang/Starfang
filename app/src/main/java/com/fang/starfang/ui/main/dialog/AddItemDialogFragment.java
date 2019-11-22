@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.ui.main.recycler.adapter.ItemsRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 

@@ -9,7 +9,7 @@
         android:id="@+id/simulataion_et_layout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatButton
@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
-            android:text="@string/title_filter"
+            android:text="@string/filter"
             android:fontFamily="@font/krona_one"
             android:background="@drawable/rect_button"
             android:gravity="center"/>
@@ -32,7 +32,7 @@
             android:layout_marginEnd="85dp"
             android:autofillHints=""
             android:focusedByDefault="false"
-            android:hint="@string/et_search_hint"
+            android:hint="@string/search_kor"
             android:background="#FFF"
             android:textColor="#000"
             android:inputType="textNoSuggestions"
@@ -48,7 +48,7 @@
             android:background="@drawable/rect_button"
             android:fontFamily="@font/krona_one"
             android:textSize="12sp"
-            android:text="@string/filter_button_title_search" />
+            android:text="@string/search" />
 
 
     </RelativeLayout>
@@ -57,7 +57,7 @@
         android:id="@+id/simulation_content_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/simulataion_et_layout"
+        android:layout_above="@id/simulataion_et_layout"
         android:background="@drawable/top_bottom_border_black_1dp"
         android:orientation="horizontal">
 
@@ -82,7 +82,7 @@
                     android:layout_marginEnd="2dp"
                     android:layout_marginStart="1dp"
                     android:gravity="center"
-                    android:text="@string/table_header_name"
+                    android:text="@string/name_kor"
                     android:textSize="15sp" />
 
 
@@ -118,14 +118,14 @@
                         android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/table_header_grade"
+                        android:text="@string/grade_kor"
                         android:layout_marginBottom="2dp"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="40dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/table_header_cost"
+                        android:text="@string/cost"
                         android:textSize="13sp"
                         android:layout_marginBottom="2dp"
                         android:background="@drawable/end_border_gray_1dp"/>
@@ -134,7 +134,7 @@
                         android:layout_width="100dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/title_stat"
+                        android:text="@string/stat_kor"
                         android:layout_marginBottom="2dp"
                         android:background="@drawable/end_border_gray_1dp"/>
 
@@ -144,7 +144,7 @@
                         android:layout_width="200dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/table_header_specs_unique"
+                        android:text="@string/unique_spec"
                         android:textSize="15sp"
                         android:layout_marginBottom="2dp"
                         android:background="@drawable/end_dotted_border_gray_1dp"/>
@@ -153,7 +153,7 @@
                         android:layout_width="200dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/table_header_specs_branch"
+                        android:text="@string/branch_spec"
                         android:textSize="15sp"
                         android:layout_marginBottom="2dp"
                         android:background="@drawable/end_border_gray_1dp"/>
@@ -162,7 +162,7 @@
                         android:layout_width="180dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/table_header_item"
+                        android:text="@string/item_kor"
                         android:textSize="15sp"
                         android:layout_marginBottom="2dp"
                         android:background="@drawable/end_border_gray_1dp"/>
@@ -171,7 +171,7 @@
                         android:layout_width="80dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/table_header_lineage"
+                        android:text="@string/lineage_kor"
                         android:textSize="15sp"
                         android:layout_marginBottom="2dp"
                         android:background="@drawable/end_border_gray_1dp"/>
