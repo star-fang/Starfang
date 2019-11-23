@@ -30,14 +30,14 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/plus"
-                android:textColor="@color/colorStat1" />
+                android:textColor="@color/colorStat1_pastel" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_plus_stat1"
                 android:layout_width="25dp"
                 android:layout_height="match_parent"
                 tools:text="125"
-                android:textColor="@color/colorStat1"
+                android:textColor="@color/colorStat1_pastel"
                 android:gravity="center"/>
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -45,14 +45,14 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/equals"
-                android:textColor="@color/colorStat1" />
+                android:textColor="@color/colorStat1_pastel" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_hero_sum_stat1"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 tools:text="155"
-                android:textColor="@color/colorStat1"
+                android:textColor="@color/colorStat1_pastel"
                 android:gravity="center"/>
 
         </LinearLayout>
@@ -80,14 +80,14 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/plus"
-            android:textColor="@color/colorStat2" />
+            android:textColor="@color/colorStat2_pastel" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_plus_stat2"
             android:layout_width="25dp"
             android:layout_height="match_parent"
             tools:text="15"
-            android:textColor="@color/colorStat2"
+            android:textColor="@color/colorStat2_pastel"
             android:gravity="center"/>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -95,14 +95,14 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/equals"
-            android:textColor="@color/colorStat2" />
+            android:textColor="@color/colorStat2_pastel" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_sum_stat2"
             android:layout_width="30dp"
             android:layout_height="match_parent"
             tools:text="115"
-            android:textColor="@color/colorStat2"
+            android:textColor="@color/colorStat2_pastel"
             android:gravity="center"/>
 
     </LinearLayout>
@@ -130,14 +130,14 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/plus"
-            android:textColor="@color/colorStat3" />
+            android:textColor="@color/colorStat3_pastel" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_plus_stat3"
             android:layout_width="25dp"
             android:layout_height="match_parent"
             tools:text="0"
-            android:textColor="@color/colorStat3"
+            android:textColor="@color/colorStat3_pastel"
             android:gravity="center"/>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -145,14 +145,14 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/equals"
-            android:textColor="@color/colorStat3" />
+            android:textColor="@color/colorStat3_pastel" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_sum_stat3"
             android:layout_width="30dp"
             android:layout_height="match_parent"
             tools:text="77"
-            android:textColor="@color/colorStat3"
+            android:textColor="@color/colorStat3_pastel"
             android:gravity="center"/>
 
     </LinearLayout>
@@ -167,7 +167,7 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/stat3" />
+            android:text="@string/stat4" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_stat4"
             android:layout_width="25dp"
@@ -180,14 +180,14 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/plus"
-            android:textColor="@color/colorStat4" />
+            android:textColor="@color/colorStat4_pastel" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_plus_stat4"
             android:layout_width="25dp"
             android:layout_height="match_parent"
             tools:text="22"
-            android:textColor="@color/colorStat4"
+            android:textColor="@color/colorStat4_pastel"
             android:gravity="center"/>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -195,14 +195,14 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/equals"
-            android:textColor="@color/colorStat4" />
+            android:textColor="@color/colorStat4_pastel" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_sum_stat4"
             android:layout_width="30dp"
             android:layout_height="match_parent"
             tools:text="87"
-            android:textColor="@color/colorStat4"
+            android:textColor="@color/colorStat4_pastel"
             android:gravity="center"/>
 
     </LinearLayout>
@@ -230,14 +230,14 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/plus"
-            android:textColor="@color/colorStat5" />
+            android:textColor="@color/colorStat5_pastel" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_plus_stat5"
             android:layout_width="25dp"
             android:layout_height="match_parent"
             tools:text="22"
-            android:textColor="@color/colorStat5"
+            android:textColor="@color/colorStat5_pastel"
             android:gravity="center"/>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -245,14 +245,14 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/equals"
-            android:textColor="@color/colorStat5" />
+            android:textColor="@color/colorStat5_pastel" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_sum_stat5"
             android:layout_width="30dp"
             android:layout_height="match_parent"
             tools:text="55"
-            android:textColor="@color/colorStat5"
+            android:textColor="@color/colorStat5_pastel"
             android:gravity="center"/>
 
     </LinearLayout>
@@ -260,7 +260,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:background="#30000000"
+            android:background="@drawable/rect_black"
             android:gravity="center"
             android:orientation="horizontal">
 

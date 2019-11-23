@@ -5,4 +5,7 @@
     <dimen name="appbar_padding">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
+
+    <dimen name="seek_bar_thickness">15dp</dimen>
+    <dimen name="seek_bar_thumb_size">17dp</dimen>
 </resources>

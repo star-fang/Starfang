@@ -10,7 +10,8 @@
     <LinearLayout
         android:id="@+id/row_hero_grade1"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="18dp"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal"
         android:weightSum="2"
         >
@@ -34,7 +35,8 @@
     <LinearLayout
         android:id="@+id/row_hero_grade2"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="18dp"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal"
         android:weightSum="2"
         >
@@ -58,7 +60,8 @@
     <LinearLayout
         android:id="@+id/row_hero_grade3"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="18dp"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal"
         android:weightSum="2"
         >
@@ -83,7 +86,8 @@
     <LinearLayout
         android:id="@+id/row_hero_grade4"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="18dp"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal"
         android:weightSum="2"
         >
@@ -107,7 +111,8 @@
     <LinearLayout
         android:id="@+id/row_hero_grade5"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="18dp"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal"
         android:weightSum="2"
         >
@@ -128,4 +133,13 @@
             android:layout_weight="1"/>
     </LinearLayout>
 
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="@drawable/rect_black"
+            android:gravity="center"
+            tools:text="검술가" />
 </LinearLayout>

@@ -9,8 +9,12 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.util.Pair;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
@@ -113,7 +117,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
     private class HeroesFloatingViewHolder extends RecyclerView.ViewHolder {
         private View[] row_hero_grade;
         private AppCompatTextView[] text_hero_grade_cost;
-        private AppCompatTextView text_hero_lineage;
+        private AppCompatTextView text_hero_grade;
 
         private AppCompatTextView[] text_hero_stat;
         private AppCompatTextView[] text_hero_plus_stat;
@@ -132,13 +136,17 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         private AppCompatTextView[] text_hero_spec_branch;
         private AppCompatTextView[] text_hero_spec_branch_val;
         private AppCompatTextView text_spec_score_total;
+        private NestedScrollView scroll_hero_specs;
+        private AppCompatButton button_spec_change_view;
+        private AppCompatImageView image_spec_arrow;
 
+        private AppCompatTextView text_hero_lineage;
 
         private HeroesFloatingViewHolder(View itemView) {
             super(itemView);
             row_hero_grade = new View[5];
             text_hero_grade_cost = new AppCompatTextView[5];
-            text_hero_lineage = itemView.findViewById(R.id.text_hero_lineage);
+            text_hero_grade = itemView.findViewById(R.id.text_hero_grade);
 
             text_hero_stat = new AppCompatTextView[5];
             text_hero_plus_stat = new AppCompatTextView[5];
@@ -157,6 +165,11 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             text_hero_spec_branch = new AppCompatTextView[5];
             text_hero_spec_branch_val = new AppCompatTextView[5];
             text_spec_score_total = itemView.findViewById(R.id.text_spec_score_total);
+            scroll_hero_specs = itemView.findViewById(R.id.scroll_hero_specs);
+            button_spec_change_view = itemView.findViewById(R.id.button_spec_change_view);
+            image_spec_arrow = itemView.findViewById(R.id.image_spec_arrow);
+
+            text_hero_lineage = itemView.findViewById(R.id.text_hero_lineage);
 
             for(int i = 0; i < 6; i++ ) {
                 if( i < 5) {
@@ -185,12 +198,14 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                             ( R_TEXT_HERO_SEPC_BRANCH_VAL + (i + 1), ID_STR, packageName));
                 }
 
-                row_hero_spec_unique[i] = itemView.findViewById(resources.getIdentifier
-                        (R_ROW_HERO_SPEC_UNIQUE + (i + 1), ID_STR, packageName));
-                text_hero_spec_unique[i] = itemView.findViewById(resources.getIdentifier
-                        (R_TEXT_HERO_SEPC_UNIQUE + (i + 1), ID_STR, packageName));
-                text_hero_spec_unique_val[i] = itemView.findViewById(resources.getIdentifier
-                        (R_TEXT_HERO_SEPC_UNIQUE_VAL + (i + 1), ID_STR, packageName));
+                if( i < 4 ) {
+                    row_hero_spec_unique[i] = itemView.findViewById(resources.getIdentifier
+                            (R_ROW_HERO_SPEC_UNIQUE + (i + 1), ID_STR, packageName));
+                    text_hero_spec_unique[i] = itemView.findViewById(resources.getIdentifier
+                            (R_TEXT_HERO_SEPC_UNIQUE + (i + 1), ID_STR, packageName));
+                    text_hero_spec_unique_val[i] = itemView.findViewById(resources.getIdentifier
+                            (R_TEXT_HERO_SEPC_UNIQUE_VAL + (i + 1), ID_STR, packageName));
+                }
             }
         }
 
@@ -202,9 +217,11 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             RealmList<RealmString> heroSpecs = hero.getHeroSpecs();
             RealmList<RealmString> heroSpecVals = hero.getHeroSpecValues();
 
+
             RealmList<RealmString> branchSpecs = null;
             RealmList<RealmString> branchSpecVals = null;
             RealmList<RealmString> branchStatGGs = null;
+            RealmList<RealmString> branchGrades = null;
 
             int cost_init = hero.getHeroCost();
             int  heroGrade = heroSim.getHeroGrade();
@@ -219,6 +236,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                 branchSpecs = branch.getBranchSpecs();
                 branchSpecVals = branch.getBranchSpecValues();
                 branchStatGGs = branch.getBranchStatGGs();
+                branchGrades = branch.getBranchGrade();
             }
             for(int i = 0; i < 6; i ++ ) {
                 if( i < 5 ) {
@@ -286,36 +304,61 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                     text_hero_spec_branch[i].setText(branchSpecStr);
                     text_hero_spec_branch_val[i].setText(branchSpecValStr);
                 } // end if ( i < 5 )
+                if( i < 4 ) {
+                    RealmString heroSpec = heroSpecs.get(i);
+                    String heroSpecStr = "";
+                    String heroSpecValStr = "";
+                    if (heroSpec != null) {
+                        heroSpecStr = heroSpec.toString();
 
-                RealmString heroSpec = heroSpecs.get(i);
-                String heroSpecStr = "";
-                String heroSpecValStr = "";
-                if(heroSpec != null) {
-                    heroSpecStr = heroSpec.toString();
-                    if( i < 4 ) {
 
                         // 5 ~ 8
                         int bgResourceNumber = 0;
-                        if( checkedSpecsIndexes != null ) {
-                            if( checkedSpecsIndexes.contains(i + 5)) {
+                        if (checkedSpecsIndexes != null) {
+                            if (checkedSpecsIndexes.contains(i + 5)) {
                                 bgResourceNumber = R.drawable.rect_checked;
                             }
                         }
                         row_hero_spec_unique[i].setBackgroundResource(bgResourceNumber);
 
                         RealmString heroSpecVal = heroSpecVals.get(i);
-                        if(heroSpecVal != null) {
+                        if (heroSpecVal != null) {
                             heroSpecValStr = heroSpecVal.toString();
                         }
+
                     }
+                    text_hero_spec_unique[i].setText(heroSpecStr);
+                    text_hero_spec_unique_val[i].setText(heroSpecValStr);
                 }
-                text_hero_spec_unique[i].setText(heroSpecStr);
-                text_hero_spec_unique_val[i].setText(heroSpecValStr);
             } // end for (i < 6 )
 
             text_hero_stat_sum.setText(String.valueOf(heroSim.getHeroPlusStatSum()));
             text_hero_stat_sum_total.setText(String.valueOf(heroGrade * 100));
             text_hero_power_sum.setText(String.valueOf(heroSim.getHeroPowerSum()));
+
+            String branchGradeStr = hero.getHeroBranch();
+            if( branchGrades != null ) {
+                RealmString branchGrade = branchGrades.get(heroGrade - 1);
+                branchGradeStr = branchGrade.toString();
+            }
+            text_hero_grade.setText(branchGradeStr);
+            image_spec_arrow.setImageResource(R.drawable.ic_arrow_downward_white_24dp);
+            scroll_hero_specs.scrollTo(0,0);
+                    button_spec_change_view.setOnClickListener(v-> {
+                        int currY = scroll_hero_specs.getScrollY();
+                        int innerHeight = scroll_hero_specs.getChildAt(0).getHeight();
+                        int scrollHeight = scroll_hero_specs.getHeight();
+                        int scrollY = innerHeight - scrollHeight;
+                        Log.d(TAG, currY + ":" + scrollY );
+                        if(currY == 0 ) {
+                            image_spec_arrow.setImageResource(R.drawable.ic_arrow_upward_white_24dp);
+                            scroll_hero_specs.scrollTo(0, scrollY);
+                        } else {
+                            image_spec_arrow.setImageResource(R.drawable.ic_arrow_downward_white_24dp);
+                            scroll_hero_specs.scrollTo( 0, 0);
+                        }
+                    });
+
         } // end bind()
     }
 

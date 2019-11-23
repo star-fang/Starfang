@@ -13,9 +13,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
-import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.dialog.HeroesDialogFragment;
 import com.fang.starfang.ui.main.recycler.filter.HeroSimFilter;
@@ -24,7 +22,6 @@ import java.util.ArrayList;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.Sort;
 
@@ -32,7 +29,6 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, R
 
     private final String TAG  = "FANG_HERO_FIX";
     private FragmentManager fragmentManager;
-    private Realm realm;
     private static HeroesFixedRealmAdapter instance = null;
 
     public static HeroesFixedRealmAdapter getInstance() {
@@ -42,7 +38,6 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, R
     public HeroesFixedRealmAdapter(Realm realm, FragmentManager fragmentManager) {
         super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME).
                 sort(HeroSim.FIELD_GRADE,Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING),false);
-        this.realm = realm;
         this.fragmentManager = fragmentManager;
         instance = this;
     }
@@ -86,14 +81,12 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, R
     }
 
     private class HeroesViewHolder extends RecyclerView.ViewHolder {
-        private AppCompatTextView text_hero_branch_grade;
         private AppCompatTextView text_hero_branch;
         private AppCompatTextView text_hero_name;
         private AppCompatTextView text_hero_level;
 
         private HeroesViewHolder(View itemView) {
             super(itemView);
-            text_hero_branch_grade = itemView.findViewById(R.id.text_hero_branch_grade);
             text_hero_branch = itemView.findViewById(R.id.text_hero_branch);
             text_hero_name = itemView.findViewById(R.id.text_hero_name);
             text_hero_level = itemView.findViewById(R.id.text_hero_level);
@@ -101,20 +94,8 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, R
 
         private void bind(final HeroSim heroSim ) {
             Heroes hero = heroSim.getHero();
-            Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_ID, hero.getBranchNo()).findFirst();
-            int heroGrade= heroSim.getHeroGrade();
             String branchStr = hero.getHeroBranch();
             text_hero_branch.setText(branchStr);
-            if(branch!= null) {
-                RealmList<RealmString> branchGrades = branch.getBranchGrade();
-                if(branchGrades!= null) {
-                    RealmString branchGrade = branchGrades.get(heroGrade-1);
-                    if( branchGrade != null ) {
-                        branchStr = branchGrade.toString();
-                    }
-                }
-            }
-            text_hero_branch_grade.setText(branchStr);
             text_hero_name.setText(hero.getHeroName());
             text_hero_level.setText(String.valueOf(heroSim.getHeroLevel()));
             this.itemView.setOnClickListener(v-> HeroesDialogFragment.newInstance(hero.getHeroNo()).show(fragmentManager,TAG));

@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#81D4FA</color>
-    <color name="colorPrimaryDark">#141414</color>
+    <color name="colorPrimary">#002366</color>
+    <color name="colorPrimaryDark">#180E17</color>
     <color name="colorAccent">#FD5696</color>
+    <color name="colorStat1_pastel">#FF6961</color>
+    <color name="colorStat2_pastel">#FFB347</color>
+    <color name="colorStat3_pastel">#ADD8E6</color>
+    <color name="colorStat4_pastel">#FDFD96</color>
+    <color name="colorStat5_pastel">#B19CD9</color>
     <color name="colorStat1">#FF0900</color>
-    <color name="colorStat2">#FFB347</color>
-    <color name="colorStat3">#ADD8E6</color>
+    <color name="colorStat2">#FFA500</color>
+    <color name="colorStat3">#0000FF</color>
     <color name="colorStat4">#FFF300</color>
-    <color name="colorStat5">#B19CD9</color>
-
+    <color name="colorStat5">#800080</color>
 
 </resources>

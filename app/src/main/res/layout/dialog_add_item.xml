@@ -1,28 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_alignParentTop="true"
-        android:layout_above="@id/add_item_info_layout"
-        android:id="@+id/recycler_view_all_items"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/dialog_add_item_cell"
-        />
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:weightSum="4">
 
     <LinearLayout
-        android:id="@+id/add_item_info_layout"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="#000"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/create_item_kor"
+            android:gravity="center"
+            android:textSize="20sp"/>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="#30000000"
+            android:weightSum="2">
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinner_item_grade"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinner_item_category"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_all_items"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/dialog_add_item_cell"/>
     </LinearLayout>
-</RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="5dp"/>
+
+
+
+
+    </RelativeLayout>
+</LinearLayout>

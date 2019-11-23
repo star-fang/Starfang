@@ -8,17 +8,29 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.source.Item;
+import com.fang.starfang.local.model.realm.source.ItemCate;
 import com.fang.starfang.ui.main.recycler.adapter.ItemsRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class AddItemDialogFragment extends DialogFragment {
 
@@ -55,10 +67,65 @@ public class AddItemDialogFragment extends DialogFragment {
         ItemsRealmAdapter itemsRealmAdapter = new ItemsRealmAdapter(realm);
         recycler_view_all_items.setAdapter(itemsRealmAdapter);
 
-        builder.setView(view).setPositiveButton("추가", ( dialog, v ) -> {
+        final AppCompatSpinner spinner_item_grade = view.findViewById(R.id.spinner_item_grade);
+        final AppCompatSpinner spinner_item_category = view.findViewById(R.id.spinner_item_category);
 
-        });
+        RealmResults<Item> grades = realm.where(Item.class).distinct(Item.FIELD_GRD).findAll();
+        List<String> gradeList = new ArrayList<>();
+        for( Item grade : grades ) {
+            String gradeStr = grade.getItemGrade();
+            gradeStr += NumberUtils.isDigits(gradeStr)? "등급" : "";
+            gradeList.add(gradeStr);
+        }
+        ArrayAdapter<String> gradesAdapter = new ArrayAdapter<>(
+                mActivity,
+                android.R.layout.simple_spinner_dropdown_item,  gradeList
+        );
+        spinner_item_grade.setAdapter(gradesAdapter);
+        RealmResults < ItemCate > itemCates = realm.where(ItemCate.class).distinct(ItemCate.FIELD_MAIN_CATE).findAll();
+        List<String> categoryList = new ArrayList<>();
+        categoryList.add("전체");
+        for( ItemCate cate : itemCates) {
+            categoryList.add(cate.getItemMainCate());
+        }
+        ArrayAdapter<String> cateAdapter = new ArrayAdapter<>(
+                mActivity,
+        android.R.layout.simple_spinner_dropdown_item, categoryList);
 
+        spinner_item_category.setAdapter(cateAdapter);
+
+        spinner_item_grade.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String selected_grade = spinner_item_grade.getItemAtPosition(position).toString();
+                        String selected_category = spinner_item_category.getSelectedItem().toString();
+                        itemsRealmAdapter.getFilter().filter(selected_grade + "," + selected_category );
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
+
+        spinner_item_category.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String selected_category = spinner_item_category.getItemAtPosition(position).toString();
+                        String selected_grade = spinner_item_grade.getSelectedItem().toString();
+                        itemsRealmAdapter.getFilter().filter(selected_grade + "," + selected_category );
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
+        builder.setView(view);
         return builder.create();
     }
 

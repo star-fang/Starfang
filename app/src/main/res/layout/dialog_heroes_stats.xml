@@ -41,14 +41,36 @@
             android:id="@+id/seekbar_hero_stat1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:thumb="@drawable/seek_bar_thumb_stats"
+            android:thumbTint="@color/colorStat1_pastel"
+            android:progressDrawable="@drawable/seek_bar_stats"
             android:progressTint="@color/colorStat1"
-            android:thumbTint="@color/colorStat1"
             tools:progress="70" />
+
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_marginEnd="7dp"
+            android:layout_toStartOf="@id/text_seekbar_hero_stat1_max"
+            android:id="@+id/text_seekbar_hero_stat1_cur"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textSize="12sp"
+            tools:text="160" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_toStartOf="@id/text_seekbar_hero_stat1_max"
+            android:layout_width="7dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:text= "@string/slash" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_alignParentEnd="true"
-            android:id="@+id/text_seekbar_hero_stat1_cur"
+            android:id="@+id/text_seekbar_hero_stat1_max"
             android:layout_width="25dp"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -92,20 +114,42 @@
             android:id="@+id/seekbar_hero_stat2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:thumb="@drawable/seek_bar_thumb_stats"
+            android:thumbTint="@color/colorStat2_pastel"
+            android:progressDrawable="@drawable/seek_bar_stats"
             android:progressTint="@color/colorStat2"
-            android:thumbTint="@color/colorStat2"
             tools:progress="70" />
+
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_marginEnd="7dp"
+            android:layout_toStartOf="@id/text_seekbar_hero_stat2_max"
+            android:id="@+id/text_seekbar_hero_stat2_cur"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textSize="12sp"
+            tools:text="67" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_toStartOf="@id/text_seekbar_hero_stat2_max"
+            android:layout_width="7dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:text= "@string/slash" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_alignParentEnd="true"
-            android:id="@+id/text_seekbar_hero_stat2_cur"
+            android:id="@+id/text_seekbar_hero_stat2_max"
             android:layout_width="25dp"
             android:layout_height="match_parent"
             android:gravity="center"
             android:maxLines="1"
             android:textSize="12sp"
-            tools:text="60" />
+            tools:text="90" />
 
     </RelativeLayout>
 
@@ -143,14 +187,36 @@
             android:id="@+id/seekbar_hero_stat3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:thumb="@drawable/seek_bar_thumb_stats"
+            android:thumbTint="@color/colorStat3_pastel"
+            android:progressDrawable="@drawable/seek_bar_stats"
             android:progressTint="@color/colorStat3"
-            android:thumbTint="@color/colorStat3"
             tools:progress="70" />
+
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_marginEnd="7dp"
+            android:layout_toStartOf="@id/text_seekbar_hero_stat3_max"
+            android:id="@+id/text_seekbar_hero_stat3_cur"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textSize="12sp"
+            tools:text="60" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_toStartOf="@id/text_seekbar_hero_stat3_max"
+            android:layout_width="7dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:text= "@string/slash" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_alignParentEnd="true"
-            android:id="@+id/text_seekbar_hero_stat3_cur"
+            android:id="@+id/text_seekbar_hero_stat3_max"
             android:layout_width="25dp"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -194,14 +260,36 @@
             android:id="@+id/seekbar_hero_stat4"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:thumb="@drawable/seek_bar_thumb_stats"
+            android:thumbTint="@color/colorStat4_pastel"
+            android:progressDrawable="@drawable/seek_bar_stats"
             android:progressTint="@color/colorStat4"
-            android:thumbTint="@color/colorStat4"
             tools:progress="70" />
+
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_marginEnd="7dp"
+            android:layout_toStartOf="@id/text_seekbar_hero_stat4_max"
+            android:id="@+id/text_seekbar_hero_stat4_cur"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textSize="12sp"
+            tools:text="60" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_toStartOf="@id/text_seekbar_hero_stat4_max"
+            android:layout_width="7dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:text= "@string/slash" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_alignParentEnd="true"
-            android:id="@+id/text_seekbar_hero_stat4_cur"
+            android:id="@+id/text_seekbar_hero_stat4_max"
             android:layout_width="25dp"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -245,14 +333,36 @@
             android:id="@+id/seekbar_hero_stat5"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:thumb="@drawable/seek_bar_thumb_stats"
+            android:thumbTint="@color/colorStat5_pastel"
+            android:progressDrawable="@drawable/seek_bar_stats"
             android:progressTint="@color/colorStat5"
-            android:thumbTint="@color/colorStat5"
             tools:progress="70" />
+
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_marginEnd="7dp"
+            android:layout_toStartOf="@id/text_seekbar_hero_stat5_max"
+            android:id="@+id/text_seekbar_hero_stat5_cur"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textSize="12sp"
+            tools:text="60" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_toStartOf="@id/text_seekbar_hero_stat5_max"
+            android:layout_width="7dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:text= "@string/slash" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_alignParentEnd="true"
-            android:id="@+id/text_seekbar_hero_stat5_cur"
+            android:id="@+id/text_seekbar_hero_stat5_max"
             android:layout_width="25dp"
             android:layout_height="match_parent"
             android:gravity="center"

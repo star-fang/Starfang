@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.DialogFragment;
@@ -107,7 +108,7 @@ public class HeroesDialogFragment extends DialogFragment {
             int curLevel = heroSim.getHeroLevel() - 1;
             seekbar_hero_level.setProgress(curLevel);
 
-            final AppCompatTextView text_seekbar_hero_level_value = view.findViewById(R.id.text_seekbar_hero_level_value); // 1 ~ 99
+            final AppCompatEditText text_seekbar_hero_level_value = view.findViewById(R.id.text_seekbar_hero_level_value); // 1 ~ 99
             text_seekbar_hero_level_value.setText(String.valueOf(heroSim.getHeroLevel()));
 
             int curGrade = seekbar_hero_grade.getProgress(); // 0 ~ 4
@@ -246,7 +247,8 @@ public class HeroesDialogFragment extends DialogFragment {
 
             final int numberOfStats = Heroes.INIT_STATS.length;
             final AppCompatTextView[] text_base_plus_stat = new AppCompatTextView[numberOfStats];
-            final AppCompatTextView[] text_seekbar_hero_stat_cur = new AppCompatTextView[numberOfStats];
+            final AppCompatEditText[] text_seekbar_hero_stat_cur = new AppCompatEditText[numberOfStats];
+            final AppCompatTextView[] text_seekbar_hero_stat_max = new AppCompatTextView[numberOfStats];
             final AppCompatSeekBar[] seekbar_hero_stat = new AppCompatSeekBar[numberOfStats];
 
             int sum_of_plus_stat_cur_int = 0;
@@ -254,8 +256,10 @@ public class HeroesDialogFragment extends DialogFragment {
                 seekbar_hero_stat[i] = view.findViewById(getResources().getIdentifier("seekbar_hero_stat" + (i + 1), "id", mActivity.getPackageName()));
                 text_base_plus_stat[i] = view.findViewById(getResources().getIdentifier("text_base_plus_stat" + (i + 1), "id", mActivity.getPackageName()));
                 text_seekbar_hero_stat_cur[i] = view.findViewById(getResources().getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_cur", "id", mActivity.getPackageName()));
+                text_seekbar_hero_stat_max[i] = view.findViewById(getResources().getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_max", "id", mActivity.getPackageName()));
 
                 seekbar_hero_stat[i].setMax(maxPlusStat);
+                text_seekbar_hero_stat_max[i].setText(String.valueOf(maxPlusStat));
                 RealmInteger baseStat = heroBaseStats.get(i);
                 Integer plusStat = heroStatsUpList.get(i);
                 if (baseStat != null && plusStat != null) {
@@ -333,6 +337,7 @@ public class HeroesDialogFragment extends DialogFragment {
                     int sumOfMax = 0;
                     for (int i = 0; i < numberOfStats; i++) {
                         seekbar_hero_stat[i].setMax(maxPlusStat);
+                        text_seekbar_hero_stat_max[i].setText(String.valueOf(maxPlusStat));
                         sumOfMax += maxPlusStat;
                     }
 

@@ -32,11 +32,6 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_hero_branch"
@@ -46,23 +41,6 @@
             android:gravity="center"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/branch_grade_suffix_kor"/>
-
-    </LinearLayout>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_hero_branch_grade"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="검술가"
-        android:textSize="12sp"
-        android:gravity="center"
-        />
-
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_hero_name"
         android:layout_width="match_parent"
@@ -70,6 +48,7 @@
         tools:text="조조"
         android:textSize="17sp"
         android:gravity="center"
+        android:textColor="#FFF"
         />
 
 

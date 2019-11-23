@@ -43,11 +43,11 @@
 
             <include
                 android:id="@+id/dialog_heroes_cell_grades"
-                layout="@layout/dialog_heroes_grades" />
+                layout="@layout/dialog_heroes_specs_passive" />
 
             <include
                 android:id="@+id/dialog_heroes_cell_specs"
-                layout="@layout/dialog_heroes_specs" />
+                layout="@layout/dialog_heroes_specs_unique" />
 
 
         </com.google.android.flexbox.FlexboxLayout>

@@ -152,16 +152,7 @@
                         android:layout_width="200dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/unique_spec"
-                        android:textSize="15sp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_dotted_border_gray_1dp"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="200dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/branch_spec"
+                        android:text="@string/spec_kor"
                         android:textSize="15sp"
                         android:layout_marginBottom="2dp"
                         android:background="@drawable/end_border_gray_1dp"/>

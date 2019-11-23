@@ -19,12 +19,8 @@
         android:id="@+id/cell_hero_stats"/>
 
     <include
-        layout="@layout/cell_specs_unique"
-        android:id="@+id/cell_specs_unique"/>
-
-    <include
-        layout="@layout/cell_specs_branch"
-        android:id="@+id/cell_specs_branch"/>
+        layout="@layout/cell_hero_specs"
+        android:id="@+id/cell_hero_specs"/>
 
     <include
         layout="@layout/cell_items"

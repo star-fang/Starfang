@@ -16,7 +16,7 @@ public class DiagonalScrollRecyclerView extends HorizontalScrollView {
 
     private RecyclerView recyclerView;
     private float downX = 0f;
-    private float downY = 0;
+    private float downY = 0f;
     private float furthestDistanceMovedPx = 0f;
 
     public DiagonalScrollRecyclerView(Context context) {
@@ -36,6 +36,7 @@ public class DiagonalScrollRecyclerView extends HorizontalScrollView {
     @Override
     public boolean performClick() {
         super.performClick();
+        Log.d(TAG,"click");
         return  true;
     }
 
@@ -47,25 +48,26 @@ public class DiagonalScrollRecyclerView extends HorizontalScrollView {
         }
 
         switch( event.getAction() ) {
+
             case MotionEvent.ACTION_DOWN:
                 downX = event.getRawX();
                 downY = event.getRawY();
                 break;
             case MotionEvent.ACTION_UP:
+                //Log.d(TAG,"move distance : "  + furthestDistanceMovedPx);
                 if (recyclerView.getAdapter() != null && recyclerView.getAdapter().getItemCount() > 0 && isClick(furthestDistanceMovedPx)) {
 
-                    if(recyclerView.getAdapter() instanceof CoordinatesClickListener) {
-                        ((CoordinatesClickListener) recyclerView.getAdapter()).clickCoordinates(event.getRawX(),event.getRawY());
-                    } else {
+
                         try {
                             View v = findChildAtLocation(recyclerView, (int) event.getRawX(), (int) event.getRawY());
                             v.performClick();
+                            Log.d(TAG,v.toString());
                         } catch (Exception e) {
                             Log.d(TAG, "onTouch : " + e.getMessage());
                         }
-                    }
-                    furthestDistanceMovedPx = 0f;
+
                 }
+                furthestDistanceMovedPx = 0f;
                 break;
             case MotionEvent.ACTION_MOVE:
                 float distanceFromStart = pxDistance(event.getRawX(), event.getRawY(), downX, downY);
@@ -93,6 +95,7 @@ public class DiagonalScrollRecyclerView extends HorizontalScrollView {
                     if( child instanceof ViewGroup) {
                         child = findChildAtLocation((ViewGroup)child, x, y);
                     }
+
                     return child;
                 }
             }
@@ -100,9 +103,6 @@ public class DiagonalScrollRecyclerView extends HorizontalScrollView {
         return null;
     }
 
-    interface  CoordinatesClickListener {
-        void clickCoordinates(float x, float y);
-    }
 
     public void setRecyclerView( RecyclerView view ) {
         recyclerView = view;

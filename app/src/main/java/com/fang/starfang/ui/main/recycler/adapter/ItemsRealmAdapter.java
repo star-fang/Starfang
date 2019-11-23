@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -12,11 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Item;
+import com.fang.starfang.ui.main.recycler.filter.ItemFilter;
 
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerView.ViewHolder> {
+public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerView.ViewHolder> implements Filterable {
 
     private static final String TAG = "FANG_ITEM_ADAPTER";
 
@@ -38,8 +41,13 @@ public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerVi
 
 
     public ItemsRealmAdapter(Realm realm) {
-        super(realm.where(Item.class).findAll().sort(Item.FIELD_SUB_CATE).sort(Item.FIELD_GRD), false);
+        super(realm.where(Item.class).findAll().sort(Item.FIELD_SUB_CATE), false);
         Log.d(TAG, "constructed");
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new ItemFilter(this);
     }
 
     static class ItemsViewHolder extends RecyclerView.ViewHolder {

@@ -565,7 +565,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/ic_arrow_downward_black_24dp"
+        android:background="@drawable/ic_arrow_downward_white_24dp"
         android:backgroundTint="@color/design_default_color_primary"
         android:visibility="gone"/>
 

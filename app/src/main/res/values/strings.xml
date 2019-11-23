@@ -131,8 +131,8 @@
     <string name="power3">방어력</string>
     <string name="power4">순발력</string>
     <string name="power5">사기</string>
-    <string name="unique_spec">고유 특성</string>
-    <string name="branch_spec">병종 특성</string>
+    <string name="unique_spec">고유 효과</string>
+    <string name="branch_spec">병종 효과</string>
     <string name="spec6">군주</string>
     <string name="spec5">태수</string>
     <string name="spec4">Lv90</string>
@@ -150,6 +150,7 @@
     <string name="shield">방어구</string>
     <string name="aid">보조구</string>
     <string name="spec_score">효과 점수</string>
+    <string name="spec_kor">효과</string>
 
     <string name="one">1</string>
     <string name="two">2</string>
@@ -213,4 +214,5 @@
     </string>
     <string name="equals">=</string>
     <string name="branch_grade_suffix_kor">계</string>
+    <string name="create_item_kor">보물 생성</string>
 </resources>
