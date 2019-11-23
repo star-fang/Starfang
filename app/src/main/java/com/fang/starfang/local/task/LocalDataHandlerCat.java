@@ -75,6 +75,7 @@ class LocalDataHandlerCat {
     private static final String SEPARATOR = "----------------------------\n";
     private static final String RANGE_EMPTY = "□";
     private static final String RANGE_FULL = "■";
+    private static final String RIGHT_ARROW = "→";
 
     LocalDataHandlerCat(Context context, String sendCat, String catRoom) {
         this.context = new WeakReference<>(context);
@@ -191,10 +192,10 @@ class LocalDataHandlerCat {
                                 .append(line).append(BLANK).append(name)
                                 .append(insert_hero_num == 1 ? (tmpHero.getHeroName2() != null ? "  a.k.a. "  + tmpHero.getHeroName2() : EMPTY)
                                         + CRLF + Heroes.INIT_COST + ": "
-                                        + init_cost + "→"
-                                        + (init_cost + 3) + "→"
-                                        + (init_cost + 5) + "→"
-                                        + (init_cost + 8) + "→"
+                                        + init_cost + RIGHT_ARROW
+                                        + (init_cost + 3) + RIGHT_ARROW
+                                        + (init_cost + 5) + RIGHT_ARROW
+                                        + (init_cost + 8) + RIGHT_ARROW
                                         : BLANK).append(init_cost + 10)
                                 .append(CRLF);
 
@@ -681,7 +682,7 @@ class LocalDataHandlerCat {
                 if(q.replace(BLANK,EMPTY).isEmpty())
                     return null;
 
-                LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(" ")));
+                LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(BLANK)));
 
                 StringBuilder lambdaResult = new StringBuilder();
                 while(!rQueue.isEmpty()) {
@@ -700,7 +701,7 @@ class LocalDataHandlerCat {
                                 RealmString branchGrade = brachGrades.get(i);
                                 if(branchGrade != null ) {
                                     lambdaResult.append(branchGrade.toString()).
-                                            append(i < branchGradeSize - 1 ? "→" : "");
+                                            append(i < branchGradeSize - 1 ? RIGHT_ARROW : EMPTY);
                                 }
                             }
                             lambdaResult.append(CRLF);
@@ -715,11 +716,21 @@ class LocalDataHandlerCat {
 
                         lambdaResult.append("*부대 효과").append(CRLF);
                         for (int i = 0; i < Branch.INIT_PASVS.length; i++) {
-                            lambdaResult.append(Branch.INIT_PASVS[i]).append(": ").append(branch.getBranchPasvSpecs().get(i));
+                            lambdaResult.append("승급").append(branch.getBranchPasvSpecGrades().get(i)).append(": ").append(branch.getBranchPasvSpecs().get(i));
                             RealmString BranchPasvSpecValueRealmString = branch.getBranchPasvSpecValues().get(i);
                             if( BranchPasvSpecValueRealmString != null ) {
                                 String val = BranchPasvSpecValueRealmString.toString();
-                                lambdaResult.append(BLANK).append(val);
+                                String valLast = val;
+                                if( val.contains("/")) {
+                                    // 3/5/7%
+                                    // [3/5/7]
+                                    String[] valSplit = val.split("/");
+                                    valLast = valSplit[valSplit.length-1];
+                                    if(val.contains("[")) {
+                                        valLast = "[" + valLast;
+                                    }
+                                }
+                                lambdaResult.append(BLANK).append(valLast);
                             }
                             lambdaResult.append(CRLF);
                         }

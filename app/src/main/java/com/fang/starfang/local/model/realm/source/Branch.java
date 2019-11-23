@@ -1,5 +1,6 @@
 package com.fang.starfang.local.model.realm.source;
 
+import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 
 import io.realm.RealmList;
@@ -14,6 +15,14 @@ public class Branch extends RealmObject {
     public static final String FIELD_GRADE = "branchGrade";
     public static final String[] INIT_STATS = {"공","정","방","순","사"};
     public static final String[] INIT_PASVS = {"승급2","승급3","승급4"};
+
+    public RealmList<RealmInteger> getBranchPasvSpecGrades() {
+        return branchPasvSpecGrades;
+    }
+
+    public int getBranchHPgg() {
+        return branchHPgg;
+    }
 
     public enum INIT_SPECS {Lv01,Lv10,Lv15,Lv20,Lv25}
     public static final String INIT_HP = "HP";
@@ -30,6 +39,7 @@ public class Branch extends RealmObject {
     private int branchEP;
     private RealmList<RealmString> branchPasvSpecs; // passive specs
     private RealmList<RealmString> branchPasvSpecValues; // passive spec values
+    private RealmList<RealmInteger> branchPasvSpecGrades;
     private int branchMoving;
     private String branchWeaponSubCate;
     private String branchArmorSubCate;
@@ -39,6 +49,8 @@ public class Branch extends RealmObject {
     private String branchName2;
     private String branchMagic;
     private RealmList<RealmString> branchGrade;
+    private int branchHPgg;
+
 
     public RealmList<RealmString> getBranchGrade() {
         return branchGrade;
