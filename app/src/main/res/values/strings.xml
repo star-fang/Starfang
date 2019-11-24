@@ -215,4 +215,7 @@
     <string name="equals">=</string>
     <string name="branch_grade_suffix_kor">계</string>
     <string name="create_item_kor">보물 생성</string>
+
+    <string name="create_kor">생성</string>
+    <string name="cancel_kor">취소</string>
 </resources>

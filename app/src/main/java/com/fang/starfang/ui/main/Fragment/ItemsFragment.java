@@ -8,10 +8,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
+import com.fang.starfang.ui.main.recycler.adapter.ItemSimsRealmAdapter;
+import com.fang.starfang.util.ScreenUtils;
 
 import io.realm.Realm;
 
@@ -57,14 +62,12 @@ public class ItemsFragment extends PlaceholderFragment {
             }
         });
 
-
-
-
-
-
-
-
-
+        AppCompatTextView text_item_info = view.findViewById(R.id.text_item_info);
+        AppCompatTextView text_item_desc = view.findViewById(R.id.text_item_desc);
+        RecyclerView recycler_view_items = view.findViewById(R.id.recycler_view_items);
+        recycler_view_items.setLayoutManager(new GridLayoutManager(mActivity, ScreenUtils.calculateNoOfColumns(mActivity,80.0)));
+        ItemSimsRealmAdapter itemSimsRealmAdapter = new ItemSimsRealmAdapter(realm, text_item_info, text_item_desc);
+        recycler_view_items.setAdapter(itemSimsRealmAdapter);
 
         return view;
 

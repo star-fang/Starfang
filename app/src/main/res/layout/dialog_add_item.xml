@@ -45,7 +45,8 @@
             android:id="@+id/recycler_view_all_items"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/dialog_add_item_cell"/>
+            tools:listitem="@layout/dialog_add_item_cell"
+            />
     </LinearLayout>
 
 
@@ -56,18 +57,19 @@
         >
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:id="@+id/text_dialog_add_item_info"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:layout_marginEnd="150dp"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="50dp"
-            android:layout_height="30dp"
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="5dp"/>
-
-
-
+            android:layout_alignParentTop="true"
+            android:id="@+id/text_dialog_add_item_desc"
+            android:layout_width="150dp"
+            android:layout_height="match_parent" />
 
     </RelativeLayout>
 </LinearLayout>

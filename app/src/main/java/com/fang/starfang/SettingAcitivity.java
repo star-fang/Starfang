@@ -15,6 +15,7 @@ import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fang.starfang.local.task.RealmSyncTask;
+import com.fang.starfang.util.ScreenUtils;
 import com.google.android.material.snackbar.Snackbar;
 
 public class SettingAcitivity extends AppCompatActivity {
@@ -91,6 +92,7 @@ public class SettingAcitivity extends AppCompatActivity {
             } else {
                 Snackbar.make(view,"이름을 2글자 이상 입력 하세요.", Snackbar.LENGTH_SHORT).show();
             }
+            ScreenUtils.hideSoftKeyboard(this);
         });
 
 

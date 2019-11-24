@@ -13,6 +13,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.ui.main.recycler.filter.ItemFilter;
 
@@ -22,53 +23,56 @@ import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerView.ViewHolder> implements Filterable {
+public class ItemSimsRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> {
 
     private static final String TAG = "FANG_ITEM_ADAPTER";
     private AppCompatTextView text_info;
     private AppCompatTextView text_desc;
-    private Item item_selected;
+    private ItemSim item_selected;
+
+    private static ItemSimsRealmAdapter instance = null;
+
+    public static ItemSimsRealmAdapter getInstance() {
+        return instance;
+    }
 
     @NonNull
     @Override
-    public ItemsRealmAdapter.ItemsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public ItemSimsRealmAdapter.ItemsSimViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_add_item_cell,viewGroup,false);
-        return new ItemsRealmAdapter.ItemsViewHolder(view);
+        return new ItemSimsRealmAdapter.ItemsSimViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Item item = getItem( position );
-        ItemsViewHolder itemsViewHolder = (ItemsViewHolder) holder;
-        if( item != null ) {
-            itemsViewHolder.bind(item);
+        ItemSim itemSim = getItem( position );
+        ItemsSimViewHolder itemsViewHolder = (ItemsSimViewHolder) holder;
+        if( itemSim != null ) {
+            itemsViewHolder.bind(itemSim);
         }
     }
 
 
-    public ItemsRealmAdapter(Realm realm, AppCompatTextView text_info, AppCompatTextView text_desc) {
-        super(null, false);
+    public ItemSimsRealmAdapter(Realm realm, AppCompatTextView text_info, AppCompatTextView text_desc) {
+        super(realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF), false);
         this.text_desc = text_desc;
         this.text_info = text_info;
         this.item_selected = null;
         Log.d(TAG, "constructed");
+        instance = this;
     }
 
-    public Item getSelectedItem() {
+    public ItemSim getSelectedItem() {
         return item_selected;
     }
 
-    @Override
-    public Filter getFilter() {
-        return new ItemFilter(this);
-    }
 
-    public class ItemsViewHolder extends RecyclerView.ViewHolder {
+    public class ItemsSimViewHolder extends RecyclerView.ViewHolder {
 
         AppCompatTextView text_cell_title_item_grade;
         CheckedTextView button_cell_item_name;
 
-        private ItemsViewHolder(View itemView) {
+        private ItemsSimViewHolder(View itemView) {
             super(itemView);
             Log.d(TAG, "view holder constructed");
             text_cell_title_item_grade = itemView.findViewById(R.id.text_cell_title_item_grade);
@@ -76,19 +80,20 @@ public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerVi
         }
 
 
-        private void bind(Item item) {
+        private void bind(ItemSim itemSim) {
+            Item item = itemSim.getItem();
             text_cell_title_item_grade.setText(item.getItemGrade());
             button_cell_item_name.setText(item.getItemName());
 
             itemView.setOnFocusChangeListener((view, b) -> {
                 if(b) {
-                    item_selected = item;
+                    item_selected = itemSim;
                     text_info.setText(item.toString());
                     text_desc.setText(item.getitemDescription());
-
+                    Log.d(TAG, "focused : " + itemSim.getItemID() );
                 }
 
-                Log.d(TAG, "focus changed : " + b );
+
             });
         }
     }

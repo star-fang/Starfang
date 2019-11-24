@@ -41,6 +41,8 @@ import com.fang.starfang.local.model.realm.union.UnionSkill;
 import com.fang.starfang.local.model.realm.union.UnionSpec;
 import com.fang.starfang.local.model.realm.UpdateTime;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
+import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -444,15 +446,20 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
     protected void onPostExecute(String result){
         button_close.get().setVisibility(View.VISIBLE);
         progress_result.get().setText(result);
+
+        HeroesFixedRealmAdapter heroesFixedRealmAdapter = HeroesFixedRealmAdapter.getInstance();
+        if(heroesFixedRealmAdapter != null ) {
+            heroesFixedRealmAdapter.notifyDataSetChanged();
+            Log.d(TAG, "notify to HeroesFixedRealmAdapter");
+        }
+
+        HeroesFloatingRealmAdapter heroesFloatingRealmAdapter = HeroesFloatingRealmAdapter.getInstance();
+        if(heroesFloatingRealmAdapter != null ) {
+            heroesFloatingRealmAdapter.notifyDataSetChanged();
+            Log.d(TAG, "notify to HeroesFloatingRealmAdapter");
+        }
     }
 
-
-
-    /**
-     * Created by catalin prata on 29/05/15.
-     * <p/>
-     * Used to deserialize a list of realm string objects
-     */
     public class RealmStringDeserializer implements
             JsonDeserializer<RealmList<RealmString>> {
 
