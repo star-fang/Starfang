@@ -20,7 +20,7 @@ import io.realm.RealmRecyclerViewAdapter;
 public class RoomFilterRealmAdapter extends RealmRecyclerViewAdapter<Conversation, RecyclerView.ViewHolder> {
     //   implements Filterable {
 
-    private static final String TAG = "FANG_FILTER_ROOM";
+    private static final String TAG = "FANG_ADAPTER_FILTER_ROOM";
     private AppCompatTextView countText;
     private AppCompatTextView listText;
 

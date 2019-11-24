@@ -14,7 +14,7 @@ import io.realm.Realm;
 
 public class NotificationListener extends NotificationListenerService {
 
-    private static final String TAG = "FANG_LISTENER";
+    private static final String TAG = "FANG_SERVICE_NOTIFY";
     public static final String PACKAGE_KAKAO = "com.kakao.talk";
     public static final String PACKAGE_DISCORD = "com.discord";
     public static final String PACKAGE_STARFANG = "com.fang.starfang";

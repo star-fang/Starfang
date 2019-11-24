@@ -22,7 +22,7 @@ import io.realm.Realm;
 
 public class ItemsFragment extends PlaceholderFragment {
 
-    private static final String TAG = "FANG_ITEM_FRAG";
+    private static final String TAG = "FANG_FRAG_ITEM";
     private Realm realm;
 
     static ItemsFragment newInstance(int index) {

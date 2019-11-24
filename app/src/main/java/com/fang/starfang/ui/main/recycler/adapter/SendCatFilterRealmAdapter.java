@@ -19,7 +19,7 @@ import io.realm.RealmRecyclerViewAdapter;
 
 public class SendCatFilterRealmAdapter extends RealmRecyclerViewAdapter<Conversation, RecyclerView.ViewHolder> {
      //   implements Filterable {
-    private static final String TAG = "FANG_FILTER_SENDCAT";
+    private static final String TAG = "FANG_ADAPTER_FILTER_SEND_CAT";
     private AppCompatTextView countText;
     private AppCompatTextView listText;
 

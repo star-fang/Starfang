@@ -1,5 +1,6 @@
 package com.fang.starfang.local.model.realm.simulator;
 
+import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Item;
 
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class ItemSim extends RealmObject {
     private Item item;
     private int itemNo;
     private int itemReinforcement;
-
+    private Heroes heroWhoHasThis;
     public ItemSim() {
 
     }
@@ -30,6 +31,7 @@ public class ItemSim extends RealmObject {
             this.item = item;
             this.itemNo = item.getItemNo();
             this.itemReinforcement = 0;
+            this.heroWhoHasThis = null;
     }
 
 
@@ -51,5 +53,13 @@ public class ItemSim extends RealmObject {
 
     public void setItemReinforcement(int itemReinforcement) {
         this.itemReinforcement = itemReinforcement;
+    }
+
+    public Heroes getHeroWhoHasThis() {
+        return heroWhoHasThis;
+    }
+
+    public void setHeroWhoHasThis(Heroes heroWhoHasThis) {
+        this.heroWhoHasThis = heroWhoHasThis;
     }
 }

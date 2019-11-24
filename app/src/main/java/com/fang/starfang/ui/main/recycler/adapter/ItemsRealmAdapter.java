@@ -16,18 +16,16 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.ui.main.recycler.filter.ItemFilter;
 
-import java.util.ArrayList;
-
-import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
 public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerView.ViewHolder> implements Filterable {
 
-    private static final String TAG = "FANG_ITEM_ADAPTER";
+    private static final String TAG = "FANG_ADAPTER_ITEM";
     private AppCompatTextView text_info;
     private AppCompatTextView text_desc;
     private Item item_selected;
+    private Realm realm;
 
     @NonNull
     @Override
@@ -51,6 +49,7 @@ public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerVi
         this.text_desc = text_desc;
         this.text_info = text_info;
         this.item_selected = null;
+        this.realm = realm;
         Log.d(TAG, "constructed");
     }
 
@@ -60,7 +59,7 @@ public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerVi
 
     @Override
     public Filter getFilter() {
-        return new ItemFilter(this);
+        return new ItemFilter(this, realm);
     }
 
     public class ItemsViewHolder extends RecyclerView.ViewHolder {

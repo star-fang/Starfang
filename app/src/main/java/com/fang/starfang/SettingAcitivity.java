@@ -20,7 +20,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 public class SettingAcitivity extends AppCompatActivity {
 
-    private static final String TAG = "FANG_SETTING_ACTIVITY";
+    private static final String TAG = "FANG_ACTIVITY_SETTING";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

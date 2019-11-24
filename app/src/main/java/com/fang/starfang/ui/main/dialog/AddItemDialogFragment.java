@@ -107,6 +107,7 @@ public class AddItemDialogFragment extends DialogFragment {
                         String selected_grade = spinner_item_grade.getItemAtPosition(position).toString();
                         String selected_category = spinner_item_category.getSelectedItem().toString();
                         itemsRealmAdapter.getFilter().filter(selected_grade + "," + selected_category );
+                        Log.d(TAG,"grade selected :" + selected_grade);
                     }
 
                     @Override
@@ -123,6 +124,7 @@ public class AddItemDialogFragment extends DialogFragment {
                         String selected_category = spinner_item_category.getItemAtPosition(position).toString();
                         String selected_grade = spinner_item_grade.getSelectedItem().toString();
                         itemsRealmAdapter.getFilter().filter(selected_grade + "," + selected_category );
+                        Log.d(TAG,"category selected :" + selected_category);
                     }
 
                     @Override
@@ -149,9 +151,7 @@ public class AddItemDialogFragment extends DialogFragment {
                     Log.d(TAG,e.toString());
                 }
             }
-        }).setNegativeButton(R.string.cancel_kor, (dialogInterface, i) -> {
-        });
-
+        }).setNegativeButton(R.string.cancel_kor, null);
 
         return builder.create();
     }

@@ -23,7 +23,7 @@ public class ConversationRealmAdapter
         extends RealmRecyclerViewAdapter<Conversation, RecyclerView.ViewHolder>
         implements Filterable {
 
-    private static final String TAG = "FANG_CONVERSATION";
+    private static final String TAG = "FANG_ADAPTER_CONVERSATION";
     private Realm realm;
 
     @NonNull

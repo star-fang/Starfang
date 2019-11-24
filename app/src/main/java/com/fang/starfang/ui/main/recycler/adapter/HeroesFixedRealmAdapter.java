@@ -1,5 +1,6 @@
 package com.fang.starfang.ui.main.recycler.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +28,10 @@ import io.realm.Sort;
 
 public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, RecyclerView.ViewHolder> implements Filterable {
 
-    private final String TAG  = "FANG_HERO_FIX";
+    private final String TAG  = "FANG_ADAPTER_FIXED";
     private FragmentManager fragmentManager;
     private static HeroesFixedRealmAdapter instance = null;
+    private Realm realm;
 
     public static HeroesFixedRealmAdapter getInstance() {
         return instance;
@@ -39,7 +41,10 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, R
         super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME).
                 sort(HeroSim.FIELD_GRADE,Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING),false);
         this.fragmentManager = fragmentManager;
+        this.realm = realm;
         instance = this;
+
+        Log.d(TAG,"constructed");
     }
 
     @NonNull
@@ -77,7 +82,7 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, R
 
     @Override
     public Filter getFilter() {
-        return new HeroSimFilter(this);
+        return new HeroSimFilter(this, realm);
     }
 
     private class HeroesViewHolder extends RecyclerView.ViewHolder {

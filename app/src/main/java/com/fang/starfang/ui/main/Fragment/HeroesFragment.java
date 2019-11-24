@@ -23,7 +23,7 @@ import io.realm.Realm;
 
 public class HeroesFragment extends PlaceholderFragment {
 
-    private static final String TAG = "FANG_HEROES_FRAG";
+    private static final String TAG = "FANG_FRAG_HEROES";
     private Realm realm;
 
     static HeroesFragment newInstance(int index) {

@@ -14,7 +14,7 @@ import io.realm.Realm;
 
 public class MagicItemsFragment extends PlaceholderFragment {
 
-    private static final String TAG = "FANG_MAGIC_ITEM_FRAG";
+    private static final String TAG = "FANG_FRAG_MAGIC_ITEM";
     private Realm realm;
 
     static MagicItemsFragment newInstance(int index) {

@@ -45,7 +45,7 @@ import io.realm.RealmResults;
 
 public class ConversationActivity extends AppCompatActivity {
 
-    private static final String TAG = "FANG_CONV_FRAG";
+    private static final String TAG = "FANG_ACTIVITY_CONV";
     private static final String SUMMARY_TIME_FORMAT = "yyyy년 MM월 dd일";
     private RealmChangeListener<Realm> realmChangeListener;
     private Realm realm;

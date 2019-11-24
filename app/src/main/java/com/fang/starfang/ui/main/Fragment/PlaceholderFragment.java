@@ -16,7 +16,7 @@ import com.fang.starfang.ui.main.PageViewModel;
  */
 public class PlaceholderFragment extends Fragment {
 
-    private static final String TAG = "FANG_HOLDER_FRAG";
+    private static final String TAG = "FANG_FRAG_HOLDER";
     static final String ARG_SECTION_NUMBER = "section_number";
     Activity mActivity;
 

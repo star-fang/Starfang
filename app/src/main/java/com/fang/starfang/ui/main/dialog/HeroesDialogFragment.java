@@ -49,12 +49,10 @@ public class HeroesDialogFragment extends DialogFragment {
 
     public static HeroesDialogFragment newInstance( int heroNo  ) {
 
-        Realm realm = Realm.getDefaultInstance();
         HeroesDialogFragment heroesDialogFragment = new HeroesDialogFragment();
         Bundle args = new Bundle();
         args.putInt("heroNo",heroNo);
         heroesDialogFragment.setArguments(args);
-        realm.close();
 
         return heroesDialogFragment;
 
@@ -90,28 +88,22 @@ public class HeroesDialogFragment extends DialogFragment {
         if( heroSim != null ) {
         Heroes hero = heroSim.getHero();
 
-
+            final AppCompatSeekBar seekbar_hero_grade = view.findViewById(R.id.seekbar_hero_grade);  // 0 ~ 4
+            final AppCompatTextView text_seekbar_hero_grade_value = view.findViewById(R.id.text_seekbar_hero_grade_value); // 1 ~ 5
+            final AppCompatSeekBar seekbar_hero_level = view.findViewById(R.id.seekbar_hero_level); // 0 ~ 98
+            final AppCompatEditText text_seekbar_hero_level_value = view.findViewById(R.id.text_seekbar_hero_level_value); // 1 ~ 99
 
             String heroBranchStr = hero.getHeroBranch() + ((hero.getHeroNo()>0)? "계" : "");
             ((AppCompatTextView) view.findViewById(R.id.dialog_title_branch)).setText(heroBranchStr);
-
             ((AppCompatTextView) view.findViewById(R.id.dialog_title_name)).setText(hero.getHeroName());
-            final AppCompatSeekBar seekbar_hero_grade = view.findViewById(R.id.seekbar_hero_grade);  // 0 ~ 4
-            seekbar_hero_grade.setProgress(heroSim.getHeroGrade() - 1);
 
-            //final AppCompatTextView text_seekbar_hero_grade = view.findViewById(R.id.text_seekbar_hero_grade); // 악사, 철거병,...
-            final AppCompatTextView text_seekbar_hero_grade_value = view.findViewById(R.id.text_seekbar_hero_grade_value); // 1 ~ 5
-            text_seekbar_hero_grade_value.setText(String.valueOf(heroSim.getHeroGrade()));
-
-
-            final AppCompatSeekBar seekbar_hero_level = view.findViewById(R.id.seekbar_hero_level); // 0 ~ 98
-            int curLevel = heroSim.getHeroLevel() - 1;
+            int curLevel = heroSim.getHeroLevel() - 1; // 0 ~ 98
             seekbar_hero_level.setProgress(curLevel);
+            text_seekbar_hero_level_value.setText(String.valueOf(curLevel + 1));
 
-            final AppCompatEditText text_seekbar_hero_level_value = view.findViewById(R.id.text_seekbar_hero_level_value); // 1 ~ 99
-            text_seekbar_hero_level_value.setText(String.valueOf(heroSim.getHeroLevel()));
-
-            int curGrade = seekbar_hero_grade.getProgress(); // 0 ~ 4
+            int curGrade = heroSim.getHeroGrade() - 1; // 0 ~ 4
+            seekbar_hero_grade.setProgress(curGrade);
+            text_seekbar_hero_grade_value.setText(String.valueOf(curGrade + 1));
 
             Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_ID,hero.getBranchNo()).findFirst();
 
@@ -129,6 +121,7 @@ public class HeroesDialogFragment extends DialogFragment {
             RealmList<RealmString> branchPasvSpecs = null; // 0 ~ 2
             RealmList<RealmString> branchPasvSpecVals = null; // 0 ~ 2
             RealmList<RealmString> branchStatGGs = null;
+            RealmList<RealmInteger> branchPasvSpecGrades = null;
 
             ArrayList<String> titles_pasv = new ArrayList<>(); // 0 ~ 4
             ArrayList<String> specs_pasv = new ArrayList<>();
@@ -149,10 +142,11 @@ public class HeroesDialogFragment extends DialogFragment {
                 branchPasvSpecs = branch.getBranchPasvSpecs();
                 branchPasvSpecVals = branch.getBranchPasvSpecValues();
                 branchStatGGs = branch.getBranchStatGGs();
+                branchPasvSpecGrades = branch.getBranchPasvSpecGrades();
             }
-            if(branchPasvSpecs != null) {
-                for (int i = 0; i < 3; i++) {
-                    titles_pasv.add(Branch.INIT_PASVS[i]);
+            if(branchPasvSpecs != null && branchPasvSpecGrades != null) {
+                for (int i = 0; i < Branch.NUM_PASVS; i++) {
+                    titles_pasv.add("승급" + branchPasvSpecGrades.get(i));
                     RealmString branchPasvSpec = branchPasvSpecs.get(i);
                     String branchPasvSpecStr = "";
                     if( branchPasvSpec != null) {
@@ -230,6 +224,7 @@ public class HeroesDialogFragment extends DialogFragment {
             final SpecsRecycleAdapter heroAdapter = new SpecsRecycleAdapter(titles,specs,specVals, checkedSpecLevels, false, text_dialog_heroes_cell_specs_total);
             recycler_view_pasv_grades.setAdapter(pasvAdapter);
             recycler_view_hero_grades.setAdapter(heroAdapter);
+            text_dialog_heroes_cell_specs_total.setText(String.valueOf(heroSim.getHeroSpecScoreSum()));
 
             pasvAdapter.getFilter().filter((curGrade + 1)+"");
             heroAdapter.getFilter().filter(( curLevel + 1 ) + "");
@@ -239,7 +234,7 @@ public class HeroesDialogFragment extends DialogFragment {
 
             RealmList<RealmInteger> heroBaseStats = hero.getHeroStats();
             ArrayList<Integer> heroStatsUpList = heroSim.getHeroPlusStatList();
-            final PowersRecyclerAdapter powerAdapter = new PowersRecyclerAdapter(branchStatGGs,heroBaseStats,heroStatsUpList,curLevel);
+            final PowersRecyclerAdapter powerAdapter = new PowersRecyclerAdapter(branchStatGGs,heroBaseStats,heroStatsUpList,curLevel + 1);
             recycler_view_dialog_heroes_cell_power.setAdapter(powerAdapter);
 
             final AppCompatTextView text_sum_of_plus_stat_cur = view.findViewById(R.id.text_sum_of_plus_stat_cur);
@@ -251,7 +246,6 @@ public class HeroesDialogFragment extends DialogFragment {
             final AppCompatTextView[] text_seekbar_hero_stat_max = new AppCompatTextView[numberOfStats];
             final AppCompatSeekBar[] seekbar_hero_stat = new AppCompatSeekBar[numberOfStats];
 
-            int sum_of_plus_stat_cur_int = 0;
             for (int i = 0; i < numberOfStats; i++) {
                 seekbar_hero_stat[i] = view.findViewById(getResources().getIdentifier("seekbar_hero_stat" + (i + 1), "id", mActivity.getPackageName()));
                 text_base_plus_stat[i] = view.findViewById(getResources().getIdentifier("text_base_plus_stat" + (i + 1), "id", mActivity.getPackageName()));
@@ -268,7 +262,6 @@ public class HeroesDialogFragment extends DialogFragment {
                     text_base_plus_stat[i].setText(String.valueOf(totalStat));
                     text_seekbar_hero_stat_cur[i].setText(String.valueOf(plusStat));
                     seekbar_hero_stat[i].setProgress(plusStatInt);
-                    sum_of_plus_stat_cur_int += plusStatInt;
                 }
 
                 int finalI = i;
@@ -312,11 +305,10 @@ public class HeroesDialogFragment extends DialogFragment {
                     }
                 });
 
-            }
+            } // end for
 
-            int sum_of_plus_stat_cur_max = Math.min(500, maxPlusStat * numberOfStats);
-            text_sum_of_plus_stat_cur.setText(String.valueOf(sum_of_plus_stat_cur_int));
-            text_sum_of_plus_stat_max.setText(String.valueOf(sum_of_plus_stat_cur_max));
+            text_sum_of_plus_stat_cur.setText(String.valueOf(heroSim.getHeroPlusStatSum()));
+            text_sum_of_plus_stat_max.setText(String.valueOf( (curGrade + 1 ) * 100 ) );
 
             seekbar_hero_grade.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
@@ -397,7 +389,7 @@ public class HeroesDialogFragment extends DialogFragment {
                 }
             });
 
-            builder.setView(view).setPositiveButton("변경", (dialog, which) -> {
+            builder.setView(view).setPositiveButton(R.string.modify_kor, (dialog, which) -> {
                 realm.beginTransaction();
                 int heroGrade = seekbar_hero_grade.getProgress() + 1;
                 int heroLevel = seekbar_hero_level.getProgress() + 1;
@@ -440,7 +432,7 @@ public class HeroesDialogFragment extends DialogFragment {
                 }
 
 
-            }).setNegativeButton("취소", null);
+            }).setNegativeButton(R.string.cancel_kor, null);
 
 
 

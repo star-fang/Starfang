@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
-import android.widget.Filter;
-import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -15,20 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
-import com.fang.starfang.ui.main.recycler.filter.ItemFilter;
-
-import java.util.ArrayList;
-
-import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
 public class ItemSimsRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> {
 
-    private static final String TAG = "FANG_ITEM_ADAPTER";
+    private static final String TAG = "FANG_ADAPTER_ITEM_SIM";
     private AppCompatTextView text_info;
     private AppCompatTextView text_desc;
-    private ItemSim item_selected;
+    private ItemSim item_sim_selected;
 
     private static ItemSimsRealmAdapter instance = null;
 
@@ -57,13 +50,14 @@ public class ItemSimsRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, Recy
         super(realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF), false);
         this.text_desc = text_desc;
         this.text_info = text_info;
-        this.item_selected = null;
-        Log.d(TAG, "constructed");
+        this.item_sim_selected = null;
         instance = this;
+
+        Log.d(TAG, "constructed");
     }
 
-    public ItemSim getSelectedItem() {
-        return item_selected;
+    public ItemSim getSelectedItemSim() {
+        return item_sim_selected;
     }
 
 
@@ -87,7 +81,7 @@ public class ItemSimsRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, Recy
 
             itemView.setOnFocusChangeListener((view, b) -> {
                 if(b) {
-                    item_selected = itemSim;
+                    item_sim_selected = itemSim;
                     text_info.setText(item.toString());
                     text_desc.setText(item.getitemDescription());
                     Log.d(TAG, "focused : " + itemSim.getItemID() );

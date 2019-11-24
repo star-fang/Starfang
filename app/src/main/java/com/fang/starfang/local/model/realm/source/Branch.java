@@ -14,15 +14,8 @@ public class Branch extends RealmObject {
     public static final String FIELD_NAME2 = "branchName2";
     public static final String FIELD_GRADE = "branchGrade";
     public static final String[] INIT_STATS = {"공","정","방","순","사"};
-    public static final String[] INIT_PASVS = {"승급2","승급3","승급4"};
-
-    public RealmList<RealmInteger> getBranchPasvSpecGrades() {
-        return branchPasvSpecGrades;
-    }
-
-    public int getBranchHPgg() {
-        return branchHPgg;
-    }
+    public static final int NUM_PASVS = 3;
+    //public static final String[] INIT_PASVS = {"승급2","승급3","승급4"};
 
     public enum INIT_SPECS {Lv01,Lv10,Lv15,Lv20,Lv25}
     public static final String INIT_HP = "HP";
@@ -90,6 +83,14 @@ public class Branch extends RealmObject {
 
     public String getBranchArmorSubCate() {
         return branchArmorSubCate;
+    }
+
+    public RealmList<RealmInteger> getBranchPasvSpecGrades() {
+        return branchPasvSpecGrades;
+    }
+
+    public int getBranchHPgg() {
+        return branchHPgg;
     }
 
 }

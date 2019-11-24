@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class RecyclerAdapterRef extends RecyclerView.Adapter<RecyclerAdapterRef.RecyclerViewAdapterRefViewHolder> {
 
-    private static final String TAG = "FANG_SPEC_ADAPTER";
+    private static final String TAG = "FANG_ADAPTER_SPEC";
 
     @NonNull
     @Override

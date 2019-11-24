@@ -715,7 +715,7 @@ class LocalDataHandlerCat {
                         lambdaResult.append(CRLF).append(branch.getBranchOtherStats());
 
                         lambdaResult.append("*부대 효과").append(CRLF);
-                        for (int i = 0; i < Branch.INIT_PASVS.length; i++) {
+                        for (int i = 0; i < Branch.NUM_PASVS; i++) {
                             lambdaResult.append("승급").append(branch.getBranchPasvSpecGrades().get(i)).append(": ").append(branch.getBranchPasvSpecs().get(i));
                             RealmString BranchPasvSpecValueRealmString = branch.getBranchPasvSpecValues().get(i);
                             if( BranchPasvSpecValueRealmString != null ) {
@@ -843,10 +843,10 @@ class LocalDataHandlerCat {
             // 인연 검색
             HandleLocalDB destinyByKey = (q->{
                 if(q.replace(BLANK,EMPTY).isEmpty()) {
-                    String nameResult = "인연 전체 목록" + CRLF + SEPARATOR;
+                    StringBuilder nameResult = new StringBuilder("인연 전체 목록" + CRLF + SEPARATOR);
                     for (Destiny destiny : realm.where(Destiny.class).findAll())
-                        nameResult += destiny.getDesName() + CRLF;
-                    return nameResult;
+                        nameResult.append(destiny.getDesName()).append(CRLF);
+                    return nameResult.toString();
                 }
 
 

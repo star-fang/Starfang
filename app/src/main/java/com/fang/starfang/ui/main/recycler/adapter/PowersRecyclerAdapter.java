@@ -19,7 +19,7 @@ import io.realm.RealmList;
 
 public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAdapter.PowersRecyclerViewAdapterViewHolder> {
 
-    private static final String TAG = "FANG_POWER_ADAPTER";
+    private static final String TAG = "FANG_ADAPTER_POWER";
     private RealmList<RealmString> branchStatGGs;
     private RealmList<RealmInteger> heroBaseStats;
     private ArrayList<Integer> heroStatsUpList;

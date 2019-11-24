@@ -42,7 +42,9 @@ public class HeroSim extends RealmObject {
     private RealmList<Integer> heroSpecsChecked; //  체크된 효과 인덱스 (~3개)
     private RealmList<MagicItemSim> heroMagicItemsSlot1; // 보패 슬롯1
     private RealmList<MagicItemSim> heroMagicItemsSlot2; // 보패 슬롯2
-    private RealmList<ItemSim> heroItemSlot;  // 무기 방어구 보조구
+    private ItemSim heroWeapon;
+    private ItemSim heroArmor;
+    private ItemSim heroAid;
     private RealmList<RealmInteger> heroPowers;
     private int heroPowerSum;
     private int heroPlusStatSum;
@@ -64,7 +66,9 @@ public class HeroSim extends RealmObject {
         this.heroSpecsChecked = null;
         this.heroMagicItemsSlot1 = null;
         this.heroMagicItemsSlot2 = null;
-        this.heroItemSlot = null;
+        this.heroWeapon = null;
+        this.heroArmor = null;
+        this.heroAid = null;
         this.heroPowers = new RealmList<>();
         for( int i = 0; i < Heroes.INIT_STATS.length; i++ ) {
             heroPowers.add(new RealmInteger(0));
@@ -183,13 +187,6 @@ public class HeroSim extends RealmObject {
         this.heroMagicItemsSlot2 = heroMagicItemsSlot2;
     }
 
-    public RealmList<ItemSim> getHeroItemSlot() {
-        return heroItemSlot;
-    }
-
-    public void setHeroItemSlot(RealmList<ItemSim> heroItemSlot) {
-        this.heroItemSlot = heroItemSlot;
-    }
 
     public static double calcGrowthRateByStatAndGrade(int stat, String grade ) {
         Double rate = GROWTH_RATES_INIT[Arrays.asList(GROWTH_RATES_GRADE).indexOf(grade)];
@@ -242,5 +239,29 @@ public class HeroSim extends RealmObject {
 
     public void setHeroSpecScoreSum(int heroSpecScoreSum) {
         this.heroSpecScoreSum = heroSpecScoreSum;
+    }
+
+    public ItemSim getHeroWeapon() {
+        return heroWeapon;
+    }
+
+    public void setHeroWeapon(ItemSim heroWeapon) {
+        this.heroWeapon = heroWeapon;
+    }
+
+    public ItemSim getHeroArmor() {
+        return heroArmor;
+    }
+
+    public void setHeroArmor(ItemSim heroArmor) {
+        this.heroArmor = heroArmor;
+    }
+
+    public ItemSim getHeroAid() {
+        return heroAid;
+    }
+
+    public void setHeroAid(ItemSim heroAid) {
+        this.heroAid = heroAid;
     }
 }

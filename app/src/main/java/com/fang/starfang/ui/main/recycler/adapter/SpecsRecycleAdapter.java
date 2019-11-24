@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class SpecsRecycleAdapter extends RecyclerView.Adapter<SpecsRecycleAdapter.SpecsRecyclerViewAdapterViewHolder>
 implements Filterable {
 
-    private static final String TAG = "FANG_SPEC_ADAPTER";
+    private static final String TAG = "FANG_ADAPTER_SPEC";
     private ArrayList<String> titles;
     private ArrayList<String> titlesFiltered;
     private ArrayList<String> specs;
@@ -73,14 +73,26 @@ implements Filterable {
     @Override
     public Filter getFilter() {
         return new Filter() {
+            private int cs;
+
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
 
                 String csStr = charSequence.toString();
-                int cs = NumberUtils.toInt(csStr,0);
+                cs = NumberUtils.toInt(csStr,0);
                 //Log.d(TAG,"CS: " + cs);
+                // 1 ~ 99  or 1 ~ 5
                 if( cs == 0 ) {
                     return null;
+                }
+
+                if(!pasv && checkedLevels != null) {
+                    Integer level_before = cs + 1;
+                    if(checkedLevels.contains(level_before)) {
+                        checkedLevels.remove(level_before);
+                        setScoreResultView();
+                        Log.d(TAG,"level down : checked spec removed");
+                    }
                 }
 
                 ArrayList<Integer> results = new ArrayList<>();
@@ -120,9 +132,33 @@ implements Filterable {
                         for(Object o : al) {
                             if(o  instanceof Integer) {
                                 Integer integer = (Integer) o;
-                                titlesFiltered.add(titles.get(integer));
+                                String titleStr = titles.get(integer);
+                                String specValStr = specVals.get(integer);
+                                if(pasv) {
+                                    if(specValStr != null) {
+                                        if(specValStr.contains("/")) {
+                                            int titleValue = NumberUtils.toInt(titleStr.replaceAll("[^0-9]", ""),0);
+                                            String[] specValSplit = specValStr.split("/");
+                                            String specValCurCS;
+                                            try {
+                                                specValCurCS = specValSplit[cs - titleValue];
+                                            } catch( StringIndexOutOfBoundsException e ) {
+                                                specValCurCS = specValSplit[specValSplit.length - 1];
+                                                Log.d(TAG,e.toString());
+                                            }
+                                                String specValCurCSValue = specValCurCS.replaceAll("[^0-9]", "");
+                                                if (specValStr.contains("%")) {
+                                                    specValStr = specValCurCSValue + "%";
+                                                } else {
+                                                    specValStr = "[" + specValCurCSValue + "]";
+                                                }
+
+                                        }
+                                    }
+                                }
+                                titlesFiltered.add(titleStr);
                                 specsFiltered.add(specs.get(integer));
-                                specValsFiltered.add(specVals.get(integer));
+                                specValsFiltered.add(specValStr);
                             }
                         }
                     }
@@ -171,24 +207,27 @@ implements Filterable {
                         button_cell_spec.setChecked(false);
                         button_cell_spec.setBackgroundResource(R.drawable.rect_button);
                         checkedLevels.remove(titleInteger);
-                        resultView.setText(getCurSumOfScores());
+                        setScoreResultView();
                     } else if( checkedLevels.size() < 3 ){
                         button_cell_spec.setChecked(true);
                         button_cell_spec.setBackgroundResource(R.drawable.rect_checked);
                         checkedLevels.add(titleInteger);
-                        resultView.setText(getCurSumOfScores());
+                        setScoreResultView();
                     }
                 });
             }
         }
     }
 
-    private String getCurSumOfScores() {
+    private void setScoreResultView() {
+        if(resultView == null) {
+            return;
+        }
         int sum = 0;
         for( int level : checkedLevels ) {
             sum += HeroSim.getSpecScoreByLevel(level);
         }
-        return String.valueOf(sum);
+        resultView.setText(String.valueOf(sum));
     }
 
 }

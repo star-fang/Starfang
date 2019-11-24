@@ -52,7 +52,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
     private static final String R_TEXT_HERO_SEPC_UNIQUE = "text_hero_spec_unique";
     private static final String R_TEXT_HERO_SEPC_UNIQUE_VAL =  "text_hero_spec_unique_val";
 
-    private static final String TAG = "FANG_FLOATING_ADAPTER";
+    private static final String TAG = "FANG_ADAPTER_FLOATING";
     private final static int[] COST_PLUS_BY_UPGRADE = {0,3,5,8,10};
     private Realm realm;
     private final static String ID_STR = "id";
@@ -70,8 +70,9 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         this.realm = realm;
         this.packageName = context.getPackageName();
         this.resources = context.getResources();
-        Log.d(TAG,"constructed" );
         instance = this;
+
+        Log.d(TAG,"constructed" );
     }
 
     @NonNull
@@ -110,7 +111,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
 
     @Override
     public Filter getFilter() {
-        return new HeroSimFilter(this );
+        return new HeroSimFilter(this, realm );
     }
 
 
