@@ -10,9 +10,9 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,7 +35,7 @@ import io.realm.Sort;
 
 public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, RecyclerView.ViewHolder> implements Filterable {
 
-    private static final String R_ROW_HERO_HRADE = "row_hero_grade";
+    private static final String R_TEXT_HERO_GRADE_STAR = "text_hero_grade_star";
     private static final String R_TEXT_HERO_GRADE_COST = "text_hero_grade_cost";
 
     private static final String R_TEXT_HERO_STAT = "text_hero_stat";
@@ -45,10 +45,12 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
     private static final String R_TEXT_HERO_POWER_GRADE = "text_hero_power_grade";
     private static final String R_TEXT_HERO_POWER = "text_hero_power";
 
-    private static final String R_ROW_HERO_SPEC_BRANCH = "row_hero_spec_branch";
+    //private static final String R_ROW_HERO_SPEC_BRANCH = "row_hero_spec_branch";
+    private static final String R_TEXT_HERO_SEPC_BRANCH_LEVEL = "text_hero_spec_branch_level";
     private static final String R_TEXT_HERO_SEPC_BRANCH = "text_hero_spec_branch";
     private static final String R_TEXT_HERO_SEPC_BRANCH_VAL =  "text_hero_spec_branch_val";
-    private static final String R_ROW_HERO_SPEC_UNIQUE = "row_hero_spec_unique";
+    //private static final String R_ROW_HERO_SPEC_UNIQUE = "row_hero_spec_unique";
+    private static final String R_TEXT_HERO_SEPC_UNIQUE_LEVEL = "text_hero_spec_unique_level";
     private static final String R_TEXT_HERO_SEPC_UNIQUE = "text_hero_spec_unique";
     private static final String R_TEXT_HERO_SEPC_UNIQUE_VAL =  "text_hero_spec_unique_val";
 
@@ -58,6 +60,8 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
     private final static String ID_STR = "id";
     private String packageName;
     private Resources resources;
+    private int color_text_checked;
+    private int color_text_unchecked;
     private static HeroesFloatingRealmAdapter instance = null;
 
     public static HeroesFloatingRealmAdapter getInstance() {
@@ -70,6 +74,8 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         this.realm = realm;
         this.packageName = context.getPackageName();
         this.resources = context.getResources();
+        this.color_text_checked = ContextCompat.getColor(context,R.color.colorCheckedText);
+        this.color_text_unchecked = ContextCompat.getColor(context,R.color.colorUnCheckedText);
         instance = this;
 
         Log.d(TAG,"constructed" );
@@ -116,7 +122,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
 
 
     private class HeroesFloatingViewHolder extends RecyclerView.ViewHolder {
-        private View[] row_hero_grade;
+        private AppCompatTextView[] text_hero_grade_star;
         private AppCompatTextView[] text_hero_grade_cost;
         private AppCompatTextView text_hero_grade;
 
@@ -130,10 +136,12 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         private AppCompatTextView[] text_hero_power;
         private AppCompatTextView text_hero_power_sum;
 
-        private View[] row_hero_spec_unique;
+        //private View[] row_hero_spec_unique;
+        private AppCompatTextView[] text_hero_spec_unique_level;
         private AppCompatTextView[] text_hero_spec_unique;
         private AppCompatTextView[] text_hero_spec_unique_val;
-        private View[] row_hero_spec_branch;
+        //private View[] row_hero_spec_branch;
+        private AppCompatTextView[] text_hero_spec_branch_level;
         private AppCompatTextView[] text_hero_spec_branch;
         private AppCompatTextView[] text_hero_spec_branch_val;
         private AppCompatTextView text_spec_score_total;
@@ -145,7 +153,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
 
         private HeroesFloatingViewHolder(View itemView) {
             super(itemView);
-            row_hero_grade = new View[5];
+            text_hero_grade_star = new AppCompatTextView[5];
             text_hero_grade_cost = new AppCompatTextView[5];
             text_hero_grade = itemView.findViewById(R.id.text_hero_grade);
 
@@ -159,10 +167,12 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             text_hero_power = new AppCompatTextView[5];
             text_hero_power_sum = itemView.findViewById(R.id.text_hero_power_sum);
 
-            row_hero_spec_unique = new View[6];
-            text_hero_spec_unique = new AppCompatTextView[6];
-            text_hero_spec_unique_val = new AppCompatTextView[6];
-            row_hero_spec_branch = new View[5];
+            //row_hero_spec_unique = new View[6];
+            text_hero_spec_unique_level = new AppCompatTextView[4];
+            text_hero_spec_unique = new AppCompatTextView[4];
+            text_hero_spec_unique_val = new AppCompatTextView[4];
+            //row_hero_spec_branch = new View[5];
+            text_hero_spec_branch_level = new AppCompatTextView[5];
             text_hero_spec_branch = new AppCompatTextView[5];
             text_hero_spec_branch_val = new AppCompatTextView[5];
             text_spec_score_total = itemView.findViewById(R.id.text_spec_score_total);
@@ -172,10 +182,9 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
 
             text_hero_lineage = itemView.findViewById(R.id.text_hero_lineage);
 
-            for(int i = 0; i < 6; i++ ) {
-                if( i < 5) {
-                    row_hero_grade[i] = itemView.findViewById(resources.getIdentifier
-                            (R_ROW_HERO_HRADE + (i + 1), ID_STR, packageName));
+            for(int i = 0; i < 5; i++ ) {
+                    text_hero_grade_star[i] = itemView.findViewById(resources.getIdentifier
+                            (R_TEXT_HERO_GRADE_STAR + (i + 1), ID_STR, packageName));
                     text_hero_grade_cost[i] = itemView.findViewById(resources.getIdentifier
                             ( R_TEXT_HERO_GRADE_COST + (i + 1), ID_STR, packageName));
 
@@ -191,17 +200,17 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                     text_hero_power[i] = itemView.findViewById(resources.getIdentifier
                             ( R_TEXT_HERO_POWER + (i + 1), ID_STR, packageName));
 
-                    row_hero_spec_branch[i] = itemView.findViewById(resources.getIdentifier
-                            ( R_ROW_HERO_SPEC_BRANCH + (i + 1), ID_STR, packageName));
+                    text_hero_spec_branch_level[i] = itemView.findViewById(resources.getIdentifier
+                            ( R_TEXT_HERO_SEPC_BRANCH_LEVEL + (i + 1), ID_STR, packageName));
                     text_hero_spec_branch[i] = itemView.findViewById(resources.getIdentifier
                             ( R_TEXT_HERO_SEPC_BRANCH + (i + 1), ID_STR, packageName));
                     text_hero_spec_branch_val[i] = itemView.findViewById(resources.getIdentifier
                             ( R_TEXT_HERO_SEPC_BRANCH_VAL + (i + 1), ID_STR, packageName));
-                }
+
 
                 if( i < 4 ) {
-                    row_hero_spec_unique[i] = itemView.findViewById(resources.getIdentifier
-                            (R_ROW_HERO_SPEC_UNIQUE + (i + 1), ID_STR, packageName));
+                    text_hero_spec_unique_level[i] = itemView.findViewById(resources.getIdentifier
+                            (R_TEXT_HERO_SEPC_UNIQUE_LEVEL + (i + 1), ID_STR, packageName));
                     text_hero_spec_unique[i] = itemView.findViewById(resources.getIdentifier
                             (R_TEXT_HERO_SEPC_UNIQUE + (i + 1), ID_STR, packageName));
                     text_hero_spec_unique_val[i] = itemView.findViewById(resources.getIdentifier
@@ -239,14 +248,15 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                 branchStatGGs = branch.getBranchStatGGs();
                 branchGrades = branch.getBranchGrade();
             }
-            for(int i = 0; i < 6; i ++ ) {
-                if( i < 5 ) {
+            for(int i = 0; i < 5; i ++ ) {
                     int plus_cost = COST_PLUS_BY_UPGRADE[i];
                     text_hero_grade_cost[i].setText(String.valueOf(cost_init + plus_cost));
                     if(i == heroGrade - 1 ) {
-                        row_hero_grade[i].setBackgroundResource(R.drawable.rect_checked);
+                        text_hero_grade_star[i].setTextColor(color_text_checked);
+                        text_hero_grade_cost[i].setTextColor(color_text_checked);
                     } else {
-                        row_hero_grade[i].setBackgroundResource(0);
+                        text_hero_grade_star[i].setTextColor(color_text_unchecked);
+                        text_hero_grade_cost[i].setTextColor(color_text_unchecked);
                     }
                     RealmInteger heroStat = heroStats.get(i);
                     String heroPlusStatStr = "";
@@ -295,16 +305,18 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                             }
                         }
                     }
-                    int bgResourceNumber = 0;
+                    int color_text = color_text_unchecked;
                     if( checkedSpecsIndexes != null ) {
                         if( checkedSpecsIndexes.contains(i)) {
-                            bgResourceNumber = R.drawable.rect_checked;
+                            color_text = color_text_checked;
                         }
                     }
-                    row_hero_spec_branch[i].setBackgroundResource(bgResourceNumber);
+
+                    text_hero_spec_branch_level[i].setTextColor(color_text);
                     text_hero_spec_branch[i].setText(branchSpecStr);
+                    text_hero_spec_branch[i].setTextColor(color_text);
                     text_hero_spec_branch_val[i].setText(branchSpecValStr);
-                } // end if ( i < 5 )
+                    text_hero_spec_branch_val[i].setTextColor(color_text);
                 if( i < 4 ) {
                     RealmString heroSpec = heroSpecs.get(i);
                     String heroSpecStr = "";
@@ -312,26 +324,26 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                     if (heroSpec != null) {
                         heroSpecStr = heroSpec.toString();
 
-
-                        // 5 ~ 8
-                        int bgResourceNumber = 0;
-                        if (checkedSpecsIndexes != null) {
-                            if (checkedSpecsIndexes.contains(i + 5)) {
-                                bgResourceNumber = R.drawable.rect_checked;
-                            }
-                        }
-                        row_hero_spec_unique[i].setBackgroundResource(bgResourceNumber);
-
                         RealmString heroSpecVal = heroSpecVals.get(i);
                         if (heroSpecVal != null) {
                             heroSpecValStr = heroSpecVal.toString();
                         }
-
                     }
+
+                    int color_text_unique = color_text_unchecked;
+                    if (checkedSpecsIndexes != null) {
+                        if (checkedSpecsIndexes.contains(i + 5)) {
+                            color_text_unique = color_text_checked;
+                        }
+                    }
+
+                    text_hero_spec_unique_level[i].setTextColor(color_text_unique);
                     text_hero_spec_unique[i].setText(heroSpecStr);
+                    text_hero_spec_unique[i].setTextColor(color_text_unique);
                     text_hero_spec_unique_val[i].setText(heroSpecValStr);
-                }
-            } // end for (i < 6 )
+                    text_hero_spec_unique_val[i].setTextColor(color_text_unique);
+                } // end if i < 4
+            }  // end for i < 5
 
             text_hero_stat_sum.setText(String.valueOf(heroSim.getHeroPlusStatSum()));
             text_hero_stat_sum_total.setText(String.valueOf(heroGrade * 100));
@@ -340,7 +352,9 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             String branchGradeStr = hero.getHeroBranch();
             if( branchGrades != null ) {
                 RealmString branchGrade = branchGrades.get(heroGrade - 1);
-                branchGradeStr = branchGrade.toString();
+                if(branchGrade != null ) {
+                    branchGradeStr = branchGrade.toString();
+                }
             }
             text_hero_grade.setText(branchGradeStr);
             image_spec_arrow.setImageResource(R.drawable.ic_arrow_downward_white_24dp);

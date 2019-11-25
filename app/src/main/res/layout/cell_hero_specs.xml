@@ -32,6 +32,7 @@
                 android:layout_height="20dp"
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_hero_spec_unique_level4"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -60,6 +61,7 @@
                 android:layout_height="20dp"
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_hero_spec_unique_level3"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -88,6 +90,7 @@
                 android:layout_height="20dp"
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_hero_spec_unique_level2"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -116,6 +119,7 @@
         android:orientation="horizontal"
         >
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_spec_unique_level1"
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -144,6 +148,7 @@
                 android:layout_height="20dp"
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_hero_spec_branch_level5"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -170,6 +175,7 @@
                 android:layout_height="20dp"
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_hero_spec_branch_level4"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -197,6 +203,7 @@
                 android:layout_height="20dp"
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_hero_spec_branch_level3"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -225,6 +232,7 @@
                 android:layout_height="20dp"
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_hero_spec_branch_level2"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -253,6 +261,7 @@
                 android:layout_height="20dp"
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_hero_spec_branch_level1"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:gravity="center"

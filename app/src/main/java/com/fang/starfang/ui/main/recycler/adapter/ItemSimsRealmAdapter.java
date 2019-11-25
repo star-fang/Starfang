@@ -76,19 +76,21 @@ public class ItemSimsRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, Recy
 
         private void bind(ItemSim itemSim) {
             Item item = itemSim.getItem();
-            text_cell_title_item_grade.setText(item.getItemGrade());
-            button_cell_item_name.setText(item.getItemName());
+            if(item != null) {
+                text_cell_title_item_grade.setText(item.getItemGrade());
+                button_cell_item_name.setText(item.getItemName());
 
-            itemView.setOnFocusChangeListener((view, b) -> {
-                if(b) {
-                    item_sim_selected = itemSim;
-                    text_info.setText(item.toString());
-                    text_desc.setText(item.getitemDescription());
-                    Log.d(TAG, "focused : " + itemSim.getItemID() );
-                }
+                itemView.setOnFocusChangeListener((view, b) -> {
+                    if (b) {
+                        item_sim_selected = itemSim;
+                        text_info.setText(item.toString());
+                        text_desc.setText(item.getitemDescription());
+                        Log.d(TAG, "focused : " + itemSim.getItemID());
+                    }
 
 
-            });
+                });
+            }
         }
     }
 

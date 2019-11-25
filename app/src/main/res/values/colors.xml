@@ -13,5 +13,7 @@
     <color name="colorStat3">#0000FF</color>
     <color name="colorStat4">#FFF300</color>
     <color name="colorStat5">#800080</color>
+    <color name="colorCheckedText">#FD5696</color>
+    <color name="colorUnCheckedText">#C0C0C0</color>
 
 </resources>

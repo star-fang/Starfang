@@ -1,5 +1,8 @@
 package com.fang.starfang.local.model.realm.source;
 
+import com.fang.starfang.local.model.realm.primitive.RealmString;
+
+import io.realm.RealmList;
 import io.realm.RealmObject;
 
 public class ItemCate extends RealmObject {
@@ -10,8 +13,12 @@ public class ItemCate extends RealmObject {
     private String itemSubCate;
     private String itemMainCate;
     private String itemRestriction;
+    private RealmList<RealmString> itemReinforcementTypes;
 
     public String getItemSubCate() {return itemSubCate;}
     public String getItemMainCate() {return itemMainCate;}
     public String getItemRestriction() {return itemRestriction;}
+    public RealmList<RealmString> getItemReinforcementTypes() {
+        return itemReinforcementTypes;
+    }
 }

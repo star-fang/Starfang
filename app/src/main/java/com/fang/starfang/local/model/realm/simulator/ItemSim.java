@@ -39,9 +39,6 @@ public class ItemSim extends RealmObject {
         return itemID;
     }
 
-    public Item getItem() {
-        return item;
-    }
 
     public int getItemNo() {
         return itemNo;
@@ -61,5 +58,13 @@ public class ItemSim extends RealmObject {
 
     public void setHeroWhoHasThis(Heroes heroWhoHasThis) {
         this.heroWhoHasThis = heroWhoHasThis;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 }

@@ -152,11 +152,11 @@
     <string name="spec_score">효과 점수</string>
     <string name="spec_kor">효과</string>
 
-    <string name="one">1</string>
-    <string name="two">2</string>
-    <string name="three">3</string>
-    <string name="four">4</string>
-    <string name="five">5</string>
+    <string name="grade_one">★1</string>
+    <string name="grade_two">★2</string>
+    <string name="grade_three">★3</string>
+    <string name="grade_four">★4</string>
+    <string name="grade_five">★5</string>
 
     <string name="branch_grade_kor">승급</string>
     <string name="grade_kor">단계</string>

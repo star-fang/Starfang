@@ -21,6 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
+import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Agenda;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Destiny;
@@ -285,11 +286,24 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                                     item.setItemNameNoBlank(item.getItemName().replace(" ",""));
                                     realm.copyToRealm(item);
                             }
+
+                            for(ItemSim itemSim : realm.where(ItemSim.class).findAll()) {
+                                Item item = realm.where(Item.class).equalTo(Item.FIELD_NO, itemSim.getItemNo()).findFirst();
+                                if( item != null) {
+                                    itemSim.setItem(item);
+                                } else {
+                                    itemSim.deleteFromRealm();
+                                }
+                            }
                             Log.d(TAG, "SYNC Item REALM COMPLETE!");
                             break;
                         case ItemCate.PREF_TABLE:
                             realm.delete(ItemCate.class);
-                            realm.createAllFromJson(ItemCate.class, jsonArray);
+                            for(int i = 0; i < jsonArray.length(); i++ ) {
+                                String json = jsonArray.get(i).toString();
+                                ItemCate itemCate = gson.fromJson(json,ItemCate.class);
+                                realm.copyToRealm(itemCate);
+                            }
                             Log.d(TAG, "SYNC ItemCate REALM COMPLETE!");
                             break;
                         case ItemReinforcement.PREF_TABLE:
@@ -424,20 +438,23 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         if(values[1].equals("")) {
             progress_layout.addView(row_progress);
             currentProgressView = new WeakReference<>(row_progress);
-
+            ScrollView scroll_progress = scroll_progress_list.get();
+            int innerHeight = progress_layout.getHeight();
+            int scrollHeight = scroll_progress.getHeight();
+            int scrollY = innerHeight - scrollHeight;
+            if( scrollY > 0 ) {
+                Log.d(TAG, "scroll to : " + scrollY );
+                scroll_progress.smoothScrollTo( 0 , scrollY );
+            }
         } else {
             progress_layout.removeView(currentProgressView.get());
             progressBar.setVisibility(View.INVISIBLE);
             progress_layout.addView(row_progress);
         }
 
-        ScrollView scroll_progress = scroll_progress_list.get();
-        View last_child = scroll_progress.getChildAt(scroll_progress.getChildCount() - 1 );
-        int bottom = last_child.getBottom() + scroll_progress.getPaddingBottom();
-        //int sy = scroll_progress.getScrollY();
-        //int sh = scroll_progress.getHeight();
-        //int delta = bottom - (sy + sh);
-        scroll_progress.scrollTo( 0 , bottom );
+
+
+
 
     }
 

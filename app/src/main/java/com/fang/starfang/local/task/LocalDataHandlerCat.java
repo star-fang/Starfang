@@ -28,6 +28,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.mozilla.javascript.Scriptable;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,9 +74,16 @@ class LocalDataHandlerCat {
     private static final String DASH = "-";
     private static final String COMMA = ",";
     private static final String SEPARATOR = "----------------------------\n";
+    private static final String STAR_FILLED = "★";
+    private static final String STAR_EMPTY = "☆";
+    private static final String COLON = ":";
     private static final String RANGE_EMPTY = "□";
     private static final String RANGE_FULL = "■";
     private static final String RIGHT_ARROW = "→";
+    private static final String BRANCH_GRADE_KOR = "승급";
+    private static final String GRADE_KOR = "단계";
+    private static final String SLASH = "/";
+    private static final String PLUS = "+";
 
     LocalDataHandlerCat(Context context, String sendCat, String catRoom) {
         this.context = new WeakReference<>(context);
@@ -364,10 +372,9 @@ class LocalDataHandlerCat {
                 ArrayList<String> specList = new ArrayList<>();
                 while( !rQueue.isEmpty()) {
                     String each = rQueue.remove();
-                    String validBranchName = findBranchName( each, realm );
-                    if( validBranchName != null ) {
-                        qBranch = validBranchName;
-                        //Log.d(TAG,"Branch: " + qBranch);
+                    Branch branch = findBranchByName( each, realm );
+                    if( branch != null ) {
+                        qBranch = branch.getBranchName();
                     } else {
                         String validLineageName = findLineageName( each, realm );
                         if( validLineageName != null ) {
@@ -620,7 +627,7 @@ class LocalDataHandlerCat {
                         String itemSpecTwo = null;
 
                         lambdaResult.append("[").append(item.getItemSubCate()).append("] ").append(item.getItemName()).append(" (")
-                                .append(item.getItemGrade()).append(")").append(CRLF).append(item.getitemDescription());
+                                .append(STAR_FILLED).append(item.getItemGrade()).append(")").append(CRLF).append(item.getitemDescription());
 
                         try {
                             RealmString tmpItemSpec = item.getItemSpecs().get(0);
@@ -678,9 +685,15 @@ class LocalDataHandlerCat {
 
             // 병종 정보 검색 : 수군 설명냥
             HandleLocalDB descByBranch = ( q -> {
-
                 if(q.replace(BLANK,EMPTY).isEmpty())
                     return null;
+
+                int grade = NumberUtils.toInt(q.replaceAll("[^0-9]", EMPTY),0);
+                boolean gradeDecisive = grade > 0 && grade < 6;
+                grade = !gradeDecisive ? 5 : grade;
+                if(gradeDecisive) {
+                    q = q.replaceAll("[0-9]",EMPTY).replace(GRADE_KOR,EMPTY).replace(BRANCH_GRADE_KOR,BLANK);
+                }
 
                 LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(BLANK)));
 
@@ -688,68 +701,95 @@ class LocalDataHandlerCat {
                 while(!rQueue.isEmpty()) {
                     String probBranch = rQueue.remove();
                     if (!probBranch.isEmpty()) {
-                        RealmResults<Branch> branchResult = realm.where(Branch.class).contains(Branch.FIELD_NAME, probBranch).or()
-                                .contains(Branch.FIELD_NAME2, probBranch).findAll();
-                    if (branchResult.isEmpty()) return null;
-                    for (Branch branch : branchResult) {
-                        lambdaResult.append(branch.getBranchName()).append(CRLF);
+                        Branch branch = findBranchByName(probBranch, realm);
+                    if ( branch != null ) {
                         RealmList<RealmString> brachGrades = branch.getBranchGrade();
-
-                        if(brachGrades != null ) {
-                            int branchGradeSize = brachGrades.size();
-                            for(int i = 0; i < branchGradeSize; i++ ) {
-                                RealmString branchGrade = brachGrades.get(i);
-                                if(branchGrade != null ) {
-                                    lambdaResult.append(branchGrade.toString()).
-                                            append(i < branchGradeSize - 1 ? RIGHT_ARROW : EMPTY);
-                                }
+                        String branchGradeNameStr = "";
+                        if( brachGrades!=null && gradeDecisive) {
+                            RealmString branchGradeName = brachGrades.get(grade-1);
+                            if( branchGradeName != null) {
+                                branchGradeNameStr =  branchGradeName.toString();
                             }
-                            lambdaResult.append(CRLF);
                         }
+                            lambdaResult.append(gradeDecisive? STAR_FILLED + grade + BLANK : EMPTY)
+                                    .append(branch.getBranchName()).append(BLANK)
+                                    .append(gradeDecisive?  DASH + BLANK + branchGradeNameStr : EMPTY).append(CRLF);
+                            for (int i = 0; i < Branch.INIT_STATS.length; i++)
+                                lambdaResult.append(Branch.INIT_STATS[i])
+                                        .append(branch.getBranchStatGGs()
+                                                .get(i)).append(BLANK);
 
-                        for (int i = 0; i < Branch.INIT_STATS.length; i++)
-                            lambdaResult.append(Branch.INIT_STATS[i])
-                                    .append(branch.getBranchStatGGs()
-                                            .get(i)).append(BLANK);
+                            lambdaResult.append(CRLF).append(branch.getBranchOtherStats());
 
-                        lambdaResult.append(CRLF).append(branch.getBranchOtherStats());
-
-                        lambdaResult.append("*부대 효과").append(CRLF);
-                        for (int i = 0; i < Branch.NUM_PASVS; i++) {
-                            lambdaResult.append("승급").append(branch.getBranchPasvSpecGrades().get(i)).append(": ").append(branch.getBranchPasvSpecs().get(i));
-                            RealmString BranchPasvSpecValueRealmString = branch.getBranchPasvSpecValues().get(i);
-                            if( BranchPasvSpecValueRealmString != null ) {
-                                String val = BranchPasvSpecValueRealmString.toString();
-                                String valLast = val;
-                                if( val.contains("/")) {
-                                    // 3/5/7%
-                                    // [3/5/7]
-                                    String[] valSplit = val.split("/");
-                                    valLast = valSplit[valSplit.length-1];
-                                    if(val.contains("[")) {
-                                        valLast = "[" + valLast;
+                            lambdaResult.append("*부대 효과(").append(grade).append("차 승급 기준)").append(CRLF);
+                            int specFiltered = 0;
+                            for (int i = 0; i < Branch.NUM_PASVS; i++) {
+                                RealmInteger branchPasvSpecGrade = branch.getBranchPasvSpecGrades().get(i);
+                                if (branchPasvSpecGrade != null) {
+                                   if( grade >= branchPasvSpecGrade.toInt() ) {
+                                       specFiltered += 1;
+                                        lambdaResult.append(BLANK).append("   ").append(BRANCH_GRADE_KOR).append(branchPasvSpecGrade)
+                                                .append(COLON).append(BLANK).append(branch.getBranchPasvSpecs().get(i));
+                                        RealmString BranchPasvSpecValueRealmString = branch.getBranchPasvSpecValues().get(i);
+                                        if (BranchPasvSpecValueRealmString != null) {
+                                            String val = BranchPasvSpecValueRealmString.toString();
+                                            String valCur = val;
+                                            if (val.contains(SLASH)) {
+                                                // 3/5/7%
+                                                // [3/5/7]
+                                                String[] valSplit = val.split(SLASH);
+                                                try {
+                                                    valCur = valSplit[grade - branchPasvSpecGrade.toInt()]
+                                                            .replaceAll("[^0-9]", BLANK);
+                                                } catch (ArrayIndexOutOfBoundsException e) {
+                                                    Log.d(TAG, e.toString());
+                                                }
+                                                if (val.contains("[")) {
+                                                    valCur = "[" + valCur + "]";
+                                                } else if (val.contains("%")) {
+                                                    valCur = valCur + "%";
+                                                }
+                                            }
+                                            lambdaResult.append(BLANK).append(valCur);
+                                        }
+                                        lambdaResult.append(CRLF);
                                     }
                                 }
-                                lambdaResult.append(BLANK).append(valLast);
                             }
-                            lambdaResult.append(CRLF);
-                        }
+                            if( specFiltered == 0) {
+                                lambdaResult.append("   적용되는 효과 없음\r\n");
+                            }
+                            lambdaResult.append("*장수 효과").append(CRLF);
+                            for (Branch.INIT_SPECS spec : Branch.INIT_SPECS.values()) {
+                                lambdaResult.append(BLANK).append("   ").append(spec.name()).append(COLON)
+                                        .append(BLANK).append(branch.getBranchSpecs().get(spec.ordinal()));
+                                RealmString branchSpecValuesRealmString = branch.getBranchSpecValues().get(spec.ordinal());
+                                if (branchSpecValuesRealmString != null) {
+                                    lambdaResult.append(BLANK).append(branchSpecValuesRealmString.toString());
+                                }
+                                lambdaResult.append(CRLF);
+                            }
 
-                        lambdaResult.append("*장수 효과").append(CRLF);
-                        for (Branch.INIT_SPECS spec : Branch.INIT_SPECS.values()) {
-                            lambdaResult.append(spec.name()).append(": ").append(branch.getBranchSpecs().get(spec.ordinal()));
-                            RealmString BranchSpecValuesRealmString = branch.getBranchSpecValues().get(spec.ordinal());
-                            if( BranchSpecValuesRealmString != null) {
-                                String val = BranchSpecValuesRealmString.toString();
-                                lambdaResult.append(BLANK).append(val);
-                            }
-                            lambdaResult.append(CRLF);
-                        }
-                        lambdaResult.append(COMMA).append(CRLF);
-                    }
+
+                            if (brachGrades != null && !gradeDecisive) {
+                                lambdaResult.append("*승급 단계").append(CRLF);
+                                int branchGradeSize = brachGrades.size();
+                                for (int i = 0; i < branchGradeSize; i++) {
+                                    RealmString branchGrade = brachGrades.get(i);
+                                    lambdaResult.append(BLANK).append("   ")
+                                            .append(STAR_FILLED).append(i + 1).append(COLON);
+                                    if (branchGrade != null) {
+                                        lambdaResult.append(BLANK).append(branchGrade.toString());
+                                    }
+                                    lambdaResult.append(CRLF);
+                                } // end for
+                            } // end if(brachGrades != null)
+
+                            lambdaResult.append(COMMA).append(CRLF);
+                    } // end if branch != null
                 }
 
-                }
+                } // end while
                 return lambdaResult.toString();} );
 
             // 지형 정보 검색 : 노전차 지형냥
@@ -768,9 +808,9 @@ class LocalDataHandlerCat {
 
                 String key1 = rQueue.remove();
 
-                String validBranchName = findBranchName(key1, realm);
-                boolean firstKeyIsBranch = (validBranchName != null);
-                key1 = firstKeyIsBranch? validBranchName : key1;
+                Branch validBranch = findBranchByName(key1, realm);
+                boolean firstKeyIsBranch = (validBranch != null);
+                key1 = firstKeyIsBranch? validBranch.getBranchName() : key1;
 
                 if( rQueue.isEmpty() ) {  // key가 하나뿐
                     if( firstKeyIsBranch ) {
@@ -786,7 +826,7 @@ class LocalDataHandlerCat {
 
                         for(TVpair pair : isTerCMD ? terrain.getTerrainSyns(): terrain.getMovingCost()) {
 
-                            lambdaResult.append(pair.getPaddTvTerrainName(4)).append(":")
+                            lambdaResult.append(pair.getPaddTvTerrainName(4)).append(COLON)
                                     .append(pair.getPaddTvValue(isTerCMD?3:1));
                             lambdaResult.append((iForCRLF++)%2==0? BLANK+BLANK:CRLF);
                         }
@@ -805,7 +845,7 @@ class LocalDataHandlerCat {
                             for(TVpair pair : tvs) {
                                 if( pair.getTvTerrainName().contains(key1) ) {
                                     lambdaResult.append(terrain.getPaddBranchName(4))
-                                            .append(":").append(pair.getPaddTvValue(isTerCMD? 3:1));
+                                            .append(COLON).append(pair.getPaddTvValue(isTerCMD? 3:1));
                                     terrainIsValid = true;
                                     break;
                                 }
@@ -825,7 +865,7 @@ class LocalDataHandlerCat {
                     lambdaResult.append(branchKey).append(BLANK).append(terrainKey)
                             .append(PRFX_COMMAND[finalCertainCMD.ordinal()])
                             .append(COMMAND_CERTAIN[finalCertainCMD.ordinal()])
-                            .append(SFX_COMMAND[finalCertainCMD.ordinal()]).append(": ");
+                            .append(SFX_COMMAND[finalCertainCMD.ordinal()]).append(COLON).append(BLANK);
                     boolean terrainIsValid = false;
                     for(TVpair pair : isTerCMD ? terrain.getTerrainSyns(): terrain.getMovingCost()) {
                         if( pair.getTvTerrainName().contains(terrainKey) ) {
@@ -860,7 +900,7 @@ class LocalDataHandlerCat {
                         for( Heroes hero : heroes ) {
                             String desName = hero.getHeroDestiny();
                             if( desName != null )
-                                for( String desNameEach : desName.split(":"))
+                                for( String desNameEach : desName.split(COLON))
                                     map_destiny.put(desNameEach, 1);
                         }
                     }
@@ -890,7 +930,7 @@ class LocalDataHandlerCat {
                         try {
                             lambdaResult.append(Destiny.INIT_LASTING_EFFECT).append(destiny.getDesLastingEffect()).append(CRLF);
                             for( String effect :  destiny.getdesJoinEffect()) {
-                                    String[] effectSplit = effect.split(":");
+                                    String[] effectSplit = effect.split(COLON);
                                     lambdaResult.append(effectSplit[0]).append(NumberUtils.isDigits(effectSplit[0]) ? "명 이상 출진: "
                                             : "시 발동: ").append(effectSplit[1]).append(BLANK).append(effectSplit[2]).append(CRLF);
                             }
@@ -916,7 +956,7 @@ class LocalDataHandlerCat {
                 String reinfOrGRD = q.replaceAll("[^0-9]",EMPTY);
                 q = q.replaceAll("[0-9]",EMPTY);
 
-                String[] ignores= {"강","등급","+","성"};
+                String[] ignores= {"강","등급",PLUS,"성"};
                 ArrayList<String> ignoreList = new ArrayList<>(Arrays.asList(ignores));
                 LinkedList<String> qList = new LinkedList<>(Arrays.asList(q.split(BLANK)));
                 ArrayList<String> nsList = new ArrayList<>();
@@ -962,28 +1002,37 @@ class LocalDataHandlerCat {
                 RealmResults<Item> itemsByName = nameOrSpec.length() < 2? itemQuery.and().alwaysFalse().findAll() :
                         itemQuery.and().contains(Item.FIELD_NAME_NO_BLANK,nameOrSpec).findAll();
                 if(!itemsByName.isEmpty()) {
-
                     Log.d(TAG,"Item Search type A");
                     for (Item item : itemsByName) {
-                        lambdaResult.append("[").append(item.getItemSubCate()).append("]").append(BLANK)
-                                .append(item.getItemName()).append(BLANK).append("(").
-                                append(item.getItemGrade()).append(")").append(CRLF);
+                        Reinforcement reinforcement = new Reinforcement(realm, item);
+                        StringBuilder builderForStat = new StringBuilder();
+                        String reinfStr = "";
                         for (int i = 0; i < Item.INIT_STATS.length; i++) {
                             RealmInteger itemStatRealmInteger = item.getItemStats().get(i);
                             int baseStat = itemStatRealmInteger == null? 0 : itemStatRealmInteger.toInt();
 
                             int plusStat = 0;
                             if( !reinfOrGRD.isEmpty() ) {
-                                plusStat = Reinforcement.getInstance().reinforce(item,i,reinfOrGRD);
+                                int reinfVal = NumberUtils.toInt(reinfOrGRD,0);
+                                plusStat = reinforcement.reinforce(i,reinfVal);
                                 baseStat += plusStat;
+                                if( plusStat > 0 ) {
+                                    reinfStr = PLUS + reinfVal + BLANK;
+                                }
                             }
 
                             String stat = baseStat == 0 ? null : plusStat == 0 ? ( baseStat + "" ) : baseStat + " (+" + plusStat + ")" ;
-
-
-                            if(stat != null)
-                                lambdaResult.append(Item.INIT_STATS[i]).append(": ").append(stat).append(CRLF);
+                            if(stat != null) {
+                                builderForStat.append(Item.INIT_STATS[i]).append(COLON).append(BLANK).append(stat).append(CRLF);
+                            }
                         }
+
+                        Log.d(TAG,builderForStat.toString());
+
+                        lambdaResult.append("[").append(item.getItemSubCate()).append("]").append(BLANK).append(reinfStr)
+                                .append(item.getItemName()).append(BLANK).append("(").
+                                append(STAR_FILLED).append(item.getItemGrade()).append(")").append(CRLF);
+                        lambdaResult.append(builderForStat.toString());
                         String restriction = item.getItemRestriction();
                         if(restriction == null )  {
                             ItemCate sub_cate = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_SUB_CATE,item.getItemSubCate()).findFirst();
@@ -997,14 +1046,20 @@ class LocalDataHandlerCat {
                         }
 
                         for (int i = 0; i < item.getItemSpecValues().size(); i++) {
-                            String itemSpec = item.getItemSpecs().get(i).toString();
-                            if(!itemSpec.isEmpty())
-                                lambdaResult.append("*").append(itemSpec).append(BLANK)
-                                        .append(item.getItemSpecValues().get(i).toString().replace(DASH,EMPTY)).append(CRLF);
+                            RealmString itemSpec = item.getItemSpecs().get(i);
+                            if( itemSpec != null ) {
+                                String itemSpecStr = itemSpec.toString();
+                                if (!itemSpecStr.isEmpty()) {
+                                    lambdaResult.append("*").append(itemSpec);
+                                    RealmString itemSpecValue = item.getItemSpecValues().get(i);
+                                    if( itemSpecValue != null ) {
+                                        lambdaResult.append(BLANK).append(itemSpecValue.toString().replace(DASH, EMPTY));
+                                    }
+                                    lambdaResult.append(CRLF);
+                                }
+                            }
                         }
-
                         lambdaResult.append(COMMA);
-
                     }
                 } else {
 
@@ -1035,7 +1090,7 @@ class LocalDataHandlerCat {
                             lambdaResult.append("[").append(item.getItemSubCate()).append("]").append(BLANK)
                                     .append(item.getItemName()).append(BLANK);
                             if( reinfOrGRD.isEmpty() )
-                                lambdaResult.append("(").append(item.getItemGrade()).append(")");
+                                lambdaResult.append("(").append(STAR_FILLED).append(item.getItemGrade()).append(")");
                             lambdaResult.append(CRLF);
                         }
 
@@ -1065,7 +1120,7 @@ class LocalDataHandlerCat {
                                     lambdaResult.append("[").append(item.getItemSubCate()).append("]").append(BLANK)
                                             .append(item.getItemName()).append(BLANK);
                                     if( reinfOrGRD.isEmpty() )
-                                        lambdaResult.append("(").append(item.getItemGrade()).append(")");
+                                        lambdaResult.append("(").append(STAR_FILLED).append(item.getItemGrade()).append(")");
                                     lambdaResult.append(CRLF);
                                 }
                                 lambdaResult.append(COMMA);
@@ -1096,8 +1151,12 @@ class LocalDataHandlerCat {
                                 .contains(Branch.FIELD_NAME,probBranch).findAll() : branches;
                         if(branches.isEmpty())
                             return "그런 병종 없다옹";
-                        else
-                            branchList.add(branches.first().getBranchName());
+                        else {
+                            Branch branch = branches.first();
+                            if( branch != null ) {
+                                branchList.add(branch.getBranchName());
+                            }
+                        }
                     }
                 }
 
@@ -1115,12 +1174,19 @@ class LocalDataHandlerCat {
                             .equalTo(Relation.FIELD_ATTACKER, branchName2).and()
                             .equalTo(Relation.FIELD_DEFENDER, branchName1).findFirst();
 
-                    lambdaResult.append(String.format("%-4s", attackRelation.getBranchAttacker()).replace(' ', '　')).append(" → ")
-                            .append(String.format("%-4s", attackRelation.getBranchDefender()).replace(' ', '　')).append(": ")
-                            .append(attackRelation.getRelationValue()).append(CRLF);
-                    lambdaResult.append(String.format("%-4s", defenseRelation.getBranchAttacker()).replace(' ', '　')).append(" → ")
-                            .append(String.format("%-4s", defenseRelation.getBranchDefender()).replace(' ', '　')).append(": ")
-                            .append(defenseRelation.getRelationValue()).append(CRLF);
+                    if( attackRelation != null ) {
+                        lambdaResult.append(String.format("%-4s", attackRelation.getBranchAttacker()).replace(' ', '　'))
+                                .append(BLANK).append(RIGHT_ARROW).append(BLANK)
+                                .append(String.format("%-4s", attackRelation.getBranchDefender()).replace(' ', '　')).append(COLON).append(BLANK)
+                                .append(attackRelation.getRelationValue()).append(CRLF);
+                    }
+
+                    if( defenseRelation != null ) {
+                        lambdaResult.append(String.format("%-4s", defenseRelation.getBranchAttacker()).replace(' ', '　'))
+                                .append(BLANK).append(RIGHT_ARROW).append(BLANK)
+                                .append(String.format("%-4s", defenseRelation.getBranchDefender()).replace(' ', '　')).append(COLON).append(BLANK)
+                                .append(defenseRelation.getRelationValue()).append(CRLF);
+                    }
 
                 } else if (branchList.size() == 1) {
                     String branchName = branchList.get(0);
@@ -1135,11 +1201,13 @@ class LocalDataHandlerCat {
                         Relation attack = attackRelations.get(i);
                         Relation defense = defenseRelations.get(i);
 
-                        if( attack.getBranchDefender().equals(defense.getBranchAttacker()))
-                            lambdaResult.append(String.format("%-4s", attack.getBranchDefender())
-                                    .replace(' ', '　')).append(BLANK)
-                                    .append(attack.getRelationValue()).append("　　")
-                                    .append(defense.getRelationValue()).append(CRLF);
+                        if( attack != null  && defense != null ) {
+                            if (attack.getBranchDefender().equals(defense.getBranchAttacker()))
+                                lambdaResult.append(String.format("%-4s", attack.getBranchDefender())
+                                        .replace(' ', '　')).append(BLANK)
+                                        .append(attack.getRelationValue()).append("　　")
+                                        .append(defense.getRelationValue()).append(CRLF);
+                        }
                     }
 
                 } else {
@@ -1236,9 +1304,10 @@ class LocalDataHandlerCat {
                                     .append(prfxName.getPrefixSpec()).append(")").append(CRLF)
                                     .append(prfxName.getPrefixStat()).append(BLANK).append(statValue);
                             try {
-                                for (int i = 0; i < 5; i++)
-                                    lambdaResult.append(CRLF).append("Lv.").append((i + 1)).append(":  ")
+                                for (int i = 0; i < 5; i++) {
+                                    lambdaResult.append(CRLF).append("Lv.").append((i + 1)).append(COLON).append(BLANK).append(BLANK)
                                             .append((prfxName.getPrefixValue().get(i) * (double) statValue / 200.0));
+                                }
                             } catch( NullPointerException ignore ) {}
                             lambdaResult.append(COMMA);
                         }
@@ -1336,7 +1405,7 @@ class LocalDataHandlerCat {
                     return "그런 보패 조합 없다냥...";
                 }
 
-                lambdaResult.append("보패 조합 검색 결과: " + combinations.size() + "개").append(CRLF)
+                lambdaResult.append("보패 조합 검색 결과: ").append(combinations.size()).append("개").append(CRLF)
                         .append(SEPARATOR);
 
                 for( MagicItemCombination combination : combinations ) {
@@ -1413,7 +1482,7 @@ class LocalDataHandlerCat {
 
                         Log.d(TAG,type.getMagicSkillType());
                         RealmResults<Magic> magics = realm.where(Magic.class).equalTo(Magic.FIELD_TYPE, type.getMagicSkillType()).findAll();
-                        lambdaResult.append("*[" + type.getMagicSkillType() + "]속성 책략" + CRLF);
+                        lambdaResult.append("*[").append(type.getMagicSkillType()).append("]속성 책략").append(CRLF);
                         lambdaResult.append("검색 결과: ").append(magics.size()).append("개")
                                 .append(CRLF).append(SEPARATOR);
                         for (Magic magic : magics) {
@@ -1439,29 +1508,24 @@ class LocalDataHandlerCat {
                 if (q.isEmpty())
                     return null;
 
-
-                q = findBranchName(q, realm);
-
-                if( q == null)
+                Branch branch = findBranchByName(q, realm);
+                if( branch == null) {
                     return null;
+                }
 
                 StringBuilder lambdaResult = new StringBuilder();
 
-                lambdaResult.append("*").append(q).append("계 책략").append(CRLF).append(SEPARATOR);
+                lambdaResult.append("*").append(branch.getBranchName()).append("계 책략").append(CRLF).append(SEPARATOR);
 
 
+                        if (branch.getBranchMagic().equals("-")) return "책략 없음";
 
-                try {
-                    Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_NAME, q).findFirst();
-                    if (branch.getBranchMagic().equals("-")) return "책략 없음";
-
-                    for(String each : branch.getBranchMagic().split(":")) {
-                        Magic magic = realm.where(Magic.class).equalTo(Magic.FIELD_NAME, each).findFirst();
-                        lambdaResult.append("[").append(magic.getMagicSkillType()).append("] ").append(magic.getMagicName()).append(CRLF);
-                    }
-                } catch (NullPointerException ignore) {
-                }
-
+                        for (String each : branch.getBranchMagic().split(COLON)) {
+                            Magic magic = realm.where(Magic.class).equalTo(Magic.FIELD_NAME, each).findFirst();
+                            if( magic != null ) {
+                                lambdaResult.append("[").append(magic.getMagicSkillType()).append("]").append(BLANK).append(magic.getMagicName()).append(CRLF);
+                            }
+                        } // end for
 
                 return lambdaResult.toString();
 
@@ -1722,20 +1786,16 @@ class LocalDataHandlerCat {
         String handle(String req);
     }
 
-    private String findBranchName( String proBranch, Realm realm ) {
+    private Branch findBranchByName( String proBranch, Realm realm ) {
         if(proBranch.isEmpty()||proBranch.length()<2) return null;
-        String branchName = null;
+        Branch branch = null;
         RealmResults<Branch> branches = realm.where(Branch.class).contains(Branch.FIELD_NAME,proBranch)
                 .or().contains(Branch.FIELD_NAME2,proBranch).findAll();
-
         if( !branches.isEmpty() ) {
-            Branch branch = branches.size() > 1 ? realm.where(Branch.class).equalTo(Branch.FIELD_NAME, proBranch)
+            branch = branches.size() > 1 ? branches.where().equalTo(Branch.FIELD_NAME, proBranch)
                     .or().contains(Branch.FIELD_NAME2, proBranch).findFirst() : branches.first();
-            if(branch != null ) {
-                branchName = branch.getBranchName();
-            }
         }
-        return branchName;
+        return branch;
     }
 
     private String findLineageName( String probLineage, Realm realm ) {

@@ -8,7 +8,6 @@
     android:background="@drawable/end_border_gray_1dp">
 
     <LinearLayout
-        android:id="@+id/row_hero_grade1"
         android:layout_width="match_parent"
         android:layout_height="18dp"
         android:layout_marginBottom="2dp"
@@ -16,10 +15,11 @@
         android:weightSum="2"
         >
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_star1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/one"
+            android:text="@string/grade_one"
             android:layout_weight="1"/>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -33,7 +33,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/row_hero_grade2"
         android:layout_width="match_parent"
         android:layout_height="18dp"
         android:layout_marginBottom="2dp"
@@ -41,10 +40,11 @@
         android:weightSum="2"
         >
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_star2"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/two"
+            android:text="@string/grade_two"
             android:layout_weight="1"/>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -58,7 +58,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/row_hero_grade3"
         android:layout_width="match_parent"
         android:layout_height="18dp"
         android:layout_marginBottom="2dp"
@@ -66,10 +65,11 @@
         android:weightSum="2"
         >
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_star3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/three"
+            android:text="@string/grade_three"
             android:layout_weight="1"/>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -84,7 +84,6 @@
 
 
     <LinearLayout
-        android:id="@+id/row_hero_grade4"
         android:layout_width="match_parent"
         android:layout_height="18dp"
         android:layout_marginBottom="2dp"
@@ -92,10 +91,11 @@
         android:weightSum="2"
         >
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_star4"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/four"
+            android:text="@string/grade_four"
             android:layout_weight="1"/>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -109,7 +109,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/row_hero_grade5"
         android:layout_width="match_parent"
         android:layout_height="18dp"
         android:layout_marginBottom="2dp"
@@ -117,10 +116,11 @@
         android:weightSum="2"
         >
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_hero_grade_star5"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/five"
+            android:text="@string/grade_five"
             android:layout_weight="1"/>
 
         <androidx.appcompat.widget.AppCompatTextView
