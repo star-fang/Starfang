@@ -62,17 +62,17 @@ public class ItemsFragment extends PlaceholderFragment {
             }
         });
 
-        RecyclerView recycler_view_items_fixed = view.findViewById(R.id.recycler_view_items_fixed);
-        RecyclerView recycler_view_items_floating = view.findViewById(R.id.recycler_view_items_floating);
+        final RecyclerView recycler_view_items_fixed = view.findViewById(R.id.recycler_view_items_fixed);
+        final RecyclerView recycler_view_items_floating = view.findViewById(R.id.recycler_view_items_floating);
         recycler_view_items_fixed.setLayoutManager(new LinearLayoutManager(mActivity));
         recycler_view_items_floating.setLayoutManager(new LinearLayoutManager(mActivity));
-        DiagonalScrollRecyclerView recycler_view_items_content = view.findViewById(R.id.recycler_view_items_content);
+        final DiagonalScrollRecyclerView recycler_view_items_content = view.findViewById(R.id.recycler_view_items_content);
         recycler_view_items_content.setRecyclerView(recycler_view_items_floating);
 
-        ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = new ItemSimsFixedRealmAdapter(realm);
+        final ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = new ItemSimsFixedRealmAdapter(realm);
         recycler_view_items_fixed.setAdapter(itemSimsFixedRealmAdapter);
 
-        ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = new ItemSimsFloatingRealmAdapter(realm);
+        final ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = new ItemSimsFloatingRealmAdapter(realm,getFragmentManager());
         recycler_view_items_floating.setAdapter(itemSimsFloatingRealmAdapter);
 
 

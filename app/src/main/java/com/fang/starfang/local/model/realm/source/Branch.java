@@ -13,6 +13,8 @@ public class Branch extends RealmObject {
     public static final String FIELD_NAME = "branchName";
     public static final String FIELD_NAME2 = "branchName2";
     public static final String FIELD_GRADE = "branchGrade";
+    public static final String FIELD_CATE_WEAPON = "branchWeaponSubCate";
+    public static final String FIELD_CATE_ARMOR = "branchArmorSubCate";
     public static final String[] INIT_STATS = {"공","정","방","순","사"};
     public static final int NUM_PASVS = 3;
     //public static final String[] INIT_PASVS = {"승급2","승급3","승급4"};

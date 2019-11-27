@@ -75,6 +75,11 @@
         <item>@string/stat5</item>
     </string-array>
 
+    <string-array name="option_sort_cost">
+        <item>현재</item>
+        <item>최종</item>
+    </string-array>
+
     <string-array name="option_sort_power">
         <item>@string/sum_kor</item>
         <item>@string/power1</item>
@@ -219,4 +224,9 @@
     <string name="cancel_kor">취소</string>
     <string name="setting">SETTING</string>
     <string name="chat">CHAT</string>
+    <string name="sort_kor">정렬</string>
+    <string name="spec_reinforce_level6">LV 6 강화 효과</string>
+    <string name="spec_reinforce_level12">LV 12 강화 효과</string>
+    <string name="hero_who_has_item">착용 장수</string>
+    <string name="reinforcement_kor">강화</string>
 </resources>

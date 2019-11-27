@@ -744,7 +744,7 @@ class LocalDataHandlerCat {
                                                 String[] valSplit = val.split(SLASH);
                                                 try {
                                                     valCur = valSplit[grade - branchPasvSpecGrade.toInt()]
-                                                            .replaceAll("[^0-9]", BLANK);
+                                                            .replaceAll("[^0-9]", BLANK).trim();
                                                 } catch (ArrayIndexOutOfBoundsException e) {
                                                     Log.d(TAG, e.toString());
                                                 }

@@ -150,7 +150,7 @@
             android:layout_height="match_parent"
             android:maxLines="1"
             android:layout_centerVertical="true"
-            android:icon="@drawable/ic_info_black_24dp"
+            android:icon="@drawable/ic_info_white_24dp"
             android:padding="10dp"
             android:text="@string/host_address_1"
             android:visibility="gone"/>

@@ -1,15 +1,15 @@
 package com.fang.starfang.ui.main.Fragment;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -92,34 +92,25 @@ public class HeroesFragment extends PlaceholderFragment {
         recycler_view_hero_floating.addOnScrollListener(heroRecyclerViewLiteners[0]);
         recycler_view_hero_fixed.addOnScrollListener(heroRecyclerViewLiteners[1]);
 
-        final  View table_header_name = child_sim.findViewById(R.id.table_header_name);
+        final AppCompatButton button_sort_hero = child_sim.findViewById(R.id.button_sort_hero);
+        final AppCompatEditText simulation_et_search = child_sim.findViewById(R.id.simulation_et_search);
+        final AppCompatButton button_search_hero = child_sim.findViewById(R.id.button_search_hero);
 
-        final AppCompatButton simulataion_hero_spinner = child_sim.findViewById(R.id.button_filter_hero);
-        //ArrayAdapter searchOptionAdapter = ArrayAdapter.createFromResource(mActivity,
-          //      R.array.option_search_heroes, android.R.layout.simple_spinner_dropdown_item);
-        //simulataion_hero_spinner.setAdapter(searchOptionAdapter);
+        button_sort_hero.setOnClickListener( v-> {
 
-        final EditText simulation_et_search = child_sim.findViewById(R.id.simulation_et_search);
+        });
 
-        final Button button_search_hero = child_sim.findViewById(R.id.button_search_hero);
         button_search_hero.setOnClickListener( v-> {
-            String cs = simulation_et_search.getText().toString();
+            Editable cs_editable = simulation_et_search.getText();
+            if( cs_editable != null ) {
+            String cs = cs_editable.toString();
             HeroSimFilter floatingFilter = (HeroSimFilter)heroesFloatingRecyclerAdapter.getFilter();
             floatingFilter.filter(cs);
 
             HeroSimFilter fixedFilter = (HeroSimFilter)heroesFixedRecyclerAdapter.getFilter();
             fixedFilter.filter(cs);
+            }
         });
-
-
-
-
-
-
-
-
-
-
 
 
         return child_sim;

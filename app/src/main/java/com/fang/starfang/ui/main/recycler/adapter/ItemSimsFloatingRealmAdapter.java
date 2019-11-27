@@ -8,13 +8,15 @@ import android.widget.CheckedTextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Heroes;
-import com.fang.starfang.local.model.realm.source.Item;
+import com.fang.starfang.ui.main.dialog.PickHeroDialogFragment;
+
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
@@ -23,6 +25,9 @@ public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemS
     private static final String TAG = "FANG_ADAPTER_ITEM_FLOAT";
 
     private static ItemSimsFloatingRealmAdapter instance = null;
+
+    private FragmentManager fragmentManager;
+
 
     public static ItemSimsFloatingRealmAdapter getInstance() {
         return instance;
@@ -45,10 +50,10 @@ public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemS
     }
 
 
-    public ItemSimsFloatingRealmAdapter(Realm realm) {
+    public ItemSimsFloatingRealmAdapter(Realm realm, FragmentManager fragmentManager) {
         super(realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF), false);
+        this.fragmentManager = fragmentManager;
         instance = this;
-
         Log.d(TAG, "constructed");
     }
 
@@ -96,6 +101,8 @@ public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemS
             text_item_spec_grade_val6.setText(specGradeVal6 == null ? "" : specGradeVal6);
             text_item_spec_grade12.setText(specGrade12 == null ? "" : specGrade12);
             text_item_spec_grade_val12.setText(specGradeVal12 == null ? "" : specGradeVal12);
+
+            text_item_hero_name.setOnClickListener( v -> PickHeroDialogFragment.newInstance(itemSim.getItemID()).show(fragmentManager,TAG));
         }
     }
 

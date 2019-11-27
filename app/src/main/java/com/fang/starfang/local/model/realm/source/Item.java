@@ -40,6 +40,7 @@ public class Item extends RealmObject {
     public RealmList<RealmString> getItemSpecValues() {return itemSpecValues;}
     public void setItemNameNoBlank(String itemNameNoBlank) {this.itemNameNoBlank=itemNameNoBlank;}
 
+
     public int getItemNo() {
         return itemNo;
     }

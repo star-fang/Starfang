@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 xmlns:tools="http://schemas.android.com/tools">
@@ -44,11 +43,50 @@ xmlns:tools="http://schemas.android.com/tools">
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_items_fixed"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/row_items_fixed"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/right_border_black_2dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@drawable/bottom_border_black_2dp"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginEnd="2dp"
+                        android:gravity="center"
+                        android:text="@string/reinforcement_kor"
+                        android:textSize="15sp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginEnd="2dp"
+                        android:gravity="center"
+                        android:text="@string/name_kor"
+                        android:textSize="15sp" />
+
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_items_fixed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/row_items_fixed"/>
+            </LinearLayout>
+
+
 
         <com.fang.starfang.ui.main.recycler.custom.DiagonalScrollRecyclerView
             android:id="@+id/recycler_view_items_content"
@@ -59,6 +97,43 @@ xmlns:tools="http://schemas.android.com/tools">
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/bottom_border_black_2dp"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_marginStart="5dp"
+                        android:layout_width="130dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/hero_who_has_item"
+                        android:layout_marginBottom="2dp"
+                        android:background="@drawable/end_border_gray_1dp"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="150dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/spec_reinforce_level6"
+                        android:textSize="15sp"
+                        android:layout_marginBottom="2dp"
+                        android:background="@drawable/end_border_gray_1dp"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="150dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/spec_reinforce_level12"
+                        android:textSize="15sp"
+                        android:layout_marginBottom="2dp"
+                        android:background="@drawable/end_border_gray_1dp"/>
+
+
+                </LinearLayout>
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

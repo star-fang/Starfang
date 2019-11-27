@@ -50,6 +50,10 @@ public class ItemFilter extends Filter {
             }
             query.endGroup();
         }
+
+        if( !csSplit[2].equals("전체")) {
+            query.and().equalTo(Item.FIELD_SUB_CATE,csSplit[2]);
+        }
         adapter.updateData(query.findAll().sort(Item.FIELD_SUB_CATE));
     }
 }
