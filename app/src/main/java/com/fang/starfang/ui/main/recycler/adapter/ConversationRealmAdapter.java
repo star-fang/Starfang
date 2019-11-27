@@ -23,8 +23,13 @@ public class ConversationRealmAdapter
         extends RealmRecyclerViewAdapter<Conversation, RecyclerView.ViewHolder>
         implements Filterable {
 
-    private static final String TAG = "FANG_ADAPTER_CONVERSATION";
+    private static final String TAG = "FANG_ADAPTER_CONV";
     private Realm realm;
+    private static ConversationRealmAdapter instance = null;
+
+    public static ConversationRealmAdapter getInstance() {
+        return instance;
+    }
 
     @NonNull
     @Override
@@ -48,6 +53,7 @@ public class ConversationRealmAdapter
         super(realm.where(Conversation.class).findAll(),true);
         Log.d(TAG,"constructed");
         this.realm = realm;
+        instance = this;
     }
 
 

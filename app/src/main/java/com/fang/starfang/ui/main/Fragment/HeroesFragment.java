@@ -58,15 +58,13 @@ public class HeroesFragment extends PlaceholderFragment {
         final RecyclerView recycler_view_hero_floating = child_sim.findViewById(R.id.recycler_view_hero_floating);
         final HeroesFloatingRealmAdapter heroesFloatingRecyclerAdapter = new HeroesFloatingRealmAdapter(realm,mActivity);
         final HeroesFixedRealmAdapter heroesFixedRecyclerAdapter = new HeroesFixedRealmAdapter(realm, getFragmentManager());
-        final LinearLayoutManager layoutManager_fixed = new LinearLayoutManager(mActivity);
-        final LinearLayoutManager layoutManager_floating = new LinearLayoutManager(mActivity);
         final DiagonalScrollRecyclerView recycler_view_hero_content = child_sim.findViewById(R.id.recycler_view_hero_content);
 
-        recycler_view_hero_floating.setLayoutManager(layoutManager_floating);
+        recycler_view_hero_floating.setLayoutManager(new LinearLayoutManager(mActivity));
         recycler_view_hero_floating.setAdapter(heroesFloatingRecyclerAdapter);
         recycler_view_hero_content.setRecyclerView(recycler_view_hero_floating);
 
-        recycler_view_hero_fixed.setLayoutManager(layoutManager_fixed);
+        recycler_view_hero_fixed.setLayoutManager(new LinearLayoutManager(mActivity));
         recycler_view_hero_fixed.setAdapter(heroesFixedRecyclerAdapter);
 
         final RecyclerView.OnScrollListener[] heroRecyclerViewLiteners =

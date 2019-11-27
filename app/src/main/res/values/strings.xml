@@ -101,11 +101,10 @@
     <string name="sync_kor">동기화</string>
     <string name="sync_host">SYNC HOST</string>
     <string name="filter_kor">필터</string>
-    <string name="filter_send_cat">작성자</string>
-    <string name="filter_room">단톡방</string>
-    <string name="filter_time">기간</string>
-    <string name="filter_conversation">단어</string>
-    <string name="filter_package">메신저</string>
+    <string name="filter_send_cat">작성자 필터</string>
+    <string name="filter_room">단톡방 필터</string>
+    <string name="filter_time">기간 필터</string>
+    <string name="filter_conversation">단어 필터</string>
     <string name="submit">SUBMIT</string>
     <string name="search">SEARCH</string>
     <string name="desc_filter_sendCat">작성자 필터: 필터링할 작성자를 선택하세요.</string>
@@ -218,4 +217,6 @@
     <string name="modify_kor">변경</string>
     <string name="create_kor">생성</string>
     <string name="cancel_kor">취소</string>
+    <string name="setting">SETTING</string>
+    <string name="chat">CHAT</string>
 </resources>

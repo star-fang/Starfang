@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/inner_column_filter_room"
+        android:animateLayoutChanges="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000">
+
+        <LinearLayout
+            android:id="@+id/layout_header_dialog_filter_room"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bottom_border_gray_1dp"
+            >
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_filter_room_count"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="#FFF"
+                android:textSize="18sp"
+                android:gravity="center"
+                tools:text="3"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:maxLines="1"
+                android:textColor="#FFF"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:text="@string/room_count_holder"/>
+
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background = "#FFFFFF">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_filter_room_count_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:maxLines="1"
+                    android:textColor="#000"
+                    android:textSize="14sp"
+                    android:gravity="center"/>
+
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_filter_room"
+        android:layout_below="@id/layout_header_dialog_filter_room"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/row_items_floating"
+        tools:itemCount="10"
+        android:fadeScrollbars="false"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/design_default_color_primary"
+            android:backgroundTint="@color/design_default_color_primary_dark"
+            android:gravity="center"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:layout_alignParentBottom="true"
+            android:text="@string/desc_filter_room"
+            android:textColor="@android:color/background_light"
+            android:maxLines="1"
+            android:textSize="12sp" />
+
+    </RelativeLayout>

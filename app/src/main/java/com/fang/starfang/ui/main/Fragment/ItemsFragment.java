@@ -8,15 +8,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
-import com.fang.starfang.ui.main.recycler.adapter.ItemSimsRealmAdapter;
-import com.fang.starfang.util.ScreenUtils;
+import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFixedRealmAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFloatingRealmAdapter;
+import com.fang.starfang.ui.main.recycler.custom.DiagonalScrollRecyclerView;
 
 import io.realm.Realm;
 
@@ -62,12 +62,45 @@ public class ItemsFragment extends PlaceholderFragment {
             }
         });
 
-        AppCompatTextView text_item_info = view.findViewById(R.id.text_item_info);
-        AppCompatTextView text_item_desc = view.findViewById(R.id.text_item_desc);
-        RecyclerView recycler_view_items = view.findViewById(R.id.recycler_view_items);
-        recycler_view_items.setLayoutManager(new GridLayoutManager(mActivity, ScreenUtils.calculateNoOfColumns(mActivity,80.0)));
-        ItemSimsRealmAdapter itemSimsRealmAdapter = new ItemSimsRealmAdapter(realm, text_item_info, text_item_desc);
-        recycler_view_items.setAdapter(itemSimsRealmAdapter);
+        RecyclerView recycler_view_items_fixed = view.findViewById(R.id.recycler_view_items_fixed);
+        RecyclerView recycler_view_items_floating = view.findViewById(R.id.recycler_view_items_floating);
+        recycler_view_items_fixed.setLayoutManager(new LinearLayoutManager(mActivity));
+        recycler_view_items_floating.setLayoutManager(new LinearLayoutManager(mActivity));
+        DiagonalScrollRecyclerView recycler_view_items_content = view.findViewById(R.id.recycler_view_items_content);
+        recycler_view_items_content.setRecyclerView(recycler_view_items_floating);
+
+        ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = new ItemSimsFixedRealmAdapter(realm);
+        recycler_view_items_fixed.setAdapter(itemSimsFixedRealmAdapter);
+
+        ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = new ItemSimsFloatingRealmAdapter(realm);
+        recycler_view_items_floating.setAdapter(itemSimsFloatingRealmAdapter);
+
+
+        final RecyclerView.OnScrollListener[] itemRecyclerViewListeners =
+                new RecyclerView.OnScrollListener[2];
+        itemRecyclerViewListeners[0] = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                recycler_view_items_fixed.removeOnScrollListener(itemRecyclerViewListeners[1]);
+                recycler_view_items_fixed.scrollBy(0,dy);
+                recycler_view_items_fixed.addOnScrollListener(itemRecyclerViewListeners[1]);
+            }
+        };
+
+        itemRecyclerViewListeners[1] = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                recycler_view_items_floating.removeOnScrollListener(itemRecyclerViewListeners[0]);
+                recycler_view_items_floating.scrollBy(0,dy);
+                recycler_view_items_floating.addOnScrollListener(itemRecyclerViewListeners[0]);
+            }
+        };
+
+        recycler_view_items_floating.addOnScrollListener(itemRecyclerViewListeners[0]);
+        recycler_view_items_fixed.addOnScrollListener(itemRecyclerViewListeners[1]);
+
 
         return view;
 

@@ -26,7 +26,7 @@
             android:layout_height="50dp"
             android:orientation="horizontal"
             android:background="#30000000"
-            android:weightSum="2">
+            android:weightSum="3">
 
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spinner_item_grade"
@@ -35,7 +35,13 @@
                 android:layout_height="match_parent" />
 
             <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinner_item_category"
+                android:id="@+id/spinner_item_category_main"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinner_item_category_sub"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent" />

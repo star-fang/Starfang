@@ -22,7 +22,7 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-import com.fang.starfang.ui.main.recycler.adapter.ItemSimsRealmAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFixedRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.ItemsRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 
@@ -74,7 +74,7 @@ public class AddItemDialogFragment extends DialogFragment {
         recycler_view_all_items.setAdapter(itemsRealmAdapter);
 
         final AppCompatSpinner spinner_item_grade = view.findViewById(R.id.spinner_item_grade);
-        final AppCompatSpinner spinner_item_category = view.findViewById(R.id.spinner_item_category);
+        final AppCompatSpinner spinner_item_category_main = view.findViewById(R.id.spinner_item_category_main);
 
         RealmResults<Item> grades = realm.where(Item.class).distinct(Item.FIELD_GRD).findAll();
         List<String> gradeList = new ArrayList<>();
@@ -98,14 +98,14 @@ public class AddItemDialogFragment extends DialogFragment {
                 mActivity,
         android.R.layout.simple_spinner_dropdown_item, categoryList);
 
-        spinner_item_category.setAdapter(cateAdapter);
+        spinner_item_category_main.setAdapter(cateAdapter);
 
         spinner_item_grade.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         String selected_grade = spinner_item_grade.getItemAtPosition(position).toString();
-                        String selected_category = spinner_item_category.getSelectedItem().toString();
+                        String selected_category = spinner_item_category_main.getSelectedItem().toString();
                         itemsRealmAdapter.getFilter().filter(selected_grade + "," + selected_category );
                         Log.d(TAG,"grade selected :" + selected_grade);
                     }
@@ -117,11 +117,11 @@ public class AddItemDialogFragment extends DialogFragment {
                 });
 
 
-        spinner_item_category.setOnItemSelectedListener(
+        spinner_item_category_main.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String selected_category = spinner_item_category.getItemAtPosition(position).toString();
+                        String selected_category = spinner_item_category_main.getItemAtPosition(position).toString();
                         String selected_grade = spinner_item_grade.getSelectedItem().toString();
                         itemsRealmAdapter.getFilter().filter(selected_grade + "," + selected_category );
                         Log.d(TAG,"category selected :" + selected_category);
@@ -143,7 +143,7 @@ public class AddItemDialogFragment extends DialogFragment {
                     realm.copyToRealm(itemSim);
                     realm.commitTransaction();
                     Log.d(TAG,"copy to realm : success");
-                    ItemSimsRealmAdapter itemSimsRealmAdapter = ItemSimsRealmAdapter.getInstance();
+                    ItemSimsFixedRealmAdapter itemSimsRealmAdapter = ItemSimsFixedRealmAdapter.getInstance();
                     if( itemSimsRealmAdapter != null ) {
                         itemSimsRealmAdapter.notifyDataSetChanged();
                     }

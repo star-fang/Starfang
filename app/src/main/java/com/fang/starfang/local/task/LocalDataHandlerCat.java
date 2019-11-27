@@ -690,19 +690,23 @@ class LocalDataHandlerCat {
 
                 int grade = NumberUtils.toInt(q.replaceAll("[^0-9]", EMPTY),0);
                 boolean gradeDecisive = grade > 0 && grade < 6;
+
                 grade = !gradeDecisive ? 5 : grade;
+                q = q.replaceAll("[0-9]",EMPTY);
                 if(gradeDecisive) {
-                    q = q.replaceAll("[0-9]",EMPTY).replace(GRADE_KOR,EMPTY).replace(BRANCH_GRADE_KOR,BLANK);
+                    q = q.replace(GRADE_KOR,EMPTY).replace(BRANCH_GRADE_KOR,BLANK);
                 }
 
                 LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(BLANK)));
 
                 StringBuilder lambdaResult = new StringBuilder();
+                boolean branchDecisive = false;
                 while(!rQueue.isEmpty()) {
                     String probBranch = rQueue.remove();
                     if (!probBranch.isEmpty()) {
                         Branch branch = findBranchByName(probBranch, realm);
                     if ( branch != null ) {
+                        branchDecisive = true;
                         RealmList<RealmString> brachGrades = branch.getBranchGrade();
                         String branchGradeNameStr = "";
                         if( brachGrades!=null && gradeDecisive) {
@@ -788,9 +792,11 @@ class LocalDataHandlerCat {
                             lambdaResult.append(COMMA).append(CRLF);
                     } // end if branch != null
                 }
-
                 } // end while
-                return lambdaResult.toString();} );
+
+
+                return branchDecisive ? lambdaResult.toString() : null;
+            } );
 
             // 지형 정보 검색 : 노전차 지형냥
             COMMAND_CERTAIN_ENUM finalCertainCMD = certainCMD;

@@ -13,16 +13,19 @@ import io.realm.RealmResults;
 
 public class ConversationFilter extends Filter {
 
-    //private static final String TAG = "FANG_FILTER";
+    public static ConversationFilter instance = null;
     private final ConversationRealmAdapter adapter;
     private Realm realm;
 
+    public static ConversationFilter getInstance() {
+        return instance;
+    }
 
     public ConversationFilter(ConversationRealmAdapter adapter, Realm realm) {
         super();
         this.adapter = adapter;
         this.realm = realm;
-        //conversationFilterObject = new ConversationFilterObject();
+        instance = this;
     }
 
 

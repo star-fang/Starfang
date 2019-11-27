@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_item_filter_send_cat"
+        android:title="@string/filter_send_cat"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        />
+
+    <item
+        android:id="@+id/menu_item_filter_room"
+        android:title="@string/filter_room"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_group_black_24dp"
+        />
+
+    <item
+        android:id="@+id/menu_item_filter_time"
+        android:title="@string/filter_time"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_access_time_black_24dp"
+        />
+
+    <item
+        android:id="@+id/menu_item_filter_word"
+        android:title="@string/filter_conversation"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_search_black_24dp"
+        />
+</menu>

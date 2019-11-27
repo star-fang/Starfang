@@ -5,7 +5,9 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 
@@ -16,6 +18,32 @@ public class ScreenUtils {
                 context.getResources().getDisplayMetrics());
     }
 
+    public static void changeLayouWeight(View view, float weight) {
+
+        try {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+            if (weight >= 0) {
+                params.weight = weight;
+            }
+
+            view.setLayoutParams(params);
+        } catch (ClassCastException ignored) {
+        }
+    }
+
+    public static void changeLayoutSize(View view, int width, int height) {
+
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        if(width > -5 ) {
+            params.width = width;
+        }
+
+        if(height >= -5 ) {
+            params.height = height;
+        }
+
+        view.setLayoutParams(params);
+    }
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager =
