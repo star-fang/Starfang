@@ -229,4 +229,5 @@
     <string name="spec_reinforce_level12">LV 12 강화 효과</string>
     <string name="hero_who_has_item">착용 장수</string>
     <string name="reinforcement_kor">강화</string>
+    <string name="description_kor">설명</string>
 </resources>

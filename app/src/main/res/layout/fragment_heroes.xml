@@ -156,7 +156,7 @@
                         android:background="@drawable/end_border_gray_1dp"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="180dp"
+                        android:layout_width="205dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="@string/item_kor"

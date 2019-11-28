@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="30dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_dialog_reinforce_cell_power_name"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        tools:text="공격력"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_dialog_reinforce_cell_power_init"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        tools:text="124"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/plus"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_dialog_reinforce_cell_power_plus"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        tools:text="156"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/equals"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_dialog_reinforce_cell_power_fin"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        tools:text="280"/>
+</LinearLayout>

@@ -127,20 +127,42 @@ public class PickHeroDialogFragment extends DialogFragment {
                     recycler_view_pick_hero.setLayoutManager(new LinearLayoutManager(mActivity));
                     recycler_view_pick_hero.setAdapter(pickHeroRealmAdapter);
 
-                    builder.setView(view).setPositiveButton("착용", (dialog, whick) -> {
-                        Heroes hero_seleced = pickHeroRealmAdapter.getSelectedHero();
-                        if (hero_seleced != null) {
-                            HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, hero_seleced.getHeroNo()).findFirst();
+                    builder.setView(view).setPositiveButton("착용", (dialog, which) -> {
+                        Heroes hero_selected = pickHeroRealmAdapter.getSelectedHero();
+                        if (hero_selected != null) {
+                            HeroSim hero_before = itemSim.getHeroWhoHasThis();
+                            HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, hero_selected.getHeroNo()).findFirst();
                             if (heroSim != null) {
                                 realm.beginTransaction();
                                 switch(itemCate.getItemMainCate()) {
                                     case "무기" :
+                                        if(hero_before != null ) {
+                                            hero_before.setHeroWeapon(null);
+                                        }
+                                        ItemSim weapon_before = heroSim.getHeroWeapon();
+                                        if(weapon_before != null ) {
+                                            weapon_before.setHeroWhoHasThis(null);
+                                        }
                                         heroSim.setHeroWeapon(itemSim);
                                         break;
                                     case "방어구" :
+                                        if(hero_before != null ) {
+                                            hero_before.setHeroArmor(null);
+                                        }
+                                        ItemSim armor_before = heroSim.getHeroArmor();
+                                        if(armor_before != null ) {
+                                            armor_before.setHeroWhoHasThis(null);
+                                        }
                                         heroSim.setHeroArmor(itemSim);
                                         break;
                                         default:
+                                            if(hero_before != null ) {
+                                                hero_before.setHeroAid(null);
+                                            }
+                                            ItemSim aid_before = heroSim.getHeroAid();
+                                            if(aid_before != null ) {
+                                                aid_before.setHeroWhoHasThis(null);
+                                            }
                                         heroSim.setHeroAid(itemSim);
                                 } // end switch
                                 itemSim.setHeroWhoHasThis(heroSim);

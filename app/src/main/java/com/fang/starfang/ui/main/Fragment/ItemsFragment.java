@@ -24,6 +24,7 @@ public class ItemsFragment extends PlaceholderFragment {
 
     private static final String TAG = "FANG_FRAG_ITEM";
     private Realm realm;
+    private FragmentManager fragmentManager;
 
     static ItemsFragment newInstance(int index) {
         ItemsFragment itemsFragment = new ItemsFragment();
@@ -36,6 +37,7 @@ public class ItemsFragment extends PlaceholderFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.fragmentManager = getFragmentManager();
         //Log.d(TAG,"_ON CREATE");
     }
 
@@ -69,10 +71,10 @@ public class ItemsFragment extends PlaceholderFragment {
         final DiagonalScrollRecyclerView recycler_view_items_content = view.findViewById(R.id.recycler_view_items_content);
         recycler_view_items_content.setRecyclerView(recycler_view_items_floating);
 
-        final ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = new ItemSimsFixedRealmAdapter(realm);
+        final ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = new ItemSimsFixedRealmAdapter(realm, fragmentManager);
         recycler_view_items_fixed.setAdapter(itemSimsFixedRealmAdapter);
 
-        final ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = new ItemSimsFloatingRealmAdapter(realm,getFragmentManager());
+        final ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = new ItemSimsFloatingRealmAdapter(realm, fragmentManager);
         recycler_view_items_floating.setAdapter(itemSimsFloatingRealmAdapter);
 
 

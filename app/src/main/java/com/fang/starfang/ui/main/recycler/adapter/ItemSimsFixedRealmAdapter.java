@@ -7,11 +7,14 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
+import com.fang.starfang.ui.main.dialog.ReinforceDialogFragment;
+
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
@@ -24,6 +27,8 @@ public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim,
     public static ItemSimsFixedRealmAdapter getInstance() {
         return instance;
     }
+
+    private FragmentManager fragmentManager;
 
     @NonNull
     @Override
@@ -42,10 +47,10 @@ public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim,
     }
 
 
-    public ItemSimsFixedRealmAdapter(Realm realm) {
+    public ItemSimsFixedRealmAdapter(Realm realm, FragmentManager fragmentManager) {
         super(realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF), false);
         instance = this;
-
+        this.fragmentManager = fragmentManager;
         Log.d(TAG, "constructed");
     }
 
@@ -73,6 +78,8 @@ public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim,
             }
             text_item_name.setText(itemName);
             text_item_reinforcement.setText(String.valueOf(itemSim.getItemReinforcement()));
+
+            itemView.setOnClickListener( v -> ReinforceDialogFragment.newInstance( itemSim.getItemID() ).show(fragmentManager,TAG));
         }
     }
 

@@ -3,92 +3,95 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="180dp"
+    android:layout_width="205dp"
     android:layout_height="match_parent"
     android:background="@drawable/end_border_gray_1dp"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal">
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp">
+
+        <LinearLayout
+            android:layout_width="65dp"
             android:layout_height="match_parent"
+            android:orientation="vertical">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
             android:gravity="center"
             android:text="@string/weapon"
-            android:textSize="13sp"
             />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_item_weapon_reinforcement"
-            android:layout_marginStart="2dp"
-            android:layout_width="25dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
             tools:text="+12"
             android:gravity="center" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_item_weapon_name"
-            android:layout_marginStart="2dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="12sp"
+            android:layout_height="45dp"
             tools:text="관우의 청룡언월도"
-            android:gravity="center_vertical"/>
+            android:gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="65dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:text="@string/shield"
+                />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_item_shield_reinforcement"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                tools:text="+9"
+                android:gravity="center" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_item_shield_name"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                tools:text="관우의 청동쇄자갑"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="65dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:text="@string/aid"
+                />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_item_aid_reinforcement"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                tools:text="+19"
+                android:gravity="center" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_item_aid_name"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                tools:text="관우의 적토마"
+                android:gravity="center"/>
+        </LinearLayout>
+
+
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal">
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:textSize="13sp"
-            android:gravity="center"
-            android:text="@string/shield"
-            />
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_item_shield_reinforcement"
-            android:layout_marginStart="2dp"
-            android:layout_width="25dp"
-            android:layout_height="match_parent"
-            tools:text="+9"
-            android:gravity="center" />
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_item_shield_name"
-            android:layout_marginStart="2dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:text="관우의 청동쇄자갑"
-            android:textSize="12sp"
-            android:gravity="center_vertical"/>
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal">
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:textSize="13sp"
-            android:gravity="center"
-            android:text="@string/aid"/>
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_item_aid_reinforcement"
-            android:layout_marginStart="2dp"
-            android:layout_width="25dp"
-            android:layout_height="match_parent"
-            tools:text="+15"
-            android:gravity="center" />
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_item_aid_name"
-            android:layout_marginStart="2dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:text="관우의 적토마"
-            android:textSize="12sp"
-            android:gravity="center_vertical"/>
-    </LinearLayout>
+
+
 
 </LinearLayout>

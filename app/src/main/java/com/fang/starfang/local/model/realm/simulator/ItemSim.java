@@ -4,6 +4,7 @@ import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Item;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import io.realm.RealmList;
@@ -24,6 +25,7 @@ public class ItemSim extends RealmObject {
     private int itemNo;
     private int itemReinforcement;
     private RealmList<RealmInteger> itemPlusPowers;
+    private RealmList<RealmInteger> itemPowers;
     private HeroSim heroWhoHasThis;
     private String specNameGrade6;
     private String specValueGrade6;
@@ -44,8 +46,12 @@ public class ItemSim extends RealmObject {
             this.itemReinforcement = 0;
             this.heroWhoHasThis = null;
             this.itemPlusPowers = new RealmList<>();
-            for( int i = 0; i < Heroes.INIT_STATS.length; i++ ) {
+            for(int i = 0; i < Heroes.INIT_STATS.length; i++ ) {
                 itemPlusPowers.add(new RealmInteger(0));
+            }
+            this.itemPowers = new RealmList<>();
+            for(int i = 0; i < Heroes.INIT_STATS.length; i++ ) {
+                itemPowers.add(new RealmInteger(0));
             }
             this.specNameGrade6 = null;
             this.specValueGrade6 = null;
@@ -140,4 +146,39 @@ public class ItemSim extends RealmObject {
     public void setSpecTwelveID(int specTwelveID) {
         this.specTwelveID = specTwelveID;
     }
+
+    public ArrayList<Integer> getItemPlusPowersList() {
+        ArrayList<Integer> powers = new ArrayList<>();
+        if(itemPlusPowers != null) {
+            for( RealmInteger power : itemPlusPowers) {
+                powers.add( power.toInt());
+            }
+        }
+        return powers;
+    }
+
+    public ArrayList<Integer> getItemPowersList() {
+        ArrayList<Integer> powers = new ArrayList<>();
+        if(itemPowers != null) {
+            for( RealmInteger power : itemPowers) {
+                powers.add( power.toInt());
+            }
+        }
+        return powers;
+    }
+
+    public void setItemPlusPowers(int power, int position) {
+        RealmInteger integerAtPosition = this.itemPlusPowers.get(position);
+        if( integerAtPosition != null ) {
+            integerAtPosition.setIntValue(power);
+        }
+    }
+
+    public void setItemPowers(int power, int position) {
+        RealmInteger integerAtPosition = this.itemPowers.get(position);
+        if( integerAtPosition != null ) {
+            integerAtPosition.setIntValue(power);
+        }
+    }
+
 }

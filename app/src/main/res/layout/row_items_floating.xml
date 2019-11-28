@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_centerInParent="true"
     android:layout_width="wrap_content"
-    android:layout_height="40dp"
+    android:layout_height="60dp"
     android:orientation="horizontal"
     android:layout_marginStart="5dp"
     android:background="@drawable/bottom_border_gray_1dp">
@@ -40,7 +40,7 @@
             android:layout_marginBottom="2dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_assignment_white_24dp"/>
+            android:src="@drawable/ic_mode_edit_white_24dp"/>
 
     </RelativeLayout>
 
