@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_centerInParent="true"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:layout_marginStart="5dp"
-        android:background="@drawable/bottom_border_gray_1dp"
-        android:gravity="center">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_centerInParent="true"
+    android:layout_width="75dp"
+    android:layout_height="75dp"
+    android:layout_marginStart="5dp"
+    android:background="@drawable/bottom_border_gray_1dp"
+    >
+
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/item_reinforcement_layout"
+            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="10dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/plus"
                 android:gravity="center"
@@ -23,7 +28,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_item_reinforcement"
-                android:layout_width="20dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="12"
                 android:gravity="center"
@@ -31,14 +36,32 @@
 
         </LinearLayout>
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_centerVertical="true"
+        android:id="@+id/text_item_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="관우의\n청룡언월도"
+        android:gravity="center"
+        android:textColor="#FFF"
+        />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_item_name"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            tools:text="관우의\n청룡언월도"
-            android:gravity="center"
-            android:textColor="#FFF"
-            />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="2dp"
+        android:gravity="center">
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/ic_assignment_white_24dp"/>
+
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_mode_edit_white_24dp"/>
     </LinearLayout>
+    </RelativeLayout>

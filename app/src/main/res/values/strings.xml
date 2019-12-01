@@ -17,6 +17,7 @@
         <item>보물</item>
         <item>보물 분류</item>
         <item>보물 강화</item>
+        <item>일반 보물</item>
         <item>보패 접두사</item>
         <item>보패 접미사</item>
         <item>보패 조합</item>
@@ -26,26 +27,6 @@
         <item>연합전 스킬</item>
         <item>연합전 능력</item>
         <item>일정</item>
-    </string-array>
-    <string-array name="pref_table_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>9</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-        <item>13</item>
-        <item>14</item>
-        <item>15</item>
-        <item>16</item>
-        <item>17</item>
     </string-array>
 
     <string-array name="option_sort_heroes">
@@ -230,4 +211,13 @@
     <string name="hero_who_has_item">착용 장수</string>
     <string name="reinforcement_kor">강화</string>
     <string name="description_kor">설명</string>
+    <string name="grade_item_kor">등급</string>
+    <string name="category_item_man">대분류</string>
+    <string name="category_item_sub">소분류</string>
+    <string name="reinforce_grade_kor">등급</string>
+    <string name="growth_rate_kor">성장률</string>
+    <string name="plus_stat_book_kor">교본</string>
+    <string name="release_kor">해제</string>
+    <string name="wear_kor">착용</string>
+    <string name="item_wear_or_release_kor">보물 착용/해제</string>
 </resources>

@@ -21,6 +21,7 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
+import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.recycler.filter.HeroSimFilter;
@@ -95,8 +96,11 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
 
         HeroSim heroSim = getItem(i);
         if( heroSim != null ) {
-            heroesViewHolder.bind(heroSim);
-
+            try {
+                heroesViewHolder.bind(heroSim);
+            } catch ( NullPointerException | ArrayIndexOutOfBoundsException e ) {
+                Log.d(TAG, e.toString() );
+            }
         }
     }
 
@@ -149,6 +153,13 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         private AppCompatButton button_spec_change_view;
         private AppCompatImageView image_spec_arrow;
 
+        private AppCompatTextView text_item_weapon_reinforcement;
+        private AppCompatTextView text_item_weapon_name;
+        private AppCompatTextView text_item_armor_reinforcement;
+        private AppCompatTextView text_item_armor_name;
+        private AppCompatTextView text_item_aid_reinforcement;
+        private AppCompatTextView text_item_aid_name;
+
         private AppCompatTextView text_hero_lineage;
 
         private HeroesFloatingViewHolder(View itemView) {
@@ -179,6 +190,13 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             scroll_hero_specs = itemView.findViewById(R.id.scroll_hero_specs);
             button_spec_change_view = itemView.findViewById(R.id.button_spec_change_view);
             image_spec_arrow = itemView.findViewById(R.id.image_spec_arrow);
+
+            text_item_weapon_reinforcement = itemView.findViewById(R.id.text_item_weapon_reinforcement);
+            text_item_weapon_name = itemView.findViewById(R.id.text_item_weapon_name);
+            text_item_armor_reinforcement = itemView.findViewById(R.id.text_item_armor_reinforcement);
+            text_item_armor_name = itemView.findViewById(R.id.text_item_armor_name);
+            text_item_aid_reinforcement = itemView.findViewById(R.id.text_item_aid_reinforcement);
+            text_item_aid_name = itemView.findViewById(R.id.text_item_aid_name);
 
             text_hero_lineage = itemView.findViewById(R.id.text_hero_lineage);
 
@@ -219,7 +237,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             }
         }
 
-        private void bind(final HeroSim heroSim ) {
+        private void bind(final HeroSim heroSim ) throws NullPointerException, ArrayIndexOutOfBoundsException {
 
             Heroes hero = heroSim.getHero();
             Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_ID,hero.getBranchNo()).findFirst();
@@ -359,7 +377,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             text_hero_grade.setText(branchGradeStr);
             image_spec_arrow.setImageResource(R.drawable.ic_arrow_downward_white_24dp);
             scroll_hero_specs.scrollTo(0,0);
-                    button_spec_change_view.setOnClickListener(v-> {
+            button_spec_change_view.setOnClickListener(v-> {
                         int currY = scroll_hero_specs.getScrollY();
                         int innerHeight = scroll_hero_specs.getChildAt(0).getHeight();
                         int scrollHeight = scroll_hero_specs.getHeight();
@@ -373,6 +391,25 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                             scroll_hero_specs.scrollTo( 0, 0);
                         }
                     });
+
+            ItemSim weapon = heroSim.getHeroWeapon();
+            ItemSim armor = heroSim.getHeroArmor();
+            ItemSim aid = heroSim.getHeroAid();
+
+            int weaponReinforce = weapon != null ? weapon.getItemReinforcement() : 0;
+            int armorReinforce = armor != null ? armor.getItemReinforcement() : 0;
+            int aidReinforce = aid != null ? aid.getItemReinforcement() : 0;
+
+            String weaponName = weapon != null ? weapon.getItem().getItemName() : "EMPTY";
+            String armorName = armor != null ? armor.getItem().getItemName() : "EMPTY";
+            String aidName = aid != null ? aid.getItem().getItemName() : "EMPTY";
+
+            text_item_weapon_reinforcement.setText( String.valueOf(weaponReinforce) );
+            text_item_weapon_name.setText( weaponName );
+            text_item_armor_reinforcement.setText( String.valueOf( armorReinforce ) );
+            text_item_armor_name.setText( armorName );
+            text_item_aid_reinforcement.setText( String.valueOf( aidReinforce ) );
+            text_item_aid_name.setText( aidName );
 
         } // end bind()
     }

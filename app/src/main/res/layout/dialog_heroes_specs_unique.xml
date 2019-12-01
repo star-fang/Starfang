@@ -12,7 +12,7 @@
         android:layout_height="25dp"
         android:gravity="center"
         android:text="@string/hero_spec_kor"
-        android:textSize="18sp"/>
+        android:textSize="20sp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_hero_grades"

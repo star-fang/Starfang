@@ -7,6 +7,14 @@
     android:background="#30000000"
     android:gravity="center"
     android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:text="@string/plus_stat_book_kor"
+        android:textSize="20sp"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"

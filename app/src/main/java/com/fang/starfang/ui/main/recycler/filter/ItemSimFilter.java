@@ -5,6 +5,7 @@ import android.widget.Filter;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
 import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
@@ -14,13 +15,13 @@ import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
 
-public class ItemFilter extends Filter {
+public class ItemSimFilter extends Filter {
 
-    private RealmRecyclerViewAdapter<Item, RecyclerView.ViewHolder> adapter;
+    private static final String TAG = "FANG_FILTER_ITEM_SIM";
+    private RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> adapter;
     private Realm realm;
-    private static final String TAG = "FANG_FILTER_ITEM";
 
-    public ItemFilter(RealmRecyclerViewAdapter<Item, RecyclerView.ViewHolder> adapter, Realm realm) {
+    public ItemSimFilter(RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> adapter, Realm realm) {
         super();
         this.adapter = adapter;
         this.realm = realm;
@@ -44,28 +45,28 @@ public class ItemFilter extends Filter {
 
         cs = cs.trim();
         String[] csSplit = cs.split(",");
-        RealmQuery<Item> query = realm.where(Item.class);
+        RealmQuery<ItemSim> query = realm.where(ItemSim.class);
 
         try {
             if (!csSplit[0].equals(AddItemDialogFragment.ALL_PICK_KOR)) {
-                query.equalTo(Item.FIELD_GRD, csSplit[0].replace(AddItemDialogFragment.GRADE_KOR, ""));
+                query.equalTo(ItemSim.FIELD_ITEM + "." + Item.FIELD_GRD, csSplit[0].replace(AddItemDialogFragment.GRADE_KOR, ""));
             }
 
             if (!csSplit[1].equals(AddItemDialogFragment.ALL_PICK_KOR)) {
                 query.and().beginGroup().alwaysFalse();
                 RealmResults<ItemCate> cates = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_MAIN_CATE, csSplit[1]).findAll();
                 for (ItemCate cate : cates) {
-                    query.or().equalTo(Item.FIELD_SUB_CATE, cate.getItemSubCate());
+                    query.or().equalTo(ItemSim.FIELD_ITEM + "." + Item.FIELD_SUB_CATE, cate.getItemSubCate());
                 }
                 query.endGroup();
             }
 
             if (!csSplit[2].equals(AddItemDialogFragment.ALL_PICK_KOR)) {
-                query.and().equalTo(Item.FIELD_SUB_CATE, csSplit[2]);
+                query.and().equalTo(ItemSim.FIELD_ITEM + "." + Item.FIELD_SUB_CATE, csSplit[2]);
             }
         } catch( ArrayIndexOutOfBoundsException | IllegalArgumentException e ) {
             Log.d(TAG, e.toString());
         }
-        adapter.updateData(query.findAll().sort(Item.FIELD_SUB_CATE));
+        adapter.updateData(query.findAll().sort(ItemSim.FIELD_ITEM+"."+Item.FIELD_SUB_CATE));
     }
 }

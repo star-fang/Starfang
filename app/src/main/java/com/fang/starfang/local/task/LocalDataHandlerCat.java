@@ -627,7 +627,7 @@ class LocalDataHandlerCat {
                         String itemSpecTwo = null;
 
                         lambdaResult.append("[").append(item.getItemSubCate()).append("] ").append(item.getItemName()).append(" (")
-                                .append(STAR_FILLED).append(item.getItemGrade()).append(")").append(CRLF).append(item.getitemDescription());
+                                .append(STAR_FILLED).append(item.getItemGrade()).append(")").append(CRLF).append(item.getItemDescription());
 
                         try {
                             RealmString tmpItemSpec = item.getItemSpecs().get(0);

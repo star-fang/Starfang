@@ -23,7 +23,7 @@
         android:id="@+id/cell_hero_specs"/>
 
     <include
-        layout="@layout/cell_items"
+        layout="@layout/cell_hero_items"
         android:id="@+id/cell_items" />
 
 

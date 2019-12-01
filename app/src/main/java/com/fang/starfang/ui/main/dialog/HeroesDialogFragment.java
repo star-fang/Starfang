@@ -27,6 +27,7 @@ import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
+import com.fang.starfang.local.model.realm.source.NormalItem;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.PowersRecyclerAdapter;
@@ -45,6 +46,8 @@ public class HeroesDialogFragment extends DialogFragment {
     private static final String TAG = "FANG_HERO_DIALOG";
     private Activity mActivity;
     private static final int[] MAX_LEVEL_BY_GRADE = {20,40,60,80,99};
+    private final int[] MIN_LEVEL_BY_REINFORCE = {1,7,14,21,28,35,42,49,56,63,70,77};
+    private final int[] MAX_LEVEL_BY_REINFORCE = {20,20,40,40,40,60,60,60,80,80,80,99};
     private Realm realm;
 
     public static HeroesDialogFragment newInstance( int heroNo  ) {
@@ -88,22 +91,29 @@ public class HeroesDialogFragment extends DialogFragment {
         if( heroSim != null ) {
         Heroes hero = heroSim.getHero();
 
-            final AppCompatSeekBar seekbar_hero_grade = view.findViewById(R.id.seekbar_hero_grade);  // 0 ~ 4
-            final AppCompatTextView text_seekbar_hero_grade_value = view.findViewById(R.id.text_seekbar_hero_grade_value); // 1 ~ 5
-            final AppCompatSeekBar seekbar_hero_level = view.findViewById(R.id.seekbar_hero_level); // 0 ~ 98
-            final AppCompatEditText text_seekbar_hero_level_value = view.findViewById(R.id.text_seekbar_hero_level_value); // 1 ~ 99
+            final AppCompatSeekBar seek_bar_hero_grade = view.findViewById(R.id.seek_bar_hero_grade);  // 0 ~ 4
+            final AppCompatTextView text_seek_bar_hero_grade_value = view.findViewById(R.id.text_seek_bar_hero_grade_value); // 1 ~ 5
+            final AppCompatSeekBar seek_bar_hero_level = view.findViewById(R.id.seek_bar_hero_level); // 0 ~ 98
+            final AppCompatEditText text_seek_bar_hero_level_value = view.findViewById(R.id.text_seek_bar_hero_level_value); // 1 ~ 99
+            final AppCompatSeekBar seek_bar_hero_reinforce = view.findViewById(R.id.seek_bar_hero_reinforce);
+            final AppCompatTextView text_seek_bar_hero_reinforce_value = view.findViewById(R.id.text_seek_bar_hero_reinforce_value); // 0 ~ 11
+            // 1, 7, 14, 21, 3
 
             String heroBranchStr = hero.getHeroBranch() + ((hero.getHeroNo()>0)? "계" : "");
             ((AppCompatTextView) view.findViewById(R.id.dialog_title_branch)).setText(heroBranchStr);
             ((AppCompatTextView) view.findViewById(R.id.dialog_title_name)).setText(hero.getHeroName());
 
             int curLevel = heroSim.getHeroLevel() - 1; // 0 ~ 98
-            seekbar_hero_level.setProgress(curLevel);
-            text_seekbar_hero_level_value.setText(String.valueOf(curLevel + 1));
+            seek_bar_hero_level.setProgress(curLevel);
+            text_seek_bar_hero_level_value.setText(String.valueOf(curLevel + 1));
 
             int curGrade = heroSim.getHeroGrade() - 1; // 0 ~ 4
-            seekbar_hero_grade.setProgress(curGrade);
-            text_seekbar_hero_grade_value.setText(String.valueOf(curGrade + 1));
+            seek_bar_hero_grade.setProgress(curGrade);
+            text_seek_bar_hero_grade_value.setText(String.valueOf(curGrade + 1));
+
+            int curReinforce = heroSim.getHeroReinforcement() - 1; // 0 ~ 11
+            seek_bar_hero_reinforce.setProgress(curReinforce);
+            text_seek_bar_hero_reinforce_value.setText(String.valueOf(curReinforce + 1));
 
             Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_ID,hero.getBranchNo()).findFirst();
 
@@ -122,6 +132,9 @@ public class HeroesDialogFragment extends DialogFragment {
             RealmList<RealmString> branchPasvSpecVals = null; // 0 ~ 2
             RealmList<RealmString> branchStatGGs = null;
             RealmList<RealmInteger> branchPasvSpecGrades = null;
+            String branchWeaponSubCate = null;
+            String branchArmorSubCate = null;
+            String branchNormalAidType = null;
 
             ArrayList<String> titles_pasv = new ArrayList<>(); // 0 ~ 4
             ArrayList<String> specs_pasv = new ArrayList<>();
@@ -143,6 +156,10 @@ public class HeroesDialogFragment extends DialogFragment {
                 branchPasvSpecVals = branch.getBranchPasvSpecValues();
                 branchStatGGs = branch.getBranchStatGGs();
                 branchPasvSpecGrades = branch.getBranchPasvSpecGrades();
+                branchWeaponSubCate = branch.getBranchWeaponSubCate();
+                branchArmorSubCate = branch.getBranchArmorSubCate();
+                branchNormalAidType = branch.getBranchNormalAidType();
+                //Log.d(TAG, branchWeaponSubCate + "\n" + branchArmorSubCate + "\n" + branchNormalAidType);
             }
             if(branchPasvSpecs != null && branchPasvSpecGrades != null) {
                 for (int i = 0; i < Branch.NUM_PASVS; i++) {
@@ -234,7 +251,18 @@ public class HeroesDialogFragment extends DialogFragment {
 
             RealmList<RealmInteger> heroBaseStats = hero.getHeroStats();
             ArrayList<Integer> heroStatsUpList = heroSim.getHeroPlusStatList();
-            final PowersRecyclerAdapter powerAdapter = new PowersRecyclerAdapter(branchStatGGs,heroBaseStats,heroStatsUpList,curLevel + 1);
+
+            RealmList<NormalItem> normalItems = new RealmList<>();
+
+            NormalItem normalWeapon = branchWeaponSubCate == null ? null : realm.where(NormalItem.class).equalTo(NormalItem.FIELD_CATE_SUB, branchWeaponSubCate).findFirst();
+            NormalItem normalArmor = branchArmorSubCate == null ? null : realm.where(NormalItem.class).equalTo(NormalItem.FIELD_CATE_SUB, branchArmorSubCate).findFirst();
+            NormalItem normalAid = branchNormalAidType == null ? null : realm.where(NormalItem.class).equalTo(NormalItem.FIELD_TYPE, branchNormalAidType).findFirst();
+
+            normalItems.add(normalWeapon);
+            normalItems.add(normalArmor);
+            normalItems.add(normalAid);
+
+            final PowersRecyclerAdapter powerAdapter = new PowersRecyclerAdapter(branchStatGGs,heroBaseStats,heroStatsUpList,curLevel + 1, curReinforce + 1, normalItems);
             recycler_view_dialog_heroes_cell_power.setAdapter(powerAdapter);
 
             final AppCompatTextView text_sum_of_plus_stat_cur = view.findViewById(R.id.text_sum_of_plus_stat_cur);
@@ -310,31 +338,35 @@ public class HeroesDialogFragment extends DialogFragment {
             text_sum_of_plus_stat_cur.setText(String.valueOf(heroSim.getHeroPlusStatSum()));
             text_sum_of_plus_stat_max.setText(String.valueOf( (curGrade + 1 ) * 100 ) );
 
-            seekbar_hero_grade.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            seek_bar_hero_grade.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    text_seekbar_hero_grade_value.setText(String.valueOf(progress + 1));
-                    int curLevel = seekbar_hero_level.getProgress() + 1;  // 1 ~ 99
+                    text_seek_bar_hero_grade_value.setText(String.valueOf(progress + 1));
+                    int curLevel = seek_bar_hero_level.getProgress() + 1;  // 1 ~ 99
                     int curGrade = progress + 1; // 1 ~ 5
                     pasvAdapter.getFilter().filter(curGrade + "");
-                    if (curLevel > MAX_LEVEL_BY_GRADE[progress]) {
-                        seekbar_hero_level.setProgress(MAX_LEVEL_BY_GRADE[progress] - 1);
-                    } else if (progress > 0) {
-                        if (curLevel < MAX_LEVEL_BY_GRADE[progress - 1]) {
-                            seekbar_hero_level.setProgress(MAX_LEVEL_BY_GRADE[progress - 1] - 1);
+                    try {
+                        if (curLevel > MAX_LEVEL_BY_GRADE[progress]) {
+                            seek_bar_hero_level.setProgress(MAX_LEVEL_BY_GRADE[progress] - 1);
+                        } else if (progress > 0) {
+                            if (curLevel < MAX_LEVEL_BY_GRADE[progress - 1]) {
+                                seek_bar_hero_level.setProgress(MAX_LEVEL_BY_GRADE[progress - 1] - 1);
+                            }
                         }
-                    }
-                    int maxPlusStat = (progress < 4) ? MAX_LEVEL_BY_GRADE[progress] :
-                            (hero.getHeroCost() + 16) * 5;
-                    int sumOfMax = 0;
-                    for (int i = 0; i < numberOfStats; i++) {
-                        seekbar_hero_stat[i].setMax(maxPlusStat);
-                        text_seekbar_hero_stat_max[i].setText(String.valueOf(maxPlusStat));
-                        sumOfMax += maxPlusStat;
-                    }
+                        int maxPlusStat = (progress < 4) ? MAX_LEVEL_BY_GRADE[progress] :
+                                (hero.getHeroCost() + 16) * 5;
+                        int sumOfMax = 0;
+                        for (int i = 0; i < numberOfStats; i++) {
+                            seekbar_hero_stat[i].setMax(maxPlusStat);
+                            text_seekbar_hero_stat_max[i].setText(String.valueOf(maxPlusStat));
+                            sumOfMax += maxPlusStat;
+                        }
 
-                    sumOfMax = Math.min(500, sumOfMax);
-                    text_sum_of_plus_stat_max.setText(String.valueOf(sumOfMax));
+                        sumOfMax = Math.min(500, sumOfMax);
+                        text_sum_of_plus_stat_max.setText(String.valueOf(sumOfMax));
+                    } catch ( StringIndexOutOfBoundsException e ) {
+                        Log.d(TAG, e.toString());
+                    }
 
                     if(branch != null) {
                         RealmString branchGrade = branch.getBranchGrade().get(progress);
@@ -356,26 +388,73 @@ public class HeroesDialogFragment extends DialogFragment {
 
             });
 
-            seekbar_hero_level.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            seek_bar_hero_level.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) { // 0 ~ 98
-                    int curGrade = seekbar_hero_grade.getProgress(); // 0 ~ 4
+                    int curGrade = seek_bar_hero_grade.getProgress(); // 0 ~ 4
+                    int curReinforce = seek_bar_hero_reinforce.getProgress();  // 0 ~ 11
                     int curLevel = progress + 1; // 1 ~ 99;
+
                     powerAdapter.setLevel(curLevel);
                     powerAdapter.notifyDataSetChanged();
-                    //if(( curLevel ) % 5 == 0 || curLevel == 1) {
-                        heroAdapter.getFilter().filter(curLevel+"");
-                   //}
-                    pasvAdapter.getFilter().filter((curGrade + 1)+"");
-                    if (curLevel > MAX_LEVEL_BY_GRADE[curGrade]) {
-                        seekbar_hero_grade.setProgress(curGrade + 1);
-                    } else if (curGrade > 0) {
-                        if (curLevel < MAX_LEVEL_BY_GRADE[curGrade - 1]) {
-                            seekbar_hero_grade.setProgress(curGrade - 1);
+                    heroAdapter.getFilter().filter(curLevel+"");
+                    //pasvAdapter.getFilter().filter((curGrade + 1)+"");
+                    try {
+                        if (curLevel > MAX_LEVEL_BY_GRADE[curGrade]) {
+                            seek_bar_hero_grade.setProgress(curGrade + 1);
+                        } else if (curGrade > 0) {
+                            if (curLevel < MAX_LEVEL_BY_GRADE[curGrade - 1]) {
+                                seek_bar_hero_grade.setProgress(curGrade - 1);
+                            }
                         }
+
+                        if( curLevel > MAX_LEVEL_BY_REINFORCE[curReinforce] ) {
+                            seek_bar_hero_reinforce.setProgress(curReinforce + 1);
+                        } else if( curLevel < MIN_LEVEL_BY_REINFORCE[curReinforce]) {
+                            seek_bar_hero_reinforce.setProgress(curReinforce - 1);
+                        }
+                    } catch( StringIndexOutOfBoundsException e) {
+                        Log.d(TAG, e.toString());
                     }
 
-                    text_seekbar_hero_level_value.setText(String.valueOf(progress + 1));
+                    text_seek_bar_hero_level_value.setText(String.valueOf(progress + 1));
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+
+            seek_bar_hero_reinforce.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    int curLevel = seek_bar_hero_level.getProgress() + 1; // 0 ~ 99
+                    int curReinforce = progress + 1; // 1 ~ 12
+
+                    powerAdapter.setReinforce(curReinforce);
+                    powerAdapter.notifyDataSetChanged();
+
+                    try {
+                        int minLevelByReinforce = MIN_LEVEL_BY_REINFORCE[progress];
+                        int maxLevelByReinforce = MAX_LEVEL_BY_REINFORCE[progress];
+
+                        if (curLevel < minLevelByReinforce) {
+                            seek_bar_hero_level.setProgress(minLevelByReinforce - 1);
+                        } else if (curLevel > maxLevelByReinforce) {
+                            seek_bar_hero_level.setProgress(maxLevelByReinforce - 1);
+                        }
+                    } catch( StringIndexOutOfBoundsException e) {
+                        Log.d(TAG, e.toString());
+                    }
+
+                    text_seek_bar_hero_reinforce_value.setText(String.valueOf(curReinforce));
+
                 }
 
                 @Override
@@ -391,10 +470,12 @@ public class HeroesDialogFragment extends DialogFragment {
 
             builder.setView(view).setPositiveButton(R.string.modify_kor, (dialog, which) -> {
                 realm.beginTransaction();
-                int heroGrade = seekbar_hero_grade.getProgress() + 1;
-                int heroLevel = seekbar_hero_level.getProgress() + 1;
+                int heroGrade = seek_bar_hero_grade.getProgress() + 1;
+                int heroLevel = seek_bar_hero_level.getProgress() + 1;
+                int heroReinforce = seek_bar_hero_reinforce.getProgress() + 1;
                 heroSim.setHeroGrade(heroGrade);
                 heroSim.setHeroLevel(heroLevel);
+                heroSim.setHeroReinforcement(heroReinforce);
                 heroSim.updateSpecsChecked(checkedSpecLevels);
 
                 int sumPowers = 0;

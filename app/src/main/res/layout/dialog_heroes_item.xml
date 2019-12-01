@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="210dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="5dp"
+    android:background="#30000000"
+    android:gravity="center">
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:text="@string/item_kor"
+        android:textSize="20sp"/>
+
+
+    <include
+        layout="@layout/cell_hero_items"
+        android:id="@+id/dialog_heroes_items"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/layout_wear_item"
+        android:background="#20000000">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/item_wear_or_release_kor"
+            android:gravity="center"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recycler_view_pick_item_sim"
+        tools:listitem="@layout/dialog_heroes_pick_item_cell"
+        tools:itemCount="2"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:text="@string/release_kor"
+            android:background="@drawable/rect_black"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginEnd="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:text="@string/wear_kor"
+            android:background="@drawable/rect_black"/>
+
+    </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

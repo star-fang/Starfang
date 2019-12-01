@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -16,17 +18,19 @@ import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.dialog.PickHeroDialogFragment;
+import com.fang.starfang.ui.main.recycler.filter.ItemSimFilter;
 
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> {
+public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> implements Filterable {
 
     private static final String TAG = "FANG_ADAPTER_ITEM_FLOAT";
 
     private static ItemSimsFloatingRealmAdapter instance = null;
 
     private FragmentManager fragmentManager;
+    private Realm realm;
 
 
     public static ItemSimsFloatingRealmAdapter getInstance() {
@@ -52,9 +56,15 @@ public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemS
 
     public ItemSimsFloatingRealmAdapter(Realm realm, FragmentManager fragmentManager) {
         super(realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF), false);
+        this.realm = realm;
         this.fragmentManager = fragmentManager;
         instance = this;
         Log.d(TAG, "constructed");
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new ItemSimFilter(this,realm);
     }
 
 

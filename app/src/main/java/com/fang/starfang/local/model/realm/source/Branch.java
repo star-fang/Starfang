@@ -15,8 +15,13 @@ public class Branch extends RealmObject {
     public static final String FIELD_GRADE = "branchGrade";
     public static final String FIELD_CATE_WEAPON = "branchWeaponSubCate";
     public static final String FIELD_CATE_ARMOR = "branchArmorSubCate";
+    public static final String FIELD_NORMAL_TYPE = "branchNormalAidType";
     public static final String[] INIT_STATS = {"공","정","방","순","사"};
     public static final int NUM_PASVS = 3;
+
+    public String getBranchNormalAidType() {
+        return branchNormalAidType;
+    }
     //public static final String[] INIT_PASVS = {"승급2","승급3","승급4"};
 
     public enum INIT_SPECS {Lv01,Lv10,Lv15,Lv20,Lv25}
@@ -45,6 +50,7 @@ public class Branch extends RealmObject {
     private String branchMagic;
     private RealmList<RealmString> branchGrade;
     private int branchHPgg;
+    private String branchNormalAidType;
 
 
     public RealmList<RealmString> getBranchGrade() {

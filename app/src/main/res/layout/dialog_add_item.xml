@@ -23,28 +23,58 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content"
             android:background="#30000000"
+            android:orientation="horizontal"
             android:weightSum="3">
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinner_item_grade"
-                android:layout_weight="1"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/grade_item_kor"
+                    android:gravity="center"/>
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinner_item_grade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinner_item_category_main"
-                android:layout_weight="1"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/category_item_man"
+                    android:gravity="center"/>
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinner_item_category_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinner_item_category_sub"
-                android:layout_weight="1"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/category_item_sub"
+                    android:gravity="center"/>
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinner_item_category_sub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
         </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView

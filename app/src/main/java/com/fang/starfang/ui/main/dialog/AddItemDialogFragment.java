@@ -35,6 +35,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import io.realm.exceptions.RealmException;
 import io.realm.exceptions.RealmPrimaryKeyConstraintException;
 
@@ -43,7 +44,8 @@ public class AddItemDialogFragment extends DialogFragment {
     private static final String TAG = "FANG_ADD_ITEM_DIALOG";
     private Activity mActivity;
     private Realm realm;
-    private static final String ALL_PICK_KOR = "전체";
+    public static final String ALL_PICK_KOR = "전체";
+    public static final String GRADE_KOR = "등급";
 
     public static AddItemDialogFragment newInstance() {
         return new AddItemDialogFragment();
@@ -80,11 +82,12 @@ public class AddItemDialogFragment extends DialogFragment {
         final AppCompatSpinner spinner_item_category_main = view.findViewById(R.id.spinner_item_category_main);
         final AppCompatSpinner spinner_item_category_sub = view.findViewById(R.id.spinner_item_category_sub);
 
-        RealmResults<Item> grades = realm.where(Item.class).distinct(Item.FIELD_GRD).findAll();
+        RealmResults<Item> grades = realm.where(Item.class).distinct(Item.FIELD_GRD).findAll().sort(Item.FIELD_GRD, Sort.DESCENDING);
         List<String> gradeList = new ArrayList<>();
+        gradeList.add(ALL_PICK_KOR);
         for( Item grade : grades ) {
             String gradeStr = grade.getItemGrade();
-            gradeStr += NumberUtils.isDigits(gradeStr)? "등급" : "";
+            gradeStr += NumberUtils.isDigits(gradeStr)? GRADE_KOR : "";
             gradeList.add(gradeStr);
         }
         ArrayAdapter<String> gradesAdapter = new ArrayAdapter<>(

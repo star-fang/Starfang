@@ -35,16 +35,22 @@
             android:textSize="13sp"
             android:layout_marginEnd="5dp"/>
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/plus"
+            android:textSize="13sp"/>
 
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_cell_title_item_cate_sub"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="13sp"
-        android:maxLines="1"
-        tools:text="창"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_cell_title_item_reinforce"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:maxLines="1"
+            tools:text="12"/>
     </LinearLayout>
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_cell_title_item_name"

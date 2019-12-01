@@ -13,13 +13,15 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.ui.main.recycler.filter.ItemFilter;
+import com.fang.starfang.ui.main.recycler.filter.ItemSimFilter;
 
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerView.ViewHolder> implements Filterable {
+public class ItemSimsRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> implements Filterable {
 
     private static final String TAG = "FANG_ADAPTER_ITEM";
     private AppCompatTextView text_info;
@@ -29,22 +31,22 @@ public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerVi
 
     @NonNull
     @Override
-    public ItemsRealmAdapter.ItemsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public ItemSimsRealmAdapter.ItemSimsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_add_item_cell,viewGroup,false);
-        return new ItemsRealmAdapter.ItemsViewHolder(view);
+        return new ItemSimsRealmAdapter.ItemSimsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Item item = getItem( position );
-        ItemsViewHolder itemsViewHolder = (ItemsViewHolder) holder;
-        if( item != null ) {
-            itemsViewHolder.bind(item);
+        ItemSim itemSim = getItem( position );
+        ItemSimsViewHolder itemsViewHolder = (ItemSimsViewHolder) holder;
+        if( itemSim != null ) {
+            itemsViewHolder.bind(itemSim);
         }
     }
 
 
-    public ItemsRealmAdapter(Realm realm, AppCompatTextView text_info, AppCompatTextView text_desc) {
+    public ItemSimsRealmAdapter(Realm realm, AppCompatTextView text_info, AppCompatTextView text_desc) {
         super(null, false);
         this.text_desc = text_desc;
         this.text_info = text_info;
@@ -59,27 +61,28 @@ public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerVi
 
     @Override
     public Filter getFilter() {
-        return new ItemFilter(this, realm);
+        return new ItemSimFilter(this, realm);
     }
 
-    public class ItemsViewHolder extends RecyclerView.ViewHolder {
+    public class ItemSimsViewHolder extends RecyclerView.ViewHolder {
 
         AppCompatTextView text_cell_title_item_grade;
-        AppCompatTextView text_cell_title_item_cate_sub;
+        AppCompatTextView text_cell_title_item_reinforce;
         AppCompatTextView text_cell_title_item_name;
 
-        private ItemsViewHolder(View itemView) {
+        private ItemSimsViewHolder(View itemView) {
             super(itemView);
             Log.d(TAG, "view holder constructed");
             text_cell_title_item_grade = itemView.findViewById(R.id.text_cell_title_item_grade);
-            text_cell_title_item_cate_sub = itemView.findViewById(R.id.text_cell_title_item_cate_sub);
+            text_cell_title_item_reinforce = itemView.findViewById(R.id.text_cell_title_item_reinforce);
             text_cell_title_item_name = itemView.findViewById(R.id.text_cell_title_item_name);
         }
 
 
-        private void bind(Item item) {
+        private void bind(ItemSim itemSim) {
+            Item item = itemSim.getItem();
             text_cell_title_item_grade.setText(item.getItemGrade());
-            text_cell_title_item_cate_sub.setText(item.getItemSubCate());
+            text_cell_title_item_reinforce.setText(String.valueOf(itemSim.getItemReinforcement()));
             text_cell_title_item_name.setText(item.getItemName());
 
             itemView.setOnFocusChangeListener((view, b) -> {

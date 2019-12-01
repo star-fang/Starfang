@@ -13,28 +13,58 @@ xmlns:tools="http://schemas.android.com/tools">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:background="#30000000"
             android:orientation="horizontal"
             android:weightSum="3">
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinner_item_grade"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/grade_item_kor"
+                    android:gravity="center"/>
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinner_item_sim_grade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinner_item_category_main"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/category_item_man"
+                    android:gravity="center"/>
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinner_item_sim_category_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinner_item_category_sub"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/category_item_sub"
+                    android:gravity="center"/>
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinner_item_sim_category_sub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -51,33 +81,16 @@ xmlns:tools="http://schemas.android.com/tools">
                 android:background="@drawable/right_border_black_2dp"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="5dp"
-                    android:background="@drawable/bottom_border_black_2dp"
-                    android:orientation="horizontal">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="30dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="1dp"
-                        android:layout_marginEnd="2dp"
-                        android:gravity="center"
-                        android:text="@string/reinforcement_kor"
-                        android:textSize="15sp" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="70dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="1dp"
+                        android:layout_width="75dp"
                         android:layout_marginEnd="2dp"
                         android:gravity="center"
                         android:text="@string/name_kor"
-                        android:textSize="15sp" />
-
-
-                </LinearLayout>
+                        android:textSize="15sp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="5dp"
+                        android:background="@drawable/bottom_border_black_2dp"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_items_fixed"
@@ -106,11 +119,20 @@ xmlns:tools="http://schemas.android.com/tools">
                     android:orientation="horizontal">
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="140dp"
+                        android:layout_height="match_parent"
                         android:layout_marginStart="5dp"
-                        android:layout_width="130dp"
+                        android:layout_marginBottom="2dp"
+                        android:background="@drawable/end_border_gray_1dp"
+                        android:gravity="center"
+                        android:text="@string/hero_who_has_item" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="150dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/hero_who_has_item"
+                        android:text="@string/spec_reinforce_level12"
+                        android:textSize="15sp"
                         android:layout_marginBottom="2dp"
                         android:background="@drawable/end_border_gray_1dp"/>
 
@@ -123,14 +145,7 @@ xmlns:tools="http://schemas.android.com/tools">
                         android:layout_marginBottom="2dp"
                         android:background="@drawable/end_border_gray_1dp"/>
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="150dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/spec_reinforce_level12"
-                        android:textSize="15sp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1dp"/>
+
 
 
                 </LinearLayout>

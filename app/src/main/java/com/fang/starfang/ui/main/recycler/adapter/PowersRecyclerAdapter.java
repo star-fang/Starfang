@@ -13,9 +13,13 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
+import com.fang.starfang.local.model.realm.source.NormalItem;
 
 import java.util.ArrayList;
+
+import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAdapter.PowersRecyclerViewAdapterViewHolder> {
 
@@ -24,6 +28,8 @@ public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAd
     private RealmList<RealmInteger> heroBaseStats;
     private ArrayList<Integer> heroStatsUpList;
     private int level;
+    private int reinforce;
+    private RealmList<NormalItem> normalItems; // weapon, armor, aid
 
     @NonNull
     @Override
@@ -44,16 +50,23 @@ public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAd
 
     //branchSpecGGs,heroBaseStats,heroStatsUpList,curLevel
     public PowersRecyclerAdapter(RealmList<RealmString> branchStatGGs, RealmList<RealmInteger> heroBaseStats,
-                                 ArrayList<Integer> heroStatsUpList, int level) {
+                                 ArrayList<Integer> heroStatsUpList, int level, int reinforce, RealmList<NormalItem> normalItems ) {
         this.branchStatGGs = branchStatGGs;
         this.heroBaseStats = heroBaseStats;
         this.heroStatsUpList = heroStatsUpList;
         this.level = level;
+        this.reinforce = reinforce;
+        this.normalItems = normalItems;
         Log.d(TAG, "constructed");
+
+
     }
 
     public void setLevel( int level ) {
         this.level = level;
+    }
+    public void setReinforce( int reinforce ) {
+        this.reinforce = reinforce;
     }
 
     class PowersRecyclerViewAdapterViewHolder extends RecyclerView.ViewHolder {
@@ -89,7 +102,32 @@ public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAd
             double growthRate = HeroSim.calcGrowthRateByStatAndGrade(statSum, branchStatGGsStr);
             text_dialog_heroes_cell_power_rate.setText(String.valueOf(growthRate));
             int power = (int)Math.floor(Math.max(0,heroStatUp - 100) +  statSum / 2.0  + level * growthRate);
+
+            int normalItemPowerSum = 0;
+            for(NormalItem normalItem : normalItems ) {
+                RealmList<RealmInteger> normalItemPowerInitList = normalItem == null ? null : normalItem.getNormalItemPowers();
+                RealmInteger normalItemPowerInit = normalItemPowerInitList == null? null : normalItem.getNormalItemPowers().get(position);
+                int normalItemPowerInt = normalItemPowerInit == null? 0 : normalItemPowerInit.toInt();
+
+                if(reinforce > 1 && normalItemPowerInt != 0) {
+                    RealmList<RealmInteger> normalItemLevelUpPowers = normalItem.getNormalItemLevelUpPowers();
+                    RealmInteger normalItemLevelUpPower = normalItemLevelUpPowers == null ? null : normalItemLevelUpPowers.get(reinforce - 2);
+                    normalItemPowerInt = normalItemLevelUpPower == null ? 0 : normalItemLevelUpPower.toInt();
+                } // end if reinforce > 1
+
+                normalItemPowerSum += normalItemPowerInt;
+            } // end for
+
+            //if( normalItemPowerSum > 0 ) {
+             //   Log.d(TAG, "power position : " + position + "// normal power : " + normalItemPowerSum);
+            //}
+
+            power += normalItemPowerSum;
+
             text_dialog_heroes_cell_power.setText(String.valueOf(power));
+
+
+
         }
     }
 

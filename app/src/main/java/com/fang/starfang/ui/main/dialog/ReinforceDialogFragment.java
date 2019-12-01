@@ -97,7 +97,7 @@ public class ReinforceDialogFragment extends DialogFragment {
                 recycler_view_dialog_reinforce_power.setAdapter(itemPowersRecyclerAdapter);
 
                 final AppCompatTextView text_dialog_item_desc = view.findViewById(R.id.text_dialog_item_desc);
-                text_dialog_item_desc.setText(item.getitemDescription());
+                text_dialog_item_desc.setText(item.getItemDescription());
 
                 final AppCompatTextView dialog_title_item_name = view.findViewById(R.id.dialog_title_item_name);
                 final AppCompatTextView dialog_title_item_reinforce = view.findViewById(R.id.dialog_title_item_reinforce);

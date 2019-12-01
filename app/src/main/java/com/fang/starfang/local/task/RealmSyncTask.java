@@ -34,6 +34,7 @@ import com.fang.starfang.local.model.realm.source.Magic;
 import com.fang.starfang.local.model.realm.source.MagicItemCombination;
 import com.fang.starfang.local.model.realm.source.MagicItemPRFX;
 import com.fang.starfang.local.model.realm.source.MagicItemSFX;
+import com.fang.starfang.local.model.realm.source.NormalItem;
 import com.fang.starfang.local.model.realm.source.Relation;
 import com.fang.starfang.local.model.realm.source.Spec;
 import com.fang.starfang.local.model.realm.source.Terrain;
@@ -314,6 +315,15 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                                     realm.copyToRealm(itemReinforcement);
                             }
                             Log.d(TAG, "SYNC ItemReinforcement REALM COMPLETE!");
+                            break;
+                        case NormalItem.PREF_TABLE:
+                            realm.delete(NormalItem.class);
+                            for(int i = 0; i < jsonArray.length(); i++) {
+                                String json = jsonArray.get(i).toString();
+                                NormalItem normalItem = gson.fromJson(json, NormalItem.class);
+                                realm.copyToRealm(normalItem);
+                            }
+                            Log.d(TAG, "SYNC normalItem REALM COMPLETE!");
                             break;
                         case Relation.PREF_TABLE:
                             realm.delete((Relation.class));

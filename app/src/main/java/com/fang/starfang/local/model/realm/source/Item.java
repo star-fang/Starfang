@@ -33,7 +33,7 @@ public class Item extends RealmObject {
     public String getItemName() {return itemName;}
     public String getItemGrade() {return itemGrade;}
     public String getItemSubCate() {return itemSubCate;}
-    public String getitemDescription() {return itemDescription;}
+    public String getItemDescription() {return itemDescription;}
     public String getItemRestriction() {return itemRestriction;}
     public RealmList<RealmInteger> getItemStats() {return itemStats;}
     public RealmList<RealmString> getItemSpecs() {return itemSpecs;}

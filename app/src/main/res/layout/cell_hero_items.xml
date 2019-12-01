@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="205dp"
+    android:layout_width="210dp"
     android:layout_height="match_parent"
     android:background="@drawable/end_border_gray_1dp"
     >
@@ -12,13 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp">
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="1dp">
 
         <LinearLayout
+            android:layout_margin="2dp"
+            android:id="@+id/cell_hero_weapon"
             android:layout_width="65dp"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/rect_black">
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="20dp"
@@ -40,9 +43,12 @@
         </LinearLayout>
 
         <LinearLayout
+            android:layout_margin="2dp"
+            android:id="@+id/cell_hero_armor"
             android:layout_width="65dp"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/rect_black">
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
@@ -50,13 +56,13 @@
                 android:text="@string/shield"
                 />
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_item_shield_reinforcement"
+                android:id="@+id/text_item_armor_reinforcement"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 tools:text="+9"
                 android:gravity="center" />
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_item_shield_name"
+                android:id="@+id/text_item_armor_name"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 tools:text="관우의 청동쇄자갑"
@@ -64,9 +70,12 @@
         </LinearLayout>
 
         <LinearLayout
+            android:layout_margin="2dp"
+            android:id="@+id/cell_hero_aid"
             android:layout_width="65dp"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/rect_black">
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="20dp"

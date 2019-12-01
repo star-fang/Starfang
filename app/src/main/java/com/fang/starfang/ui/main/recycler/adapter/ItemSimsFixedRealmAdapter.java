@@ -4,6 +4,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -14,11 +16,12 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.ui.main.dialog.ReinforceDialogFragment;
+import com.fang.starfang.ui.main.recycler.filter.ItemSimFilter;
 
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> {
+public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> implements Filterable {
 
     private static final String TAG = "FANG_ADAPTER_ITEM_FIXED";
 
@@ -29,6 +32,7 @@ public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim,
     }
 
     private FragmentManager fragmentManager;
+    private Realm realm;
 
     @NonNull
     @Override
@@ -49,9 +53,15 @@ public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim,
 
     public ItemSimsFixedRealmAdapter(Realm realm, FragmentManager fragmentManager) {
         super(realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF), false);
-        instance = this;
+        this.realm = realm;
         this.fragmentManager = fragmentManager;
+        instance = this;
         Log.d(TAG, "constructed");
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new ItemSimFilter(this,realm);
     }
 
 

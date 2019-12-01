@@ -49,6 +49,21 @@ public class HeroSim extends RealmObject {
     private int heroPowerSum;
     private int heroPlusStatSum;
     private int heroSpecScoreSum;
+    private int heroReinforcement; // 1 ~ 12
+    // 1, 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77
+    // r1 -> l 1 ~ 20 // g1
+    // r2 -> l 7 ~ 20 // g1
+    // r3 -> l 14 ~ 40 // g1, 2
+    // r4 -> l 21 ~ 40 // g2
+    // r5 -> l 28 ~ 40 // g2
+    // r6 -> l 35 ~ 60 // g2, 3
+    // r7 -> l 42 ~ 60 // g3
+    // r8 -> l 49 ~ 60 // g3
+    // r9 -> l 56 ~ 80 // g3, 4
+    // r10 -> l 63 ~ 80 // g4
+    // r11 -> l 70 ~ 80 // g4
+    // r12 -> l 77 ~ 99 // g4, 5
+
 
     public HeroSim() {
 
@@ -59,6 +74,7 @@ public class HeroSim extends RealmObject {
         this.hero = hero;
         this.heroLevel = 1;
         this.heroGrade = 1;
+        this.heroReinforcement = 1;
         this.heroPlusStats = new RealmList<>();
         for( int i = 0; i < Heroes.INIT_STATS.length; i++ ) {
             heroPlusStats.add(new RealmInteger(0));
@@ -263,5 +279,13 @@ public class HeroSim extends RealmObject {
 
     public void setHeroAid(ItemSim heroAid) {
         this.heroAid = heroAid;
+    }
+
+    public int getHeroReinforcement() {
+        return heroReinforcement;
+    }
+
+    public void setHeroReinforcement(int heroReinforcement) {
+        this.heroReinforcement = heroReinforcement;
     }
 }
