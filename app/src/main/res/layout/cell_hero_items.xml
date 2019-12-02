@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="210dp"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/end_border_gray_1dp"
     >
 
@@ -40,7 +40,15 @@
             android:layout_height="45dp"
             tools:text="관우의 청룡언월도"
             android:gravity="center"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_item_weapon_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
         </LinearLayout>
+
+
 
         <LinearLayout
             android:layout_margin="2dp"
@@ -67,6 +75,12 @@
                 android:layout_height="45dp"
                 tools:text="관우의 청동쇄자갑"
                 android:gravity="center"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_item_armor_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout
@@ -94,6 +108,12 @@
                 android:layout_height="45dp"
                 tools:text="관우의 적토마"
                 android:gravity="center"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_item_aid_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
         </LinearLayout>
 
 

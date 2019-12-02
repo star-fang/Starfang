@@ -16,6 +16,8 @@ public class Item extends RealmObject {
     public static final String FIELD_SPECS = "itemSpecs";
     public static final String FIELD_SUB_CATE = "itemSubCate";
     public static final String FIELD_GRD = "itemGrade";
+    public static final String FIELD_RESTRICT_BRANCH = "itemRestrictionBranch";
+    public static final String FIELD_RESTRICT_Hero = "itemRestrictionHero";
     public static final String[] INIT_STATS = {"공격력","정신력","방어력","순발력","사기　"};
 
     @PrimaryKey
@@ -28,13 +30,15 @@ public class Item extends RealmObject {
     private RealmList<RealmString> itemSpecs;
     private RealmList<RealmString> itemSpecValues;
     private String itemDescription;
-    private String itemRestriction;
+    private String itemRestrictionBranch;
+    private int itemRestrictionHero;
 
     public String getItemName() {return itemName;}
     public String getItemGrade() {return itemGrade;}
     public String getItemSubCate() {return itemSubCate;}
     public String getItemDescription() {return itemDescription;}
-    public String getItemRestriction() {return itemRestriction;}
+    public String getItemRestrictionBranch() {return itemRestrictionBranch;}
+    public int getItemRestrictionHero() {return itemRestrictionHero;}
     public RealmList<RealmInteger> getItemStats() {return itemStats;}
     public RealmList<RealmString> getItemSpecs() {return itemSpecs;}
     public RealmList<RealmString> getItemSpecValues() {return itemSpecValues;}

@@ -13,26 +13,28 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.primitive.RealmInteger;
+import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.ui.main.recycler.filter.ItemFilter;
 import com.fang.starfang.ui.main.recycler.filter.ItemSimFilter;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
 
 public class ItemSimsRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> implements Filterable {
 
-    private static final String TAG = "FANG_ADAPTER_ITEM";
+    private static final String TAG = "FANG_ADAPTER_ITEM_SIM";
     private AppCompatTextView text_info;
-    private AppCompatTextView text_desc;
-    private Item item_selected;
+    private ItemSim item_selected;
     private Realm realm;
 
     @NonNull
     @Override
     public ItemSimsRealmAdapter.ItemSimsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_add_item_cell,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_heroes_pick_item_cell,viewGroup,false);
         return new ItemSimsRealmAdapter.ItemSimsViewHolder(view);
     }
 
@@ -46,16 +48,15 @@ public class ItemSimsRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, Recy
     }
 
 
-    public ItemSimsRealmAdapter(Realm realm, AppCompatTextView text_info, AppCompatTextView text_desc) {
+    public ItemSimsRealmAdapter(Realm realm, AppCompatTextView text_info) {
         super(null, false);
-        this.text_desc = text_desc;
         this.text_info = text_info;
         this.item_selected = null;
         this.realm = realm;
         Log.d(TAG, "constructed");
     }
 
-    public Item getSelectedItem() {
+    public ItemSim getSelectedItem() {
         return item_selected;
     }
 
@@ -87,9 +88,31 @@ public class ItemSimsRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, Recy
 
             itemView.setOnFocusChangeListener((view, b) -> {
                 if(b) {
-                    item_selected = item;
-                    text_info.setText(item.toString());
-                    text_desc.setText(item.getItemDescription());
+                    item_selected = itemSim;
+                    StringBuilder infoBuilder = new StringBuilder();
+                    infoBuilder.append(item.getItemName());
+                    for( int i = 0; i < Item.INIT_STATS.length; i++ ) {
+                        Integer power = itemSim.getItemPowersList().get(i);
+                        Integer plusPower =  itemSim.getItemPlusPowersList().get(i);
+                        String powerStr = power == null ? "" : power == 0 ? "" :
+                                "\r\n" + Item.INIT_STATS[i] + ": "+ power.toString();
+                        String plusPowerStr = powerStr.equals("")? "" : plusPower == null ? "" :
+                                plusPower == 0 ? "" : " (+" + plusPower + ")";
+                        infoBuilder.append(powerStr).append(plusPowerStr);
+
+                        RealmList<RealmString> itemSpecs = item.getItemSpecs();
+                        int specIndex = 0;
+                        for( RealmString itemSpec : itemSpecs) {
+                            if( itemSpec != null) {
+                                RealmString specVal = item.getItemSpecValues().get(specIndex++);
+                                String specStr = "\r\n"+itemSpec.toString() +
+                                        (specVal == null ? "" : " " + specVal.toString());
+                                infoBuilder.append(specStr);
+                            }
+                        } // end for
+                    }
+
+                    text_info.setText(infoBuilder.toString());
 
                 }
 

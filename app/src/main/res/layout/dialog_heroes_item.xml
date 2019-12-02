@@ -17,47 +17,87 @@
 
 
     <include
-        layout="@layout/cell_hero_items"
-        android:id="@+id/dialog_heroes_items"/>
+        layout="@layout/cell_hero_items"/>
 
     <LinearLayout
+        android:id="@+id/layout_modify_picked_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/layout_wear_item"
-        android:background="#20000000">
+        >
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/item_wear_or_release_kor"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_margin="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/picked_kor"
+                android:gravity="center"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_picked_item_cate_main"
+            android:layout_margin="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="무기"
             android:gravity="center"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_margin="2dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/colon"
+                android:gravity="center"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_picked_item_name"
+        android:layout_margin="3dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/recycler_view_pick_item_sim"
-        tools:listitem="@layout/dialog_heroes_pick_item_cell"
-        tools:itemCount="2"/>
+        tools:text="관우의 청룡언월도"
+        android:gravity="center"/>
+
+        </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="end">
+        android:gravity="center">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_margin="3dp"
+            android:id="@+id/button_release_picked_item"
+            android:layout_width="50dp"
+            android:layout_height="20dp"
             android:text="@string/release_kor"
-            android:background="@drawable/rect_black"/>
+            android:background="@drawable/rect_black"
+            android:enabled="false"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:layout_marginEnd="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:text="@string/wear_kor"
-            android:background="@drawable/rect_black"/>
+            android:layout_margin="3dp"
+            android:id="@+id/button_reinforce_picked_item"
+            android:layout_width="50dp"
+            android:layout_height="20dp"
+            android:text="@string/reinforcement_kor"
+            android:background="@drawable/rect_black"
+            android:enabled="false"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_margin="3dp"
+            android:id="@+id/button_modify_picked_item"
+            android:layout_width="50dp"
+            android:layout_height="20dp"
+            android:text="@string/modify_kor"
+            android:background="@drawable/rect_black"
+            android:enabled="false"/>
+
+
 
     </LinearLayout>
 

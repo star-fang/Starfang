@@ -21,9 +21,10 @@ import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFixedRealmAdapter;
-import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFloatingRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.PickHeroRealmAdapter;
+import com.fang.starfang.util.NotifyUtils;
+
+import org.apache.commons.lang3.math.NumberUtils;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -83,14 +84,15 @@ public class PickHeroDialogFragment extends DialogFragment {
                 ItemCate itemCate = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_SUB_CATE, itemSubCate).findFirst();
                 if (itemCate != null) {
                     RealmResults<Heroes> heroesRealmResults;
-                    String itemRestriction = item.getItemRestriction();
+                    String itemRestrictionBranch = item.getItemRestrictionBranch();
                     RealmQuery<Heroes> heroesRealmQuery = realm.where(Heroes.class).beginGroup().alwaysFalse();
 
-                    if (itemRestriction != null) {
-                        String[] branches = itemRestriction.split("·");
+                    if (itemRestrictionBranch != null) {
+                        String[] branches = itemRestrictionBranch.split(",");
                         RealmList<Branch> branchList = new RealmList<>();
                         for (String branchStr : branches) {
-                            Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_NAME, branchStr).findFirst();
+                            int branchNo = NumberUtils.toInt(branchStr);
+                            Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_ID, branchNo).findFirst();
                             if (branch != null) {
                                 branchList.add(branch);
                             }
@@ -105,10 +107,10 @@ public class PickHeroDialogFragment extends DialogFragment {
                         RealmQuery<Branch> branchRealmQuery = realm.where(Branch.class);
 
                         switch (itemCate.getItemMainCate()) {
-                            case "무기":
+                            case AddItemDialogFragment.WEAPON_KOR:
                                 branchRealmQuery.equalTo(Branch.FIELD_CATE_WEAPON, itemSubCate);
                                 break;
-                            case "방어구":
+                            case AddItemDialogFragment.AID_KOR:
                                 branchRealmQuery.equalTo(Branch.FIELD_CATE_ARMOR, itemSubCate);
                                 break;
                             default:
@@ -127,7 +129,7 @@ public class PickHeroDialogFragment extends DialogFragment {
                     recycler_view_pick_hero.setLayoutManager(new LinearLayoutManager(mActivity));
                     recycler_view_pick_hero.setAdapter(pickHeroRealmAdapter);
 
-                    builder.setView(view).setPositiveButton("착용", (dialog, which) -> {
+                    builder.setView(view).setPositiveButton(R.string.wear_kor, (dialog, which) -> {
                         Heroes hero_selected = pickHeroRealmAdapter.getSelectedHero();
                         if (hero_selected != null) {
                             HeroSim hero_before = itemSim.getHeroWhoHasThis();
@@ -167,17 +169,10 @@ public class PickHeroDialogFragment extends DialogFragment {
                                 } // end switch
                                 itemSim.setHeroWhoHasThis(heroSim);
                                 realm.commitTransaction();
-                                ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = com.fang.starfang.ui.main.recycler.adapter.ItemSimsFixedRealmAdapter.getInstance();
-                                if( itemSimsFixedRealmAdapter != null ) {
-                                    itemSimsFixedRealmAdapter.notifyDataSetChanged();
-                                }
-                                ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = ItemSimsFloatingRealmAdapter.getInstance();
-                                if( itemSimsFloatingRealmAdapter != null ) {
-                                    itemSimsFloatingRealmAdapter.notifyDataSetChanged();
-                                }
+                                NotifyUtils.notifyToAdapter(true,true,true,true);
                             }
                         }
-                    }).setNegativeButton("취소", null);
+                    }).setNegativeButton(R.string.cancel_kor, null);
                 }
             }
         }

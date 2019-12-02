@@ -27,6 +27,7 @@ import com.fang.starfang.local.task.Reinforcement;
 import com.fang.starfang.ui.main.recycler.adapter.ItemPowersRecyclerAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFixedRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFloatingRealmAdapter;
+import com.fang.starfang.util.NotifyUtils;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -134,15 +135,10 @@ public class ReinforceDialogFragment extends DialogFragment {
                         itemSim.setItemPowers( itemPowers.get(i) , i);
                     }
                     itemSim.setItemReinforcement( seek_bar_item_reinforce.getProgress() );
-                    ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = ItemSimsFixedRealmAdapter.getInstance();
-                    if( itemSimsFixedRealmAdapter != null ) {
-                        itemSimsFixedRealmAdapter.notifyDataSetChanged();
-                    }
-                    ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = ItemSimsFloatingRealmAdapter.getInstance();
-                    if( itemSimsFloatingRealmAdapter != null ) {
-                        itemSimsFloatingRealmAdapter.notifyDataSetChanged();
-                    }
+
                     realm.commitTransaction();
+
+                    NotifyUtils.notyfyToMainAdapters();
                 }).setNegativeButton(R.string.cancel_kor, null);
             }
         }

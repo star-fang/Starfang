@@ -220,4 +220,7 @@
     <string name="release_kor">해제</string>
     <string name="wear_kor">착용</string>
     <string name="item_wear_or_release_kor">보물 착용/해제</string>
+    <string name="available_item_list_kor">착용가능 보물 목록</string>
+    <string name="picked_kor">선택된</string>
+    <string name="colon">:</string>
 </resources>

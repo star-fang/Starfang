@@ -22,9 +22,8 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFixedRealmAdapter;
-import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFloatingRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.ItemsRealmAdapter;
+import com.fang.starfang.util.NotifyUtils;
 import com.fang.starfang.util.ScreenUtils;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -46,6 +45,9 @@ public class AddItemDialogFragment extends DialogFragment {
     private Realm realm;
     public static final String ALL_PICK_KOR = "전체";
     public static final String GRADE_KOR = "등급";
+    public static final String WEAPON_KOR = "무기";
+    public static final String ARMOR_KOR = "방어구";
+    public static final String AID_KOR = "보조구";
 
     public static AddItemDialogFragment newInstance() {
         return new AddItemDialogFragment();
@@ -196,14 +198,7 @@ public class AddItemDialogFragment extends DialogFragment {
                     realm.copyToRealm(itemSim);
                     realm.commitTransaction();
                     Log.d(TAG,"copy to realm : success");
-                    ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = ItemSimsFixedRealmAdapter.getInstance();
-                    if( itemSimsFixedRealmAdapter != null ) {
-                        itemSimsFixedRealmAdapter.notifyDataSetChanged();
-                    }
-                    ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = ItemSimsFloatingRealmAdapter.getInstance();
-                    if( itemSimsFloatingRealmAdapter != null ) {
-                        itemSimsFloatingRealmAdapter.notifyDataSetChanged();
-                    }
+                    NotifyUtils.notifyToAdapter(false,false,true,true);
                 } catch( RealmPrimaryKeyConstraintException | RealmException e ) {
                     Log.d(TAG,e.toString());
                 }

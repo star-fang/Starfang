@@ -46,27 +46,35 @@ public class ItemSimFilter extends Filter {
         cs = cs.trim();
         String[] csSplit = cs.split(",");
         RealmQuery<ItemSim> query = realm.where(ItemSim.class);
+        String itemSimItemField = ItemSim.FIELD_ITEM + ".";
 
         try {
             if (!csSplit[0].equals(AddItemDialogFragment.ALL_PICK_KOR)) {
-                query.equalTo(ItemSim.FIELD_ITEM + "." + Item.FIELD_GRD, csSplit[0].replace(AddItemDialogFragment.GRADE_KOR, ""));
+                query.equalTo( itemSimItemField + Item.FIELD_GRD, csSplit[0].replace(AddItemDialogFragment.GRADE_KOR, ""));
             }
 
             if (!csSplit[1].equals(AddItemDialogFragment.ALL_PICK_KOR)) {
                 query.and().beginGroup().alwaysFalse();
                 RealmResults<ItemCate> cates = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_MAIN_CATE, csSplit[1]).findAll();
                 for (ItemCate cate : cates) {
-                    query.or().equalTo(ItemSim.FIELD_ITEM + "." + Item.FIELD_SUB_CATE, cate.getItemSubCate());
+                    query.or().equalTo(itemSimItemField + Item.FIELD_SUB_CATE, cate.getItemSubCate());
                 }
                 query.endGroup();
             }
 
-            if (!csSplit[2].equals(AddItemDialogFragment.ALL_PICK_KOR)) {
-                query.and().equalTo(ItemSim.FIELD_ITEM + "." + Item.FIELD_SUB_CATE, csSplit[2]);
+            if( !csSplit[2].equals(AddItemDialogFragment.ALL_PICK_KOR) ) {
+                if ( !csSplit[2].equals(AddItemDialogFragment.AID_KOR) &&
+                        csSplit[1].equals(AddItemDialogFragment.AID_KOR)) {
+                    query.and().beginGroup().isNull(itemSimItemField + Item.FIELD_RESTRICT_BRANCH).or().
+                            isEmpty(itemSimItemField + Item.FIELD_RESTRICT_BRANCH).or().
+                            contains(itemSimItemField + Item.FIELD_RESTRICT_BRANCH, csSplit[2]).endGroup();
+                } else  {
+                    query.and().equalTo(itemSimItemField + Item.FIELD_SUB_CATE, csSplit[2]);
+                }
             }
         } catch( ArrayIndexOutOfBoundsException | IllegalArgumentException e ) {
             Log.d(TAG, e.toString());
         }
-        adapter.updateData(query.findAll().sort(ItemSim.FIELD_ITEM+"."+Item.FIELD_SUB_CATE));
+        adapter.updateData(query.findAll().sort(itemSimItemField+Item.FIELD_SUB_CATE));
     }
 }
