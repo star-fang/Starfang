@@ -31,9 +31,9 @@ import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
 import com.fang.starfang.local.model.realm.source.ItemReinforcement;
 import com.fang.starfang.local.model.realm.source.Magic;
-import com.fang.starfang.local.model.realm.source.MagicItemCombination;
-import com.fang.starfang.local.model.realm.source.MagicItemPRFX;
-import com.fang.starfang.local.model.realm.source.MagicItemSFX;
+import com.fang.starfang.local.model.realm.source.RelicCombination;
+import com.fang.starfang.local.model.realm.source.RelicPRFX;
+import com.fang.starfang.local.model.realm.source.RelicSFX;
 import com.fang.starfang.local.model.realm.source.NormalItem;
 import com.fang.starfang.local.model.realm.source.Relation;
 import com.fang.starfang.local.model.realm.source.Spec;
@@ -72,7 +72,6 @@ import java.util.concurrent.TimeoutException;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
-import io.realm.RealmResults;
 import io.realm.exceptions.RealmPrimaryKeyConstraintException;
 
 public class RealmSyncTask  extends AsyncTask<String,String, String> {
@@ -338,24 +337,24 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                             realm.createAllFromJson(Relation.class, jsonArray);
                             Log.d(TAG, "SYNC Relation REALM COMPLETE!");
                             break;
-                        case MagicItemCombination.PREF_TABLE:
-                            realm.delete(MagicItemCombination.class);
+                        case RelicCombination.PREF_TABLE:
+                            realm.delete(RelicCombination.class);
                             for(int i = 0; i < jsonArray.length(); i++ ) {
                                     String json = jsonArray.get(i).toString();
-                                    MagicItemCombination comb = gson.fromJson(json,MagicItemCombination.class);
+                                    RelicCombination comb = gson.fromJson(json, RelicCombination.class);
                                     realm.copyToRealm(comb);
                             }
-                            Log.d(TAG, "SYNC MagicItemCombination REALM COMPLETE!");
+                            Log.d(TAG, "SYNC RelicCombination REALM COMPLETE!");
                             break;
-                        case MagicItemPRFX.PREF_TABLE:
-                            realm.delete(MagicItemPRFX.class);
-                            realm.createAllFromJson(MagicItemPRFX.class, jsonArray);
-                            Log.d(TAG, "SYNC  MagicItemPRFX REALM COMPLETE!");
+                        case RelicPRFX.PREF_TABLE:
+                            realm.delete(RelicPRFX.class);
+                            realm.createAllFromJson(RelicPRFX.class, jsonArray);
+                            Log.d(TAG, "SYNC  RelicPRFX REALM COMPLETE!");
                             break;
-                        case MagicItemSFX.PREF_TABLE:
-                            realm.delete(MagicItemSFX.class);
-                            realm.createAllFromJson(MagicItemSFX.class, jsonArray);
-                            Log.d(TAG, "SYNC MagicItemSFX REALM COMPLETE!");
+                        case RelicSFX.PREF_TABLE:
+                            realm.delete(RelicSFX.class);
+                            realm.createAllFromJson(RelicSFX.class, jsonArray);
+                            Log.d(TAG, "SYNC RelicSFX REALM COMPLETE!");
                             break;
                         case Dot.PREF_TABLE:
                             realm.delete(Dot.class);

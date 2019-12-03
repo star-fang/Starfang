@@ -43,8 +43,8 @@ public class HeroSim extends RealmObject {
     private int heroGrade; // 1(~20),2(~40),3(~60),4(~80),5(~99)
     private RealmList<RealmInteger> heroPlusStats; // 교본작
     private RealmList<Integer> heroSpecsChecked; //  체크된 효과 인덱스 (~3개)
-    private RealmList<MagicItemSim> heroMagicItemsSlot1; // 보패 슬롯1
-    private RealmList<MagicItemSim> heroMagicItemsSlot2; // 보패 슬롯2
+    private RealmList<RelicSim> heroMagicItemsSlot1; // 보패 슬롯1
+    private RealmList<RelicSim> heroMagicItemsSlot2; // 보패 슬롯2
     private ItemSim heroWeapon;
     private ItemSim heroArmor;
     private ItemSim heroAid;
@@ -192,19 +192,19 @@ public class HeroSim extends RealmObject {
     }
 
 
-    public RealmList<MagicItemSim> getHeroMagicItemsSlot1() {
+    public RealmList<RelicSim> getHeroMagicItemsSlot1() {
         return heroMagicItemsSlot1;
     }
 
-    public void setHeroMagicItemsSlot1(RealmList<MagicItemSim> heroMagicItemsSlot1) {
+    public void setHeroMagicItemsSlot1(RealmList<RelicSim> heroMagicItemsSlot1) {
         this.heroMagicItemsSlot1 = heroMagicItemsSlot1;
     }
 
-    public RealmList<MagicItemSim> getHeroMagicItemsSlot2() {
+    public RealmList<RelicSim> getHeroMagicItemsSlot2() {
         return heroMagicItemsSlot2;
     }
 
-    public void setHeroMagicItemsSlot2(RealmList<MagicItemSim> heroMagicItemsSlot2) {
+    public void setHeroMagicItemsSlot2(RealmList<RelicSim> heroMagicItemsSlot2) {
         this.heroMagicItemsSlot2 = heroMagicItemsSlot2;
     }
 

@@ -13,9 +13,9 @@ import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
 import com.fang.starfang.local.model.realm.source.Magic;
-import com.fang.starfang.local.model.realm.source.MagicItemCombination;
-import com.fang.starfang.local.model.realm.source.MagicItemPRFX;
-import com.fang.starfang.local.model.realm.source.MagicItemSFX;
+import com.fang.starfang.local.model.realm.source.RelicCombination;
+import com.fang.starfang.local.model.realm.source.RelicPRFX;
+import com.fang.starfang.local.model.realm.source.RelicSFX;
 import com.fang.starfang.local.model.realm.Memo;
 import com.fang.starfang.local.model.realm.source.Relation;
 import com.fang.starfang.local.model.realm.source.Spec;
@@ -55,7 +55,7 @@ class LocalDataHandlerCat {
     private static final String TAG = "FANG_HANDLER_CAT";
     private enum COMMAND_CERTAIN_ENUM {
         COMMAND_DEST,COMMAND_TER,COMMAND_MOV,COMMAND_DESC,
-        COMMAND_ITEM,COMMAND_AGENDA,COMMAND_MAGIC_ITEM,
+        COMMAND_ITEM,COMMAND_AGENDA,COMMAND_RELIC,
         COMMAND_RELATION,COMMAND_EXTERMINATE,COMMAND_DOT,COMMAND_COMB,
         COMMAND_CALC, COMMAND_MAGIC, COMMAND_MEMO, COMMAND_DEL_MEMO,COMMAND_DESC_CAT, COMMAND_DEFAULT }
     private static final String[] COMMAND_CERTAIN = {
@@ -69,10 +69,11 @@ class LocalDataHandlerCat {
 
     private static final String CRLF = "\r\n";
     private static final String BLANK = " ";
-    //private static final String BLANK_DOUBLE = "  ";
+    private static final String BLANK_DOUBLE = "  ";
     private static final String BLANK_TRIPLE = "   ";
     private static final String EMPTY = "";
     private static final String DASH = "-";
+    private static final String EQUALS = "=";
     private static final String COMMA = ",";
     private static final String SEPARATOR = "----------------------------\n";
     private static final String STAR_FILLED = "★";
@@ -82,9 +83,13 @@ class LocalDataHandlerCat {
     private static final String RANGE_FULL = "■";
     private static final String RIGHT_ARROW = "→";
     private static final String BRANCH_GRADE_KOR = "승급";
-    private static final String GRADE_KOR = "단계";
+    private static final String STEP_KOR = "단계";
+    private static final String GRADE_KOR = "등급";
     private static final String SLASH = "/";
     private static final String PLUS = "+";
+
+    private static final String REGEX_EXCEPT_DIGITS = "[^0-9]";
+    private static final String REGEX_DIGITS = "[0-9]";
 
     LocalDataHandlerCat(Context context, String sendCat, String catRoom) {
         this.context = new WeakReference<>(context);
@@ -210,7 +215,7 @@ class LocalDataHandlerCat {
 
                         String destinies = tmpHero.getHeroDestiny();
                         if (destinies != null) {
-                            for(String destiny : destinies.split(":")) {
+                            for(String destiny : destinies.split(COLON)) {
                                 int putValue = 1;
                                 Integer curDestinyValue = map_destiny.get(destiny);
                                 if( curDestinyValue != null ) {
@@ -221,7 +226,7 @@ class LocalDataHandlerCat {
                         }
 
                         if (insert_hero_num == 1) {
-                            lambdaResult.append(Heroes.INIT_LINEAGE).append(": ")
+                            lambdaResult.append(Heroes.INIT_LINEAGE).append(COLON).append(BLANK)
                                     .append(tmpHero.getHeroLineage()).append(CRLF);
 
                             lambdaResult.append(destinies != null ?
@@ -246,7 +251,7 @@ class LocalDataHandlerCat {
                                 } catch (ArrayIndexOutOfBoundsException ignore) {
 
                                 }
-                                lambdaResult.append(Heroes.INIT_SPECS[i]).append(": ")
+                                lambdaResult.append(Heroes.INIT_SPECS[i]).append(COLON).append(BLANK)
                                         .append(tmpHero.getHeroSpecs().get(i)).append(BLANK)
                                         .append(val).append(CRLF);
 
@@ -269,13 +274,23 @@ class LocalDataHandlerCat {
 
         if( insert_hero_num == searched_hero_count ) {
             if (insert_hero_num > 1)
-                lambdaResult.append(SEPARATOR).append("TOTAL COST: [  ").append(total_cost).append("  ]").append(CRLF);
+                lambdaResult.append(SEPARATOR).append("TOTAL COST: [").append(BLANK_DOUBLE).append(total_cost).append(BLANK_DOUBLE).append("]").append(CRLF);
 
-            if (insert_hero_num > 2 && insert_hero_num < 6 && total_cost != 99)
-                lambdaResult.append("섬멸전:  ").append(99).append(" - ").append(total_cost).append(" = ").append(99 - total_cost).append(CRLF);
+            if (insert_hero_num > 2 && insert_hero_num < 6 && total_cost != 99) {
+                lambdaResult.append("섬멸전").append(COLON).append(BLANK_DOUBLE).append(99)
+                        .append(BLANK).append(DASH).append(BLANK)
+                        .append(total_cost)
+                        .append(BLANK).append(EQUALS).append(BLANK)
+                        .append(99 - total_cost).append(CRLF);
+            }
 
-            if (insert_hero_num > 4 && insert_hero_num < 8 && total_cost != 145)
-                lambdaResult.append("경쟁전: ").append(145).append(" - ").append(total_cost).append(" = ").append(145 - total_cost).append(CRLF);
+            if (insert_hero_num > 4 && insert_hero_num < 8 && total_cost != 145) {
+                lambdaResult.append("경쟁전").append(COLON).append(BLANK).append(145)
+                        .append(BLANK).append(DASH).append(BLANK)
+                        .append(total_cost)
+                        .append(BLANK).append(EQUALS).append(BLANK)
+                        .append(145 - total_cost).append(CRLF);
+            }
 
 
                 Set<String> set = map_destiny.keySet();
@@ -291,7 +306,7 @@ class LocalDataHandlerCat {
                                 if (NumberUtils.toInt(desValueStr.substring(0, 1)) <= mapDestinyValue) {
                                     lambdaResult.append(SEPARATOR).append(des.getDesName()).append(CRLF);
                                     for (String joinEffect : des.getdesJoinEffect()) {
-                                        String[] joinEffectSplit = joinEffect.split(":");
+                                        String[] joinEffectSplit = joinEffect.split(COLON);
                                         lambdaResult.append(NumberUtils.isDigits(joinEffectSplit[0]) ? EMPTY : joinEffectSplit[0] + " 시 ");
                                         lambdaResult.append(joinEffectSplit[1]).append(BLANK).append(joinEffectSplit[2]).append(CRLF);
                                     }
@@ -343,25 +358,25 @@ class LocalDataHandlerCat {
                 if(q.contains("특성")) {
                 // 30, 50, 70, 90 : 30 ~ 49, 50 ~ 69, 70 ~ 89, 90 ~ 99
                     // 0 1 2 3  0 / 20 = 0, 20 / 20 = 1, 40 / 20 = 2, 60 / 20 = 3
-                    level_pivot = NumberUtils.toInt(q.replaceAll("[^0-9]",EMPTY),0);
+                    level_pivot = NumberUtils.toInt(q.replaceAll(REGEX_EXCEPT_DIGITS,EMPTY),0);
                     level_pivot = level_pivot < 30 ? 0 : level_pivot;
                     level_pivot = level_pivot < 50 &&  level_pivot >= 30 ? 30 : level_pivot;
                     level_pivot = level_pivot < 70 &&  level_pivot >= 50 ? 50 : level_pivot;
                     level_pivot = level_pivot < 90 &&  level_pivot >= 70 ? 70 : level_pivot;
                     level_pivot = level_pivot >= 90 ? 90 : level_pivot;
-                    q = q.replace("특성",EMPTY).replaceAll("[0-9]",EMPTY).trim();
+                    q = q.replace("특성",EMPTY).replaceAll(REGEX_DIGITS,EMPTY).trim();
                     if(q.replace(BLANK,EMPTY).isEmpty())
                         return null;
                     //Log.d(TAG,level_pivot + "특성");
                 } else if(q.contains("~")) {
                     String beforePivot = q.substring(0,q.indexOf("~"));
                     String afterPivot = q.substring(q.indexOf("~"));
-                    cost_more = NumberUtils.toInt(beforePivot.replaceAll("[^0-9]", EMPTY),10) -10;
-                    cost_below = NumberUtils.toInt(afterPivot.replaceAll("[^0-9]", EMPTY),10) - 10;
-                    q = q.replace("~",EMPTY).replaceAll("[0-9]",EMPTY).trim();
+                    cost_more = NumberUtils.toInt(beforePivot.replaceAll(REGEX_EXCEPT_DIGITS, EMPTY),10) -10;
+                    cost_below = NumberUtils.toInt(afterPivot.replaceAll(REGEX_EXCEPT_DIGITS, EMPTY),10) - 10;
+                    q = q.replace("~",EMPTY).replaceAll(REGEX_DIGITS,EMPTY).trim();
                 } else {
-                    cost_equal = NumberUtils.toInt(q.replaceAll("[^0-9]",EMPTY),10)-10;
-                    q = q.replaceAll("[0-9]",EMPTY).trim();
+                    cost_equal = NumberUtils.toInt(q.replaceAll(REGEX_EXCEPT_DIGITS,EMPTY),10)-10;
+                    q = q.replaceAll(REGEX_DIGITS,EMPTY).trim();
                 }
 
 
@@ -588,7 +603,7 @@ class LocalDataHandlerCat {
 
                     if (realmSpec.size() > 4) {
                         StringBuilder descForTooManyResults = new StringBuilder();
-                        descForTooManyResults.append(probSpec).append(": 검색 결과 ")
+                        descForTooManyResults.append(probSpec).append(COLON).append(" 검색 결과 ")
                                 .append(realmSpec.size()).append("개")
                                 .append(CRLF).append(SEPARATOR);
                         for (Spec spec : realmSpec)
@@ -599,7 +614,7 @@ class LocalDataHandlerCat {
                         for (Spec spec : realmSpec) {
                             //int numAKA = spec.getSpecName2().replaceAll("[^:]",EMPTY).length();
                             lambdaResult.append(spec.getSpecName())
-                                    .append(spec.getSpecName2() != null? "  a.k.a. " + spec.getSpecName2().replace(":","，") + CRLF : CRLF)
+                                    .append(spec.getSpecName2() != null? "\r\na.k.a. " + spec.getSpecName2().replace(COLON,"，") + CRLF : CRLF)
                                     .append(spec.getSpecDescription()).append(COMMA);
                         }
                     }
@@ -690,13 +705,13 @@ class LocalDataHandlerCat {
                 if(q.replace(BLANK,EMPTY).isEmpty())
                     return null;
 
-                int grade = NumberUtils.toInt(q.replaceAll("[^0-9]", EMPTY),0);
+                int grade = NumberUtils.toInt(q.replaceAll(REGEX_EXCEPT_DIGITS, EMPTY),0);
                 boolean gradeDecisive = grade > 0 && grade < 6;
 
                 grade = !gradeDecisive ? 5 : grade;
-                q = q.replaceAll("[0-9]",EMPTY);
+                q = q.replaceAll(REGEX_DIGITS,EMPTY);
                 if(gradeDecisive) {
-                    q = q.replace(GRADE_KOR,EMPTY).replace(BRANCH_GRADE_KOR,BLANK);
+                    q = q.replace(STEP_KOR,EMPTY).replace(BRANCH_GRADE_KOR,BLANK);
                 }
 
                 LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(BLANK)));
@@ -709,10 +724,10 @@ class LocalDataHandlerCat {
                         Branch branch = findBranchByName(probBranch, realm);
                     if ( branch != null ) {
                         branchDecisive = true;
-                        RealmList<RealmString> brachGrades = branch.getBranchGrade();
+                        RealmList<RealmString> branchGrades = branch.getBranchGrade();
                         String branchGradeNameStr = "";
-                        if( brachGrades!=null && gradeDecisive) {
-                            RealmString branchGradeName = brachGrades.get(grade-1);
+                        if( branchGrades!=null && gradeDecisive) {
+                            RealmString branchGradeName = branchGrades.get(grade-1);
                             if( branchGradeName != null) {
                                 branchGradeNameStr =  branchGradeName.toString();
                             }
@@ -734,7 +749,7 @@ class LocalDataHandlerCat {
                                 if (branchPasvSpecGrade != null) {
                                    if( grade >= branchPasvSpecGrade.toInt() ) {
                                        specFiltered += 1;
-                                        lambdaResult.append(BLANK).append(BLANK_TRIPLE).append(BRANCH_GRADE_KOR).append(branchPasvSpecGrade)
+                                        lambdaResult.append(BLANK_TRIPLE).append(BRANCH_GRADE_KOR).append(branchPasvSpecGrade)
                                                 .append(COLON).append(BLANK).append(branch.getBranchPasvSpecs().get(i));
                                         RealmString BranchPasvSpecValueRealmString = branch.getBranchPasvSpecValues().get(i);
                                         if (BranchPasvSpecValueRealmString != null) {
@@ -746,7 +761,7 @@ class LocalDataHandlerCat {
                                                 String[] valSplit = val.split(SLASH);
                                                 try {
                                                     valCur = valSplit[grade - branchPasvSpecGrade.toInt()]
-                                                            .replaceAll("[^0-9]", BLANK).trim();
+                                                            .replaceAll(REGEX_EXCEPT_DIGITS, BLANK).trim();
                                                 } catch (ArrayIndexOutOfBoundsException e) {
                                                     Log.d(TAG, e.toString());
                                                 }
@@ -763,11 +778,11 @@ class LocalDataHandlerCat {
                                 }
                             }
                             if( specFiltered == 0) {
-                                lambdaResult.append("   적용되는 효과 없음\r\n");
+                                lambdaResult.append(BLANK_TRIPLE).append("적용되는 효과 없음\r\n");
                             }
                             lambdaResult.append("*장수 효과").append(CRLF);
                             for (Branch.INIT_SPECS spec : Branch.INIT_SPECS.values()) {
-                                lambdaResult.append(BLANK).append(BLANK_TRIPLE).append(spec.name()).append(COLON)
+                                lambdaResult.append(BLANK_TRIPLE).append(spec.name()).append(COLON)
                                         .append(BLANK).append(branch.getBranchSpecs().get(spec.ordinal()));
                                 RealmString branchSpecValuesRealmString = branch.getBranchSpecValues().get(spec.ordinal());
                                 if (branchSpecValuesRealmString != null) {
@@ -777,19 +792,19 @@ class LocalDataHandlerCat {
                             }
 
 
-                            if (brachGrades != null && !gradeDecisive) {
+                            if (branchGrades != null && !gradeDecisive) {
                                 lambdaResult.append("*승급 단계").append(CRLF);
-                                int branchGradeSize = brachGrades.size();
+                                int branchGradeSize = branchGrades.size();
                                 for (int i = 0; i < branchGradeSize; i++) {
-                                    RealmString branchGrade = brachGrades.get(i);
-                                    lambdaResult.append(BLANK).append(BLANK_TRIPLE)
+                                    RealmString branchGrade = branchGrades.get(i);
+                                    lambdaResult.append(BLANK_TRIPLE)
                                             .append(STAR_FILLED).append(i + 1).append(COLON);
                                     if (branchGrade != null) {
                                         lambdaResult.append(BLANK).append(branchGrade.toString());
                                     }
                                     lambdaResult.append(CRLF);
                                 } // end for
-                            } // end if(brachGrades != null)
+                            } // end if(branchGrades != null)
 
                             lambdaResult.append(COMMA).append(CRLF);
                     } // end if branch != null
@@ -807,7 +822,7 @@ class LocalDataHandlerCat {
                 if(q.replace(BLANK,EMPTY).isEmpty())
                     return "병종 지형을 입력하라옹!";
 
-                LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(" ")));
+                LinkedList<String> rQueue = new LinkedList<>(Arrays.asList(q.split(BLANK)));
 
                 boolean isTerCMD = (finalCertainCMD == COMMAND_CERTAIN_ENUM.COMMAND_TER);
                 StringBuilder lambdaResult = new StringBuilder();
@@ -961,10 +976,10 @@ class LocalDataHandlerCat {
                 if(q.replace(BLANK,EMPTY).isEmpty())
                     return "보물 이름 종류 특수효과를 입력하라옹";
 
-                String reinfOrGRD = q.replaceAll("[^0-9]",EMPTY);
-                q = q.replaceAll("[0-9]",EMPTY);
+                String reinfOrGRD = q.replaceAll(REGEX_EXCEPT_DIGITS,EMPTY);
+                q = q.replaceAll(REGEX_DIGITS,EMPTY);
 
-                String[] ignores= {"강","등급",PLUS,"성"};
+                String[] ignores= {"강",GRADE_KOR,PLUS,"성"};
                 ArrayList<String> ignoreList = new ArrayList<>(Arrays.asList(ignores));
                 LinkedList<String> qList = new LinkedList<>(Arrays.asList(q.split(BLANK)));
                 ArrayList<String> nsList = new ArrayList<>();
@@ -1032,7 +1047,7 @@ class LocalDataHandlerCat {
                             String powerStr = basePower == 0 ? null : plusPower == 0 ? ( basePower + "" ) :
                                     basePower + " (+" + plusPower + ")" ;
                             if(powerStr != null) {
-                                builderForPower.append(BLANK_TRIPLE).append(Item.INIT_STATS[i])
+                                builderForPower.append(BLANK_DOUBLE).append(Item.INIT_STATS[i])
                                         .append(COLON).append(BLANK).append(powerStr).append(CRLF);
                             }
                         }
@@ -1052,7 +1067,7 @@ class LocalDataHandlerCat {
                             if( itemSpec != null ) {
                                 String itemSpecStr = itemSpec.toString();
                                 if (!itemSpecStr.isEmpty()) {
-                                    builderForSpec.append(BLANK_TRIPLE).append(itemSpec);
+                                    builderForSpec.append(BLANK_DOUBLE).append(itemSpec);
                                     RealmString itemSpecValue = item.getItemSpecValues().get(i);
                                     if( itemSpecValue != null ) {
                                         builderForSpec.append(BLANK).append(itemSpecValue.toString());
@@ -1087,11 +1102,13 @@ class LocalDataHandlerCat {
                         }
                         if(restrictionBranch != null) {
                             lambdaResult.append("*착용 제한 병종").append(CRLF);
+
+                            int i = 0;
                             for(String branchNoStr : restrictionBranch.split(COMMA)) {
                                 int branchNo = NumberUtils.toInt(branchNoStr);
                                 Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_ID,branchNo).findFirst();
                                 if(branch != null) {
-                                    lambdaResult.append(BLANK_TRIPLE).append(branch.getBranchName()).append(CRLF);
+                                    lambdaResult.append(BLANK_DOUBLE).append(StringUtils.rightPad(branch.getBranchName(),4,'　')).append((i++)%2 == 0 ? EMPTY: CRLF);
                                 }
                             }  // end for
                         }
@@ -1254,27 +1271,27 @@ class LocalDataHandlerCat {
             });
 
             // 보패 정보 검색
-            HandleLocalDB magicItemByKey = (q->{
+            HandleLocalDB relicByKey = (q->{
                 //각 보패냥, 단단한 보패냥, 근접피해감소 보패냥
 
-                int statValue = NumberUtils.toInt(q.replaceAll("[^0-9]",EMPTY),200);
+                int statValue = NumberUtils.toInt(q.replaceAll(REGEX_EXCEPT_DIGITS,EMPTY),200);
                 statValue = (statValue<0 || statValue > 200) ? 200 : statValue;
-                q = q.replaceAll("[0-9]",EMPTY).replace(BLANK,EMPTY);
+                q = q.replaceAll(REGEX_DIGITS,EMPTY).replace(BLANK,EMPTY);
 
-                RealmResults<MagicItemSFX> sfxes = realm.where(MagicItemSFX.class).distinct(MagicItemSFX.FIELD_NAME).findAll();
-                RealmResults<MagicItemPRFX> prfxes = realm.where(MagicItemPRFX.class).findAll();
+                RealmResults<RelicSFX> sfxes = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_NAME).findAll();
+                RealmResults<RelicPRFX> prfxes = realm.where(RelicPRFX.class).findAll();
 
 
                 if(q.isEmpty()) {
                     StringBuilder descEmptyCommand = new StringBuilder("접두사 또는 접미사를 입력하게냥" + CRLF + "*접미사 : ");
                     int i = 0;
-                    for( MagicItemSFX sfx : sfxes ) {
-                        descEmptyCommand.append((i++)%7 == 0 ? CRLF : EMPTY).append(BLANK).append(sfx.getMagicSuffixName());
+                    for( RelicSFX sfx : sfxes ) {
+                        descEmptyCommand.append((i++)%7 == 0 ? CRLF : EMPTY).append(BLANK).append(sfx.getRelicSuffixName());
                     }
                     descEmptyCommand.append(CRLF + "*접두사 : ");
                     i = 0;
-                    for( MagicItemPRFX prfx : prfxes ) {
-                        descEmptyCommand.append((i++)%3 == 0 ? CRLF : EMPTY).append(BLANK).append(prfx.getPrefixName());
+                    for( RelicPRFX prfx : prfxes ) {
+                        descEmptyCommand.append((i++)%3 == 0 ? CRLF : EMPTY).append(BLANK).append(prfx.getRelicPrefixName());
                     }
                     return descEmptyCommand.toString();
                 }
@@ -1283,8 +1300,8 @@ class LocalDataHandlerCat {
 
                 for(char probSFX : q.toCharArray()) {
                     boolean qIsSFX = false;
-                    for( MagicItemSFX sfx : sfxes ) {
-                        if(sfx.getMagicSuffixName().equals(probSFX+EMPTY)) {
+                    for( RelicSFX sfx : sfxes ) {
+                        if(sfx.getRelicSuffixName().equals(probSFX+EMPTY)) {
                             qIsSFX = true;
                             //Log.d(TAG,probSFX+"is suffix");
                             break;
@@ -1307,16 +1324,16 @@ class LocalDataHandlerCat {
                     for(char probSFX : q.toCharArray()) {
                         lambdaResult.append("접미사 ").append(probSFX).append(" 스탯 정보").append(CRLF).append(SEPARATOR);
                         //lambdaResult.append("등급 공 정 방 순 사 HP MP").append(CRLF).append(SEPARATOR);
-                        RealmResults<MagicItemSFX> sfxGrades = realm.where(MagicItemSFX.class).equalTo(MagicItemSFX.FIELD_NAME, probSFX+EMPTY).findAll();
+                        RealmResults<RelicSFX> sfxGrades = realm.where(RelicSFX.class).equalTo(RelicSFX.FIELD_NAME, probSFX+EMPTY).findAll();
 
-                        for (MagicItemSFX sfxGrade : sfxGrades) {
+                        for (RelicSFX sfxGrade : sfxGrades) {
 
-                            lambdaResult.append("[").append(sfxGrade.getMagicSuffixGRD()).append("등급] ");
+                            lambdaResult.append("[").append(sfxGrade.getRelicSuffixGrade()).append(GRADE_KOR).append("] ");
                             // 공 정 방 순 사 HP MP
                             int i = 0;
                             try {
-                                for (int stat : sfxGrade.getMagicSuffixStats()) {
-                                    lambdaResult.append(stat!=0? initStat[i]+StringUtils.leftPad(stat+BLANK,3,'0') : EMPTY);
+                                for (int power : sfxGrade.getRelicSuffixPowers()) {
+                                    lambdaResult.append(power!=0? initStat[i]+StringUtils.leftPad(power+BLANK,3,'0') : EMPTY);
                                     i++;
                                     //lambdaResult.append(StringUtils.leftPad(stat+EMPTY,2,'0')).append(BLANK);
                                 }
@@ -1332,15 +1349,15 @@ class LocalDataHandlerCat {
                     if(q.length()<2) {
                         return "접두사 또는 효과를 2글자 이상 입력하게냥";
                     }
-                    RealmResults<MagicItemPRFX> prfxNames =  realm.where(MagicItemPRFX.class).contains(MagicItemPRFX.FIELD_NAME,q).findAll();
+                    RealmResults<RelicPRFX> prfxNames =  realm.where(RelicPRFX.class).contains(RelicPRFX.FIELD_NAME,q).findAll();
 
                     if(!prfxNames.isEmpty()) {
-                        for (MagicItemPRFX prfxName : prfxNames) {
-                            lambdaResult.append(prfxName.getPrefixName()).append(BLANK).append("(")
-                                    .append(prfxName.getPrefixSpec()).append(")").append(CRLF)
-                                    .append(prfxName.getPrefixStat()).append(BLANK).append(statValue);
+                        for (RelicPRFX prfxName : prfxNames) {
+                            lambdaResult.append(prfxName.getRelicPrefixName()).append(BLANK).append("(")
+                                    .append(prfxName.getRelicPrefixSpec()).append(")").append(CRLF)
+                                    .append(prfxName.getRelicPrefixStat()).append(BLANK).append(statValue);
 
-                            RealmList<Double> prefixValues = prfxName.getPrefixValue();
+                            RealmList<Double> prefixValues = prfxName.getRelicPrefixValue();
                             if( prefixValues != null ) {
                                 for (int i = 0; i < prefixValues.size(); i++) {
                                     Double prefixValue = prefixValues.get(i);
@@ -1358,18 +1375,18 @@ class LocalDataHandlerCat {
                         if( specs.isEmpty() )
                             return null;
                         for( Spec spec : specs ) {
-                            MagicItemPRFX prfxName = realm.where(MagicItemPRFX.class).equalTo(MagicItemPRFX.FIELD_SPEC,spec.getSpecName().replace("보패: ",EMPTY)).findFirst();
+                            RelicPRFX prfxName = realm.where(RelicPRFX.class).equalTo(RelicPRFX.FIELD_SPEC,spec.getSpecName().replace("보패: ",EMPTY)).findFirst();
                             if(prfxName != null) {
-                                lambdaResult.append(prfxName.getPrefixName()).append(BLANK).append("(")
-                                        .append(prfxName.getPrefixSpec()).append(")").append(CRLF)
-                                        .append(prfxName.getPrefixStat()).append(BLANK).append(statValue);
+                                lambdaResult.append(prfxName.getRelicPrefixName()).append(BLANK).append("(")
+                                        .append(prfxName.getRelicPrefixSpec()).append(")").append(CRLF)
+                                        .append(prfxName.getRelicPrefixStat()).append(BLANK).append(statValue);
 
-                                RealmList<Double> prefixValues = prfxName.getPrefixValue();
+                                RealmList<Double> prefixValues = prfxName.getRelicPrefixValue();
                                 if( prefixValues != null ) {
                                     for (int i = 0; i < prefixValues.size(); i++) {
                                         Double prefixValue = prefixValues.get(i);
                                         if( prefixValue != null ) {
-                                            lambdaResult.append(CRLF).append("Lv.").append((i + 1)).append(":  ")
+                                            lambdaResult.append(CRLF).append("Lv.").append((i + 1)).append(COLON).append(BLANK_DOUBLE)
                                                     .append((prefixValue * (double) statValue / 200.0));
                                         }
                                     }
@@ -1387,23 +1404,23 @@ class LocalDataHandlerCat {
             });
 
             // 보패 조합 검색
-            HandleLocalDB magicCombByKey = (q->{
+            HandleLocalDB relicCombByKey = (q->{
                 //각 조합냥
                 q = q.replace(BLANK,EMPTY);
 
-                RealmResults<MagicItemSFX> sfxes = realm.where(MagicItemSFX.class).distinct(MagicItemSFX.FIELD_NAME).findAll();
+                RealmResults<RelicSFX> sfxes = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_NAME).findAll();
 
                 if(q.isEmpty()) {
                     StringBuilder descEmptyCommand = new StringBuilder("접미사 조합 또는 조합효과를 입력하게냥" + CRLF + "*접미사 : ");
                     int i = 0;
-                    for( MagicItemSFX sfx : sfxes ) {
-                        descEmptyCommand.append((i++)%7 == 0 ? CRLF : EMPTY).append(BLANK).append(sfx.getMagicSuffixName());
+                    for( RelicSFX sfx : sfxes ) {
+                        descEmptyCommand.append((i++)%7 == 0 ? CRLF : EMPTY).append(BLANK).append(sfx.getRelicSuffixName());
                     }
-                    RealmResults<MagicItemCombination> combs = realm.where(MagicItemCombination.class).distinct(MagicItemCombination.FIELD_COMB).findAll();
+                    RealmResults<RelicCombination> combs = realm.where(RelicCombination.class).distinct(RelicCombination.FIELD_SPEC).findAll();
                     descEmptyCommand.append(CRLF).append("*조합효과 : ");
                     i = 0;
-                    for( MagicItemCombination comb : combs ) {
-                        descEmptyCommand.append((i++)%2 == 0 ? CRLF : EMPTY).append(BLANK).append(StringUtils.rightPad(comb.getMagicCombination().replaceAll("[0-9][0-9]%",EMPTY),6,'　'));
+                    for( RelicCombination comb : combs ) {
+                        descEmptyCommand.append((i++)%2 == 0 ? CRLF : EMPTY).append(BLANK).append(StringUtils.rightPad(comb.getRelicCombinationSpec(),6,'　'));
                     }
                     return descEmptyCommand.toString();
                 }
@@ -1412,8 +1429,8 @@ class LocalDataHandlerCat {
 
                 for(char probSFX : q.toCharArray()) {
                     boolean qIsSFX = false;
-                    for( MagicItemSFX sfx : sfxes ) {
-                        if(sfx.getMagicSuffixName().equals(probSFX+EMPTY)) {
+                    for( RelicSFX sfx : sfxes ) {
+                        if(sfx.getRelicSuffixName().equals(probSFX+EMPTY)) {
                             qIsSFX = true;
                             //Log.d(TAG,probSFX+"is suffix");
                             break;
@@ -1428,13 +1445,13 @@ class LocalDataHandlerCat {
 
                 StringBuilder lambdaResult = new StringBuilder();
 
-                RealmResults<MagicItemCombination> combinations;
+                RealmResults<RelicCombination> combinations;
                 if( qIsSFXes ) {
                     // 각 조합냥
-                    RealmQuery<MagicItemCombination> combQuery = realm.where(MagicItemCombination.class).alwaysTrue();
+                    RealmQuery<RelicCombination> combQuery = realm.where(RelicCombination.class).alwaysTrue();
 
                     for(char probSFX : q.toCharArray())
-                        combQuery.and().equalTo(MagicItemCombination.FIELD_SFXES+"."+RealmString.VALUE, probSFX+EMPTY);
+                        combQuery.and().equalTo(RelicCombination.FIELD_SFX+"."+RealmString.VALUE, probSFX+EMPTY);
 
                     combinations = combQuery.findAll();
 
@@ -1443,7 +1460,7 @@ class LocalDataHandlerCat {
                 } else {
                     if(q.length()<2)
                         return "조합 효과를 2글자 이상 입력하게냥";
-                    combinations = realm.where(MagicItemCombination.class).contains(MagicItemCombination.FIELD_COMB,q).findAll();
+                    combinations = realm.where(RelicCombination.class).contains(RelicCombination.FIELD_SPEC,q).findAll();
                 }
 
                 if(combinations.isEmpty()) {
@@ -1453,11 +1470,11 @@ class LocalDataHandlerCat {
                 lambdaResult.append("보패 조합 검색 결과: ").append(combinations.size()).append("개").append(CRLF)
                         .append(SEPARATOR);
 
-                for( MagicItemCombination combination : combinations ) {
+                for( RelicCombination combination : combinations ) {
                     for(int i = 0; i < 4; i++ )
-                        lambdaResult.append(combination.getMagicCombSFXes().get(i));
-                    lambdaResult.append(BLANK).append("[").append(combination.getMagicCombGRD())
-                            .append("등급]").append(BLANK).append(combination.getMagicCombination()).append(CRLF);
+                        lambdaResult.append(combination.getRelicSFXes().get(i));
+                    lambdaResult.append(BLANK).append("[").append(combination.getRelicCombinationGrade())
+                            .append(GRADE_KOR).append("]").append(BLANK).append(combination.getRelicCombinationSpec()).append(CRLF);
                 }
 
 
@@ -1595,7 +1612,7 @@ class LocalDataHandlerCat {
                }
 
 
-                String dateInfo = q.replaceAll("[^0-9]", "");
+                String dateInfo = q.replaceAll(REGEX_EXCEPT_DIGITS, "");
                 Date date = new Date();
                 date.setTime(date.getTime());
                 SimpleDateFormat df_ymd = new SimpleDateFormat("yyMMdd", Locale.KOREA);
@@ -1724,7 +1741,7 @@ class LocalDataHandlerCat {
                     return "삭제 실패: 단톡방에서만 사용가능한 기능입니다.";
                 }
 
-                int id = NumberUtils.toInt(q.replaceAll("[^0-9]",EMPTY),-1);
+                int id = NumberUtils.toInt(q.replaceAll(REGEX_EXCEPT_DIGITS,EMPTY),-1);
                 if( id < 0 ) {
                     return "삭제 실패: 삭제할 문서 번호를 입력 하세요!";
                 }
@@ -1776,13 +1793,13 @@ class LocalDataHandlerCat {
                         case COMMAND_RELATION:
                             result = relationByKey.handle(req);
                             break;
-                        case COMMAND_MAGIC_ITEM:
-                            result = magicItemByKey.handle(req);
-                            result = (result == null) ? magicCombByKey.handle(req) : result;
+                        case COMMAND_RELIC:
+                            result = relicByKey.handle(req);
+                            result = (result == null) ? relicCombByKey.handle(req) : result;
                             result = (result == null) ? "보패정보 -> 보패조합 검색결과 : 없음" : result;
                             break;
                         case COMMAND_COMB:
-                            result = magicCombByKey.handle(req);
+                            result = relicCombByKey.handle(req);
                             break;
                         case COMMAND_EXTERMINATE:
                             result = null;
