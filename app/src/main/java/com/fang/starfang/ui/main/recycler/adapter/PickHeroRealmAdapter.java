@@ -4,7 +4,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
@@ -14,10 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Heroes;
-import com.fang.starfang.local.model.realm.source.Item;
-import com.fang.starfang.ui.main.recycler.filter.ItemFilter;
 
-import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
 
@@ -64,7 +60,7 @@ public class PickHeroRealmAdapter extends RealmRecyclerViewAdapter<Heroes, Recyc
 
         private PickHeroViewHolder(View itemView) {
             super(itemView);
-            Log.d(TAG, "view holder constructed");
+            //Log.d(TAG, "view holder constructed");
             text_pick_cell_hero_name = itemView.findViewById(R.id.text_pick_cell_hero_name);
             text_pick_cell_hero_branch = itemView.findViewById(R.id.text_pick_cell_hero_branch);
         }

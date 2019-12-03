@@ -33,7 +33,7 @@ public class Branch extends RealmObject {
 
     private int branchNo;
     private String branchName;
-    private RealmList<RealmString> branchStatGGs; // growth grades 공정방순사
+    private RealmList<RealmString> branchStatGGs; // growth grades 공정방순사  S A B C D
     private int branchHP;
     private int branchMP;
     private int branchEP;

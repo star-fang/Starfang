@@ -18,7 +18,7 @@ import com.fang.starfang.local.task.RealmSyncTask;
 import com.fang.starfang.util.ScreenUtils;
 import com.google.android.material.snackbar.Snackbar;
 
-public class SettingAcitivity extends AppCompatActivity {
+public class SettingActivity extends AppCompatActivity {
 
     private static final String TAG = "FANG_ACTIVITY_SETTING";
 
@@ -58,7 +58,7 @@ public class SettingAcitivity extends AppCompatActivity {
             Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
             startActivity(intent);
         } );
-        switch_bot.setChecked(NotificationListener.getStatus().equals("start"));
+        switch_bot.setChecked(NotificationListener.getStatus().equals(AppConstant.SERVICE_STATUS_START));
         switch_bot.setOnCheckedChangeListener((view,isChecked)->{
 
             Intent intent = new Intent(this, NotificationListener.class);
@@ -67,12 +67,12 @@ public class SettingAcitivity extends AppCompatActivity {
                     Snackbar.make(view,"알림 읽기 권한 설정 하세요",Snackbar.LENGTH_SHORT).show();
                     switch_bot.setChecked(false);
                 } else {
-                    intent.putExtra("status", "start");
+                    intent.putExtra(AppConstant.INTENT_KEY_SERVICE_STATUS, AppConstant.SERVICE_STATUS_START);
                     Snackbar.make(view,"냥봇 시작",Snackbar.LENGTH_SHORT).show();
                     startService(intent);
                 }
             } else {
-                intent.putExtra("status","stop");
+                intent.putExtra(AppConstant.INTENT_KEY_SERVICE_STATUS,AppConstant.SERVICE_STATUS_STOP);
                 Snackbar.make(view,"냥봇 중지",Snackbar.LENGTH_SHORT).show();
                 startService(intent);
             }
@@ -86,7 +86,7 @@ public class SettingAcitivity extends AppCompatActivity {
             name = name.trim();
             if(name.length() > 1 ) {
                 Intent intent = new Intent(this, NotificationListener.class);
-                intent.putExtra("name", name);
+                intent.putExtra(AppConstant.INTENT_KEY_SERVICE_NAME, name);
                 Snackbar.make(view,"냥봇 이름 설정됨 : " + name, Snackbar.LENGTH_SHORT).show();
                 startService(intent);
             } else {

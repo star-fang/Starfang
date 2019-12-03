@@ -44,7 +44,7 @@ public class HeroesFragment extends PlaceholderFragment {
     public void onDestroyView() {
         super.onDestroyView();
         realm.close();
-        Log.d(TAG, "_ON DESTROY VIEW : realm instance closed");
+        //Log.d(TAG, "_ON DESTROY VIEW : realm instance closed");
     }
 
     @Override

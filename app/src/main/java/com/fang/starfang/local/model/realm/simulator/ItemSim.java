@@ -50,8 +50,13 @@ public class ItemSim extends RealmObject {
                 itemPlusPowers.add(new RealmInteger(0));
             }
             this.itemPowers = new RealmList<>();
+            ArrayList<Integer> basePowers = item.getItemStatList();
             for(int i = 0; i < Heroes.INIT_STATS.length; i++ ) {
-                itemPowers.add(new RealmInteger(0));
+                try {
+                    itemPowers.add(new RealmInteger(basePowers.get(i)));
+                } catch( ArrayIndexOutOfBoundsException e ) {
+                    itemPowers.add(new RealmInteger(0));
+                }
             }
             this.specNameGrade6 = null;
             this.specValueGrade6 = null;
@@ -155,6 +160,10 @@ public class ItemSim extends RealmObject {
             }
         }
         return powers;
+    }
+
+    public RealmList<RealmInteger> getItemPowers() {
+        return itemPowers;
     }
 
     public ArrayList<Integer> getItemPowersList() {

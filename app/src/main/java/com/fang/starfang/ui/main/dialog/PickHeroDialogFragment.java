@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fang.starfang.AppConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
@@ -40,7 +41,7 @@ public class PickHeroDialogFragment extends DialogFragment {
     public static PickHeroDialogFragment newInstance( int itemID ) {
 
         Bundle args = new Bundle();
-        args.putInt("itemID", itemID);
+        args.putInt(AppConstant.INTENT_KEY_ITEM_ID, itemID);
         PickHeroDialogFragment pickHeroDialogFragment = new PickHeroDialogFragment();
         pickHeroDialogFragment.setArguments(args);
         return pickHeroDialogFragment;
@@ -57,7 +58,7 @@ public class PickHeroDialogFragment extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        Log.d(TAG, "_ON ATTATCH");
+        Log.d(TAG, "_ON ATTACH");
         if (context instanceof Activity) {
             mActivity = (Activity) context;
         }
@@ -71,7 +72,7 @@ public class PickHeroDialogFragment extends DialogFragment {
         Bundle args = getArguments();
         int itemID = 0;
         if(args != null) {
-            itemID = args.getInt("itemID");
+            itemID = args.getInt(AppConstant.INTENT_KEY_ITEM_ID);
         }
 
         realm = Realm.getDefaultInstance();
@@ -107,14 +108,14 @@ public class PickHeroDialogFragment extends DialogFragment {
                         RealmQuery<Branch> branchRealmQuery = realm.where(Branch.class);
 
                         switch (itemCate.getItemMainCate()) {
-                            case AddItemDialogFragment.WEAPON_KOR:
+                            case AppConstant.WEAPON_KOR:
                                 branchRealmQuery.equalTo(Branch.FIELD_CATE_WEAPON, itemSubCate);
                                 break;
-                            case AddItemDialogFragment.AID_KOR:
+                            case AppConstant.ARMOR_KOR:
                                 branchRealmQuery.equalTo(Branch.FIELD_CATE_ARMOR, itemSubCate);
                                 break;
                             default:
-                        }// end switch\
+                        }// end switch
                         RealmResults<Branch> branchRealmResults = branchRealmQuery.findAll();
                         if (!branchRealmResults.isEmpty()) {
                             for (Branch branch : branchRealmResults) {
@@ -137,7 +138,7 @@ public class PickHeroDialogFragment extends DialogFragment {
                             if (heroSim != null) {
                                 realm.beginTransaction();
                                 switch(itemCate.getItemMainCate()) {
-                                    case "무기" :
+                                    case AppConstant.WEAPON_KOR :
                                         if(hero_before != null ) {
                                             hero_before.setHeroWeapon(null);
                                         }
@@ -147,7 +148,7 @@ public class PickHeroDialogFragment extends DialogFragment {
                                         }
                                         heroSim.setHeroWeapon(itemSim);
                                         break;
-                                    case "방어구" :
+                                    case AppConstant.ARMOR_KOR :
                                         if(hero_before != null ) {
                                             hero_before.setHeroArmor(null);
                                         }

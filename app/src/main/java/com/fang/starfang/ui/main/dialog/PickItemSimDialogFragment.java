@@ -5,18 +5,22 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fang.starfang.AppConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
+import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.ui.main.recycler.adapter.ItemSimsRealmAdapter;
 import com.fang.starfang.util.NotifyUtils;
 import com.fang.starfang.util.ScreenUtils;
@@ -32,9 +36,9 @@ public class PickItemSimDialogFragment extends DialogFragment {
 
     public static PickItemSimDialogFragment newInstance( int heroID, String itemSubCate, int itemMainCate ) {
         Bundle args = new Bundle();
-        args.putInt("heroID", heroID);
-        args.putString("itemSubCate", itemSubCate);
-        args.putInt("itemMainCate", itemMainCate);
+        args.putInt(AppConstant.INTENT_KEY_HERO_ID, heroID);
+        args.putString(AppConstant.INTENT_KEY_ITEM_CATE_SUB, itemSubCate);
+        args.putInt(AppConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate);
         PickItemSimDialogFragment pickItemSimDialogFragment = new PickItemSimDialogFragment();
         pickItemSimDialogFragment.setArguments(args);
         return pickItemSimDialogFragment;
@@ -63,11 +67,11 @@ public class PickItemSimDialogFragment extends DialogFragment {
 
         Bundle args = getArguments();
         if( args != null ) {
-            int heroID = args.getInt("heroID");
+            int heroID = args.getInt(AppConstant.INTENT_KEY_HERO_ID);
             HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, heroID).findFirst();
             if(heroSim != null) {
-                String itemSubCate = args.getString("itemSubCate");
-                int itemMainCate = args.getInt("itemMainCate");
+                String itemSubCate = args.getString(AppConstant.INTENT_KEY_ITEM_CATE_SUB);
+                int itemMainCate = args.getInt(AppConstant.INTENT_KEY_ITEM_CATE_MAIN);
 
                 final RecyclerView recycler_view_pick_item_sim = view.findViewById(R.id.recycler_view_pick_item_sim);
                 recycler_view_pick_item_sim.setLayoutManager(new GridLayoutManager(mActivity, ScreenUtils.calculateNoOfColumns(mActivity, 75)));
@@ -76,16 +80,16 @@ public class PickItemSimDialogFragment extends DialogFragment {
 
                 switch (itemMainCate) {
                     case 0:
-                        itemSimsRealmAdapter.getFilter().filter(AddItemDialogFragment.ALL_PICK_KOR +
-                                "," + AddItemDialogFragment.WEAPON_KOR + "," + itemSubCate);
+                        itemSimsRealmAdapter.getFilter().filter(AppConstant.ALL_PICK_KOR +
+                                AppConstant.CONSTRAINT_SEPARATOR + AppConstant.WEAPON_KOR + AppConstant.CONSTRAINT_SEPARATOR + itemSubCate);
                         break;
                     case 1:
-                        itemSimsRealmAdapter.getFilter().filter(AddItemDialogFragment.ALL_PICK_KOR +
-                                "," + AddItemDialogFragment.ARMOR_KOR + "," + itemSubCate);
+                        itemSimsRealmAdapter.getFilter().filter(AppConstant.ALL_PICK_KOR +
+                                AppConstant.CONSTRAINT_SEPARATOR + AppConstant.ARMOR_KOR + AppConstant.CONSTRAINT_SEPARATOR + itemSubCate);
                         break;
                     default:
-                        itemSimsRealmAdapter.getFilter().filter(AddItemDialogFragment.ALL_PICK_KOR +
-                                "," + AddItemDialogFragment.AID_KOR + "," + heroSim.getHero().getBranchNo());
+                        itemSimsRealmAdapter.getFilter().filter(AppConstant.ALL_PICK_KOR +
+                                AppConstant.CONSTRAINT_SEPARATOR + AppConstant.AID_KOR + AppConstant.CONSTRAINT_SEPARATOR + heroSim.getHero().getBranchNo());
                 }
 
                 recycler_view_pick_item_sim.setAdapter(itemSimsRealmAdapter);
@@ -130,6 +134,21 @@ public class PickItemSimDialogFragment extends DialogFragment {
                         itemSim_selected.setHeroWhoHasThis( heroSim );
                             realm.commitTransaction();
                         NotifyUtils.notyfyToMainAdapters();
+
+                        Fragment targetFragment = getTargetFragment();
+                        if(targetFragment != null) {
+                            Intent intent = new Intent();
+                            Item item = itemSim_selected.getItem();
+                            intent.putExtra(AppConstant.INTENT_KEY_ITEM_NAME, item.getItemName());
+                            intent.putExtra(AppConstant.INTENT_KEY_ITEM_ID, itemSim_selected.getItemID());
+                            int reinforceValue = itemSim_selected.getItemReinforcement();
+                            String itemGrade = item.getItemGrade();
+                            String reinforceStr = AppConstant.ITEM_GRADE_NO_REINFORCE.equals(itemGrade) ? null :
+                                    "+" + reinforceValue;
+                            intent.putExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE, reinforceStr );
+                            intent.putExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate );
+                            targetFragment.onActivityResult(AppConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT,Activity.RESULT_OK,intent);
+                        }
                     }
                 }).setNegativeButton(R.string.cancel_kor, null);
             }

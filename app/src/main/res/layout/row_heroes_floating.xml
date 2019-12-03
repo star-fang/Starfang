@@ -22,11 +22,15 @@
         layout="@layout/cell_hero_specs"
         android:id="@+id/cell_hero_specs"/>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/end_border_gray_1dp">
     <include
         layout="@layout/cell_hero_items"
         android:id="@+id/cell_items" />
 
-
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_hero_lineage"

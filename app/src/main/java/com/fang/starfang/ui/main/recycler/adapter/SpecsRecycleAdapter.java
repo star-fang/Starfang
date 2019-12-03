@@ -33,7 +33,7 @@ implements Filterable {
     private ArrayList<Integer> checkedLevels;
     private boolean pasv;
     private TextView resultView;
-    private static final int[] RESTRICT_PICK_SPECS_BY_GRADE = {1,1,2,2,3};
+    //private static final int[] RESTRICT_PICK_SPECS_BY_GRADE = {1,1,2,2,3};
 
 
     @NonNull

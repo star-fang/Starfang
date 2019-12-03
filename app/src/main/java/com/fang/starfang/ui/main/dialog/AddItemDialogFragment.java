@@ -18,6 +18,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fang.starfang.AppConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
@@ -43,11 +44,7 @@ public class AddItemDialogFragment extends DialogFragment {
     private static final String TAG = "FANG_ADD_ITEM_DIALOG";
     private Activity mActivity;
     private Realm realm;
-    public static final String ALL_PICK_KOR = "전체";
-    public static final String GRADE_KOR = "등급";
-    public static final String WEAPON_KOR = "무기";
-    public static final String ARMOR_KOR = "방어구";
-    public static final String AID_KOR = "보조구";
+
 
     public static AddItemDialogFragment newInstance() {
         return new AddItemDialogFragment();
@@ -86,10 +83,10 @@ public class AddItemDialogFragment extends DialogFragment {
 
         RealmResults<Item> grades = realm.where(Item.class).distinct(Item.FIELD_GRD).findAll().sort(Item.FIELD_GRD, Sort.DESCENDING);
         List<String> gradeList = new ArrayList<>();
-        gradeList.add(ALL_PICK_KOR);
+        gradeList.add(AppConstant.ALL_PICK_KOR);
         for( Item grade : grades ) {
             String gradeStr = grade.getItemGrade();
-            gradeStr += NumberUtils.isDigits(gradeStr)? GRADE_KOR : "";
+            gradeStr += NumberUtils.isDigits(gradeStr)? AppConstant.GRADE_KOR : "";
             gradeList.add(gradeStr);
         }
         ArrayAdapter<String> gradesAdapter = new ArrayAdapter<>(
@@ -99,7 +96,7 @@ public class AddItemDialogFragment extends DialogFragment {
         spinner_item_grade.setAdapter(gradesAdapter);
         RealmResults < ItemCate > itemCates_main = realm.where(ItemCate.class).distinct(ItemCate.FIELD_MAIN_CATE).findAll();
         List<String> mainCategoryList = new ArrayList<>();
-        mainCategoryList.add(ALL_PICK_KOR);
+        mainCategoryList.add(AppConstant.ALL_PICK_KOR);
         for( ItemCate cate_main : itemCates_main) {
             mainCategoryList.add(cate_main.getItemMainCate());
         }
@@ -121,9 +118,9 @@ public class AddItemDialogFragment extends DialogFragment {
                         String selected_grade = spinner_item_grade.getItemAtPosition(position).toString();
                         String selected_category_main = spinner_item_category_main.getSelectedItem().toString();
                         Object selected_sub_cate = spinner_item_category_sub.getSelectedItem();
-                        String selected_category_sub = selected_sub_cate == null ? ALL_PICK_KOR : selected_sub_cate.toString();
+                        String selected_category_sub = selected_sub_cate == null ? AppConstant.ALL_PICK_KOR : selected_sub_cate.toString();
                         itemsRealmAdapter.getFilter().filter(selected_grade
-                                + "," + selected_category_main + "," + selected_category_sub );
+                                + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub );
                         Log.d(TAG,"grade selected :" + selected_grade);
                     }
 
@@ -141,23 +138,23 @@ public class AddItemDialogFragment extends DialogFragment {
                         String selected_category_main = spinner_item_category_main.getItemAtPosition(position).toString();
                         String selected_grade = spinner_item_grade.getSelectedItem().toString();
                         RealmQuery<ItemCate> categories_sub_query = realm.where(ItemCate.class);
-                        if(!selected_category_main.equals(ALL_PICK_KOR)) {
+                        if(!selected_category_main.equals(AppConstant.ALL_PICK_KOR)) {
                             categories_sub_query.equalTo(ItemCate.FIELD_MAIN_CATE, selected_category_main);
                         }
                         RealmResults<ItemCate> categories_sub = categories_sub_query.findAll();
 
                         subCategoryList.clear();
-                        subCategoryList.add(ALL_PICK_KOR);
+                        subCategoryList.add(AppConstant.ALL_PICK_KOR);
                         for( ItemCate cate_sub : categories_sub) {
                             subCategoryList.add(cate_sub.getItemSubCate() );
                         }
                         subCateAdapter.notifyDataSetChanged();
                         spinner_item_category_sub.setSelection(0);
                         Object selected_sub_cate = spinner_item_category_sub.getSelectedItem();
-                        String selected_category_sub = selected_sub_cate == null ? ALL_PICK_KOR : selected_sub_cate.toString();
+                        String selected_category_sub = selected_sub_cate == null ? AppConstant.ALL_PICK_KOR : selected_sub_cate.toString();
 
                         itemsRealmAdapter.getFilter().filter(selected_grade
-                                + "," + selected_category_main + "," + selected_category_sub );
+                                + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub );
                         Log.d(TAG,"category_main selected :" + selected_category_main);
 
 
@@ -177,7 +174,7 @@ public class AddItemDialogFragment extends DialogFragment {
                         String selected_category_main = spinner_item_category_main.getSelectedItem().toString();
                         String selected_grade = spinner_item_grade.getSelectedItem().toString();
                         itemsRealmAdapter.getFilter().filter(selected_grade
-                                + "," + selected_category_main + "," + selected_category_sub );
+                                + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub );
                         Log.d(TAG,"category_sub selected :" + selected_category_sub);
                     }
 

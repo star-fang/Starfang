@@ -4,7 +4,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
@@ -13,11 +12,9 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
-import com.fang.starfang.ui.main.recycler.filter.ItemFilter;
 import com.fang.starfang.ui.main.recycler.filter.ItemSimFilter;
 
 import io.realm.Realm;
@@ -73,7 +70,7 @@ public class ItemSimsRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, Recy
 
         private ItemSimsViewHolder(View itemView) {
             super(itemView);
-            Log.d(TAG, "view holder constructed");
+            //Log.d(TAG, "view holder constructed");
             text_cell_title_item_grade = itemView.findViewById(R.id.text_cell_title_item_grade);
             text_cell_title_item_reinforce = itemView.findViewById(R.id.text_cell_title_item_reinforce);
             text_cell_title_item_name = itemView.findViewById(R.id.text_cell_title_item_name);

@@ -72,7 +72,7 @@ public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim,
 
         private ItemsSimViewHolder(View itemView) {
             super(itemView);
-            Log.d(TAG, "view holder constructed");
+            //Log.d(TAG, "view holder constructed");
             text_item_reinforcement = itemView.findViewById(R.id.text_item_reinforcement);
             text_item_name = itemView.findViewById(R.id.text_item_name);
         }
@@ -89,7 +89,7 @@ public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim,
             text_item_name.setText(itemName);
             text_item_reinforcement.setText(String.valueOf(itemSim.getItemReinforcement()));
 
-            itemView.setOnClickListener( v -> ReinforceDialogFragment.newInstance( itemSim.getItemID() ).show(fragmentManager,TAG));
+            itemView.setOnClickListener( v -> ReinforceDialogFragment.newInstance( itemSim.getItemID(), -1 ).show(fragmentManager,TAG));
         }
     }
 

@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fang.starfang.AppConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
@@ -58,7 +59,7 @@ public class ItemsFragment extends PlaceholderFragment {
     public void onDestroyView() {
         super.onDestroyView();
         realm.close();
-        Log.d(TAG, "_ON DESTROY VIEW : realm instance closed");
+        //Log.d(TAG, "_ON DESTROY VIEW : realm instance closed");
     }
 
     @Override
@@ -123,10 +124,10 @@ public class ItemsFragment extends PlaceholderFragment {
 
         RealmResults<Item> grades = realm.where(Item.class).distinct(Item.FIELD_GRD).findAll().sort(Item.FIELD_GRD, Sort.DESCENDING);
         List<String> gradeList = new ArrayList<>();
-        gradeList.add(AddItemDialogFragment.ALL_PICK_KOR);
+        gradeList.add(AppConstant.ALL_PICK_KOR);
         for( Item grade : grades ) {
             String gradeStr = grade.getItemGrade();
-            gradeStr += NumberUtils.isDigits(gradeStr)? AddItemDialogFragment.GRADE_KOR : "";
+            gradeStr += NumberUtils.isDigits(gradeStr)? AppConstant.GRADE_KOR : "";
             gradeList.add(gradeStr);
         }
         ArrayAdapter<String> gradesAdapter = new ArrayAdapter<>(
@@ -136,7 +137,7 @@ public class ItemsFragment extends PlaceholderFragment {
         spinner_item_grade.setAdapter(gradesAdapter);
         RealmResults <ItemCate> itemCates_main = realm.where(ItemCate.class).distinct(ItemCate.FIELD_MAIN_CATE).findAll();
         List<String> mainCategoryList = new ArrayList<>();
-        mainCategoryList.add(AddItemDialogFragment.ALL_PICK_KOR);
+        mainCategoryList.add(AppConstant.ALL_PICK_KOR);
         for( ItemCate cate_main : itemCates_main) {
             mainCategoryList.add(cate_main.getItemMainCate());
         }
@@ -158,8 +159,8 @@ public class ItemsFragment extends PlaceholderFragment {
                         String selected_grade = spinner_item_grade.getItemAtPosition(position).toString();
                         String selected_category_main = spinner_item_category_main.getSelectedItem().toString();
                         Object selected_sub_cate = spinner_item_category_sub.getSelectedItem();
-                        String selected_category_sub = selected_sub_cate == null ? AddItemDialogFragment.ALL_PICK_KOR : selected_sub_cate.toString();
-                        String cs = selected_grade + "," + selected_category_main + "," + selected_category_sub;
+                        String selected_category_sub = selected_sub_cate == null ? AppConstant.ALL_PICK_KOR : selected_sub_cate.toString();
+                        String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                         itemSimsFixedRealmAdapter.getFilter().filter(cs);
                         itemSimsFloatingRealmAdapter.getFilter().filter(cs);
                         Log.d(TAG,"grade selected :" + selected_grade);
@@ -179,22 +180,22 @@ public class ItemsFragment extends PlaceholderFragment {
                         String selected_category_main = spinner_item_category_main.getItemAtPosition(position).toString();
                         String selected_grade = spinner_item_grade.getSelectedItem().toString();
                         RealmQuery<ItemCate> categories_sub_query = realm.where(ItemCate.class);
-                        if(!selected_category_main.equals(AddItemDialogFragment.ALL_PICK_KOR)) {
+                        if(!selected_category_main.equals(AppConstant.ALL_PICK_KOR)) {
                             categories_sub_query.equalTo(ItemCate.FIELD_MAIN_CATE, selected_category_main);
                         }
                         RealmResults<ItemCate> categories_sub = categories_sub_query.findAll();
 
                         subCategoryList.clear();
-                        subCategoryList.add(AddItemDialogFragment.ALL_PICK_KOR);
+                        subCategoryList.add(AppConstant.ALL_PICK_KOR);
                         for( ItemCate cate_sub : categories_sub) {
                             subCategoryList.add(cate_sub.getItemSubCate() );
                         }
                         subCateAdapter.notifyDataSetChanged();
                         spinner_item_category_sub.setSelection(0);
                         Object selected_sub_cate = spinner_item_category_sub.getSelectedItem();
-                        String selected_category_sub = selected_sub_cate == null ? AddItemDialogFragment.ALL_PICK_KOR : selected_sub_cate.toString();
+                        String selected_category_sub = selected_sub_cate == null ? AppConstant.ALL_PICK_KOR : selected_sub_cate.toString();
 
-                        String cs = selected_grade + "," + selected_category_main + "," + selected_category_sub;
+                        String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                         itemSimsFixedRealmAdapter.getFilter().filter(cs);
                         itemSimsFloatingRealmAdapter.getFilter().filter(cs);
                         Log.d(TAG,"category_main selected :" + selected_category_main);
@@ -215,7 +216,7 @@ public class ItemsFragment extends PlaceholderFragment {
                         String selected_category_sub = spinner_item_category_sub.getItemAtPosition(position).toString();
                         String selected_category_main = spinner_item_category_main.getSelectedItem().toString();
                         String selected_grade = spinner_item_grade.getSelectedItem().toString();
-                        String cs = selected_grade + "," + selected_category_main + "," + selected_category_sub;
+                        String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                         itemSimsFixedRealmAdapter.getFilter().filter(cs);
                         itemSimsFloatingRealmAdapter.getFilter().filter(cs);
                         Log.d(TAG,"category_sub selected :" + selected_category_sub);

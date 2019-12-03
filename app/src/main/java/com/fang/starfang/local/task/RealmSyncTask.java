@@ -72,6 +72,7 @@ import java.util.concurrent.TimeoutException;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.exceptions.RealmPrimaryKeyConstraintException;
 
 public class RealmSyncTask  extends AsyncTask<String,String, String> {
@@ -240,11 +241,12 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                                     Heroes hero = gson.fromJson(json,Heroes.class);
                                     //realm.copyToRealm(hero);
                                     HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID,hero.getHeroNo()).findFirst();
-                                    if(heroSim == null ) {
+                                    if(heroSim == null) {
                                         heroSim = new HeroSim(hero);
                                         realm.copyToRealm(heroSim);
                                     } else {
-                                        heroSim.setHero(hero);
+                                        realm.copyToRealm(hero);
+                                        heroSim.updateHero(realm);
                                     }
                             }
                             Log.d(TAG, "SYNC Hero REALM COMPLETE!");
@@ -276,6 +278,12 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                                     Branch branch = gson.fromJson(json,Branch.class);
                                     realm.copyToRealm(branch);
                             }
+
+                            for(HeroSim heroSim : realm.where(HeroSim.class).findAll()) {
+                                heroSim.updateBranch(realm);
+                                heroSim.updateBasePower();
+                            }
+
 
                             Log.d(TAG, "SYNC Branch REALM COMPLETE!");
                             break;

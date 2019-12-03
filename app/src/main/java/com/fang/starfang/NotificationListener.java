@@ -20,7 +20,7 @@ public class NotificationListener extends NotificationListenerService {
     public static final String PACKAGE_STARFANG = "com.fang.starfang";
     private static final String COMMAND_CAT = "냥";
     private static final String COMMAND_DOG = "멍";
-    private static String status = "stop";
+    private static String status = AppConstant.SERVICE_STATUS_STOP;
     private static String name = "";
 
     public static String getCommandCat() {
@@ -49,17 +49,17 @@ public class NotificationListener extends NotificationListenerService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle bundle = intent.getExtras();
         if( bundle != null ) {
-            String getStatus = (String)intent.getExtras().get("status");
+            String getStatus = (String)intent.getExtras().get(AppConstant.INTENT_KEY_SERVICE_STATUS);
             if( getStatus != null ) {
                 status = getStatus;
                 Log.d(TAG, "status changed:" + status);
-                if(status.equals("start")) {
+                if(status.equals(AppConstant.SERVICE_STATUS_START)) {
                     super.onStartCommand(intent, flags, startId);
                 } else {
                     super.stopSelf();
                 }
             } else {
-                String getName = (String)intent.getExtras().get("name");
+                String getName = (String)intent.getExtras().get(AppConstant.INTENT_KEY_SERVICE_NAME);
                 if( getName != null ) {
                     name = getName;
                     Log.d(TAG, "name changed:" + name);
@@ -118,7 +118,7 @@ public class NotificationListener extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        if(status.equals("stop"))
+        if(status.equals(AppConstant.SERVICE_STATUS_STOP))
             return;
         if (sbn!=null) {
             String sbnPackage = sbn.getPackageName();

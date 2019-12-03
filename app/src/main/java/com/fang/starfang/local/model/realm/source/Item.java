@@ -3,6 +3,8 @@ package com.fang.starfang.local.model.realm.source;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 
+import java.util.ArrayList;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -40,6 +42,15 @@ public class Item extends RealmObject {
     public String getItemRestrictionBranch() {return itemRestrictionBranch;}
     public int getItemRestrictionHero() {return itemRestrictionHero;}
     public RealmList<RealmInteger> getItemStats() {return itemStats;}
+    public ArrayList<Integer> getItemStatList() {
+        ArrayList<Integer> stats = new ArrayList<>();
+        if( itemStats != null ) {
+            for (RealmInteger stat : itemStats) {
+                stats.add(stat.toInt());
+            }
+        }
+        return stats;
+    }
     public RealmList<RealmString> getItemSpecs() {return itemSpecs;}
     public RealmList<RealmString> getItemSpecValues() {return itemSpecValues;}
     public void setItemNameNoBlank(String itemNameNoBlank) {this.itemNameNoBlank=itemNameNoBlank;}

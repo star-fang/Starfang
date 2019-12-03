@@ -4,7 +4,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
@@ -70,7 +69,7 @@ public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerVi
 
         private ItemsViewHolder(View itemView) {
             super(itemView);
-            Log.d(TAG, "view holder constructed");
+            //Log.d(TAG, "view holder constructed");
             text_cell_title_item_grade = itemView.findViewById(R.id.text_cell_title_item_grade);
             text_cell_title_item_cate_sub = itemView.findViewById(R.id.text_cell_title_item_cate_sub);
             text_cell_title_item_name = itemView.findViewById(R.id.text_cell_title_item_name);

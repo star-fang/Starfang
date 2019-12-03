@@ -5,12 +5,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
@@ -19,12 +19,12 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fang.starfang.AppConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
@@ -34,8 +34,6 @@ import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.NormalItem;
-import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
-import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.PowersRecyclerAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.SpecsRecycleAdapter;
 import com.fang.starfang.util.NotifyUtils;
@@ -56,17 +54,30 @@ public class HeroesDialogFragment extends DialogFragment {
     private static final int[] MAX_LEVEL_BY_GRADE = {20, 40, 60, 80, 99};
     private final int[] MIN_LEVEL_BY_REINFORCE = {1, 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77};
     private final int[] MAX_LEVEL_BY_REINFORCE = {20, 20, 40, 40, 40, 60, 60, 60, 80, 80, 80, 99};
-    private final int[] MIN_GRADE_BY_REINFORCE = {};
-    private final int[] MAX_GRADE_BY_REINFORCE = {};
+    //private final int[] MIN_GRADE_BY_REINFORCE = {};
+    //private final int[] MAX_GRADE_BY_REINFORCE = {};
 
     private Realm realm;
     private FragmentManager fragmentManager;
+    private PowersRecyclerAdapter powerAdapter;
 
-    public static HeroesDialogFragment newInstance(int heroNo) {
+    private AppCompatTextView text_picked_item_name;
+    private AppCompatTextView text_picked_item_cate_main;
+    private AppCompatTextView[] texts_item_reinforcement;
+    private AppCompatTextView[] texts_item_name;
+    private View[] cells_hero_item;
+    private AppCompatButton button_release_picked_item;
+    private AppCompatButton button_reinforce_picked_item;
+    private AppCompatButton button_modify_picked_item;
+    private RealmList<ItemSim> itemSims;
+
+    private View view;
+
+    public static HeroesDialogFragment newInstance(int heroID) {
 
         HeroesDialogFragment heroesDialogFragment = new HeroesDialogFragment();
         Bundle args = new Bundle();
-        args.putInt("heroNo", heroNo);
+        args.putInt(AppConstant.INTENT_KEY_HERO_ID, heroID);
         heroesDialogFragment.setArguments(args);
 
         return heroesDialogFragment;
@@ -78,10 +89,48 @@ public class HeroesDialogFragment extends DialogFragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (resultCode == Activity.RESULT_OK) {
+            int itemMainCate = intent.getIntExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN, -1);
+            if (itemMainCate > -1) {
+                try {
+                    switch (requestCode) {
+                        case AppConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT:
+                            String itemName = intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_NAME);
+                            String itemReinforce = intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE);
+                            int itemID = intent.getIntExtra(AppConstant.INTENT_KEY_ITEM_ID,0);
+                            ItemSim itemSim = realm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID, itemID).findFirst();
+                            itemSims.set(itemMainCate, itemSim);
+                            texts_item_reinforcement[itemMainCate].setText(itemReinforce);
+                            texts_item_name[itemMainCate].setText(itemName);
+                            text_picked_item_name.setText(itemName);
+                            button_release_picked_item.setEnabled(true);
+                            button_reinforce_picked_item.setEnabled(itemReinforce != null);
+                            Snackbar.make(view,  itemReinforce + " " + itemName + " " + AppConstant.WEAR_KOR, Snackbar.LENGTH_SHORT).show();
+                            break;
+                        case AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT:
+                            itemReinforce = intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE);
+                            texts_item_reinforcement[itemMainCate].setText(intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE));
+                            Snackbar.make(view,  itemReinforce + " " + AppConstant.REINFORCE_KOR, Snackbar.LENGTH_SHORT).show();
+                            break;
+                        default:
+                    } // end switch
+
+                    powerAdapter.notifyDataSetChanged();
+                    NotifyUtils.notyfyToMainAdapters();
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    Log.d(TAG, e.toString());
+                }
+            }
+        } // end if ok
+    }
+
+    @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        Log.d(TAG, "_ON ATTATCH");
+        Log.d(TAG, "_ON ATTACH");
         if (context instanceof Activity) {
             mActivity = (Activity) context;
         }
@@ -93,15 +142,15 @@ public class HeroesDialogFragment extends DialogFragment {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        View view = View.inflate(mActivity, R.layout.dialog_heroes, null);
+        view = View.inflate(mActivity, R.layout.dialog_heroes, null);
         realm = Realm.getDefaultInstance();
         fragmentManager = getFragmentManager();
 
         Bundle args = getArguments();
         if (args != null) {
-            int heroNo = getArguments().getInt("heroNo");
+            int heroID = getArguments().getInt(AppConstant.INTENT_KEY_HERO_ID);
 
-            HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_HERO + "." + Heroes.FIELD_ID, heroNo).findFirst();
+            HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_HERO + "." + Heroes.FIELD_ID, heroID).findFirst();
             if (heroSim != null) {
                 Heroes hero = heroSim.getHero();
 
@@ -129,7 +178,7 @@ public class HeroesDialogFragment extends DialogFragment {
                 seek_bar_hero_reinforce.setProgress(curReinforce);
                 text_seek_bar_hero_reinforce_value.setText(String.valueOf(curReinforce + 1));
 
-                Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_ID, hero.getBranchNo()).findFirst();
+                Branch branch = heroSim.getHeroBranch();
 
                 final RecyclerView recycler_view_pasv_grades = view.findViewById(R.id.recycler_view_pasv_grades);
                 final RecyclerView recycler_view_hero_grades = view.findViewById(R.id.recycler_view_hero_grades);
@@ -173,7 +222,6 @@ public class HeroesDialogFragment extends DialogFragment {
                     branchWeaponSubCate = branch.getBranchWeaponSubCate();
                     branchArmorSubCate = branch.getBranchArmorSubCate();
                     branchNormalAidType = branch.getBranchNormalAidType();
-                    //Log.d(TAG, branchWeaponSubCate + "\n" + branchArmorSubCate + "\n" + branchNormalAidType);
                 }
                 if (branchPasvSpecs != null && branchPasvSpecGrades != null) {
                     for (int i = 0; i < Branch.NUM_PASVS; i++) {
@@ -276,7 +324,9 @@ public class HeroesDialogFragment extends DialogFragment {
                 normalItems.add(normalArmor);
                 normalItems.add(normalAid);
 
-                final PowersRecyclerAdapter powerAdapter = new PowersRecyclerAdapter(branchStatGGs, heroBaseStats, heroStatsUpList, curLevel + 1, curReinforce + 1, normalItems);
+                itemSims = heroSim.getHeroItemSims();
+
+                powerAdapter = new PowersRecyclerAdapter(branchStatGGs, heroBaseStats, heroStatsUpList, curLevel + 1, curReinforce + 1, normalItems, itemSims);
                 recycler_view_dialog_heroes_cell_power.setAdapter(powerAdapter);
 
                 final AppCompatTextView text_sum_of_plus_stat_cur = view.findViewById(R.id.text_sum_of_plus_stat_cur);
@@ -284,30 +334,30 @@ public class HeroesDialogFragment extends DialogFragment {
 
                 final int numberOfStats = Heroes.INIT_STATS.length;
                 final AppCompatTextView[] text_base_plus_stat = new AppCompatTextView[numberOfStats];
-                final AppCompatEditText[] text_seekbar_hero_stat_cur = new AppCompatEditText[numberOfStats];
-                final AppCompatTextView[] text_seekbar_hero_stat_max = new AppCompatTextView[numberOfStats];
-                final AppCompatSeekBar[] seekbar_hero_stat = new AppCompatSeekBar[numberOfStats];
+                final AppCompatEditText[] text_seek_bar_hero_stat_cur = new AppCompatEditText[numberOfStats];
+                final AppCompatTextView[] text_seek_bar_hero_stat_max = new AppCompatTextView[numberOfStats];
+                final AppCompatSeekBar[] seek_bar_hero_stat = new AppCompatSeekBar[numberOfStats];
 
                 for (int i = 0; i < numberOfStats; i++) {
-                    seekbar_hero_stat[i] = view.findViewById(getResources().getIdentifier("seekbar_hero_stat" + (i + 1), "id", mActivity.getPackageName()));
+                    seek_bar_hero_stat[i] = view.findViewById(getResources().getIdentifier("seekbar_hero_stat" + (i + 1), "id", mActivity.getPackageName()));
                     text_base_plus_stat[i] = view.findViewById(getResources().getIdentifier("text_base_plus_stat" + (i + 1), "id", mActivity.getPackageName()));
-                    text_seekbar_hero_stat_cur[i] = view.findViewById(getResources().getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_cur", "id", mActivity.getPackageName()));
-                    text_seekbar_hero_stat_max[i] = view.findViewById(getResources().getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_max", "id", mActivity.getPackageName()));
+                    text_seek_bar_hero_stat_cur[i] = view.findViewById(getResources().getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_cur", "id", mActivity.getPackageName()));
+                    text_seek_bar_hero_stat_max[i] = view.findViewById(getResources().getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_max", "id", mActivity.getPackageName()));
 
-                    seekbar_hero_stat[i].setMax(maxPlusStat);
-                    text_seekbar_hero_stat_max[i].setText(String.valueOf(maxPlusStat));
+                    seek_bar_hero_stat[i].setMax(maxPlusStat);
+                    text_seek_bar_hero_stat_max[i].setText(String.valueOf(maxPlusStat));
                     RealmInteger baseStat = heroBaseStats.get(i);
                     Integer plusStat = heroStatsUpList.get(i);
                     if (baseStat != null && plusStat != null) {
                         int plusStatInt = plusStat;
                         int totalStat = baseStat.toInt() + plusStatInt;
                         text_base_plus_stat[i].setText(String.valueOf(totalStat));
-                        text_seekbar_hero_stat_cur[i].setText(String.valueOf(plusStat));
-                        seekbar_hero_stat[i].setProgress(plusStatInt);
+                        text_seek_bar_hero_stat_cur[i].setText(String.valueOf(plusStat));
+                        seek_bar_hero_stat[i].setProgress(plusStatInt);
                     }
 
                     int finalI = i;
-                    seekbar_hero_stat[i].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    seek_bar_hero_stat[i].setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -315,17 +365,17 @@ public class HeroesDialogFragment extends DialogFragment {
                             int sumOfCur = 0;
                             int sumOfMax = 0;
                             for (int i = 0; i < numberOfStats; i++) {
-                                sumOfCur += seekbar_hero_stat[i].getProgress();
-                                sumOfMax += seekbar_hero_stat[i].getMax();
+                                sumOfCur += seek_bar_hero_stat[i].getProgress();
+                                sumOfMax += seek_bar_hero_stat[i].getMax();
                             }
 
                             sumOfMax = Math.min(500, sumOfMax);
 
                             if (sumOfCur > sumOfMax) {
-                                seekbar_hero_stat[finalI].setProgress(progress - 1);
+                                seek_bar_hero_stat[finalI].setProgress(progress - 1);
                             } else {
                                 text_sum_of_plus_stat_cur.setText(String.valueOf(sumOfCur));
-                                text_seekbar_hero_stat_cur[finalI].setText(String.valueOf(progress));
+                                text_seek_bar_hero_stat_cur[finalI].setText(String.valueOf(progress));
                                 heroStatsUpList.set(finalI, progress);
                                 powerAdapter.notifyDataSetChanged();
                                 RealmInteger baseStat = heroBaseStats.get(finalI);
@@ -371,8 +421,8 @@ public class HeroesDialogFragment extends DialogFragment {
                                     (hero.getHeroCost() + 16) * 5;
                             int sumOfMax = 0;
                             for (int i = 0; i < numberOfStats; i++) {
-                                seekbar_hero_stat[i].setMax(maxPlusStat);
-                                text_seekbar_hero_stat_max[i].setText(String.valueOf(maxPlusStat));
+                                seek_bar_hero_stat[i].setMax(maxPlusStat);
+                                text_seek_bar_hero_stat_max[i].setText(String.valueOf(maxPlusStat));
                                 sumOfMax += maxPlusStat;
                             }
 
@@ -482,107 +532,111 @@ public class HeroesDialogFragment extends DialogFragment {
                     }
                 });
 
-                final AppCompatTextView[] texts_item_reinforcement = {
-                        view.findViewById(R.id.text_item_weapon_reinforcement),
-                        view.findViewById(R.id.text_item_armor_reinforcement),
-                        view.findViewById(R.id.text_item_aid_reinforcement)
-                };
+                texts_item_reinforcement = new AppCompatTextView[3];
+                texts_item_name = new AppCompatTextView[3];
+                cells_hero_item = new View[3];
+                texts_item_reinforcement[0] = view.findViewById(R.id.text_item_weapon_reinforcement);
+                texts_item_reinforcement[1] = view.findViewById(R.id.text_item_armor_reinforcement);
+                texts_item_reinforcement[2] = view.findViewById(R.id.text_item_aid_reinforcement);
 
-                final AppCompatTextView[] texts_item_name = {
-                        view.findViewById(R.id.text_item_weapon_name),
-                        view.findViewById(R.id.text_item_armor_name),
-                        view.findViewById(R.id.text_item_aid_name)
-                };
+                texts_item_name[0] = view.findViewById(R.id.text_item_weapon_name);
+                texts_item_name[1] = view.findViewById(R.id.text_item_armor_name);
+                texts_item_name[2] = view.findViewById(R.id.text_item_aid_name);
 
-                final AppCompatTextView[] texts_item_id = {
-                        view.findViewById(R.id.text_item_weapon_id),
-                        view.findViewById(R.id.text_item_armor_id),
-                        view.findViewById(R.id.text_item_aid_id)
-                };
-
-                final ItemSim[] curItemSims = {
-                        heroSim.getHeroWeapon(),
-                        heroSim.getHeroArmor(),
-                        heroSim.getHeroAid()
-                };
-
-                final View[] cells_hero_item = {
-                        view.findViewById(R.id.cell_hero_weapon),
-                        view.findViewById(R.id.cell_hero_armor),
-                        view.findViewById(R.id.cell_hero_aid)
-                };
-
-                //final String emptyStr = "EMPTY";
-                //final String[] emptyIds = {"weapon", "armor", "aid"};
-                final String[] pickedWeaponMainCate = {"무기", "방어구", "보조구"};
-                final View layout_modify_picked_item = view.findViewById(R.id.layout_modify_picked_item);
-                final AppCompatButton button_release_picked_item = view.findViewById(R.id.button_release_picked_item);
-                final AppCompatButton button_reinforce_picked_item = view.findViewById(R.id.button_reinforce_picked_item);
-                final AppCompatButton button_modify_picked_item = view.findViewById(R.id.button_modify_picked_item);
-                final AppCompatTextView text_picked_item_cate_main = view.findViewById(R.id.text_picked_item_cate_main);
-                final AppCompatTextView text_picked_item_name = view.findViewById(R.id.text_picked_item_name);
+                cells_hero_item[0] = view.findViewById(R.id.cell_hero_weapon);
+                cells_hero_item[1] = view.findViewById(R.id.cell_hero_armor);
+                cells_hero_item[2] = view.findViewById(R.id.cell_hero_aid);
 
 
-                for (int i = 0; i < curItemSims.length; i++) {
-                    Item curItem = curItemSims[i] == null ? null : curItemSims[i].getItem();
-                    texts_item_reinforcement[i].setText(curItemSims[i] == null ? null : "+" + curItemSims[i].getItemReinforcement());
-                    texts_item_name[i].setText(curItem == null ? "" : curItem.getItemName());
-                    texts_item_id[i].setText(curItemSims[i] == null ? "" : String.valueOf(curItemSims[i].getItemID()));
+                button_release_picked_item = view.findViewById(R.id.button_release_picked_item);
+                button_reinforce_picked_item = view.findViewById(R.id.button_reinforce_picked_item);
+                button_modify_picked_item = view.findViewById(R.id.button_modify_picked_item);
+                text_picked_item_name = view.findViewById(R.id.text_picked_item_name);
+                text_picked_item_cate_main = view.findViewById(R.id.text_picked_item_cate_main);
+
+                for (int i = 0; i < itemSims.size(); i++) {
+
+                    ItemSim curItemSim = itemSims.get(i);
+                    Item curItem = curItemSim == null ? null : curItemSim.getItem();
+                    boolean reinforceImpossible = curItem == null
+                            || AppConstant.ITEM_GRADE_NO_REINFORCE.equals(curItem.getItemGrade());
+                    texts_item_reinforcement[i].setText(reinforceImpossible ? null
+                            : "+" + curItemSim.getItemReinforcement());
+                    texts_item_name[i].setText(curItem == null ? null : curItem.getItemName());
                     int finalI = i;
                     cells_hero_item[i].setOnClickListener(vPickItem -> {
-                        Log.d(TAG, finalI + "번째 아이템 클릭");
-                        text_picked_item_cate_main.setText(pickedWeaponMainCate[finalI]);
-                        text_picked_item_name.setText(texts_item_name[finalI].getText().toString());
+                        ItemSim pickedItemSim = itemSims.get(finalI);
+                        Item pickedItem = pickedItemSim == null ? null : pickedItemSim.getItem();
+                        String selectedMainCate = text_picked_item_cate_main.getText().toString();
+                        int selectedMainCateIndex = getMainCateIndex(selectedMainCate);
 
-                        final String pickedItemIdStr = texts_item_id[finalI].getText().toString();
-                        final int pickedItemId = NumberUtils.toInt(pickedItemIdStr, 0);
-                        final ItemSim pickedItemSim = realm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID,
-                                pickedItemId).findFirst();
-                        if (pickedItemSim != null) {
-                            button_release_picked_item.setEnabled(true);
-                            button_release_picked_item.setOnClickListener(vRelease -> {
-                                button_release_picked_item.setEnabled(false);
-                                button_reinforce_picked_item.setEnabled(false);
-                                realm.beginTransaction();
-                                switch (finalI) {
-                                    case 0:
-                                        heroSim.setHeroWeapon(null);
-                                        break;
-                                    case 1:
-                                        heroSim.setHeroArmor(null);
-                                        break;
-                                    default:
-                                        heroSim.setHeroAid(null);
-                                }
-                                pickedItemSim.setHeroWhoHasThis(null);
-                                texts_item_reinforcement[finalI].setText(null);
-                                texts_item_name[finalI].setText("");
-                                texts_item_id[finalI].setText("");
-                                realm.commitTransaction();
-                                NotifyUtils.notyfyToMainAdapters();
-                                Snackbar.make(view, pickedWeaponMainCate[finalI] + " 해제됨", Snackbar.LENGTH_SHORT).show();
-                            });
-
-                            button_reinforce_picked_item.setEnabled(true);
-                            button_reinforce_picked_item.setOnClickListener(vReinforce -> {
-                                ReinforceDialogFragment.newInstance(pickedItemId).show(fragmentManager, TAG);
-                            });
-
+                        if (selectedMainCateIndex == finalI) {
+                            button_release_picked_item.setEnabled(false);
+                            button_modify_picked_item.setEnabled(false);
+                            button_reinforce_picked_item.setEnabled(false);
+                            text_picked_item_cate_main.setText(null);
+                            text_picked_item_name.setText(null);
+                            vPickItem.setBackgroundResource(R.drawable.rect_black);
 
                         } else {
-                            button_release_picked_item.setEnabled(false);
-                            button_reinforce_picked_item.setEnabled(false);
+                            if( selectedMainCateIndex > -1 ) {
+                                cells_hero_item[selectedMainCateIndex].setBackgroundResource(R.drawable.rect_black);
+                            }
+                            vPickItem.setBackgroundResource(R.drawable.rect_checked);
+                            text_picked_item_cate_main.setText(getMainCateName(finalI));
+                            text_picked_item_name.setText(texts_item_name[finalI].getText().toString());
+
+                            if (pickedItem != null) {
+                                button_release_picked_item.setEnabled(true);
+                                button_reinforce_picked_item.setEnabled(!texts_item_reinforcement[finalI].getText().toString().isEmpty());
+
+                            } else {
+                                button_release_picked_item.setEnabled(false);
+                                button_reinforce_picked_item.setEnabled(false);
+                            }
+
+                            button_modify_picked_item.setEnabled(true);
+
+                            button_modify_picked_item.setOnClickListener(vModify -> {
+                                PickItemSimDialogFragment pickItemSimDialogFragment =
+                                        PickItemSimDialogFragment.newInstance(heroSim.getHeroNo(), getItemSubCate(finalI, branch), finalI);
+                                pickItemSimDialogFragment.setTargetFragment(HeroesDialogFragment.this, AppConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT);
+                                pickItemSimDialogFragment.show(fragmentManager, TAG);
+
+                            });
+
+                            button_reinforce_picked_item.setOnClickListener(vReinforce -> {
+                                ItemSim reinforcingItem = itemSims.get(finalI);
+                                if(reinforcingItem != null) {
+                                    ReinforceDialogFragment reinforceDialogFragment = ReinforceDialogFragment.newInstance(reinforcingItem.getItemID(), finalI);
+                                    reinforceDialogFragment.setTargetFragment(HeroesDialogFragment.this, AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT);
+                                    reinforceDialogFragment.show(fragmentManager, TAG);
+                                }
+                            });
+
+                            button_release_picked_item.setOnClickListener(vRelease -> {
+                                ItemSim releasingItemSim = itemSims.get(finalI);
+                                Item releasingItem = releasingItemSim == null ? null : releasingItemSim.getItem();
+                                if( releasingItem != null ) {
+                                    button_release_picked_item.setEnabled(false);
+                                    button_reinforce_picked_item.setEnabled(false);
+                                    realm.beginTransaction();
+                                    heroSim.setHeroItemSim(null, finalI);
+                                    releasingItemSim.setHeroWhoHasThis(null);
+                                    realm.commitTransaction();
+                                    itemSims.set(finalI, null);
+                                    texts_item_reinforcement[finalI].setText(null);
+                                    texts_item_name[finalI].setText(null);
+                                    text_picked_item_name.setText(null);
+                                    powerAdapter.notifyDataSetChanged();
+                                    NotifyUtils.notyfyToMainAdapters();
+                                    Snackbar.make(view, releasingItem.getItemName() + " " + AppConstant.RELEASE_KOR, Snackbar.LENGTH_SHORT).show();
+                                }
+                            });
+
                         }
-
-                        button_modify_picked_item.setEnabled(true);
-                        button_modify_picked_item.setOnClickListener(vModify -> {
-                            PickItemSimDialogFragment.newInstance(heroSim.getHeroNo(), getItemSubCate(finalI,branch), finalI).show(
-                                    fragmentManager, TAG);
-
-                        });
-
-
                     });
+
                 } // end for
 
 
@@ -599,7 +653,7 @@ public class HeroesDialogFragment extends DialogFragment {
                     int sumPowers = 0;
                     int sumPlusStats = 0;
                     for (int i = 0; i < Heroes.INIT_STATS.length; i++) {
-                        int statUp = seekbar_hero_stat[i].getProgress();
+                        int statUp = seek_bar_hero_stat[i].getProgress();
                         heroSim.setHeroPlusStats(statUp, i);
                         sumPlusStats += statUp;
 
@@ -614,8 +668,8 @@ public class HeroesDialogFragment extends DialogFragment {
                         }
                     }
                     String sumSpecScoreStr = text_dialog_heroes_cell_specs_total.getText().toString();
-                    int sumSpecScroes = NumberUtils.toInt(sumSpecScoreStr, 0);
-                    heroSim.setHeroSpecScoreSum(sumSpecScroes);
+                    int sumSpecScores = NumberUtils.toInt(sumSpecScoreStr, 0);
+                    heroSim.setHeroSpecScoreSum(sumSpecScores);
                     heroSim.setHeroPowerSum(sumPowers);
                     heroSim.setHeroPlusStatSum(sumPlusStats);
 
@@ -653,14 +707,40 @@ public class HeroesDialogFragment extends DialogFragment {
         super.onDismiss(dialog);
     }
 
+    private int getMainCateIndex( String mainCate ) {
+        switch( mainCate ) {
+            case AppConstant.WEAPON_KOR:
+                return 0;
+            case AppConstant.ARMOR_KOR:
+                return 1;
+            case AppConstant.AID_KOR:
+                return 2;
+            default:
+                return -1;
+        }
+    }
+
+    private String getMainCateName( int index ) {
+        switch( index ) {
+            case 0:
+                return AppConstant.WEAPON_KOR;
+            case 1:
+                return AppConstant.ARMOR_KOR;
+            default:
+                return AppConstant.AID_KOR;
+        }
+    }
+
+
+
     private String getItemSubCate(int position, Branch branch) {
         switch (position) {
             case 0:
-                return branch == null ? AddItemDialogFragment.ALL_PICK_KOR : branch.getBranchWeaponSubCate();
+                return branch == null ? AppConstant.ALL_PICK_KOR : branch.getBranchWeaponSubCate();
             case 1:
-                return branch == null ? AddItemDialogFragment.ALL_PICK_KOR : branch.getBranchArmorSubCate();
+                return branch == null ? AppConstant.ALL_PICK_KOR : branch.getBranchArmorSubCate();
             default:
-                return AddItemDialogFragment.ALL_PICK_KOR;
+                return AppConstant.ALL_PICK_KOR;
         }
     }
 }

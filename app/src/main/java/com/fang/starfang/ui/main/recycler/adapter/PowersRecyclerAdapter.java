@@ -13,13 +13,12 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
+import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.NormalItem;
 
 import java.util.ArrayList;
 
-import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAdapter.PowersRecyclerViewAdapterViewHolder> {
 
@@ -30,6 +29,7 @@ public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAd
     private int level;
     private int reinforce;
     private RealmList<NormalItem> normalItems; // weapon, armor, aid
+    private RealmList<ItemSim> itemSims; // weapon, armor, aid
 
     @NonNull
     @Override
@@ -50,13 +50,14 @@ public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAd
 
     //branchSpecGGs,heroBaseStats,heroStatsUpList,curLevel
     public PowersRecyclerAdapter(RealmList<RealmString> branchStatGGs, RealmList<RealmInteger> heroBaseStats,
-                                 ArrayList<Integer> heroStatsUpList, int level, int reinforce, RealmList<NormalItem> normalItems ) {
+                                 ArrayList<Integer> heroStatsUpList, int level, int reinforce, RealmList<NormalItem> normalItems,RealmList<ItemSim> itemSims ) {
         this.branchStatGGs = branchStatGGs;
         this.heroBaseStats = heroBaseStats;
         this.heroStatsUpList = heroStatsUpList;
         this.level = level;
         this.reinforce = reinforce;
         this.normalItems = normalItems;
+        this.itemSims = itemSims;
         Log.d(TAG, "constructed");
 
 
@@ -118,12 +119,20 @@ public class PowersRecyclerAdapter extends RecyclerView.Adapter<PowersRecyclerAd
                 normalItemPowerSum += normalItemPowerInt;
             } // end for
 
+            int itemPowerSum = 0;
+            for(ItemSim itemSim : itemSims ) {
+                RealmList<RealmInteger> itemPowers = itemSim == null? null : itemSim.getItemPowers();
+                RealmInteger itemPower = itemPowers == null ? null : itemPowers.get(position);
+                int itemPowerInt = itemPower == null ? 0 : itemPower.toInt();
+                itemPowerSum += itemPowerInt;
+            } // end for
+
             //if( normalItemPowerSum > 0 ) {
              //   Log.d(TAG, "power position : " + position + "// normal power : " + normalItemPowerSum);
             //}
 
             power += normalItemPowerSum;
-
+            power += itemPowerSum;
             text_dialog_heroes_cell_power.setText(String.valueOf(power));
 
 

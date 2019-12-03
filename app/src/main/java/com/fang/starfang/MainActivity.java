@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(start_chat);
                 break;
             case R.id.menu_item_setting:
-                Intent start_setting = new Intent(this, SettingAcitivity.class);
+                Intent start_setting = new Intent(this, SettingActivity.class);
                 startActivity(start_setting);
                 break;
             default:

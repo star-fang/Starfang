@@ -55,7 +55,7 @@ public class PlaceholderFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        Log.d(TAG,"_ON ATTATCH");
+        //Log.d(TAG,"_ON ATTACH");
         if (context instanceof Activity){
             mActivity=(Activity) context;
         }

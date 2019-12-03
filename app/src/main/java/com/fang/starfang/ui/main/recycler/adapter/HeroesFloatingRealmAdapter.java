@@ -240,7 +240,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         private void bind(final HeroSim heroSim ) throws NullPointerException, ArrayIndexOutOfBoundsException {
 
             Heroes hero = heroSim.getHero();
-            Branch branch = realm.where(Branch.class).equalTo(Branch.FIELD_ID,hero.getBranchNo()).findFirst();
+            Branch branch = heroSim.getHeroBranch();
             RealmList<RealmInteger> heroStats = hero.getHeroStats();
             RealmList<RealmString> heroSpecs = hero.getHeroSpecs();
             RealmList<RealmString> heroSpecVals = hero.getHeroSpecValues();
@@ -382,7 +382,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                         int innerHeight = scroll_hero_specs.getChildAt(0).getHeight();
                         int scrollHeight = scroll_hero_specs.getHeight();
                         int scrollY = innerHeight - scrollHeight;
-                        Log.d(TAG, currY + ":" + scrollY );
+                        //Log.d(TAG, currY + ":" + scrollY );
                         if(currY == 0 ) {
                             image_spec_arrow.setImageResource(R.drawable.ic_arrow_upward_white_24dp);
                             scroll_hero_specs.scrollTo(0, scrollY);
@@ -396,19 +396,19 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             ItemSim armor = heroSim.getHeroArmor();
             ItemSim aid = heroSim.getHeroAid();
 
-            int weaponReinforce = weapon != null ? weapon.getItemReinforcement() : 0;
-            int armorReinforce = armor != null ? armor.getItemReinforcement() : 0;
-            int aidReinforce = aid != null ? aid.getItemReinforcement() : 0;
+            String weaponReinforceStr = weapon == null ?  null : "+" + weapon.getItemReinforcement();
+            String armorReinforceStr = armor == null ? null : "+" + armor.getItemReinforcement();
+            String aidReinforceStr = aid == null ? null : "+" + aid.getItemReinforcement();
 
-            String weaponName = weapon != null ? weapon.getItem().getItemName() : "EMPTY";
-            String armorName = armor != null ? armor.getItem().getItemName() : "EMPTY";
-            String aidName = aid != null ? aid.getItem().getItemName() : "EMPTY";
+            String weaponName = weapon == null ? null : weapon.getItem().getItemName();
+            String armorName = armor == null ? null : armor.getItem().getItemName();
+            String aidName = aid == null ? null : aid.getItem().getItemName();
 
-            text_item_weapon_reinforcement.setText( String.valueOf(weaponReinforce) );
+            text_item_weapon_reinforcement.setText( weaponReinforceStr );
             text_item_weapon_name.setText( weaponName );
-            text_item_armor_reinforcement.setText( String.valueOf( armorReinforce ) );
+            text_item_armor_reinforcement.setText( armorReinforceStr);
             text_item_armor_name.setText( armorName );
-            text_item_aid_reinforcement.setText( String.valueOf( aidReinforce ) );
+            text_item_aid_reinforcement.setText( aidReinforceStr );
             text_item_aid_name.setText( aidName );
 
         } // end bind()

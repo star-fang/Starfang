@@ -1,11 +1,14 @@
 package com.fang.starfang.local.model.realm.simulator;
 
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
+import com.fang.starfang.local.model.realm.primitive.RealmString;
+import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -64,6 +67,7 @@ public class HeroSim extends RealmObject {
     // r11 -> l 70 ~ 80 // g4
     // r12 -> l 77 ~ 99 // g4, 5
 
+    private Branch heroBranch;
 
     public HeroSim() {
 
@@ -91,6 +95,7 @@ public class HeroSim extends RealmObject {
         }
         this.heroPowerSum = 0;
         this.heroPlusStatSum = 0;
+        this.heroBranch = null;
     }
 
     public static Integer getSpecScoreByLevel( int level ) {
@@ -217,9 +222,16 @@ public class HeroSim extends RealmObject {
         return rate;
     }
 
-    public void setHero( Heroes hero ) {
-        this.hero = hero;
+    public void updateHero(Realm realm) {
+        this.hero = realm.where(Heroes.class).equalTo(Heroes.FIELD_ID, heroNo).findFirst();
     }
+
+    public void updateBranch(Realm realm) {
+        if( hero != null ) {
+            this.heroBranch = realm.where(Branch.class).equalTo(Branch.FIELD_ID, hero.getBranchNo()).findFirst();
+        }
+    }
+
     public Heroes getHero() {
         return hero;
     }
@@ -227,10 +239,6 @@ public class HeroSim extends RealmObject {
 
     public int getHeroNo() {
         return heroNo;
-    }
-
-    public void setHeroNo(int heroNo) {
-        this.heroNo = heroNo;
     }
 
     public int getHeroPowerSum() {
@@ -287,5 +295,56 @@ public class HeroSim extends RealmObject {
 
     public void setHeroReinforcement(int heroReinforcement) {
         this.heroReinforcement = heroReinforcement;
+    }
+
+    public RealmList<ItemSim> getHeroItemSims() {
+        RealmList<ItemSim> itemSims = new RealmList<>();
+        itemSims.add(heroWeapon);
+        itemSims.add(heroArmor);
+        itemSims.add(heroAid);
+        return itemSims;
+    }
+
+    public void setHeroItemSim( ItemSim itemSim, int position ) {
+        switch(position) {
+            case 0:
+                heroWeapon = itemSim;
+                break;
+            case 1:
+                heroArmor = itemSim;
+                break;
+            case 2:
+                heroAid = itemSim;
+            default:
+        }
+    }
+
+    public void updateBasePower() {
+        if(heroBranch != null && hero != null ) {
+            RealmList<RealmString> branchStatGGs = heroBranch.getBranchStatGGs();
+            RealmList<RealmInteger> heroStats = hero.getHeroStats();
+            if( branchStatGGs != null && heroStats != null) {
+                int powerSum = 0;
+                for (int i = 0; i < Heroes.INIT_STATS.length; i++) {
+                    RealmString branchStatGG = branchStatGGs.get(i);
+                    RealmInteger heroStat = heroStats.get(i);
+                    RealmInteger heroPlusStat = heroPlusStats.get(i);
+                    String branchStatGGStr = branchStatGG == null ? "S" : branchStatGG.toString();
+                    int heroStatInt = heroStat == null ? 0 : heroStat.toInt();
+                    int heroPlusStatInt = heroPlusStat == null ? 0 : heroPlusStat.toInt();
+                    int statSum = heroStatInt + heroPlusStatInt;
+                    double growthRate = calcGrowthRateByStatAndGrade(heroStatInt, branchStatGGStr);
+                    int power = (int)Math.floor(Math.max(0,heroPlusStatInt - 100) +  statSum / 2.0  + heroLevel * growthRate);
+                    setHeroPowers(power, i);
+                    powerSum += power;
+                } // end for
+                setHeroPowerSum( powerSum );
+            }
+        }
+
+    }
+
+    public Branch getHeroBranch() {
+        return heroBranch;
     }
 }

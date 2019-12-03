@@ -5,9 +5,9 @@ import android.widget.Filter;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fang.starfang.AppConstant;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
@@ -43,15 +43,15 @@ public class ItemFilter extends Filter {
         }
 
         cs = cs.trim();
-        String[] csSplit = cs.split(",");
+        String[] csSplit = cs.split(AppConstant.CONSTRAINT_SEPARATOR);
         RealmQuery<Item> query = realm.where(Item.class);
 
         try {
-            if (!csSplit[0].equals(AddItemDialogFragment.ALL_PICK_KOR)) {
-                query.equalTo(Item.FIELD_GRD, csSplit[0].replace(AddItemDialogFragment.GRADE_KOR, ""));
+            if (!csSplit[0].equals(AppConstant.ALL_PICK_KOR)) {
+                query.equalTo(Item.FIELD_GRD, csSplit[0].replace(AppConstant.GRADE_KOR, ""));
             }
 
-            if (!csSplit[1].equals(AddItemDialogFragment.ALL_PICK_KOR)) {
+            if (!csSplit[1].equals(AppConstant.ALL_PICK_KOR)) {
                 query.and().beginGroup().alwaysFalse();
                 RealmResults<ItemCate> cates = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_MAIN_CATE, csSplit[1]).findAll();
                 for (ItemCate cate : cates) {
@@ -60,7 +60,7 @@ public class ItemFilter extends Filter {
                 query.endGroup();
             }
 
-            if (!csSplit[2].equals(AddItemDialogFragment.ALL_PICK_KOR)) {
+            if (!csSplit[2].equals(AppConstant.ALL_PICK_KOR)) {
                 query.and().equalTo(Item.FIELD_SUB_CATE, csSplit[2]);
             }
         } catch( ArrayIndexOutOfBoundsException | IllegalArgumentException e ) {
