@@ -25,10 +25,13 @@ public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim,
 
     private static final String TAG = "FANG_ADAPTER_ITEM_FIXED";
 
-    private static ItemSimsFixedRealmAdapter instance = null;
+    private static ItemSimsFixedRealmAdapter instance;
 
     public static ItemSimsFixedRealmAdapter getInstance() {
         return instance;
+    }
+    public static void setInstance(Realm realm, FragmentManager fragmentManager) {
+        instance = new ItemSimsFixedRealmAdapter(realm, fragmentManager);
     }
 
     private FragmentManager fragmentManager;
@@ -51,11 +54,10 @@ public class ItemSimsFixedRealmAdapter extends RealmRecyclerViewAdapter<ItemSim,
     }
 
 
-    public ItemSimsFixedRealmAdapter(Realm realm, FragmentManager fragmentManager) {
+    private ItemSimsFixedRealmAdapter(Realm realm, FragmentManager fragmentManager) {
         super(realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF), false);
         this.realm = realm;
         this.fragmentManager = fragmentManager;
-        instance = this;
         Log.d(TAG, "constructed");
     }
 

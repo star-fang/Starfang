@@ -94,7 +94,7 @@
         </LinearLayout>
 
 
-        <com.fang.starfang.ui.main.recycler.custom.DiagonalScrollRecyclerView
+        <com.fang.starfang.ui.main.custom.DiagonalScrollRecyclerView
             android:id="@+id/recycler_view_hero_content"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -184,7 +184,7 @@
 
             </LinearLayout>
 
-        </com.fang.starfang.ui.main.recycler.custom.DiagonalScrollRecyclerView>
+        </com.fang.starfang.ui.main.custom.DiagonalScrollRecyclerView>
 
     </LinearLayout>
 

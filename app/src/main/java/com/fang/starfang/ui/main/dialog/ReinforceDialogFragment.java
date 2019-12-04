@@ -3,11 +3,8 @@ package com.fang.starfang.ui.main.dialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 
@@ -15,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,18 +24,13 @@ import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.task.Reinforcement;
 import com.fang.starfang.ui.main.recycler.adapter.ItemPowersRecyclerAdapter;
-import com.fang.starfang.util.NotifyUtils;
 
-import io.realm.Realm;
 import io.realm.RealmList;
 
 import java.util.ArrayList;
 
-public class ReinforceDialogFragment extends DialogFragment {
+public class ReinforceDialogFragment extends UpdateDialogFragment {
 
-    private static final String TAG = "FANG_DIALOG_PICK_HERO";
-    private Activity mActivity;
-    private Realm realm;
 
     public static ReinforceDialogFragment newInstance( int itemID, int itemMainCate ) {
 
@@ -52,22 +43,6 @@ public class ReinforceDialogFragment extends DialogFragment {
 
     }
 
-    public ReinforceDialogFragment() {
-
-
-        Log.d(TAG, "constructed");
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-        Log.d(TAG, "_ON ATTACH");
-        if (context instanceof Activity) {
-            mActivity = (Activity) context;
-        }
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -77,7 +52,6 @@ public class ReinforceDialogFragment extends DialogFragment {
         if(args != null) {
             int itemID = args.getInt(AppConstant.INTENT_KEY_ITEM_ID);
             int itemMainCate = args.getInt(AppConstant.INTENT_KEY_ITEM_CATE_MAIN);
-            realm = Realm.getDefaultInstance();
             ItemSim itemSim = realm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID, itemID).findFirst();
             if (itemSim != null) {
                 Item item = itemSim.getItem();
@@ -148,8 +122,9 @@ public class ReinforceDialogFragment extends DialogFragment {
                                     AppConstant.ITEM_GRADE_NO_REINFORCE.equals(itemSim.getItem().getItemGrade()) ?
                                     "" : "+" + reinforceValue);
                             targetFragment.onActivityResult(AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT, Activity.RESULT_OK, intent);
+                        } else {
+                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
                         }
-                        NotifyUtils.notyfyToMainAdapters();
                     }).setNegativeButton(R.string.cancel_kor, null);
                 }
             }
@@ -158,9 +133,4 @@ public class ReinforceDialogFragment extends DialogFragment {
     }
 
 
-    @Override
-    public void onDismiss(@NonNull DialogInterface dialog) {
-        realm.close();
-        super.onDismiss(dialog);
-    }
 }

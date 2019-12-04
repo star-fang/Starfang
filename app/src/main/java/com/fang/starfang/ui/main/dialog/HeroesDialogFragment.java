@@ -3,8 +3,6 @@ package com.fang.starfang.ui.main.dialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,8 +16,6 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,7 +32,6 @@ import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.NormalItem;
 import com.fang.starfang.ui.main.recycler.adapter.PowersRecyclerAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.SpecsRecycleAdapter;
-import com.fang.starfang.util.NotifyUtils;
 import com.fang.starfang.util.ScreenUtils;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -44,21 +39,17 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 
-import io.realm.Realm;
 import io.realm.RealmList;
 
-public class HeroesDialogFragment extends DialogFragment {
+public class HeroesDialogFragment extends UpdateDialogFragment {
 
     private static final String TAG = "FANG_HERO_DIALOG";
-    private Activity mActivity;
     private static final int[] MAX_LEVEL_BY_GRADE = {20, 40, 60, 80, 99};
     private final int[] MIN_LEVEL_BY_REINFORCE = {1, 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77};
     private final int[] MAX_LEVEL_BY_REINFORCE = {20, 20, 40, 40, 40, 60, 60, 60, 80, 80, 80, 99};
     //private final int[] MIN_GRADE_BY_REINFORCE = {};
     //private final int[] MAX_GRADE_BY_REINFORCE = {};
 
-    private Realm realm;
-    private FragmentManager fragmentManager;
     private PowersRecyclerAdapter powerAdapter;
 
     private AppCompatTextView text_picked_item_name;
@@ -84,9 +75,6 @@ public class HeroesDialogFragment extends DialogFragment {
 
     }
 
-    public HeroesDialogFragment() {
-        Log.d(TAG, "constructed");
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -108,32 +96,24 @@ public class HeroesDialogFragment extends DialogFragment {
                             button_release_picked_item.setEnabled(true);
                             button_reinforce_picked_item.setEnabled(itemReinforce != null);
                             Snackbar.make(view,  itemReinforce + " " + itemName + " " + AppConstant.WEAR_KOR, Snackbar.LENGTH_SHORT).show();
+                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
                             break;
                         case AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT:
                             itemReinforce = intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE);
                             texts_item_reinforcement[itemMainCate].setText(intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE));
                             Snackbar.make(view,  itemReinforce + " " + AppConstant.REINFORCE_KOR, Snackbar.LENGTH_SHORT).show();
+                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
                             break;
                         default:
                     } // end switch
 
                     powerAdapter.notifyDataSetChanged();
-                    NotifyUtils.notyfyToMainAdapters();
+
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Log.d(TAG, e.toString());
                 }
             }
         } // end if ok
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-        Log.d(TAG, "_ON ATTACH");
-        if (context instanceof Activity) {
-            mActivity = (Activity) context;
-        }
     }
 
     @NonNull
@@ -143,8 +123,6 @@ public class HeroesDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         view = View.inflate(mActivity, R.layout.dialog_heroes, null);
-        realm = Realm.getDefaultInstance();
-        fragmentManager = getFragmentManager();
 
         Bundle args = getArguments();
         if (args != null) {
@@ -629,7 +607,7 @@ public class HeroesDialogFragment extends DialogFragment {
                                     texts_item_name[finalI].setText(null);
                                     text_picked_item_name.setText(null);
                                     powerAdapter.notifyDataSetChanged();
-                                    NotifyUtils.notyfyToMainAdapters();
+                                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
                                     Snackbar.make(view, releasingItem.getItemName() + " " + AppConstant.RELEASE_KOR, Snackbar.LENGTH_SHORT).show();
                                 }
                             });
@@ -675,7 +653,7 @@ public class HeroesDialogFragment extends DialogFragment {
 
                     realm.commitTransaction();
 
-                    NotifyUtils.notifyToAdapter(true, true, false, false);
+                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_HERO);
 
 
                 }).setNegativeButton(R.string.cancel_kor, null);
@@ -701,12 +679,6 @@ public class HeroesDialogFragment extends DialogFragment {
         }
     }
 
-    @Override
-    public void onDismiss(@NonNull DialogInterface dialog) {
-        realm.close();
-        super.onDismiss(dialog);
-    }
-
     private int getMainCateIndex( String mainCate ) {
         switch( mainCate ) {
             case AppConstant.WEAPON_KOR:
@@ -730,8 +702,6 @@ public class HeroesDialogFragment extends DialogFragment {
                 return AppConstant.AID_KOR;
         }
     }
-
-
 
     private String getItemSubCate(int position, Branch branch) {
         switch (position) {

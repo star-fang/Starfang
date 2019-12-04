@@ -4,21 +4,26 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.fang.starfang.ui.main.PageViewModel;
 
-/**
- * A placeholder fragment containing a simple view.
- */
+import io.realm.Realm;
+
 public class PlaceholderFragment extends Fragment {
 
-    private static final String TAG = "FANG_FRAG_HOLDER";
+    private static final String TAG = "FANG_FRAG";
     static final String ARG_SECTION_NUMBER = "section_number";
     Activity mActivity;
+    FragmentManager fragmentManager;
+    Realm realm;
 
 
     public static PlaceholderFragment getInstance(int index) {
@@ -31,7 +36,7 @@ public class PlaceholderFragment extends Fragment {
                 fragment = HeroesFragment.newInstance(index);
                 break;
             case 3:
-                fragment = MagicItemsFragment.newInstance(index);
+                fragment = RelicFragment.newInstance(index);
                 break;
             default:
                 fragment = null;
@@ -42,23 +47,41 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"_ON CREATE");
         PageViewModel pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
-        int index = 1;
-        if (getArguments() != null) {
-            index = getArguments().getInt(ARG_SECTION_NUMBER);
-        }
+        int index = getIndex();
         pageViewModel.setIndex(index);
+        this.fragmentManager = getFragmentManager();
+        Log.d(TAG,ARG_SECTION_NUMBER + index + "_onCreate");
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
-        //Log.d(TAG,"_ON ATTACH");
-        if (context instanceof Activity){
+        realm = Realm.getDefaultInstance();
+        if (context instanceof Activity) {
             mActivity=(Activity) context;
         }
+        Log.d(TAG,ARG_SECTION_NUMBER + getIndex() +"_onAttach");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        realm.close();
+        Log.d(TAG,ARG_SECTION_NUMBER + getIndex() +"_onDetach: realm instance closed");
+    }
+
+    private int getIndex() {
+        int index = 1;
+        Bundle args = getArguments();
+        if (args != null) {
+            index = args.getInt(ARG_SECTION_NUMBER);
+        }
+        return index;
+    }
+
+    public interface OnUpdateEventListener {
+        void updateEvent(int code);
     }
 
 

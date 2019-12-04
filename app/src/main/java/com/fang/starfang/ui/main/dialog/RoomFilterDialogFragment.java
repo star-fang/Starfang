@@ -1,16 +1,11 @@
 package com.fang.starfang.ui.main.dialog;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,38 +13,19 @@ import com.fang.starfang.R;
 import com.fang.starfang.ui.main.recycler.adapter.RoomFilterRealmAdapter;
 import com.fang.starfang.ui.main.recycler.filter.ConversationFilter;
 import com.fang.starfang.ui.main.recycler.filter.ConversationFilterObject;
-import io.realm.Realm;
 
-public class RoomFilterDialogFragment extends DialogFragment {
-
-    private static final String TAG = "DIALOG_FILTER_SEND_CAT";
-    private Activity mActivity;
-    private Realm realm;
+public class RoomFilterDialogFragment extends UpdateDialogFragment {
 
     public static RoomFilterDialogFragment newInstance() {
         return new RoomFilterDialogFragment();
     }
 
-    public RoomFilterDialogFragment() {
-        Log.d(TAG, "constructed");
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-        Log.d(TAG, "_ON ATTATCH");
-        if (context instanceof Activity) {
-            mActivity = (Activity) context;
-        }
-    }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         View view = View.inflate(mActivity, R.layout.dialog_filter_room, null);
-        realm = Realm.getDefaultInstance();
 
         final ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
         final RoomFilterRealmAdapter roomFilterRealmAdapter =
@@ -61,7 +37,7 @@ public class RoomFilterDialogFragment extends DialogFragment {
         recycler_view_filter_room.setLayoutManager(new LinearLayoutManager(mActivity));
         recycler_view_filter_room.setAdapter(roomFilterRealmAdapter);
 
-        builder.setView(view).setPositiveButton("설정", (dialog, which) -> {
+        builder.setView(view).setPositiveButton(R.string.setting_kor, (dialog, which) -> {
             filterObject.setCheckRoom(true);
             ConversationFilter conversationFilter = ConversationFilter.getInstance();
             if( conversationFilter != null ) {
@@ -76,13 +52,6 @@ public class RoomFilterDialogFragment extends DialogFragment {
         });
 
         return builder.create();
-    }
-
-    @Override
-    public void onDismiss(@NonNull DialogInterface dialog) {
-        realm.close();
-        super.onDismiss(dialog);
-        Log.d(TAG,"_ON DISMISS");
     }
 
 

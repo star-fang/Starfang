@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-xmlns:tools="http://schemas.android.com/tools">
-
-    <LinearLayout
-        android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools">
 
 
         <LinearLayout
@@ -16,7 +11,8 @@ xmlns:tools="http://schemas.android.com/tools">
             android:layout_height="wrap_content"
             android:background="#30000000"
             android:orientation="horizontal"
-            android:weightSum="3">
+            android:weightSum="3"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -101,7 +97,7 @@ xmlns:tools="http://schemas.android.com/tools">
 
 
 
-        <com.fang.starfang.ui.main.recycler.custom.DiagonalScrollRecyclerView
+        <com.fang.starfang.ui.main.custom.DiagonalScrollRecyclerView
             android:id="@+id/recycler_view_items_content"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -157,20 +153,7 @@ xmlns:tools="http://schemas.android.com/tools">
             </LinearLayout>
 
 
-        </com.fang.starfang.ui.main.recycler.custom.DiagonalScrollRecyclerView>
+        </com.fang.starfang.ui.main.custom.DiagonalScrollRecyclerView>
         </LinearLayout>
-    </LinearLayout>
 
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_add_item"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/ic_add_circle_black_24dp"
-        android:backgroundTint="#FFF"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"/>
-
-</RelativeLayout>
+</LinearLayout>

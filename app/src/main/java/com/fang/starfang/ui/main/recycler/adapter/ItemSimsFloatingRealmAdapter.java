@@ -26,7 +26,7 @@ public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemS
 
     private static final String TAG = "FANG_ADAPTER_ITEM_FLOAT";
 
-    private static ItemSimsFloatingRealmAdapter instance = null;
+    private static ItemSimsFloatingRealmAdapter instance;
 
     private FragmentManager fragmentManager;
     private Realm realm;
@@ -34,6 +34,9 @@ public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemS
 
     public static ItemSimsFloatingRealmAdapter getInstance() {
         return instance;
+    }
+    public static void setInstance( Realm realm, FragmentManager fragmentManager ) {
+        instance = new ItemSimsFloatingRealmAdapter(realm, fragmentManager);
     }
 
     @NonNull
@@ -53,11 +56,10 @@ public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemS
     }
 
 
-    public ItemSimsFloatingRealmAdapter(Realm realm, FragmentManager fragmentManager) {
+    private ItemSimsFloatingRealmAdapter(Realm realm, FragmentManager fragmentManager) {
         super(realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF), false);
         this.realm = realm;
         this.fragmentManager = fragmentManager;
-        instance = this;
         Log.d(TAG, "constructed");
     }
 

@@ -30,19 +30,21 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, R
 
     private final String TAG  = "FANG_ADAPTER_FIXED";
     private FragmentManager fragmentManager;
-    private static HeroesFixedRealmAdapter instance = null;
+    private static HeroesFixedRealmAdapter instance ;
     private Realm realm;
 
     public static HeroesFixedRealmAdapter getInstance() {
         return instance;
     }
+    public static void setInstance(Realm realm, FragmentManager fragmentManager) {
+        instance = new HeroesFixedRealmAdapter(realm, fragmentManager);
+    }
 
-    public HeroesFixedRealmAdapter(Realm realm, FragmentManager fragmentManager) {
+    private HeroesFixedRealmAdapter(Realm realm, FragmentManager fragmentManager) {
         super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME).
                 sort(HeroSim.FIELD_GRADE,Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING),false);
         this.fragmentManager = fragmentManager;
         this.realm = realm;
-        instance = this;
 
         Log.d(TAG,"constructed");
     }

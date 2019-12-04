@@ -1,16 +1,11 @@
 package com.fang.starfang.ui.main.dialog;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,45 +18,22 @@ import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
 import com.fang.starfang.ui.main.recycler.adapter.PickHeroRealmAdapter;
-import com.fang.starfang.util.NotifyUtils;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
-public class PickHeroDialogFragment extends DialogFragment {
+public class PickHeroDialogFragment extends UpdateDialogFragment {
 
-    private static final String TAG = "FANG_DIALOG_PICK_HERO";
-    private Activity mActivity;
-    private Realm realm;
 
     public static PickHeroDialogFragment newInstance( int itemID ) {
-
         Bundle args = new Bundle();
         args.putInt(AppConstant.INTENT_KEY_ITEM_ID, itemID);
         PickHeroDialogFragment pickHeroDialogFragment = new PickHeroDialogFragment();
         pickHeroDialogFragment.setArguments(args);
         return pickHeroDialogFragment;
-
-    }
-
-    public PickHeroDialogFragment() {
-
-
-        Log.d(TAG, "constructed");
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-        Log.d(TAG, "_ON ATTACH");
-        if (context instanceof Activity) {
-            mActivity = (Activity) context;
-        }
     }
 
     @NonNull
@@ -75,7 +47,6 @@ public class PickHeroDialogFragment extends DialogFragment {
             itemID = args.getInt(AppConstant.INTENT_KEY_ITEM_ID);
         }
 
-        realm = Realm.getDefaultInstance();
         ItemSim itemSim = realm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID,itemID).findFirst();
         if( itemSim != null ) {
             Item item = itemSim.getItem();
@@ -170,7 +141,7 @@ public class PickHeroDialogFragment extends DialogFragment {
                                 } // end switch
                                 itemSim.setHeroWhoHasThis(heroSim);
                                 realm.commitTransaction();
-                                NotifyUtils.notifyToAdapter(true,true,true,true);
+                                onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
                             }
                         }
                     }).setNegativeButton(R.string.cancel_kor, null);
@@ -180,10 +151,4 @@ public class PickHeroDialogFragment extends DialogFragment {
         return builder.create();
     }
 
-
-    @Override
-    public void onDismiss(@NonNull DialogInterface dialog) {
-        realm.close();
-        super.onDismiss(dialog);
-    }
 }

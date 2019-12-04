@@ -13,10 +13,6 @@ import com.fang.starfang.R;
 import com.fang.starfang.ui.main.Fragment.PlaceholderFragment;
 
 
-/**
- * A [FragmentPagerAdapter] that returns a fragment corresponding to
- * one of the sections/tabs/pages.
- */
 public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
     @StringRes

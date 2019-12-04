@@ -63,13 +63,16 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
     private Resources resources;
     private int color_text_checked;
     private int color_text_unchecked;
-    private static HeroesFloatingRealmAdapter instance = null;
+    private static HeroesFloatingRealmAdapter instance;
 
     public static HeroesFloatingRealmAdapter getInstance() {
         return instance;
     }
+    public static void setInstance(Realm realm, Context context) {
+        instance = new HeroesFloatingRealmAdapter(realm, context);
+    }
 
-    public HeroesFloatingRealmAdapter(Realm realm, Context context) {
+    private HeroesFloatingRealmAdapter(Realm realm, Context context) {
         super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME).
                 sort(HeroSim.FIELD_GRADE,Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING),false);
         this.realm = realm;
@@ -77,8 +80,6 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         this.resources = context.getResources();
         this.color_text_checked = ContextCompat.getColor(context,R.color.colorCheckedText);
         this.color_text_unchecked = ContextCompat.getColor(context,R.color.colorUnCheckedText);
-        instance = this;
-
         Log.d(TAG,"constructed" );
     }
 

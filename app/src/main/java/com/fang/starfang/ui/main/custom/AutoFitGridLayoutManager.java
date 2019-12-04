@@ -1,4 +1,4 @@
-package com.fang.starfang.ui.main.recycler.custom;
+package com.fang.starfang.ui.main.custom;
 
 import android.content.Context;
 

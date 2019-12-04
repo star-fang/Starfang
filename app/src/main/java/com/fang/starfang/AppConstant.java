@@ -3,6 +3,14 @@ package com.fang.starfang;
 public class AppConstant {
     public static final int REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT = 0;
     public static final int REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT = 1;
+
+    public static final int RESULT_CODE_SUCCESS_ADD_ITEM = 0;
+    public static final int RESULT_CODE_SUCCESS_ADD_HERO = 1;
+    public static final int RESULT_CODE_SUCCESS_ADD_RELIC = 2;
+
+    public static final int RESULT_CODE_SUCCESS_MODIFY_ITEM = 3;
+    public static final int RESULT_CODE_SUCCESS_MODIFY_HERO = 4;
+
     public static final String INTENT_KEY_ITEM_NAME = "itemName";
     public static final String INTENT_KEY_ITEM_ID = "itemID";
     public static final String INTENT_KEY_ITEM_REINFORCE = "itemReinforce";

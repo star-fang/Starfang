@@ -1,7 +1,6 @@
 package com.fang.starfang.ui.main.Fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,26 +16,19 @@ import com.fang.starfang.AppConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
 import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFixedRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFloatingRealmAdapter;
-import com.fang.starfang.ui.main.recycler.custom.DiagonalScrollRecyclerView;
-
+import com.fang.starfang.ui.main.custom.DiagonalScrollRecyclerView;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class ItemsFragment extends PlaceholderFragment {
-
-    private static final String TAG = "FANG_FRAG_ITEM";
-    private Realm realm;
-    private FragmentManager fragmentManager;
 
     static ItemsFragment newInstance(int index) {
         ItemsFragment itemsFragment = new ItemsFragment();
@@ -49,35 +39,8 @@ public class ItemsFragment extends PlaceholderFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.fragmentManager = getFragmentManager();
-        //Log.d(TAG,"_ON CREATE");
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        realm.close();
-        //Log.d(TAG, "_ON DESTROY VIEW : realm instance closed");
-    }
-
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        Log.d(TAG,"_ON CREATE VIEW");
-
-        realm = Realm.getDefaultInstance();
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_items, container, false);
-        AppCompatButton button_add_item = view.findViewById(R.id.button_add_item);
-        button_add_item.setOnClickListener( v -> {
-            FragmentManager manager = getFragmentManager();
-            if (manager != null) {
-                AddItemDialogFragment.newInstance().show(manager,TAG);
-            }
-        });
-
         final RecyclerView recycler_view_items_fixed = view.findViewById(R.id.recycler_view_items_fixed);
         final RecyclerView recycler_view_items_floating = view.findViewById(R.id.recycler_view_items_floating);
         recycler_view_items_fixed.setLayoutManager(new LinearLayoutManager(mActivity));
@@ -85,10 +48,10 @@ public class ItemsFragment extends PlaceholderFragment {
         final DiagonalScrollRecyclerView recycler_view_items_content = view.findViewById(R.id.recycler_view_items_content);
         recycler_view_items_content.setRecyclerView(recycler_view_items_floating);
 
-        final ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = new ItemSimsFixedRealmAdapter(realm, fragmentManager);
+        final ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = ItemSimsFixedRealmAdapter.getInstance();
         recycler_view_items_fixed.setAdapter(itemSimsFixedRealmAdapter);
 
-        final ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = new ItemSimsFloatingRealmAdapter(realm, fragmentManager);
+        final ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = ItemSimsFloatingRealmAdapter.getInstance();
         recycler_view_items_floating.setAdapter(itemSimsFloatingRealmAdapter);
 
 
@@ -163,7 +126,6 @@ public class ItemsFragment extends PlaceholderFragment {
                         String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                         itemSimsFixedRealmAdapter.getFilter().filter(cs);
                         itemSimsFloatingRealmAdapter.getFilter().filter(cs);
-                        Log.d(TAG,"grade selected :" + selected_grade);
                     }
 
                     @Override
@@ -198,7 +160,6 @@ public class ItemsFragment extends PlaceholderFragment {
                         String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                         itemSimsFixedRealmAdapter.getFilter().filter(cs);
                         itemSimsFloatingRealmAdapter.getFilter().filter(cs);
-                        Log.d(TAG,"category_main selected :" + selected_category_main);
 
 
                     }
@@ -219,7 +180,6 @@ public class ItemsFragment extends PlaceholderFragment {
                         String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                         itemSimsFixedRealmAdapter.getFilter().filter(cs);
                         itemSimsFloatingRealmAdapter.getFilter().filter(cs);
-                        Log.d(TAG,"category_sub selected :" + selected_category_sub);
                     }
 
                     @Override
