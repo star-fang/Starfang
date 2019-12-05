@@ -3,50 +3,76 @@ package com.fang.starfang.local.model.realm.simulator;
 import com.fang.starfang.local.model.realm.source.RelicPRFX;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
 
+import java.util.UUID;
+
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.exceptions.RealmPrimaryKeyConstraintException;
 
 public class RelicSim extends RealmObject {
 
     public static final String FIELD_ID = "relicID";
 
     @PrimaryKey
-    private String relicID;
-    private int prfxID;
-    private RelicPRFX prfx; // 접두사, 접두사효과, 영향받는스탯, 레벨 별 수치(1~5)
-    private int sfxID;
-    private RelicSFX sfx; // 접미사, 등급(1~4), 능력치
-    private int magicItemLevel; // 레벨(1~5)
+    private int relicID;
+    private int prefixID;
+    private RelicPRFX prefix; // 접두사, 접두사효과, 영향받는스탯, 레벨 별 수치(1~5)
+    private int suffixID;
+    private RelicSFX suffix; // 접미사, 등급(1~4), 능력치
+    private int relicLevel; // 레벨(1~5)
 
-    public RelicPRFX getPrfx() {
-        return prfx;
+    public RelicSim() {
+
     }
 
-    public void setPrfx(RelicPRFX prfx) {
-        this.prfx = prfx;
+    public RelicSim( RelicSFX suffix, RelicPRFX prefix) throws RealmPrimaryKeyConstraintException {
+        this.relicID = (int)UUID.randomUUID().getMostSignificantBits();
+        this.suffix = suffix;
+        this.suffixID = suffix.getRelicSuffixID();
+        this.prefix = prefix;
+        this.prefixID = prefix == null ? 0 : prefix.getRelicPrefixID();
+        this.relicLevel = 1;
+
     }
 
-    public RelicSFX getSfx() {
-        return sfx;
+    public int getPrefixID() {
+        return prefixID;
     }
 
-    public void setSfx(RelicSFX sfx) {
-        this.sfx = sfx;
+    public void setPrefixID(int prefixID) {
+        this.prefixID = prefixID;
     }
 
-    public int getMagicItemLevel() {
-        return magicItemLevel;
+    public RelicPRFX getPrefix() {
+        return prefix;
     }
 
-    public void setMagicItemLevel(int magicItemLevel) {
-        this.magicItemLevel = magicItemLevel;
+    public void updatePrefix(Realm realm) {
+        this.prefix = realm.where(RelicPRFX.class).equalTo(RelicPRFX.FIELD_ID, prefixID).findFirst();
     }
 
-    public int getPrfxID() {
-        return prfxID;
+    public int getSuffixID() {
+        return suffixID;
     }
 
-    public int getSfxID() {
-        return sfxID;
+    public RelicSFX getSuffix() {
+        return suffix;
+    }
+
+    public void updateSuffix(Realm realm) {
+        this.suffix = realm.where(RelicSFX.class).equalTo(RelicPRFX.FIELD_ID, suffixID).findFirst();
+    }
+
+    public int getRelicID() {
+        return relicID;
+    }
+
+    public int getRelicLevel() {
+        return relicLevel;
+    }
+
+    public void setRelicLevel(int relicLevel) {
+        this.relicLevel = relicLevel;
     }
 }

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 
 import com.fang.starfang.AppConstant;
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.RelicPRFX;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
 
@@ -109,13 +110,23 @@ public class AddRelicDialogFragment extends UpdateDialogFragment{
             picker_add_relic_guardian.setValue(GUARDIAN_INIT_VALUE);
             picker_add_relic_grade.setValue(GRADE_INIT_VALUE);
 
-            builder.setView(view).setPositiveButton("추가", ((dialog, which) -> {
-                String guardian = relicGuardiansStr[picker_add_relic_guardian.getValue()];
+            builder.setView(view).setPositiveButton(R.string.add_kor, ((dialog, which) -> {
+                //String guardian = relicGuardiansStr[picker_add_relic_guardian.getValue()];
                 String prefix = relicPRFXesStr[picker_add_relic_prefix.getValue()];
                 String suffix = relicSFXesStr[picker_add_relic_suffix.getValue()];
                 int grade = picker_add_relic_grade.getValue() + 1;
-                Log.d(TAG, guardian + " " + prefix + " " + suffix + " " + grade);
-            }));
+                RelicSFX relicSFX = realm.where(RelicSFX.class).equalTo(RelicSFX.FIELD_NAME, suffix).and().equalTo(RelicSFX.FIELD_GRD, grade).findFirst();
+                RelicPRFX relicPRFX = realm.where(RelicPRFX.class).equalTo(RelicPRFX.FIELD_NAME,prefix).findFirst();
+                if( relicSFX != null ) {
+                    RelicSim relicSim = new RelicSim( relicSFX, relicPRFX );
+                    realm.beginTransaction();
+                    realm.copyToRealm(relicSim);
+                    realm.commitTransaction();
+                    Log.d(TAG, relicSim.toString());
+                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_ADD_RELIC);
+                }
+
+            })).setNegativeButton(R.string.cancel_kor,null);
         } catch ( IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
             Log.d(TAG,e.toString());
         }

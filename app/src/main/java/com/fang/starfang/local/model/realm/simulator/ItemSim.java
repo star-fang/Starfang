@@ -7,6 +7,7 @@ import com.fang.starfang.local.model.realm.source.Item;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -96,8 +97,8 @@ public class ItemSim extends RealmObject {
         return item;
     }
 
-    public void setItem(Item item) {
-        this.item = item;
+    public void updateItem(Realm realm) {
+        this.item = realm.where(Item.class).equalTo(Item.FIELD_NO, itemNo).findFirst();
     }
 
     public RealmList<RealmInteger> getItemPlusPowers() {

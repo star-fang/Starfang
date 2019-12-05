@@ -7,7 +7,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-// 190406 Heroes RealmList primitive type > RealmString으로 교체
+// 190406 Heroes RealmList primitive type : String > RealmString
 public class Heroes extends RealmObject {
 
     public static final String PREF_TABLE = "장수 정보";

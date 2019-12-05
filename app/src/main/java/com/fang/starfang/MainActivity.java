@@ -8,8 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
@@ -108,17 +106,17 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
         final TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
-        final View parent_button_add = view.findViewById(R.id.parent_button_add);
+        //final View parent_button_add = view.findViewById(R.id.parent_button_add);
         final View layout_toggle_button_add = view.findViewById(R.id.layout_toggle_button_add);
         final MovableFloatingActionButton button_add = view.findViewById(R.id.button_add);
-        final int color_primary = ContextCompat.getColor(this, R.color.colorPrimary);
+        //final int color_primary = ContextCompat.getColor(this, R.color.colorPrimary);
         button_add.setOnClickListener( v -> {
             if(layout_toggle_button_add.getVisibility() == View.GONE) {
                 layout_toggle_button_add.setVisibility(View.VISIBLE);
-                parent_button_add.setBackgroundColor(color_primary);
+                //parent_button_add.setBackgroundColor(color_primary);
             } else {
                 layout_toggle_button_add.setVisibility(View.GONE);
-                parent_button_add.setBackgroundColor(0);
+                //parent_button_add.setBackgroundColor(0);
             }
         });
 

@@ -25,7 +25,7 @@ public class RelicFragment extends PlaceholderFragment {
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_magic_item, container, false);
+        final View view = inflater.inflate(R.layout.fragment_relic, container, false);
 
         return view;
 

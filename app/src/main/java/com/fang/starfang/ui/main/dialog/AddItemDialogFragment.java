@@ -5,11 +5,9 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.NumberPicker;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,7 +23,6 @@ import com.fang.starfang.util.ScreenUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -53,113 +50,109 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
         ItemsRealmAdapter itemsRealmAdapter = new ItemsRealmAdapter(realm, text_dialog_add_item_info, text_dialog_add_item_desc);
         recycler_view_all_items.setAdapter(itemsRealmAdapter);
 
-        final AppCompatSpinner spinner_item_grade = view.findViewById(R.id.spinner_item_grade);
-        final AppCompatSpinner spinner_item_category_main = view.findViewById(R.id.spinner_item_category_main);
-        final AppCompatSpinner spinner_item_category_sub = view.findViewById(R.id.spinner_item_category_sub);
+        final NumberPicker picker_item_grade = view.findViewById(R.id.picker_item_grade);
+        final NumberPicker picker_item_category_main = view.findViewById(R.id.picker_item_category_main);
+        final NumberPicker picker_item_category_sub = view.findViewById(R.id.picker_item_category_sub);
 
-        RealmResults<Item> grades = realm.where(Item.class).distinct(Item.FIELD_GRD).findAll().sort(Item.FIELD_GRD, Sort.DESCENDING);
-        List<String> gradeList = new ArrayList<>();
-        gradeList.add(AppConstant.ALL_PICK_KOR);
-        for( Item grade : grades ) {
-            String gradeStr = grade.getItemGrade();
-            gradeStr += NumberUtils.isDigits(gradeStr)? AppConstant.GRADE_KOR : "";
-            gradeList.add(gradeStr);
-        }
-        ArrayAdapter<String> gradesAdapter = new ArrayAdapter<>(
-                mActivity,
-                android.R.layout.simple_spinner_dropdown_item,  gradeList
-        );
-        spinner_item_grade.setAdapter(gradesAdapter);
-        RealmResults < ItemCate > itemCates_main = realm.where(ItemCate.class).distinct(ItemCate.FIELD_MAIN_CATE).findAll();
-        List<String> mainCategoryList = new ArrayList<>();
-        mainCategoryList.add(AppConstant.ALL_PICK_KOR);
-        for( ItemCate cate_main : itemCates_main) {
-            mainCategoryList.add(cate_main.getItemMainCate());
-        }
-        ArrayAdapter<String> mainCateAdapter = new ArrayAdapter<>(
-                mActivity,
-        android.R.layout.simple_spinner_dropdown_item, mainCategoryList);
-        spinner_item_category_main.setAdapter(mainCateAdapter);
+        try {
+            RealmResults<Item> grades = realm.where(Item.class).distinct(Item.FIELD_GRD).findAll().sort(Item.FIELD_GRD, Sort.DESCENDING);
+            ArrayList<String> gradeList = new ArrayList<>();
+            gradeList.add(AppConstant.ALL_PICK_KOR);
+            for (Item grade : grades) {
+                if (grade != null) {
+                    String gradeStr = grade.getItemGrade();
+                    gradeStr += NumberUtils.isDigits(gradeStr) ? AppConstant.GRADE_KOR : "";
+                    gradeList.add(gradeStr);
+                }
+            }
 
-        List<String> subCategoryList = new ArrayList<>();
-        ArrayAdapter<String> subCateAdapter = new ArrayAdapter<>(
-                mActivity,
-                android.R.layout.simple_spinner_dropdown_item, subCategoryList);
-        spinner_item_category_sub.setAdapter(subCateAdapter);
+            picker_item_grade.setMinValue(0);
+            picker_item_grade.setMaxValue(grades.size());
+            picker_item_grade.setDisplayedValues(gradeList.toArray(new String[0]));
 
-        spinner_item_grade.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String selected_grade = spinner_item_grade.getItemAtPosition(position).toString();
-                        String selected_category_main = spinner_item_category_main.getSelectedItem().toString();
-                        Object selected_sub_cate = spinner_item_category_sub.getSelectedItem();
-                        String selected_category_sub = selected_sub_cate == null ? AppConstant.ALL_PICK_KOR : selected_sub_cate.toString();
-                        itemsRealmAdapter.getFilter().filter(selected_grade
-                                + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub );
-                        Log.d(TAG,"grade selected :" + selected_grade);
-                    }
+            RealmResults<ItemCate> itemCategories_main = realm.where(ItemCate.class).distinct(ItemCate.FIELD_MAIN_CATE).findAll();
+            ArrayList<String> mainCategoryList = new ArrayList<>();
+            mainCategoryList.add(AppConstant.ALL_PICK_KOR);
+            for (ItemCate cate_main : itemCategories_main) {
+                if (cate_main != null) {
+                    String mainCateStr = cate_main.getItemMainCate();
+                    mainCategoryList.add(mainCateStr);
+                }
+            }
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
+            picker_item_category_main.setMinValue(0);
+            picker_item_category_main.setMaxValue(itemCategories_main.size());
+            picker_item_category_main.setDisplayedValues(mainCategoryList.toArray(new String[0]));
 
 
-        spinner_item_category_main.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String selected_category_main = spinner_item_category_main.getItemAtPosition(position).toString();
-                        String selected_grade = spinner_item_grade.getSelectedItem().toString();
-                        RealmQuery<ItemCate> categories_sub_query = realm.where(ItemCate.class);
-                        if(!selected_category_main.equals(AppConstant.ALL_PICK_KOR)) {
-                            categories_sub_query.equalTo(ItemCate.FIELD_MAIN_CATE, selected_category_main);
-                        }
-                        RealmResults<ItemCate> categories_sub = categories_sub_query.findAll();
+            RealmResults<ItemCate> itemCategories_sub = realm.where(ItemCate.class).distinct(ItemCate.FIELD_SUB_CATE).findAll();
+            ArrayList<String> subCategoryList = new ArrayList<>();
+            subCategoryList.add(AppConstant.ALL_PICK_KOR);
+            for (ItemCate cate_sub : itemCategories_sub) {
+                if (cate_sub != null) {
+                    String subCateStr = cate_sub.getItemSubCate();
+                    subCategoryList.add(subCateStr);
+                }
+            }
 
-                        subCategoryList.clear();
-                        subCategoryList.add(AppConstant.ALL_PICK_KOR);
-                        for( ItemCate cate_sub : categories_sub) {
-                            subCategoryList.add(cate_sub.getItemSubCate() );
-                        }
-                        subCateAdapter.notifyDataSetChanged();
-                        spinner_item_category_sub.setSelection(0);
-                        Object selected_sub_cate = spinner_item_category_sub.getSelectedItem();
-                        String selected_category_sub = selected_sub_cate == null ? AppConstant.ALL_PICK_KOR : selected_sub_cate.toString();
-
-                        itemsRealmAdapter.getFilter().filter(selected_grade
-                                + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub );
-                        Log.d(TAG,"category_main selected :" + selected_category_main);
+            picker_item_category_sub.setMinValue(0);
+            picker_item_category_sub.setMaxValue(itemCategories_sub.size());
+            picker_item_category_sub.setDisplayedValues(subCategoryList.toArray(new String[0]));
 
 
-                    }
+            picker_item_grade.setOnValueChangedListener((picker, oldVal, newVal) -> {
+                String selected_grade = gradeList.get(newVal);
+                String selected_category_main = mainCategoryList.get(picker_item_category_main.getValue());
+                String selected_category_sub = subCategoryList.get(picker_item_category_sub.getValue());
+                String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
+                itemsRealmAdapter.getFilter().filter(cs);
+            });
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
 
-                    }
-                });
+            picker_item_category_main.setOnValueChangedListener((picker, oldVal, newVal) -> {
+                String selected_grade = gradeList.get(picker_item_grade.getValue());
+                String selected_category_main = mainCategoryList.get(newVal);
 
-        spinner_item_category_sub.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                        String selected_category_sub = spinner_item_category_sub.getItemAtPosition(position).toString();
-                        String selected_category_main = spinner_item_category_main.getSelectedItem().toString();
-                        String selected_grade = spinner_item_grade.getSelectedItem().toString();
-                        itemsRealmAdapter.getFilter().filter(selected_grade
-                                + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub );
-                        Log.d(TAG,"category_sub selected :" + selected_category_sub);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-
+                RealmQuery<ItemCate> categories_sub_query = realm.where(ItemCate.class);
+                if (newVal > 0) {
+                    categories_sub_query.equalTo(ItemCate.FIELD_MAIN_CATE, selected_category_main);
+                }
+                RealmResults<ItemCate> categories_sub = categories_sub_query.findAll();
+                subCategoryList.clear();
+                subCategoryList.add(AppConstant.ALL_PICK_KOR);
+                for (ItemCate cate_sub : categories_sub) {
+                    if (cate_sub != null) {
+                        String subCateStr = cate_sub.getItemSubCate();
+                        subCategoryList.add(subCateStr);
                     }
                 }
-        );
+                try {
+                    picker_item_category_sub.setDisplayedValues(null);
+                    picker_item_category_sub.setMinValue(0);
+                    picker_item_category_sub.setMaxValue(categories_sub.size());
+                    picker_item_category_sub.setDisplayedValues(subCategoryList.toArray(new String[0]));
+
+
+                    String selected_category_sub = subCategoryList.get(picker_item_category_sub.getValue());
+                    String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
+                    itemsRealmAdapter.getFilter().filter(cs);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    Log.d(TAG,"subCate : " + e.toString());
+                }
+            });
+
+            picker_item_category_sub.setOnValueChangedListener((picker, oldVal, newVal) -> {
+                String selected_grade = gradeList.get(picker_item_grade.getValue());
+                String selected_category_main = mainCategoryList.get(picker_item_category_main.getValue());
+                String selected_category_sub = subCategoryList.get(newVal);
+                String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
+                itemsRealmAdapter.getFilter().filter(cs);
+            });
+
+
+        } catch( IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
+            Log.d(TAG, e.toString());
+        }
 
         builder.setView(view).setPositiveButton(R.string.create_kor, (dialogInterface, i) -> {
             Item item_selected = itemsRealmAdapter.getSelectedItem();

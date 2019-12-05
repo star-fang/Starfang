@@ -1,80 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#30000000"
-            android:orientation="horizontal"
-            android:weightSum="3"
-            android:baselineAligned="false">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/grade_item_kor"
-                    android:gravity="center"/>
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinner_item_sim_grade"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/category_item_man"
-                    android:gravity="center"/>
-                <androidx.appcompat.widget.AppCompatSpinner
-                    android:id="@+id/spinner_item_sim_category_main"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/category_item_sub"
-                    android:gravity="center"/>
-                <androidx.appcompat.widget.AppCompatSpinner
-                    android:id="@+id/spinner_item_sim_category_sub"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-        </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_above="@id/layout_item_pickers">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginTop="1dp"
-                android:background="@drawable/right_border_black_2dp"
+                android:background="@drawable/end_border_white_2dp"
                 android:orientation="vertical">
 
 
@@ -86,7 +26,7 @@
                         android:textSize="15sp"
                         android:layout_height="40dp"
                         android:layout_marginStart="5dp"
-                        android:background="@drawable/bottom_border_black_2dp"/>
+                        android:background="@drawable/bottom_border_white_2dp"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_items_fixed"
@@ -111,7 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_marginTop="1dp"
-                    android:background="@drawable/bottom_border_black_2dp"
+                    android:background="@drawable/bottom_border_white_2dp"
                     android:orientation="horizontal">
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -156,4 +96,64 @@
         </com.fang.starfang.ui.main.custom.DiagonalScrollRecyclerView>
         </LinearLayout>
 
-</LinearLayout>
+
+    <LinearLayout
+        android:background="#30000000"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/layout_item_pickers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/grade_item_kor"
+                android:gravity="center"/>
+            <NumberPicker
+                android:id="@+id/picker_item_sim_grade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/category_item_man"
+                android:gravity="center"/>
+            <NumberPicker
+                android:id="@+id/picker_item_sim_category_main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/category_item_sub"
+                android:gravity="center"/>
+            <NumberPicker
+                android:id="@+id/picker_item_sim_category_sub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

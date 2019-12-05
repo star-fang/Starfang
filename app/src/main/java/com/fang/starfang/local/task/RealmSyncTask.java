@@ -22,6 +22,7 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
+import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.Agenda;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Destiny;
@@ -266,7 +267,6 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                                     spec.setSpecNameNoBlank(spec.getSpecName().replace(" ",""));
                                     realm.copyToRealm(spec);
                             }
-                            // 검색용 공백 제거 column 생성
                             Log.d(TAG, "SYNC Spec REALM COMPLETE!");
                             break;
                         case Branch.PREF_TABLE:
@@ -296,12 +296,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                             }
 
                             for(ItemSim itemSim : realm.where(ItemSim.class).findAll()) {
-                                Item item = realm.where(Item.class).equalTo(Item.FIELD_NO, itemSim.getItemNo()).findFirst();
-                                if( item != null) {
-                                    itemSim.setItem(item);
-                                } else {
-                                    itemSim.deleteFromRealm();
-                                }
+                                itemSim.updateItem( realm );
                             }
                             Log.d(TAG, "SYNC Item REALM COMPLETE!");
                             break;
@@ -348,12 +343,28 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                             break;
                         case RelicPRFX.PREF_TABLE:
                             realm.delete(RelicPRFX.class);
-                            realm.createAllFromJson(RelicPRFX.class, jsonArray);
+                            for(int i = 0; i < jsonArray.length(); i++ ) {
+                                String json = jsonArray.get(i).toString();
+                                RelicPRFX relicPRFX = gson.fromJson(json, RelicPRFX.class);
+                                realm.copyToRealm(relicPRFX);
+                            }
+
+                            for( RelicSim relicSim : realm.where(RelicSim.class).findAll()) {
+                                relicSim.updatePrefix( realm );
+                            }
                             Log.d(TAG, "SYNC  RelicPRFX REALM COMPLETE!");
                             break;
                         case RelicSFX.PREF_TABLE:
                             realm.delete(RelicSFX.class);
-                            realm.createAllFromJson(RelicSFX.class, jsonArray);
+                            for(int i = 0; i < jsonArray.length(); i++ ) {
+                                String json = jsonArray.get(i).toString();
+                                RelicSFX relicSFX = gson.fromJson(json, RelicSFX.class);
+                                realm.copyToRealm(relicSFX);
+                            }
+
+                            for( RelicSim relicSim : realm.where(RelicSim.class).findAll()) {
+                                relicSim.updateSuffix( realm );
+                            }
                             Log.d(TAG, "SYNC RelicSFX REALM COMPLETE!");
                             break;
                         case Dot.PREF_TABLE:

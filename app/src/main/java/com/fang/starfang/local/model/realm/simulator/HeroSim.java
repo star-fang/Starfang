@@ -43,8 +43,8 @@ public class HeroSim extends RealmObject {
     private int heroGrade; // 1(~20),2(~40),3(~60),4(~80),5(~99)
     private RealmList<RealmInteger> heroPlusStats; // 교본작
     private RealmList<Integer> heroSpecsChecked; //  체크된 효과 인덱스 (~3개)
-    private RealmList<RelicSim> heroMagicItemsSlot1; // 보패 슬롯1
-    private RealmList<RelicSim> heroMagicItemsSlot2; // 보패 슬롯2
+    private RealmList<RelicSim> heroRelicSlot1; // 보패 슬롯1
+    private RealmList<RelicSim> heroRelicSlot2; // 보패 슬롯2
     private ItemSim heroWeapon;
     private ItemSim heroArmor;
     private ItemSim heroAid;
@@ -84,8 +84,8 @@ public class HeroSim extends RealmObject {
             heroPlusStats.add(new RealmInteger(0));
         }
         this.heroSpecsChecked = null;
-        this.heroMagicItemsSlot1 = null;
-        this.heroMagicItemsSlot2 = null;
+        this.heroRelicSlot1 = null;
+        this.heroRelicSlot2 = null;
         this.heroWeapon = null;
         this.heroArmor = null;
         this.heroAid = null;
@@ -189,23 +189,6 @@ public class HeroSim extends RealmObject {
 
     private Integer levelToIndex(int level) {
         return Arrays.asList(SPEC_LEVELS).indexOf(level);
-    }
-
-
-    public RealmList<RelicSim> getHeroMagicItemsSlot1() {
-        return heroMagicItemsSlot1;
-    }
-
-    public void setHeroMagicItemsSlot1(RealmList<RelicSim> heroMagicItemsSlot1) {
-        this.heroMagicItemsSlot1 = heroMagicItemsSlot1;
-    }
-
-    public RealmList<RelicSim> getHeroMagicItemsSlot2() {
-        return heroMagicItemsSlot2;
-    }
-
-    public void setHeroMagicItemsSlot2(RealmList<RelicSim> heroMagicItemsSlot2) {
-        this.heroMagicItemsSlot2 = heroMagicItemsSlot2;
     }
 
 
@@ -346,5 +329,21 @@ public class HeroSim extends RealmObject {
 
     public Branch getHeroBranch() {
         return heroBranch;
+    }
+
+    public RealmList<RelicSim> getHeroRelicSlot1() {
+        return heroRelicSlot1;
+    }
+
+    public void setHeroRelicSlot1(RealmList<RelicSim> heroRelicSlot1) {
+        this.heroRelicSlot1 = heroRelicSlot1;
+    }
+
+    public RealmList<RelicSim> getHeroRelicSlot2() {
+        return heroRelicSlot2;
+    }
+
+    public void setHeroRelicSlot2(RealmList<RelicSim> heroRelicSlot2) {
+        this.heroRelicSlot2 = heroRelicSlot2;
     }
 }
