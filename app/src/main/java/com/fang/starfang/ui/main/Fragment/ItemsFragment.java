@@ -98,10 +98,10 @@ public class ItemsFragment extends PlaceholderFragment {
                 android.R.layout.simple_spinner_dropdown_item,  gradeList
         );
         spinner_item_grade.setAdapter(gradesAdapter);
-        RealmResults <ItemCate> itemCates_main = realm.where(ItemCate.class).distinct(ItemCate.FIELD_MAIN_CATE).findAll();
+        RealmResults <ItemCate> itemCategories_main = realm.where(ItemCate.class).distinct(ItemCate.FIELD_MAIN_CATE).findAll();
         List<String> mainCategoryList = new ArrayList<>();
         mainCategoryList.add(AppConstant.ALL_PICK_KOR);
-        for( ItemCate cate_main : itemCates_main) {
+        for( ItemCate cate_main : itemCategories_main) {
             mainCategoryList.add(cate_main.getItemMainCate());
         }
         ArrayAdapter<String> mainCateAdapter = new ArrayAdapter<>(

@@ -35,20 +35,15 @@ import io.realm.exceptions.RealmPrimaryKeyConstraintException;
 
 public class AddItemDialogFragment extends UpdateDialogFragment {
 
-    private static final String TAG = "FANG_ADD_ITEM_DIALOG";
+    private static final String TAG = "FANG_DIALOG_ADD_ITEM";
 
     public static AddItemDialogFragment newInstance() {
         return new AddItemDialogFragment();
     }
 
-    public AddItemDialogFragment() {
-        Log.d(TAG, "constructed");
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        super.onCreateDialog(savedInstanceState);
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         View view = View.inflate(mActivity, R.layout.dialog_add_item, null);
         final AppCompatTextView text_dialog_add_item_info = view.findViewById(R.id.text_dialog_add_item_info);

@@ -17,6 +17,7 @@ import com.fang.starfang.ui.main.Fragment.PlaceholderFragment;
 import com.fang.starfang.ui.main.SectionsPagerAdapter;
 import com.fang.starfang.ui.main.custom.MovableFloatingActionButton;
 import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
+import com.fang.starfang.ui.main.dialog.AddRelicDialogFragment;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFixedRealmAdapter;
@@ -121,8 +122,9 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
             }
         });
 
-        final AppCompatButton button_add_item = view.findViewById(R.id.button_add_item);
-        button_add_item.setOnClickListener( v -> AddItemDialogFragment.newInstance().show(fragmentManager,TAG));
+        view.findViewById(R.id.button_add_item).setOnClickListener( v -> AddItemDialogFragment.newInstance().show(fragmentManager,TAG));
+        view.findViewById(R.id.button_add_relic).setOnClickListener( v -> AddRelicDialogFragment.newInstance().show(fragmentManager,TAG));
+
     }
     @Override
     public void updateEvent(int code) {

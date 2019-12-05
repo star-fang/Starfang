@@ -1,10 +1,7 @@
 package com.fang.starfang.ui.main.dialog;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -29,7 +26,7 @@ public class UpdateDialogFragment extends DialogFragment {
         realm = Realm.getDefaultInstance();
         fragmentManager = getFragmentManager();
 
-        Log.d(TAG, "_ON ATTACH");
+        Log.d(TAG, "_onAttach");
         if (context instanceof Activity) {
             Activity activity = (Activity)context;
             mActivity = activity;
@@ -45,7 +42,7 @@ public class UpdateDialogFragment extends DialogFragment {
     public void onDetach() {
         super.onDetach();
         realm.close();
-        Log.d(TAG,"_ON DETACH");
+        Log.d(TAG,"_onDetach");
     }
 
 }

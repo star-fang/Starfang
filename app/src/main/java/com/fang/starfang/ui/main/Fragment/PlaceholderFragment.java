@@ -4,13 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.fang.starfang.ui.main.PageViewModel;
@@ -22,7 +18,6 @@ public class PlaceholderFragment extends Fragment {
     private static final String TAG = "FANG_FRAG";
     static final String ARG_SECTION_NUMBER = "section_number";
     Activity mActivity;
-    FragmentManager fragmentManager;
     Realm realm;
 
 
@@ -50,7 +45,6 @@ public class PlaceholderFragment extends Fragment {
         PageViewModel pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
         int index = getIndex();
         pageViewModel.setIndex(index);
-        this.fragmentManager = getFragmentManager();
         Log.d(TAG,ARG_SECTION_NUMBER + index + "_onCreate");
     }
 

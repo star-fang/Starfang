@@ -8,12 +8,13 @@ public class RelicSFX extends RealmObject {
     public static final String PREF_TABLE = "보패 접미사";
     public static final String FIELD_ID = "relicSuffixID";
     public static final String FIELD_NAME = "relicSuffixName";
-    public static final String FIELD_GRD = "relicSuffixGRD";
+    public static final String FIELD_GRD = "relicSuffixGrade";
+    public static final String FIELD_TYPE = "guardianType";
 
     @PrimaryKey
     private int relicSuffixID;
     private String relicSuffixName;
-    private String relicSuffixGrade;
+    private int relicSuffixGrade;
     private RealmList<Integer> relicSuffixPowers; // 공 정 방 순 사 HP MP
     private int guardianType;
 
@@ -26,7 +27,7 @@ public class RelicSFX extends RealmObject {
         return relicSuffixName;
     }
 
-    public String getRelicSuffixGrade() {
+    public int getRelicSuffixGrade() {
         return relicSuffixGrade;
     }
 
