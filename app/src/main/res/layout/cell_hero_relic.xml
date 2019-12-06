@@ -56,7 +56,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     tools:text="각 ★4"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:gravity="center"
                     android:background="@drawable/rect_black"
                     android:layout_margin="2dp"/>
@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     tools:text="저"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:gravity="center"
                     android:background="@drawable/rect_black"
                     android:layout_margin="2dp"/>
@@ -124,7 +124,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     tools:text="방"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:gravity="center"
                     android:background="@drawable/rect_black"
                     android:layout_margin="2dp"/>
@@ -158,7 +158,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     tools:text="기"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:gravity="center"
                     android:background="@drawable/rect_black"
                     android:layout_margin="2dp"/>
@@ -199,7 +199,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     tools:text="각"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:gravity="center"
                     android:background="@drawable/rect_black"
                     android:layout_margin="2dp"/>
@@ -233,7 +233,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     tools:text="저"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:gravity="center"
                     android:background="@drawable/rect_black"
                     android:layout_margin="2dp"/>
@@ -267,7 +267,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     tools:text="방"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:gravity="center"
                     android:background="@drawable/rect_black"
                     android:layout_margin="2dp"/>
@@ -301,7 +301,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     tools:text="기"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:gravity="center"
                     android:background="@drawable/rect_black"
                     android:layout_margin="2dp"/>

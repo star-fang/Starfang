@@ -157,7 +157,7 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                     });
 
                     picker_pick_relic_prefix.setOnValueChangedListener((picker, oldVal, newVal) -> {
-                        String guardianType = relicGuardianList.get(picker_pick_relic_grade.getValue());
+                        String guardianType = relicGuardianList.get(picker_pick_relic_guardian.getValue());
                         String prefix = relicPrefixList.get(newVal);
                         String grade = relicGradeList.get(picker_pick_relic_grade.getValue());
                         String suffix = relicSuffixList.get(picker_pick_relic_suffix.getValue());
@@ -169,7 +169,7 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                     });
 
                     picker_pick_relic_grade.setOnValueChangedListener((picker, oldVal, newVal) -> {
-                        String guardianType = relicGuardianList.get(picker_pick_relic_grade.getValue());
+                        String guardianType = relicGuardianList.get(picker_pick_relic_guardian.getValue());
                         String prefix = relicPrefixList.get(picker_pick_relic_prefix.getValue());
                         String grade = relicGradeList.get(newVal);
                         String suffix = relicSuffixList.get(picker_pick_relic_suffix.getValue());
@@ -181,7 +181,7 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                     });
 
                     picker_pick_relic_suffix.setOnValueChangedListener((picker, oldVal, newVal) -> {
-                        String guardianType = relicGuardianList.get(picker_pick_relic_grade.getValue());
+                        String guardianType = relicGuardianList.get(picker_pick_relic_guardian.getValue());
                         String prefix = relicPrefixList.get(picker_pick_relic_prefix.getValue());
                         String grade = relicGradeList.get(picker_pick_relic_grade.getValue());
                         String suffix = relicSuffixList.get(newVal);

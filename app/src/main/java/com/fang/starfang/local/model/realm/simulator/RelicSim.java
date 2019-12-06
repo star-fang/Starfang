@@ -18,6 +18,8 @@ public class RelicSim extends RealmObject {
     public static final String FIELD_LEVEL = "relicLevel";
     public static final String FIELD_HERO = "heroWhoHasThis";
 
+    private static RelicSim emptyInstance = null;
+
     @PrimaryKey
     private int relicID;
     private int prefixID;
@@ -26,9 +28,10 @@ public class RelicSim extends RealmObject {
     private RelicSFX suffix; // 접미사, 등급(1~4), 능력치
     private int relicLevel; // 레벨(1~5)
     private HeroSim heroWhoHasThis;
+    private int slot; // 1,2 : 0 is null
+    private int positionInSlot; // 1 ~ 4 : 0 is null
 
     public RelicSim() {
-
     }
 
     public RelicSim( RelicSFX suffix, RelicPRFX prefix) throws RealmPrimaryKeyConstraintException {
@@ -39,6 +42,8 @@ public class RelicSim extends RealmObject {
         this.prefixID = prefix == null ? 0 : prefix.getRelicPrefixID();
         this.relicLevel = 1;
         this.heroWhoHasThis = null;
+        this.positionInSlot = 0;
+        this.slot = 0;
 
     }
 
@@ -78,6 +83,10 @@ public class RelicSim extends RealmObject {
         return relicLevel;
     }
 
+    public String getRelicLevelStr() {
+        return "Lv."+relicLevel;
+    }
+
     public void setRelicLevel(int relicLevel) {
         this.relicLevel = relicLevel;
     }
@@ -88,5 +97,21 @@ public class RelicSim extends RealmObject {
 
     public void setHeroWhoHasThis(HeroSim heroWhoHasThis) {
         this.heroWhoHasThis = heroWhoHasThis;
+    }
+
+    public int getPositionInSlot() {
+        return positionInSlot;
+    }
+
+    public void setPositionInSlot(int positionInSlot) {
+        this.positionInSlot = positionInSlot;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 }

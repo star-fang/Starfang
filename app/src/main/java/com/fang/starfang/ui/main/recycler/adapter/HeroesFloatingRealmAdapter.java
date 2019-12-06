@@ -2,6 +2,7 @@ package com.fang.starfang.ui.main.recycler.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,13 +56,13 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
     private static final String R_TEXT_HERO_POWER = "text_hero_power";
 
     //private static final String R_ROW_HERO_SPEC_BRANCH = "row_hero_spec_branch";
-    private static final String R_TEXT_HERO_SEPC_BRANCH_LEVEL = "text_hero_spec_branch_level";
-    private static final String R_TEXT_HERO_SEPC_BRANCH = "text_hero_spec_branch";
-    private static final String R_TEXT_HERO_SEPC_BRANCH_VAL = "text_hero_spec_branch_val";
+    private static final String R_TEXT_HERO_SPEC_BRANCH_LEVEL = "text_hero_spec_branch_level";
+    private static final String R_TEXT_HERO_SPEC_BRANCH = "text_hero_spec_branch";
+    private static final String R_TEXT_HERO_SPEC_BRANCH_VAL = "text_hero_spec_branch_val";
     //private static final String R_ROW_HERO_SPEC_UNIQUE = "row_hero_spec_unique";
-    private static final String R_TEXT_HERO_SEPC_UNIQUE_LEVEL = "text_hero_spec_unique_level";
-    private static final String R_TEXT_HERO_SEPC_UNIQUE = "text_hero_spec_unique";
-    private static final String R_TEXT_HERO_SEPC_UNIQUE_VAL = "text_hero_spec_unique_val";
+    private static final String R_TEXT_HERO_SPEC_UNIQUE_LEVEL = "text_hero_spec_unique_level";
+    private static final String R_TEXT_HERO_SPEC_UNIQUE = "text_hero_spec_unique";
+    private static final String R_TEXT_HERO_SPEC_UNIQUE_VAL = "text_hero_spec_unique_val";
 
     private static final String R_TEXT_RELIC = "text_relic";
     private static final String R_TEXT_PREFIX_SLOT = "_prefix_slot";
@@ -76,8 +77,11 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
     private Resources resources;
     private int color_text_checked;
     private int color_text_unchecked;
+    private TypedArray colors_relic_suffix_pastel;
+    private TypedArray colors_relic_suffix;
     private FragmentManager fragmentManager;
     private static HeroesFloatingRealmAdapter instance;
+
 
     public static HeroesFloatingRealmAdapter getInstance() {
         return instance;
@@ -95,6 +99,8 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         this.resources = context.getResources();
         this.color_text_checked = ContextCompat.getColor(context, R.color.colorCheckedText);
         this.color_text_unchecked = ContextCompat.getColor(context, R.color.colorUnCheckedText);
+        colors_relic_suffix_pastel  = resources.obtainTypedArray(R.array.color_suffix_pastel);
+        colors_relic_suffix = resources.obtainTypedArray(R.array.color_suffix);
         this.fragmentManager = fragmentManager;
         Log.d(TAG, "constructed");
     }
@@ -178,8 +184,18 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         private AppCompatTextView[][] text_relic_suffix_slot;
         private AppCompatTextView[][] text_relic_level_slot;
 
+        private NestedScrollView scroll_hero_relic_slot;
+        private AppCompatTextView text_relic_slot_number;
+        private AppCompatTextView text_relic_slot_combination;
+        private AppCompatImageButton button_relic_change_slot;
+
         private HeroesFloatingViewHolder(View itemView) {
             super(itemView);
+
+            scroll_hero_relic_slot = itemView.findViewById(R.id.scroll_hero_relic_slot);
+            text_relic_slot_number = itemView.findViewById(R.id.text_relic_slot_number);
+            text_relic_slot_combination = itemView.findViewById(R.id.text_relic_slot_combination);
+            button_relic_change_slot = itemView.findViewById(R.id.button_relic_change_slot);
 
             text_relic_prefix_slot = new AppCompatTextView[2][];
             text_relic_suffix_slot = new AppCompatTextView[2][];
@@ -242,20 +258,20 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                         (R_TEXT_HERO_POWER + (i + 1), ID_STR, packageName));
 
                 text_hero_spec_branch_level[i] = itemView.findViewById(resources.getIdentifier
-                        (R_TEXT_HERO_SEPC_BRANCH_LEVEL + (i + 1), ID_STR, packageName));
+                        (R_TEXT_HERO_SPEC_BRANCH_LEVEL + (i + 1), ID_STR, packageName));
                 text_hero_spec_branch[i] = itemView.findViewById(resources.getIdentifier
-                        (R_TEXT_HERO_SEPC_BRANCH + (i + 1), ID_STR, packageName));
+                        (R_TEXT_HERO_SPEC_BRANCH + (i + 1), ID_STR, packageName));
                 text_hero_spec_branch_val[i] = itemView.findViewById(resources.getIdentifier
-                        (R_TEXT_HERO_SEPC_BRANCH_VAL + (i + 1), ID_STR, packageName));
+                        (R_TEXT_HERO_SPEC_BRANCH_VAL + (i + 1), ID_STR, packageName));
 
 
                 if (i < 4) {
                     text_hero_spec_unique_level[i] = itemView.findViewById(resources.getIdentifier
-                            (R_TEXT_HERO_SEPC_UNIQUE_LEVEL + (i + 1), ID_STR, packageName));
+                            (R_TEXT_HERO_SPEC_UNIQUE_LEVEL + (i + 1), ID_STR, packageName));
                     text_hero_spec_unique[i] = itemView.findViewById(resources.getIdentifier
-                            (R_TEXT_HERO_SEPC_UNIQUE + (i + 1), ID_STR, packageName));
+                            (R_TEXT_HERO_SPEC_UNIQUE + (i + 1), ID_STR, packageName));
                     text_hero_spec_unique_val[i] = itemView.findViewById(resources.getIdentifier
-                            (R_TEXT_HERO_SEPC_UNIQUE_VAL + (i + 1), ID_STR, packageName));
+                            (R_TEXT_HERO_SPEC_UNIQUE_VAL + (i + 1), ID_STR, packageName));
                 }
             }
 
@@ -476,32 +492,69 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
 
             for( int i = 0; i < 2; i++) {
                 RealmList<RelicSim> slot = heroSim.getHeroRelicSlot(i + 1);
-                    for (int j = 0; j < 4; j++) {
-                        RelicSim relicSim = slot.get(j);
-                        RelicPRFX relicPRFX = relicSim == null ? null : relicSim.getPrefix();
-                        RelicSFX relicSFX = relicSim == null ? null : relicSim.getSuffix();
-                        int relicLevel = relicSim == null ? 0 : relicSim.getRelicLevel();
-                        text_relic_prefix_slot[i][j].setText(
-                                relicSim == null ? null :
-                                        relicPRFX == null ? null :
-                                                relicPRFX.getRelicPrefixName() );
-                        text_relic_suffix_slot[i][j].setText(
-                                relicSim == null ? null :
-                                        relicSFX == null ? null :
-                                                relicSFX.getNameStarGrade());
-                        text_relic_level_slot[i][j].setText(
-                                relicSim == null ? null :
-                                        String.valueOf(relicLevel) );
 
-                        final int relicSlot = i;
-                        final int relicPosition = j;
+                String[] prefixStr = new String[4];
+                String[] suffixStr = new String[4];
+                String[] levelStr = new String[4];
+                int[] color_suffix = new int[4];
+
+                for( RelicSim relicSim : slot ) {
+                    RelicPRFX relicPRFX = relicSim.getPrefix();
+                    RelicSFX relicSFX = relicSim.getSuffix();
+                    int position = relicSim.getPositionInSlot();
+                    if( position > 0 && position < 5) {
+
+                        prefixStr[position - 1] = relicPRFX == null ? null :
+                                relicPRFX.getRelicPrefixName();
+
+                        suffixStr[position - 1] = relicSFX == null ? null :
+                                relicSFX.getNameStarGrade();
+
+                        color_suffix[position - 1] = relicSFX == null ? 0 :
+                                colors_relic_suffix_pastel.getColor(relicSFX.getRelicSuffixID() % 7, 0);
+
+
+                        levelStr[position - 1] = relicSim.getRelicLevelStr();
+
+                    }
+                }
+                    for (int j = 0; j < 4; j++) {
+                        text_relic_prefix_slot[i][j].setText(prefixStr[j]);
+                        text_relic_suffix_slot[i][j].setText(suffixStr[j]);
+                        text_relic_suffix_slot[i][j].setTextColor(color_suffix[j]);
+                        text_relic_level_slot[i][j].setText(levelStr[j]);
+                        final int relicSlot = i + 1;
+                        final int relicPosition = j + 1;
                         text_relic_suffix_slot[i][j].setOnClickListener( v -> {
-                            Log.d(TAG, heroSim.getHeroNo() + " " + relicPosition + " " + relicSlot + "clicked");
+                            //Log.d(TAG, heroSim.getHeroNo() + " " + relicPosition + " " + relicSlot + "clicked");
                             PickRelicSimDialogFragment.newInstance(heroSim.getHeroNo(), relicPosition, relicSlot).show(fragmentManager, TAG);
                         });
                     }
 
             }
+
+            int currentRelicSlot = heroSim.getCurrentRelicSlot();
+            text_relic_slot_number.setText(String.valueOf(currentRelicSlot));
+            int slotHeight = scroll_hero_relic_slot.getChildAt(0).getHeight();
+            int slotScrollHeight = scroll_hero_relic_slot.getHeight();
+            int slotScrollBottom = slotHeight - slotScrollHeight;
+            scroll_hero_relic_slot.scrollTo(0, (currentRelicSlot - 1) * slotScrollBottom);
+
+            button_relic_change_slot.setOnClickListener( v -> {
+                int relicSlot = heroSim.getCurrentRelicSlot();
+                // 1 <-> 2
+                int changedRelicSlot = 3 - relicSlot;
+                realm.beginTransaction();
+                heroSim.setCurrentRelicSlot(changedRelicSlot);
+                realm.commitTransaction();
+                scroll_hero_relic_slot.scrollTo(0, (changedRelicSlot - 1) * slotScrollBottom);
+                text_relic_slot_number.setText(String.valueOf(changedRelicSlot));
+            });
+
+            scroll_hero_relic_slot = itemView.findViewById(R.id.scroll_hero_relic_slot);
+            text_relic_slot_number = itemView.findViewById(R.id.text_relic_slot_number);
+            text_relic_slot_combination = itemView.findViewById(R.id.text_relic_slot_combination);
+            button_relic_change_slot = itemView.findViewById(R.id.button_relic_change_slot);
 
 
         } // end bind()

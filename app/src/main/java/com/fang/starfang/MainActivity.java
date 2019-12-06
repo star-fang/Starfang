@@ -11,11 +11,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.fang.starfang.ui.main.Fragment.PlaceholderFragment;
 import com.fang.starfang.ui.main.SectionsPagerAdapter;
 import com.fang.starfang.ui.main.custom.MovableFloatingActionButton;
 import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
 import com.fang.starfang.ui.main.dialog.AddRelicDialogFragment;
+import com.fang.starfang.ui.main.dialog.UpdateDialogFragment;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
 import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFixedRealmAdapter;
@@ -27,7 +27,7 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 
-public class MainActivity extends AppCompatActivity implements PlaceholderFragment.OnUpdateEventListener {
+public class MainActivity extends AppCompatActivity implements UpdateDialogFragment.OnUpdateEventListener {
 
     private static final String TAG = "FANG_ACTIVITY_MAIN";
     private View view;
@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
     private HeroesFixedRealmAdapter heroFixAdapter;
     private ItemSimsFloatingRealmAdapter itemFloatAdapter;
     private ItemSimsFixedRealmAdapter itemFixAdapter;
+    private boolean dialogIsBeingShown;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        dialogIsBeingShown = false;
         final FragmentManager fragmentManager = getSupportFragmentManager();
         realm = Realm.getDefaultInstance();
         HeroesFloatingRealmAdapter.setInstance(realm, fragmentManager, this);
@@ -149,7 +151,9 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
                 itemFixAdapter.notifyDataSetChanged();
                 heroFloatAdapter.notifyDataSetChanged();
                 heroFixAdapter.notifyDataSetChanged();
-                Log.d(TAG, "보물 변경");
+                Snackbar.make(view,"보물 변경됨" , Snackbar.LENGTH_SHORT).setAction(R.string.cancel_kor, v -> {
+                    Log.d(TAG, "취소함?");
+                }).show();
                 break;
             case AppConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC:
                 heroFloatAdapter.notifyDataSetChanged();
@@ -159,5 +163,20 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
             default:
         }
 
+    }
+
+    @Override
+    public boolean dialogAttached() {
+        if(dialogIsBeingShown) {
+            return true;
+        } else {
+            dialogIsBeingShown = true;
+            return false;
+        }
+    }
+
+    @Override
+    public void dialogDetached() {
+        dialogIsBeingShown = false;
     }
 }

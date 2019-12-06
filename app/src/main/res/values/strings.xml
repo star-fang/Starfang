@@ -7,6 +7,7 @@
     <string name="tab_text_4">보물</string>
     <string name="tab_text_5">보패</string>
 
+
     <string-array name="pref_list_table">
         <item>장수 정보</item>
         <item>병종 정보</item>

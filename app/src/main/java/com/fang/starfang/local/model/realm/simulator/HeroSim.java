@@ -85,13 +85,8 @@ public class HeroSim extends RealmObject {
             heroPlusStats.add(new RealmInteger(0));
         }
         this.heroSpecsChecked = null;
-        this.heroRelicSlot1 = new RealmList<>();
-        this.heroRelicSlot2 = new RealmList<>();
-        for (int i = 0; i < 4; i++) {
-            heroRelicSlot1.set(i,null);
-            heroRelicSlot2.set(i,null);
-        }
-
+        this.heroRelicSlot1 = new RealmList<>(); // empty slot
+        this.heroRelicSlot2 = new RealmList<>(); // position information belong to RelicSim
         this.heroWeapon = null;
         this.heroArmor = null;
         this.heroAid = null;
@@ -358,19 +353,21 @@ public class HeroSim extends RealmObject {
         }
     }
 
-    public void setHeroRelicSlot(RelicSim relicSim, int slot, int position) {
-        try {
-            switch (slot) {
-                case 1:
-                    heroRelicSlot1.set(position, relicSim);
+    public void setHeroRelicSlot( RelicSim newRelicSim, int slot, int position) {
+        RealmList<RelicSim> heroRelicSlot = slot == 1 ? heroRelicSlot1 : slot == 2 ? heroRelicSlot2 : null;
+        if( heroRelicSlot != null ) {
+            for (RelicSim relicSim : heroRelicSlot) {
+                if (relicSim.getPositionInSlot() == position) {
+                    heroRelicSlot.remove(relicSim);
+                    relicSim.setSlot(0);
+                    relicSim.setPositionInSlot(0);
+                    relicSim.setHeroWhoHasThis(null);
                     break;
-                case 2:
-                    heroRelicSlot2.set(position, relicSim);
-                    break;
-                default:
-            }
-        } catch (ArrayIndexOutOfBoundsException ignore) {
-
+                } // end if
+            } // end for
+            heroRelicSlot.add(newRelicSim);
+            newRelicSim.setSlot(slot);
+            newRelicSim.setPositionInSlot(position);
         }
     }
 }

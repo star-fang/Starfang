@@ -74,9 +74,4 @@ public class PlaceholderFragment extends Fragment {
         return index;
     }
 
-    public interface OnUpdateEventListener {
-        void updateEvent(int code);
-    }
-
-
 }

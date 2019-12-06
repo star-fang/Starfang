@@ -3,17 +3,42 @@
     <color name="colorPrimary">#002366</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#FD5696</color>
-    <color name="colorStat1_pastel">#FF6961</color>
-    <color name="colorStat2_pastel">#FFB347</color>
-    <color name="colorStat3_pastel">#ADD8E6</color>
-    <color name="colorStat4_pastel">#FDFD96</color>
-    <color name="colorStat5_pastel">#B19CD9</color>
-    <color name="colorStat1">#FF0900</color>
-    <color name="colorStat2">#FFA500</color>
-    <color name="colorStat3">#0000FF</color>
-    <color name="colorStat4">#FFF300</color>
-    <color name="colorStat5">#800080</color>
+    <color name="red_pastel">#FF6961</color>
+    <color name="orange_pastel">#FFB347</color>
+    <color name="blue_pastel">#D3EEFF</color>
+    <color name="yellow_pastel">#FFFFD8</color>
+    <color name="purple_pastel">#EAEBFF</color>
+    <color name="green_pastel">#77dd77</color>
+    <color name="cyan_pastel">#E0FEFE</color>
+    <color name="red">#FF0900</color>
+    <color name="orange">#FFA500</color>
+    <color name="blue">#0000FF</color>
+    <color name="yellow">#FFF300</color>
+    <color name="purple">#800080</color>
+    <color name="green">#00FF00</color>
+    <color name="cyan">#00FFFF</color>
     <color name="colorCheckedText">#FD5696</color>
     <color name="colorUnCheckedText">#C0C0C0</color>
+
+
+    <array name="color_suffix">
+        <item>@color/red</item>
+        <item>@color/blue</item>
+        <item>@color/orange</item>
+        <item>@color/yellow</item>
+        <item>@color/purple</item>
+        <item>@color/green</item>
+        <item>@color/cyan</item>
+    </array>
+
+    <array name="color_suffix_pastel">
+        <item>@color/red_pastel</item>
+        <item>@color/blue_pastel</item>
+        <item>@color/orange_pastel</item>
+        <item>@color/yellow_pastel</item>
+        <item>@color/purple_pastel</item>
+        <item>@color/green_pastel</item>
+        <item>@color/cyan_pastel</item>
+    </array>
 
 </resources>
