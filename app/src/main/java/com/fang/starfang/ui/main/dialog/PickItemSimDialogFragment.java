@@ -17,7 +17,7 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
-import com.fang.starfang.ui.main.recycler.adapter.ItemSimsRealmAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.PickItemSimRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 
 
@@ -38,7 +38,7 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        View view = View.inflate(mActivity, R.layout.dialog_heroes_pick_item, null);
+        View view = View.inflate(mActivity, R.layout.dialog_pick_item_sim, null);
 
         Bundle args = getArguments();
         if( args != null ) {
@@ -50,7 +50,7 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
 
                 final RecyclerView recycler_view_pick_item_sim = view.findViewById(R.id.recycler_view_pick_item_sim);
                 recycler_view_pick_item_sim.setLayoutManager(new GridLayoutManager(mActivity, ScreenUtils.calculateNoOfColumns(mActivity, 75)));
-                final ItemSimsRealmAdapter itemSimsRealmAdapter = new ItemSimsRealmAdapter(realm, view.findViewById(R.id.text_dialog_pick_item_info));
+                final PickItemSimRealmAdapter itemSimsRealmAdapter = new PickItemSimRealmAdapter(realm, view.findViewById(R.id.text_dialog_pick_item_info));
 
 
                 switch (itemMainCate) {

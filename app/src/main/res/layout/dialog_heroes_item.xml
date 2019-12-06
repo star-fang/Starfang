@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="210dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_margin="5dp"
@@ -16,21 +16,62 @@
         android:textSize="20sp"/>
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center" >
     <include
         layout="@layout/cell_hero_items"/>
 
+        <LinearLayout
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_margin="3dp"
+                android:id="@+id/button_release_picked_item"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:text="@string/release_kor"
+                android:background="@drawable/rect_button"
+                android:enabled="false"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_margin="3dp"
+                android:id="@+id/button_reinforce_picked_item"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:text="@string/reinforcement_kor"
+                android:background="@drawable/rect_button"
+                android:enabled="false"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_margin="3dp"
+                android:id="@+id/button_modify_picked_item"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:text="@string/modify_kor"
+                android:background="@drawable/rect_button"
+                android:enabled="false"/>
+
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/layout_modify_picked_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:gravity="center"
         >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_picked_item_cate_main"
@@ -57,44 +98,6 @@
 
         </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_margin="3dp"
-            android:id="@+id/button_release_picked_item"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:text="@string/release_kor"
-            android:background="@drawable/rect_button"
-            android:enabled="false"/>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_margin="3dp"
-            android:id="@+id/button_reinforce_picked_item"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:text="@string/reinforcement_kor"
-            android:background="@drawable/rect_button"
-            android:enabled="false"/>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_margin="3dp"
-            android:id="@+id/button_modify_picked_item"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:text="@string/modify_kor"
-            android:background="@drawable/rect_button"
-            android:enabled="false"/>
-
-
-
-    </LinearLayout>
-
-    </LinearLayout>
 
 
 </LinearLayout>

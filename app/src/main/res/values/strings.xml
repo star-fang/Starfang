@@ -225,5 +225,8 @@
     <string name="available_item_list_kor">착용가능 보물 목록</string>
     <string name="picked_kor">선택된</string>
     <string name="colon">:</string>
+    <string name="slot_kor">슬롯</string>
+    <string name="relic_kor">보패</string>
+    <string name="available_relic_list_kor">착용가능 보패 목록</string>
 
 </resources>

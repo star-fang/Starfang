@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="65dp"
-    android:layout_height="120dp"
-    android:layout_marginStart="5dp"
+    android:layout_width="70dp"
+    android:layout_height="130dp"
     android:background="@drawable/bottom_border_gray_1dp"
     >
 
     <LinearLayout
-        android:layout_centerInParent="true"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="30dp"
         android:orientation="horizontal"
         android:gravity="center">
 
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="금환삼결"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:gravity="center"
         android:textColor="#FFF"
         />
@@ -59,19 +59,19 @@
     </LinearLayout>
 
     <LinearLayout
+        android:background="@drawable/rect_black"
+        android:layout_marginEnd="1dp"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginBottom="2dp">
+        android:gravity="center">
 
         <ImageView
             android:layout_margin="2dp"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:src="@drawable/ic_assignment_white_24dp"
-            />
+            android:src="@drawable/ic_assignment_white_24dp"/>
 
         <ImageView
             android:id="@+id/image_hero_editable"

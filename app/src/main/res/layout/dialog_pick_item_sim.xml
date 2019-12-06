@@ -12,19 +12,24 @@
             android:gravity="center"/>
 
     <LinearLayout
+        android:weightSum="3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
         <androidx.recyclerview.widget.RecyclerView
+            android:layout_weight="2"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="0dp"
             android:id="@+id/recycler_view_pick_item_sim"
-            tools:listitem="@layout/dialog_heroes_pick_item_cell"
+            tools:listitem="@layout/dialog_pick_item_sim_cell"
             tools:itemCount="2"/>
 
         <androidx.core.widget.NestedScrollView
+            android:layout_margin="5dp"
+            android:background="@drawable/rect_black"
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="0dp">
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_dialog_pick_item_info"
             android:layout_width="match_parent"

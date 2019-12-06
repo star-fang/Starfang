@@ -46,10 +46,10 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch( item.getItemId() ) {
+        switch (item.getItemId()) {
             case R.id.menu_item_check:
                 RealmConfiguration config = Realm.getDefaultConfiguration();
-                if( config != null ) {
+                if (config != null) {
                     int count = Realm.getGlobalInstanceCount(config);
                     Snackbar.make(view, "Count of realm instances : " + count, Snackbar.LENGTH_LONG).show();
                 } else {
@@ -81,16 +81,17 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
         super.onStop();
         realm.close();
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
         realm = Realm.getDefaultInstance();
-        HeroesFloatingRealmAdapter.setInstance( realm, this );
-        HeroesFixedRealmAdapter.setInstance( realm, fragmentManager );
-        ItemSimsFloatingRealmAdapter.setInstance( realm, fragmentManager );
-        ItemSimsFixedRealmAdapter.setInstance( realm, fragmentManager );
+        HeroesFloatingRealmAdapter.setInstance(realm, fragmentManager, this);
+        HeroesFixedRealmAdapter.setInstance(realm, fragmentManager);
+        ItemSimsFloatingRealmAdapter.setInstance(realm, fragmentManager);
+        ItemSimsFixedRealmAdapter.setInstance(realm, fragmentManager);
 
         heroFloatAdapter = HeroesFloatingRealmAdapter.getInstance();
         heroFixAdapter = HeroesFixedRealmAdapter.getInstance();
@@ -110,8 +111,8 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
         final View layout_toggle_button_add = view.findViewById(R.id.layout_toggle_button_add);
         final MovableFloatingActionButton button_add = view.findViewById(R.id.button_add);
         //final int color_primary = ContextCompat.getColor(this, R.color.colorPrimary);
-        button_add.setOnClickListener( v -> {
-            if(layout_toggle_button_add.getVisibility() == View.GONE) {
+        button_add.setOnClickListener(v -> {
+            if (layout_toggle_button_add.getVisibility() == View.GONE) {
                 layout_toggle_button_add.setVisibility(View.VISIBLE);
                 //parent_button_add.setBackgroundColor(color_primary);
             } else {
@@ -120,18 +121,19 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
             }
         });
 
-        view.findViewById(R.id.button_add_item).setOnClickListener( v -> AddItemDialogFragment.newInstance().show(fragmentManager,TAG));
-        view.findViewById(R.id.button_add_relic).setOnClickListener( v -> AddRelicDialogFragment.newInstance().show(fragmentManager,TAG));
+        view.findViewById(R.id.button_add_item).setOnClickListener(v -> AddItemDialogFragment.newInstance().show(fragmentManager, TAG));
+        view.findViewById(R.id.button_add_relic).setOnClickListener(v -> AddRelicDialogFragment.newInstance().show(fragmentManager, TAG));
 
     }
+
     @Override
     public void updateEvent(int code) {
-        switch(code) {
+        switch (code) {
             case AppConstant.RESULT_CODE_SUCCESS_ADD_ITEM:
                 itemFloatAdapter.notifyDataSetChanged();
                 itemFixAdapter.notifyDataSetChanged();
                 Log.d(TAG, "보물 추가");
-            break;
+                break;
             case AppConstant.RESULT_CODE_SUCCESS_ADD_HERO:
                 heroFloatAdapter.notifyDataSetChanged();
                 heroFixAdapter.notifyDataSetChanged();
@@ -148,6 +150,11 @@ public class MainActivity extends AppCompatActivity implements PlaceholderFragme
                 heroFloatAdapter.notifyDataSetChanged();
                 heroFixAdapter.notifyDataSetChanged();
                 Log.d(TAG, "보물 변경");
+                break;
+            case AppConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC:
+                heroFloatAdapter.notifyDataSetChanged();
+                heroFixAdapter.notifyDataSetChanged();
+                Log.d(TAG, "보패 변경");
                 break;
             default:
         }

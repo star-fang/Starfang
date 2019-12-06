@@ -13,6 +13,10 @@ import io.realm.exceptions.RealmPrimaryKeyConstraintException;
 public class RelicSim extends RealmObject {
 
     public static final String FIELD_ID = "relicID";
+    public static final String FIELD_SUFFIX = "suffix";
+    public static final String FIELD_PREFIX = "prefix";
+    public static final String FIELD_LEVEL = "relicLevel";
+    public static final String FIELD_HERO = "heroWhoHasThis";
 
     @PrimaryKey
     private int relicID;
@@ -21,6 +25,7 @@ public class RelicSim extends RealmObject {
     private int suffixID;
     private RelicSFX suffix; // 접미사, 등급(1~4), 능력치
     private int relicLevel; // 레벨(1~5)
+    private HeroSim heroWhoHasThis;
 
     public RelicSim() {
 
@@ -33,6 +38,7 @@ public class RelicSim extends RealmObject {
         this.prefix = prefix;
         this.prefixID = prefix == null ? 0 : prefix.getRelicPrefixID();
         this.relicLevel = 1;
+        this.heroWhoHasThis = null;
 
     }
 
@@ -74,5 +80,13 @@ public class RelicSim extends RealmObject {
 
     public void setRelicLevel(int relicLevel) {
         this.relicLevel = relicLevel;
+    }
+
+    public HeroSim getHeroWhoHasThis() {
+        return heroWhoHasThis;
+    }
+
+    public void setHeroWhoHasThis(HeroSim heroWhoHasThis) {
+        this.heroWhoHasThis = heroWhoHasThis;
     }
 }

@@ -10,6 +10,15 @@ public class AppConstant {
 
     public static final int RESULT_CODE_SUCCESS_MODIFY_ITEM = 3;
     public static final int RESULT_CODE_SUCCESS_MODIFY_HERO = 4;
+    public static final int RESULT_CODE_SUCCESS_MODIFY_RELIC = 5;
+
+    public static final int ITEM_MAIN_CATEGORY_CODE_WEAPON = 0;
+    public static final int ITEM_MAIN_CATEGORY_CODE_ARMOR = 1;
+    public static final int ITEM_MAIN_CATEGORY_CODE_AID = 2;
+
+    public static final int GUARDIAN_INIT_VALUE = 0;
+    public static final int GRADE_INIT_VALUE = 3;
+    public static final String[] guardians = {"청룡","주작","백호","현무"};
 
     public static final String INTENT_KEY_ITEM_NAME = "itemName";
     public static final String INTENT_KEY_ITEM_ID = "itemID";
@@ -18,6 +27,9 @@ public class AppConstant {
     public static final String INTENT_KEY_ITEM_CATE_MAIN = "itemMainCate";
 
     public static final String INTENT_KEY_HERO_ID = "heroID";
+
+    public static final String INTENT_KEY_RELIC_POSITION = "relicPosition";
+    public static final String INTENT_KEY_RELIC_SLOT = "relicSlot";
 
     public static final String ALL_PICK_KOR = "전체";
     public static final String GRADE_KOR = "등급";

@@ -428,6 +428,10 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
             Log.d(TAG,e.toString());
             jsonResult[0] = "fail";
             jsonResult[1] = "파싱 오류";
+        } catch( NullPointerException e ) {
+            Log.d(TAG,e.toString());
+            jsonResult[0] = "fail";
+            jsonResult[1] = "심각한 오류";
         }
         return jsonResult;
     }

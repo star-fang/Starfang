@@ -2,16 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="200dp"
-    android:layout_height="120dp"
+    android:layout_height="130dp"
     android:background="@drawable/end_border_gray_1dp">
 
-    <androidx.appcompat.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:background="@drawable/rect_black"
         android:id="@+id/button_spec_change_view"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#00000000"
+        android:layout_height="30dp"
+        android:padding="5dp"
+        android:scaleType="fitEnd"
+        android:src ="@drawable/ic_arrow_downward_white_24dp"
         />
 
     <androidx.core.widget.NestedScrollView
@@ -288,46 +293,29 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_alignParentBottom="true"
         android:id="@+id/hero_spec_score_layout"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="@drawable/rect_black">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="30dp"
         android:orientation="horizontal"
-        android:layout_marginEnd="50dp"
         android:layout_alignParentStart="true"
         android:gravity="center">
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="end"
+            android:layout_height="wrap_content"
             android:textSize="15sp"
             android:text="@string/spec_score"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_spec_score_total"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:gravity="start"
             android:textSize="15sp"
             tools:text="230" />
 
 
     </LinearLayout>
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_spec_arrow"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="4dp"
-            android:layout_width="12dp"
-            android:layout_height="12dp"/>
-
-    </RelativeLayout>
 
 </RelativeLayout>

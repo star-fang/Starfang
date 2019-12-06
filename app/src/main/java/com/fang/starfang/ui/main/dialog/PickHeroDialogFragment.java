@@ -17,7 +17,7 @@ import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-import com.fang.starfang.ui.main.recycler.adapter.PickHeroRealmAdapter;
+import com.fang.starfang.ui.main.recycler.adapter.PickHeroSimRealmAdapter;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -96,7 +96,7 @@ public class PickHeroDialogFragment extends UpdateDialogFragment {
                     }
                     heroesRealmResults = heroesRealmQuery.endGroup().findAll();
 
-                    final PickHeroRealmAdapter pickHeroRealmAdapter = new PickHeroRealmAdapter(heroesRealmResults);
+                    final PickHeroSimRealmAdapter pickHeroRealmAdapter = new PickHeroSimRealmAdapter(heroesRealmResults);
                     final RecyclerView recycler_view_pick_hero = view.findViewById(R.id.recycler_view_pick_hero);
                     recycler_view_pick_hero.setLayoutManager(new LinearLayoutManager(mActivity));
                     recycler_view_pick_hero.setAdapter(pickHeroRealmAdapter);

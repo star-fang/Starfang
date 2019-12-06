@@ -8,22 +8,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fang.starfang.AppConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
+import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
+import com.fang.starfang.local.model.realm.source.RelicPRFX;
+import com.fang.starfang.local.model.realm.source.RelicSFX;
+import com.fang.starfang.ui.main.dialog.PickItemSimDialogFragment;
+import com.fang.starfang.ui.main.dialog.PickRelicSimDialogFragment;
+import com.fang.starfang.ui.main.dialog.ReinforceDialogFragment;
 import com.fang.starfang.ui.main.recycler.filter.HeroSimFilter;
 
 import java.util.ArrayList;
@@ -49,44 +57,52 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
     //private static final String R_ROW_HERO_SPEC_BRANCH = "row_hero_spec_branch";
     private static final String R_TEXT_HERO_SEPC_BRANCH_LEVEL = "text_hero_spec_branch_level";
     private static final String R_TEXT_HERO_SEPC_BRANCH = "text_hero_spec_branch";
-    private static final String R_TEXT_HERO_SEPC_BRANCH_VAL =  "text_hero_spec_branch_val";
+    private static final String R_TEXT_HERO_SEPC_BRANCH_VAL = "text_hero_spec_branch_val";
     //private static final String R_ROW_HERO_SPEC_UNIQUE = "row_hero_spec_unique";
     private static final String R_TEXT_HERO_SEPC_UNIQUE_LEVEL = "text_hero_spec_unique_level";
     private static final String R_TEXT_HERO_SEPC_UNIQUE = "text_hero_spec_unique";
-    private static final String R_TEXT_HERO_SEPC_UNIQUE_VAL =  "text_hero_spec_unique_val";
+    private static final String R_TEXT_HERO_SEPC_UNIQUE_VAL = "text_hero_spec_unique_val";
+
+    private static final String R_TEXT_RELIC = "text_relic";
+    private static final String R_TEXT_PREFIX_SLOT = "_prefix_slot";
+    private static final String R_TEXT_SUFFIX_SLOT = "_suffix_slot";
+    private static final String R_TEXT_LEVEL_SLOT = "_level_slot";
 
     private static final String TAG = "FANG_ADAPTER_FLOATING";
-    private final static int[] COST_PLUS_BY_UPGRADE = {0,3,5,8,10};
+    private final static int[] COST_PLUS_BY_UPGRADE = {0, 3, 5, 8, 10};
     private Realm realm;
     private final static String ID_STR = "id";
     private String packageName;
     private Resources resources;
     private int color_text_checked;
     private int color_text_unchecked;
+    private FragmentManager fragmentManager;
     private static HeroesFloatingRealmAdapter instance;
 
     public static HeroesFloatingRealmAdapter getInstance() {
         return instance;
     }
-    public static void setInstance(Realm realm, Context context) {
-        instance = new HeroesFloatingRealmAdapter(realm, context);
+
+    public static void setInstance(Realm realm, FragmentManager fragmentManager, Context context) {
+        instance = new HeroesFloatingRealmAdapter(realm, fragmentManager, context);
     }
 
-    private HeroesFloatingRealmAdapter(Realm realm, Context context) {
-        super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME).
-                sort(HeroSim.FIELD_GRADE,Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING),false);
+    private HeroesFloatingRealmAdapter(Realm realm, FragmentManager fragmentManager, Context context) {
+        super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO + "." + Heroes.FIELD_NAME).
+                sort(HeroSim.FIELD_GRADE, Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING), false);
         this.realm = realm;
         this.packageName = context.getPackageName();
         this.resources = context.getResources();
-        this.color_text_checked = ContextCompat.getColor(context,R.color.colorCheckedText);
-        this.color_text_unchecked = ContextCompat.getColor(context,R.color.colorUnCheckedText);
-        Log.d(TAG,"constructed" );
+        this.color_text_checked = ContextCompat.getColor(context, R.color.colorCheckedText);
+        this.color_text_unchecked = ContextCompat.getColor(context, R.color.colorUnCheckedText);
+        this.fragmentManager = fragmentManager;
+        Log.d(TAG, "constructed");
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_heroes_floating,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_heroes_floating, viewGroup, false);
         return new HeroesFloatingViewHolder(view);
     }
 
@@ -96,11 +112,11 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         HeroesFloatingViewHolder heroesViewHolder = (HeroesFloatingViewHolder) viewHolder;
 
         HeroSim heroSim = getItem(i);
-        if( heroSim != null ) {
+        if (heroSim != null) {
             try {
                 heroesViewHolder.bind(heroSim);
-            } catch ( NullPointerException | ArrayIndexOutOfBoundsException e ) {
-                Log.d(TAG, e.toString() );
+            } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
+                Log.d(TAG, e.toString());
             }
         }
     }
@@ -108,10 +124,10 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
 
     public void sort(ArrayList<Pair<String, Sort>> sortPairs) {
         OrderedRealmCollection<HeroSim> realmCollection = this.getData();
-        for( Pair<String, Sort> pair : sortPairs) {
+        for (Pair<String, Sort> pair : sortPairs) {
             String cs = pair.first;
             Sort sort = pair.second;
-            if(realmCollection != null && cs != null && sort != null ) {
+            if (realmCollection != null && cs != null && sort != null) {
                 realmCollection = realmCollection.sort(cs, sort);
             }
 
@@ -122,7 +138,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
 
     @Override
     public Filter getFilter() {
-        return new HeroSimFilter(this, realm );
+        return new HeroSimFilter(this, realm);
     }
 
 
@@ -151,20 +167,24 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         private AppCompatTextView[] text_hero_spec_branch_val;
         private AppCompatTextView text_spec_score_total;
         private NestedScrollView scroll_hero_specs;
-        private AppCompatButton button_spec_change_view;
-        private AppCompatImageView image_spec_arrow;
+        private AppCompatImageButton button_spec_change_view;
 
-        private AppCompatTextView text_item_weapon_reinforcement;
-        private AppCompatTextView text_item_weapon_name;
-        private AppCompatTextView text_item_armor_reinforcement;
-        private AppCompatTextView text_item_armor_name;
-        private AppCompatTextView text_item_aid_reinforcement;
-        private AppCompatTextView text_item_aid_name;
+        private AppCompatTextView[] text_item_reinforcement;
+        private AppCompatTextView[] text_item_name;
 
         private AppCompatTextView text_hero_lineage;
 
+        private AppCompatTextView[][] text_relic_prefix_slot;
+        private AppCompatTextView[][] text_relic_suffix_slot;
+        private AppCompatTextView[][] text_relic_level_slot;
+
         private HeroesFloatingViewHolder(View itemView) {
             super(itemView);
+
+            text_relic_prefix_slot = new AppCompatTextView[2][];
+            text_relic_suffix_slot = new AppCompatTextView[2][];
+            text_relic_level_slot = new AppCompatTextView[2][];
+
             text_hero_grade_star = new AppCompatTextView[5];
             text_hero_grade_cost = new AppCompatTextView[5];
             text_hero_grade = itemView.findViewById(R.id.text_hero_grade);
@@ -190,44 +210,46 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             text_spec_score_total = itemView.findViewById(R.id.text_spec_score_total);
             scroll_hero_specs = itemView.findViewById(R.id.scroll_hero_specs);
             button_spec_change_view = itemView.findViewById(R.id.button_spec_change_view);
-            image_spec_arrow = itemView.findViewById(R.id.image_spec_arrow);
 
-            text_item_weapon_reinforcement = itemView.findViewById(R.id.text_item_weapon_reinforcement);
-            text_item_weapon_name = itemView.findViewById(R.id.text_item_weapon_name);
-            text_item_armor_reinforcement = itemView.findViewById(R.id.text_item_armor_reinforcement);
-            text_item_armor_name = itemView.findViewById(R.id.text_item_armor_name);
-            text_item_aid_reinforcement = itemView.findViewById(R.id.text_item_aid_reinforcement);
-            text_item_aid_name = itemView.findViewById(R.id.text_item_aid_name);
+            text_item_reinforcement = new AppCompatTextView[3];
+            text_item_name = new AppCompatTextView[3];
+
+            text_item_reinforcement[0] = itemView.findViewById(R.id.text_item_weapon_reinforcement);
+            text_item_name[0] = itemView.findViewById(R.id.text_item_weapon_name);
+            text_item_reinforcement[1] = itemView.findViewById(R.id.text_item_armor_reinforcement);
+            text_item_name[1] = itemView.findViewById(R.id.text_item_armor_name);
+            text_item_reinforcement[2] = itemView.findViewById(R.id.text_item_aid_reinforcement);
+            text_item_name[2] = itemView.findViewById(R.id.text_item_aid_name);
 
             text_hero_lineage = itemView.findViewById(R.id.text_hero_lineage);
 
-            for(int i = 0; i < 5; i++ ) {
-                    text_hero_grade_star[i] = itemView.findViewById(resources.getIdentifier
-                            (R_TEXT_HERO_GRADE_STAR + (i + 1), ID_STR, packageName));
-                    text_hero_grade_cost[i] = itemView.findViewById(resources.getIdentifier
-                            ( R_TEXT_HERO_GRADE_COST + (i + 1), ID_STR, packageName));
+            for (int i = 0; i < 5; i++) {
+                text_hero_grade_star[i] = itemView.findViewById(resources.getIdentifier
+                        (R_TEXT_HERO_GRADE_STAR + (i + 1), ID_STR, packageName));
+                text_hero_grade_cost[i] = itemView.findViewById(resources.getIdentifier
+                        (R_TEXT_HERO_GRADE_COST + (i + 1), ID_STR, packageName));
 
-                    text_hero_stat[i] = itemView.findViewById(resources.getIdentifier
-                            ( R_TEXT_HERO_STAT + (i + 1), ID_STR, packageName));
-                    text_hero_plus_stat[i] = itemView.findViewById(resources.getIdentifier
-                            ( R_TEXT_HERO_STAT_PLUS + (i + 1), ID_STR, packageName));
-                    text_hero_sum_stat[i] = itemView.findViewById(resources.getIdentifier
-                            ( R_TEXT_HERO_STAT_SUM + (i + 1), ID_STR, packageName));
+                text_hero_stat[i] = itemView.findViewById(resources.getIdentifier
+                        (R_TEXT_HERO_STAT + (i + 1), ID_STR, packageName));
+                text_hero_plus_stat[i] = itemView.findViewById(resources.getIdentifier
+                        (R_TEXT_HERO_STAT_PLUS + (i + 1), ID_STR, packageName));
+                text_hero_sum_stat[i] = itemView.findViewById(resources.getIdentifier
+                        (R_TEXT_HERO_STAT_SUM + (i + 1), ID_STR, packageName));
 
-                    text_hero_power_grade[i] = itemView.findViewById(resources.getIdentifier
-                            ( R_TEXT_HERO_POWER_GRADE + (i + 1), ID_STR, packageName));
-                    text_hero_power[i] = itemView.findViewById(resources.getIdentifier
-                            ( R_TEXT_HERO_POWER + (i + 1), ID_STR, packageName));
+                text_hero_power_grade[i] = itemView.findViewById(resources.getIdentifier
+                        (R_TEXT_HERO_POWER_GRADE + (i + 1), ID_STR, packageName));
+                text_hero_power[i] = itemView.findViewById(resources.getIdentifier
+                        (R_TEXT_HERO_POWER + (i + 1), ID_STR, packageName));
 
-                    text_hero_spec_branch_level[i] = itemView.findViewById(resources.getIdentifier
-                            ( R_TEXT_HERO_SEPC_BRANCH_LEVEL + (i + 1), ID_STR, packageName));
-                    text_hero_spec_branch[i] = itemView.findViewById(resources.getIdentifier
-                            ( R_TEXT_HERO_SEPC_BRANCH + (i + 1), ID_STR, packageName));
-                    text_hero_spec_branch_val[i] = itemView.findViewById(resources.getIdentifier
-                            ( R_TEXT_HERO_SEPC_BRANCH_VAL + (i + 1), ID_STR, packageName));
+                text_hero_spec_branch_level[i] = itemView.findViewById(resources.getIdentifier
+                        (R_TEXT_HERO_SEPC_BRANCH_LEVEL + (i + 1), ID_STR, packageName));
+                text_hero_spec_branch[i] = itemView.findViewById(resources.getIdentifier
+                        (R_TEXT_HERO_SEPC_BRANCH + (i + 1), ID_STR, packageName));
+                text_hero_spec_branch_val[i] = itemView.findViewById(resources.getIdentifier
+                        (R_TEXT_HERO_SEPC_BRANCH_VAL + (i + 1), ID_STR, packageName));
 
 
-                if( i < 4 ) {
+                if (i < 4) {
                     text_hero_spec_unique_level[i] = itemView.findViewById(resources.getIdentifier
                             (R_TEXT_HERO_SEPC_UNIQUE_LEVEL + (i + 1), ID_STR, packageName));
                     text_hero_spec_unique[i] = itemView.findViewById(resources.getIdentifier
@@ -236,9 +258,28 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                             (R_TEXT_HERO_SEPC_UNIQUE_VAL + (i + 1), ID_STR, packageName));
                 }
             }
+
+
+            for(int i = 0; i < 2; i++ ) {
+                text_relic_prefix_slot[i] = new AppCompatTextView[4];
+                text_relic_suffix_slot[i] = new AppCompatTextView[4];
+                text_relic_level_slot[i] = new AppCompatTextView[4];
+
+                for(int j = 0; j < 4; j++) {
+                    text_relic_prefix_slot[i][j] = itemView.findViewById(resources.getIdentifier
+                            (R_TEXT_RELIC + (j + 1) + R_TEXT_PREFIX_SLOT + (i + 1), ID_STR, packageName));
+
+                    text_relic_suffix_slot[i][j] = itemView.findViewById(resources.getIdentifier
+                            (R_TEXT_RELIC + (j + 1) + R_TEXT_SUFFIX_SLOT + (i + 1), ID_STR, packageName));
+
+                    text_relic_level_slot[i][j] = itemView.findViewById(resources.getIdentifier
+                            (R_TEXT_RELIC + (j + 1) + R_TEXT_LEVEL_SLOT + (i + 1), ID_STR, packageName));
+                }
+
+            }
         }
 
-        private void bind(final HeroSim heroSim ) throws NullPointerException, ArrayIndexOutOfBoundsException {
+        private void bind(final HeroSim heroSim) throws NullPointerException, ArrayIndexOutOfBoundsException {
 
             Heroes hero = heroSim.getHero();
             Branch branch = heroSim.getHeroBranch();
@@ -253,90 +294,90 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             RealmList<RealmString> branchGrades = null;
 
             int cost_init = hero.getHeroCost();
-            int  heroGrade = heroSim.getHeroGrade();
+            int heroGrade = heroSim.getHeroGrade();
             String sumOfSpecScores = String.valueOf(heroSim.getHeroSpecScoreSum());
             RealmList<RealmInteger> heroPlusStats = heroSim.getHeroPlusStats();
             RealmList<RealmInteger> heroPowers = heroSim.getHeroPowers();
-            RealmList<Integer>  checkedSpecsIndexes = heroSim.getHeroSpecsChecked();
+            RealmList<Integer> checkedSpecsIndexes = heroSim.getHeroSpecsChecked();
             text_spec_score_total.setText(sumOfSpecScores);
             text_hero_lineage.setText(hero.getHeroLineage());
 
-            if(branch != null) {
+            if (branch != null) {
                 branchSpecs = branch.getBranchSpecs();
                 branchSpecVals = branch.getBranchSpecValues();
                 branchStatGGs = branch.getBranchStatGGs();
                 branchGrades = branch.getBranchGrade();
             }
-            for(int i = 0; i < 5; i ++ ) {
-                    int plus_cost = COST_PLUS_BY_UPGRADE[i];
-                    text_hero_grade_cost[i].setText(String.valueOf(cost_init + plus_cost));
-                    if(i == heroGrade - 1 ) {
-                        text_hero_grade_star[i].setTextColor(color_text_checked);
-                        text_hero_grade_cost[i].setTextColor(color_text_checked);
-                    } else {
-                        text_hero_grade_star[i].setTextColor(color_text_unchecked);
-                        text_hero_grade_cost[i].setTextColor(color_text_unchecked);
+            for (int i = 0; i < 5; i++) {
+                int plus_cost = COST_PLUS_BY_UPGRADE[i];
+                text_hero_grade_cost[i].setText(String.valueOf(cost_init + plus_cost));
+                if (i == heroGrade - 1) {
+                    text_hero_grade_star[i].setTextColor(color_text_checked);
+                    text_hero_grade_cost[i].setTextColor(color_text_checked);
+                } else {
+                    text_hero_grade_star[i].setTextColor(color_text_unchecked);
+                    text_hero_grade_cost[i].setTextColor(color_text_unchecked);
+                }
+                RealmInteger heroStat = heroStats.get(i);
+                String heroPlusStatStr = "";
+                String heroSumStatStr = "";
+                if (heroStat != null) {
+                    int sumStat = heroStat.toInt();
+                    text_hero_stat[i].setText(heroStat.toString());
+                    if (heroPlusStats != null) {
+                        RealmInteger heroPlusStat = heroPlusStats.get(i);
+                        if (heroPlusStat != null) {
+                            int plusStat = heroPlusStat.toInt();
+                            sumStat += plusStat;
+                            heroPlusStatStr = String.valueOf(plusStat);
+                        }
                     }
-                    RealmInteger heroStat = heroStats.get(i);
-                    String heroPlusStatStr = "";
-                    String heroSumStatStr = "";
-                    if(heroStat != null) {
-                        int sumStat = heroStat.toInt();
-                        text_hero_stat[i].setText(heroStat.toString());
-                        if( heroPlusStats != null) {
-                            RealmInteger heroPlusStat = heroPlusStats.get(i);
-                            if(heroPlusStat != null) {
-                                int plusStat = heroPlusStat.toInt();
-                                sumStat += plusStat;
-                                heroPlusStatStr = String.valueOf(plusStat);
+                    heroSumStatStr = String.valueOf(sumStat);
+                }
+                text_hero_plus_stat[i].setText(heroPlusStatStr);
+                text_hero_sum_stat[i].setText(heroSumStatStr);
+
+                RealmInteger heroPower = heroPowers.get(i);
+                String heroPowerStr = heroPower == null ? "" : heroPower.toString();
+                text_hero_power[i].setText(heroPowerStr);
+
+                String branchStatGGStr = "S";
+                if (branchStatGGs != null) {
+                    RealmString branchStatGG = branchStatGGs.get(i);
+                    if (branchStatGG != null) {
+                        branchStatGGStr = branchStatGG.toString();
+                    }
+                }
+                text_hero_power_grade[i].setText(branchStatGGStr);
+
+                String branchSpecStr = "";
+                String branchSpecValStr = "";
+                if (branchSpecs != null) {
+                    // 0 ~ 4
+                    RealmString branchSpec = branchSpecs.get(i);
+                    if (branchSpec != null) {
+                        branchSpecStr = branchSpec.toString();
+                        if (branchSpecVals != null) {
+                            RealmString branchSpecVal = branchSpecVals.get(i);
+                            if (branchSpecVal != null) {
+                                branchSpecValStr = branchSpecVal.toString();
                             }
                         }
-                        heroSumStatStr = String.valueOf(sumStat);
                     }
-                    text_hero_plus_stat[i].setText(heroPlusStatStr);
-                    text_hero_sum_stat[i].setText(heroSumStatStr);
-
-                    RealmInteger heroPower = heroPowers.get(i);
-                    String heroPowerStr = heroPower == null ? "" : heroPower.toString();
-                    text_hero_power[i].setText(heroPowerStr);
-
-                    String branchStatGGStr = "S";
-                    if(branchStatGGs != null) {
-                        RealmString branchStatGG = branchStatGGs.get(i);
-                        if( branchStatGG != null) {
-                            branchStatGGStr = branchStatGG.toString();
-                        }
+                }
+                int color_text = color_text_unchecked;
+                if (checkedSpecsIndexes != null) {
+                    if (checkedSpecsIndexes.contains(i)) {
+                        color_text = color_text_checked;
                     }
-                    text_hero_power_grade[i].setText(branchStatGGStr);
+                }
 
-                    String branchSpecStr = "";
-                    String branchSpecValStr = "";
-                    if( branchSpecs != null) {
-                        // 0 ~ 4
-                        RealmString branchSpec = branchSpecs.get(i);
-                        if( branchSpec != null ) {
-                            branchSpecStr = branchSpec.toString();
-                            if(branchSpecVals != null) {
-                                RealmString branchSpecVal = branchSpecVals.get(i);
-                                if(branchSpecVal != null ) {
-                                    branchSpecValStr = branchSpecVal.toString();
-                                }
-                            }
-                        }
-                    }
-                    int color_text = color_text_unchecked;
-                    if( checkedSpecsIndexes != null ) {
-                        if( checkedSpecsIndexes.contains(i)) {
-                            color_text = color_text_checked;
-                        }
-                    }
-
-                    text_hero_spec_branch_level[i].setTextColor(color_text);
-                    text_hero_spec_branch[i].setText(branchSpecStr);
-                    text_hero_spec_branch[i].setTextColor(color_text);
-                    text_hero_spec_branch_val[i].setText(branchSpecValStr);
-                    text_hero_spec_branch_val[i].setTextColor(color_text);
-                if( i < 4 ) {
+                text_hero_spec_branch_level[i].setTextColor(color_text);
+                text_hero_spec_branch[i].setText(branchSpecStr);
+                text_hero_spec_branch[i].setTextColor(color_text);
+                text_hero_spec_branch_val[i].setText(branchSpecValStr);
+                text_hero_spec_branch_val[i].setTextColor(color_text);
+                if (i < 4) {
                     RealmString heroSpec = heroSpecs.get(i);
                     String heroSpecStr = "";
                     String heroSpecValStr = "";
@@ -369,48 +410,99 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             text_hero_power_sum.setText(String.valueOf(heroSim.getHeroPowerSum()));
 
             String branchGradeStr = hero.getHeroBranch();
-            if( branchGrades != null ) {
+            if (branchGrades != null) {
                 RealmString branchGrade = branchGrades.get(heroGrade - 1);
-                if(branchGrade != null ) {
+                if (branchGrade != null) {
                     branchGradeStr = branchGrade.toString();
                 }
             }
             text_hero_grade.setText(branchGradeStr);
-            image_spec_arrow.setImageResource(R.drawable.ic_arrow_downward_white_24dp);
-            scroll_hero_specs.scrollTo(0,0);
-            button_spec_change_view.setOnClickListener(v-> {
-                        int currY = scroll_hero_specs.getScrollY();
-                        int innerHeight = scroll_hero_specs.getChildAt(0).getHeight();
-                        int scrollHeight = scroll_hero_specs.getHeight();
-                        int scrollY = innerHeight - scrollHeight;
-                        //Log.d(TAG, currY + ":" + scrollY );
-                        if(currY == 0 ) {
-                            image_spec_arrow.setImageResource(R.drawable.ic_arrow_upward_white_24dp);
-                            scroll_hero_specs.scrollTo(0, scrollY);
-                        } else {
-                            image_spec_arrow.setImageResource(R.drawable.ic_arrow_downward_white_24dp);
-                            scroll_hero_specs.scrollTo( 0, 0);
+            scroll_hero_specs.scrollTo(0, 0);
+            button_spec_change_view.setOnClickListener(v -> {
+                int currY = scroll_hero_specs.getScrollY();
+                int innerHeight = scroll_hero_specs.getChildAt(0).getHeight();
+                int scrollHeight = scroll_hero_specs.getHeight();
+                int scrollY = innerHeight - scrollHeight;
+                //Log.d(TAG, currY + ":" + scrollY );
+                if (currY == 0) {
+                    button_spec_change_view.setImageResource(R.drawable.ic_arrow_upward_white_24dp);
+                    scroll_hero_specs.smoothScrollTo(0, scrollY);
+                } else {
+                    button_spec_change_view.setImageResource(R.drawable.ic_arrow_downward_white_24dp);
+                    scroll_hero_specs.smoothScrollTo(0, 0);
+                }
+            });
+
+            RealmList<ItemSim> itemSims = heroSim.getHeroItemSims();
+
+            for (int i = 0; i < 3; i++) {
+                ItemSim itemSim = itemSims.get(i);
+                String itemSimReinforceStr = itemSim == null ? null : "+" + itemSim.getItemReinforcement();
+                String itemSimName = itemSim == null ? null : itemSim.getItem().getItemName();
+                text_item_reinforcement[i].setText(itemSimReinforceStr);
+                text_item_name[i].setText(itemSimName);
+                int finalI = i;
+                text_item_reinforcement[i].setOnClickListener(v -> {
+                    if (itemSim != null) {
+                        ReinforceDialogFragment.newInstance(itemSim.getItemID(), finalI).show(
+                                fragmentManager, TAG);
+                    }
+                });
+                text_item_name[i].setOnClickListener(v -> {
+
+                    String subCate;
+                    if (branch != null) {
+                        switch (finalI) {
+                            case AppConstant.ITEM_MAIN_CATEGORY_CODE_WEAPON:
+                                subCate = branch.getBranchWeaponSubCate();
+                                break;
+                            case AppConstant.ITEM_MAIN_CATEGORY_CODE_ARMOR:
+                                subCate = branch.getBranchArmorSubCate();
+                                break;
+                            case AppConstant.ITEM_MAIN_CATEGORY_CODE_AID:
+                                subCate = AppConstant.AID_KOR;
+                                break;
+                            default:
+                                subCate = AppConstant.ALL_PICK_KOR;
                         }
-                    });
+                    } else {
+                        subCate = AppConstant.ALL_PICK_KOR;
+                    }
+                    PickItemSimDialogFragment.newInstance(heroSim.getHeroNo(), subCate, finalI).show(
+                            fragmentManager, TAG);
 
-            ItemSim weapon = heroSim.getHeroWeapon();
-            ItemSim armor = heroSim.getHeroArmor();
-            ItemSim aid = heroSim.getHeroAid();
+                });
+            }
 
-            String weaponReinforceStr = weapon == null ?  null : "+" + weapon.getItemReinforcement();
-            String armorReinforceStr = armor == null ? null : "+" + armor.getItemReinforcement();
-            String aidReinforceStr = aid == null ? null : "+" + aid.getItemReinforcement();
+            for( int i = 0; i < 2; i++) {
+                RealmList<RelicSim> slot = heroSim.getHeroRelicSlot(i + 1);
+                    for (int j = 0; j < 4; j++) {
+                        RelicSim relicSim = slot.get(j);
+                        RelicPRFX relicPRFX = relicSim == null ? null : relicSim.getPrefix();
+                        RelicSFX relicSFX = relicSim == null ? null : relicSim.getSuffix();
+                        int relicLevel = relicSim == null ? 0 : relicSim.getRelicLevel();
+                        text_relic_prefix_slot[i][j].setText(
+                                relicSim == null ? null :
+                                        relicPRFX == null ? null :
+                                                relicPRFX.getRelicPrefixName() );
+                        text_relic_suffix_slot[i][j].setText(
+                                relicSim == null ? null :
+                                        relicSFX == null ? null :
+                                                relicSFX.getNameStarGrade());
+                        text_relic_level_slot[i][j].setText(
+                                relicSim == null ? null :
+                                        String.valueOf(relicLevel) );
 
-            String weaponName = weapon == null ? null : weapon.getItem().getItemName();
-            String armorName = armor == null ? null : armor.getItem().getItemName();
-            String aidName = aid == null ? null : aid.getItem().getItemName();
+                        final int relicSlot = i;
+                        final int relicPosition = j;
+                        text_relic_suffix_slot[i][j].setOnClickListener( v -> {
+                            Log.d(TAG, heroSim.getHeroNo() + " " + relicPosition + " " + relicSlot + "clicked");
+                            PickRelicSimDialogFragment.newInstance(heroSim.getHeroNo(), relicPosition, relicSlot).show(fragmentManager, TAG);
+                        });
+                    }
 
-            text_item_weapon_reinforcement.setText( weaponReinforceStr );
-            text_item_weapon_name.setText( weaponName );
-            text_item_armor_reinforcement.setText( armorReinforceStr);
-            text_item_armor_name.setText( armorName );
-            text_item_aid_reinforcement.setText( aidReinforceStr );
-            text_item_aid_name.setText( aidName );
+            }
+
 
         } // end bind()
     }

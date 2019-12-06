@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="75dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_margin="5dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:background="@drawable/rect_focused"
+    android:focusableInTouchMode="true"
+    >
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:background="#000"
+            android:id="@+id/text_cell_relic_sim_prefix"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            tools:text="강력한" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_cell_relic_sim_suffix"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:gravity="center"
+        tools:text="각" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#000">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/star_filled"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_cell_relic_sim_grade"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            tools:text="4"
+            android:layout_marginEnd="10dp"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:text="@string/level"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_cell_relic_sim_level"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#000"
+            android:textAlignment="center"
+            android:gravity="center"
+            tools:text="3" />
+
+
+    </LinearLayout>
+</LinearLayout>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="210dp"
-    android:layout_height="wrap_content"
+    android:layout_height="130dp"
     >
 
     <LinearLayout
@@ -20,7 +20,7 @@
             android:layout_width="65dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@drawable/rect_black">
+            android:background="@drawable/rect_button">
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="20dp"
@@ -28,15 +28,19 @@
             android:text="@string/weapon"
             />
         <androidx.appcompat.widget.AppCompatTextView
+            android:layout_margin="3dp"
+            android:background="@drawable/rect_black"
             android:id="@+id/text_item_weapon_reinforcement"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="30dp"
             tools:text="+12"
             android:gravity="center" />
         <androidx.appcompat.widget.AppCompatTextView
+            android:layout_margin="3dp"
+            android:background="@drawable/rect_black"
             android:id="@+id/text_item_weapon_name"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="match_parent"
             tools:text="관우의 청룡언월도"
             android:gravity="center"/>
 
@@ -50,7 +54,7 @@
             android:layout_width="65dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@drawable/rect_black">
+            android:background="@drawable/rect_button">
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
@@ -58,15 +62,20 @@
                 android:text="@string/shield"
                 />
             <androidx.appcompat.widget.AppCompatTextView
+                android:layout_margin="3dp"
+                android:background="@drawable/rect_black"
                 android:id="@+id/text_item_armor_reinforcement"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
+                android:layout_height="30dp"
                 tools:text="+9"
                 android:gravity="center" />
+
             <androidx.appcompat.widget.AppCompatTextView
+                android:layout_margin="3dp"
+                android:background="@drawable/rect_black"
                 android:id="@+id/text_item_armor_name"
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
+                android:layout_height="match_parent"
                 tools:text="관우의 청동쇄자갑"
                 android:gravity="center"/>
 
@@ -78,7 +87,7 @@
             android:layout_width="65dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@drawable/rect_black">
+            android:background="@drawable/rect_button">
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
@@ -86,15 +95,19 @@
                 android:text="@string/aid"
                 />
             <androidx.appcompat.widget.AppCompatTextView
+                android:layout_margin="3dp"
+                android:background="@drawable/rect_black"
                 android:id="@+id/text_item_aid_reinforcement"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
+                android:layout_height="30dp"
                 tools:text="+19"
                 android:gravity="center" />
             <androidx.appcompat.widget.AppCompatTextView
+                android:layout_margin="3dp"
+                android:background="@drawable/rect_black"
                 android:id="@+id/text_item_aid_name"
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
+                android:layout_height="match_parent"
                 tools:text="관우의 적토마"
                 android:gravity="center"/>
 

@@ -19,9 +19,7 @@ import io.realm.RealmResults;
 
 public class AddRelicDialogFragment extends UpdateDialogFragment{
     private static final String TAG = "FANG_DIALOG_ADD_RELIC";
-    private static final int GUARDIAN_INIT_VALUE = 0;
-    private static final int GRADE_INIT_VALUE = 3;
-    private static final String[] guardians = {"청룡","주작","백호","현무"};
+
 
 
     public static AddRelicDialogFragment newInstance() {
@@ -46,7 +44,7 @@ public class AddRelicDialogFragment extends UpdateDialogFragment{
             for(int i = 0; i < relicGuardiansStr.length; i++) {
                 RelicSFX relicGuardian = relicGuardians.get(i);
                 if(relicGuardian != null) {
-                    relicGuardiansStr[i] = guardians[relicGuardian.getGuardianType()-1];
+                    relicGuardiansStr[i] = AppConstant.guardians[relicGuardian.getGuardianType()-1];
                 }
             }
             picker_add_relic_guardian.setMinValue(0);
@@ -77,7 +75,7 @@ public class AddRelicDialogFragment extends UpdateDialogFragment{
             picker_add_relic_grade.setMaxValue(relicSFXGradesStr.length - 1);
             picker_add_relic_grade.setDisplayedValues(relicSFXGradesStr);
 
-            RealmResults<RelicSFX> relicSFXes = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_NAME).equalTo(RelicSFX.FIELD_TYPE,  GUARDIAN_INIT_VALUE + 1).findAll();
+            RealmResults<RelicSFX> relicSFXes = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_NAME).equalTo(RelicSFX.FIELD_TYPE,  AppConstant.GUARDIAN_INIT_VALUE + 1).findAll();
             String[] relicSFXesStr = new String[relicSFXes.size()];
             for (int i = 0; i < relicSFXesStr.length; i++) {
                 RelicSFX relicSFX = relicSFXes.get(i);
@@ -107,8 +105,8 @@ public class AddRelicDialogFragment extends UpdateDialogFragment{
                     Log.d(TAG, "suffix error :" + e.toString());
                 }
             });
-            picker_add_relic_guardian.setValue(GUARDIAN_INIT_VALUE);
-            picker_add_relic_grade.setValue(GRADE_INIT_VALUE);
+            picker_add_relic_guardian.setValue(AppConstant.GUARDIAN_INIT_VALUE);
+            picker_add_relic_grade.setValue(AppConstant.GRADE_INIT_VALUE);
 
             builder.setView(view).setPositiveButton(R.string.add_kor, ((dialog, which) -> {
                 //String guardian = relicGuardiansStr[picker_add_relic_guardian.getValue()];

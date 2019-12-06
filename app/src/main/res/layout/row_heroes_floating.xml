@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="120dp"
+    android:layout_height="130dp"
     android:orientation="horizontal"
     android:background="@drawable/bottom_border_gray_1dp">
 
@@ -31,6 +31,16 @@
         android:id="@+id/cell_items" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/end_border_gray_1dp">
+    <include
+        layout="@layout/cell_hero_relic"
+        android:id="@+id/cell_hero_relic" />
+    </LinearLayout>
+
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_hero_lineage"

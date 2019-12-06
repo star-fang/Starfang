@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_above="@id/layout_pick_relic_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/available_relic_list_kor"
+            android:gravity="center"
+            android:textSize="20sp"/>
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_relic_sim"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/dialog_pick_relic_sim_cell"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_pick_relic_info"
+        android:layout_above="@id/layout_relic_pickers"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        >
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_dialog_pick_relic_sim_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/rect_black"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_dialog_pick_relic_sim_desc"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/rect_black"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:id="@+id/layout_relic_pickers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="7"
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
+
+        <NumberPicker
+            android:id="@+id/picker_pick_relic_guardian"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"/>
+
+        <NumberPicker
+            android:id="@+id/picker_pick_relic_prefix"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"/>
+
+        <NumberPicker
+            android:id="@+id/picker_pick_relic_suffix"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <NumberPicker
+            android:id="@+id/picker_pick_relic_grade"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"/>
+    </LinearLayout>
+</RelativeLayout>

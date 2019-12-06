@@ -17,15 +17,15 @@ import com.fang.starfang.local.model.realm.source.Heroes;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
 
-public class PickHeroRealmAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
+public class PickHeroSimRealmAdapter extends RealmRecyclerViewAdapter<Heroes, RecyclerView.ViewHolder> implements Filterable {
 
     private static final String TAG = "FANG_ADAPTER_PICK_HERO";
     private Heroes hero_selected;
     @NonNull
     @Override
-    public PickHeroRealmAdapter.PickHeroViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public PickHeroSimRealmAdapter.PickHeroViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_pick_hero_cell,viewGroup,false);
-        return new PickHeroRealmAdapter.PickHeroViewHolder(view);
+        return new PickHeroSimRealmAdapter.PickHeroViewHolder(view);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class PickHeroRealmAdapter extends RealmRecyclerViewAdapter<Heroes, Recyc
     }
 
 
-    public PickHeroRealmAdapter(RealmResults<Heroes> realmResults) {
+    public PickHeroSimRealmAdapter(RealmResults<Heroes> realmResults) {
         super(realmResults, false);
         this.hero_selected = null;
         Log.d(TAG, "constructed");

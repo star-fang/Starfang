@@ -31,6 +31,10 @@ public class RelicSFX extends RealmObject {
         return relicSuffixGrade;
     }
 
+    public String getNameStarGrade()  {
+        return relicSuffixName + " ★" + relicSuffixGrade;
+   }
+
     public RealmList<Integer> getRelicSuffixPowers() {
         return relicSuffixPowers;
     }
