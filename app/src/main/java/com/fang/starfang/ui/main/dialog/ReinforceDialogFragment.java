@@ -105,6 +105,9 @@ public class ReinforceDialogFragment extends UpdateDialogFragment {
 
                     builder.setView(view).setPositiveButton(R.string.reinforce_grade_kor, (dialog, which) -> {
                         int reinforceValue = seek_bar_item_reinforce.getProgress();
+                        if( realm.isInTransaction()) {
+                            realm.commitTransaction();
+                        }
                         realm.beginTransaction();
                         for (int i = 0; i < HeroSim.POWERS_KOR.length; i++) {
                             itemSim.setItemPlusPowers(itemPlusPowers.get(i), i);
@@ -112,10 +115,11 @@ public class ReinforceDialogFragment extends UpdateDialogFragment {
                         }
                         itemSim.setItemReinforcement(reinforceValue);
 
-                        realm.commitTransaction();
+                        //realm.commitTransaction();
 
                         Fragment targetFragment = getTargetFragment();
                         if (targetFragment != null) {
+                            realm.commitTransaction();
                             Intent intent = new Intent();
                             intent.putExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN,itemMainCate);
                             intent.putExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE,
@@ -123,7 +127,8 @@ public class ReinforceDialogFragment extends UpdateDialogFragment {
                                     "" : "+" + reinforceValue);
                             targetFragment.onActivityResult(AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT, Activity.RESULT_OK, intent);
                         } else {
-                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
+                            String message = item.getItemName() + ": +" + reinforceValue + " " + resources.getString(R.string.reinforcement_kor);
+                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
                         }
                     }).setNegativeButton(R.string.cancel_kor, null);
                 }

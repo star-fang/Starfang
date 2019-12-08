@@ -353,21 +353,46 @@ public class HeroSim extends RealmObject {
         }
     }
 
-    public void setHeroRelicSlot( RelicSim newRelicSim, int slot, int position) {
-        RealmList<RelicSim> heroRelicSlot = slot == 1 ? heroRelicSlot1 : slot == 2 ? heroRelicSlot2 : null;
+    private RelicSim getHeroRelic(RealmList<RelicSim> heroRelicSlot, int position) {
+        RelicSim heroRelic = null;
+        for (RelicSim relicSim : heroRelicSlot) {
+            if (relicSim.getPositionInSlot() == position) {
+                heroRelic = relicSim;
+                break;
+            } // end if
+        } // end for
+        return heroRelic;
+    }
+
+    public void addRelic( RelicSim newRelicSim, int slot, int position) {
+        RealmList<RelicSim> heroRelicSlot = getHeroRelicSlot(slot);
         if( heroRelicSlot != null ) {
-            for (RelicSim relicSim : heroRelicSlot) {
-                if (relicSim.getPositionInSlot() == position) {
-                    heroRelicSlot.remove(relicSim);
-                    relicSim.setSlot(0);
-                    relicSim.setPositionInSlot(0);
-                    relicSim.setHeroWhoHasThis(null);
-                    break;
-                } // end if
-            } // end for
+            RelicSim heroRelic = getHeroRelic( heroRelicSlot, position );
+            if( heroRelic != null ) {
+                heroRelicSlot.remove(heroRelic);
+                heroRelic.setRelicLevel(1);
+                heroRelic.setSlot(0);
+                heroRelic.setPositionInSlot(0);
+                heroRelic.setHeroWhoHasThis(null);
+            }
             heroRelicSlot.add(newRelicSim);
             newRelicSim.setSlot(slot);
             newRelicSim.setPositionInSlot(position);
         }
     }
+
+    public int setRelicLevelUp( int slot, int position ) {
+        RealmList<RelicSim> heroRelicSlot = getHeroRelicSlot(slot);
+        int level = 0;
+        if( heroRelicSlot != null ) {
+            RelicSim heroRelic = getHeroRelic( heroRelicSlot, position );
+            if (heroRelic != null) {
+                int currLevel = heroRelic.getRelicLevel();
+                level = currLevel == 5 ? 1 : currLevel + 1;
+                heroRelic.setRelicLevel(  level );
+            } // end if
+        } // end if
+        return level;
+    }
+
 }

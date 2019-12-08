@@ -195,11 +195,18 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
 
                         RelicSim selectedRelic = pickRelicSimRealmAdapter.getSelectedRelic();
                         if( selectedRelic != null ) {
+                            if( realm.isInTransaction()) {
+                                realm.commitTransaction();
+                            }
                             realm.beginTransaction();
                             selectedRelic.setHeroWhoHasThis(heroSim);
-                            heroSim.setHeroRelicSlot(selectedRelic,relicSlot,relicPosition);
-                            realm.commitTransaction();
-                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC);
+                            heroSim.addRelic(selectedRelic,relicSlot,relicPosition);
+                            //realm.commitTransaction();
+                            RelicPRFX relicPrefix = selectedRelic.getPrefix();
+                            RelicSFX relicSuffix = selectedRelic.getSuffix();
+                            String message = heroSim.getHero().getHeroName() + ": " + (relicPrefix != null ? relicPrefix.getRelicPrefixName() : "" ) + " " +
+                                    relicSuffix.getNameStarGrade() + " " + resources.getString(R.string.wear_kor);
+                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC, message);
                         }
                     }).setNegativeButton(R.string.cancel_kor, null);
 

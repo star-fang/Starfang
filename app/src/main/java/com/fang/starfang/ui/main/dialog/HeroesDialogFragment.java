@@ -96,13 +96,13 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                             button_release_picked_item.setEnabled(true);
                             button_reinforce_picked_item.setEnabled(itemReinforce != null);
                             Snackbar.make(view,  itemReinforce + " " + itemName + " " + AppConstant.WEAR_KOR, Snackbar.LENGTH_SHORT).show();
-                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
+                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
                             break;
                         case AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT:
                             itemReinforce = intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE);
                             texts_item_reinforcement[itemMainCate].setText(intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE));
                             Snackbar.make(view,  itemReinforce + " " + AppConstant.REINFORCE_KOR, Snackbar.LENGTH_SHORT).show();
-                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
+                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
                             break;
                         default:
                     } // end switch
@@ -122,7 +122,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        view = View.inflate(mActivity, R.layout.dialog_heroes, null);
+        this.view = View.inflate(mActivity, R.layout.dialog_heroes, null);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -317,10 +317,10 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                 final AppCompatSeekBar[] seek_bar_hero_stat = new AppCompatSeekBar[numberOfStats];
 
                 for (int i = 0; i < numberOfStats; i++) {
-                    seek_bar_hero_stat[i] = view.findViewById(getResources().getIdentifier("seekbar_hero_stat" + (i + 1), "id", mActivity.getPackageName()));
-                    text_base_plus_stat[i] = view.findViewById(getResources().getIdentifier("text_base_plus_stat" + (i + 1), "id", mActivity.getPackageName()));
-                    text_seek_bar_hero_stat_cur[i] = view.findViewById(getResources().getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_cur", "id", mActivity.getPackageName()));
-                    text_seek_bar_hero_stat_max[i] = view.findViewById(getResources().getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_max", "id", mActivity.getPackageName()));
+                    seek_bar_hero_stat[i] = view.findViewById(resources.getIdentifier("seekbar_hero_stat" + (i + 1), "id", mActivity.getPackageName()));
+                    text_base_plus_stat[i] = view.findViewById(resources.getIdentifier("text_base_plus_stat" + (i + 1), "id", mActivity.getPackageName()));
+                    text_seek_bar_hero_stat_cur[i] = view.findViewById(resources.getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_cur", "id", mActivity.getPackageName()));
+                    text_seek_bar_hero_stat_max[i] = view.findViewById(resources.getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_max", "id", mActivity.getPackageName()));
 
                     seek_bar_hero_stat[i].setMax(maxPlusStat);
                     text_seek_bar_hero_stat_max[i].setText(String.valueOf(maxPlusStat));
@@ -607,7 +607,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                                     texts_item_name[finalI].setText(null);
                                     text_picked_item_name.setText(null);
                                     powerAdapter.notifyDataSetChanged();
-                                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
+                                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
                                     Snackbar.make(view, releasingItem.getItemName() + " " + AppConstant.RELEASE_KOR, Snackbar.LENGTH_SHORT).show();
                                 }
                             });
@@ -619,6 +619,9 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
 
 
                 builder.setView(view).setPositiveButton(R.string.modify_kor, (dialog, which) -> {
+                    if(realm.isInTransaction()) {
+                        realm.commitTransaction();
+                    }
                     realm.beginTransaction();
                     int heroGrade = seek_bar_hero_grade.getProgress() + 1;
                     int heroLevel = seek_bar_hero_level.getProgress() + 1;
@@ -650,10 +653,9 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                     heroSim.setHeroSpecScoreSum(sumSpecScores);
                     heroSim.setHeroPowerSum(sumPowers);
                     heroSim.setHeroPlusStatSum(sumPlusStats);
-
-                    realm.commitTransaction();
-
-                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_HERO);
+                    //realm.commitTransaction();
+                    String message = hero.getHeroName() + " " + resources.getString(R.string.modified_kor);
+                    onUpdateEventListener.updateEvent( AppConstant.RESULT_CODE_SUCCESS_MODIFY_HERO,  message );
 
 
                 }).setNegativeButton(R.string.cancel_kor, null);

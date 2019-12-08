@@ -22,6 +22,7 @@ import com.fang.starfang.ui.main.dialog.ConstraintDocBuilder;
 import com.fang.starfang.ui.main.dialog.RoomFilterDialogFragment;
 import com.fang.starfang.ui.main.dialog.SendCatFilterDialogFragment;
 import com.fang.starfang.ui.main.dialog.TimeFilterDatePickerDialog;
+import com.fang.starfang.ui.main.dialog.UpdateDialogFragment;
 import com.fang.starfang.ui.main.recycler.adapter.ConversationRealmAdapter;
 import com.fang.starfang.ui.main.recycler.filter.ConversationFilter;
 import com.fang.starfang.ui.main.recycler.filter.ConversationFilterObject;
@@ -31,7 +32,7 @@ import java.util.Calendar;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 
-public class ConversationActivity extends AppCompatActivity {
+public class ConversationActivity extends AppCompatActivity implements UpdateDialogFragment.OnUpdateEventListener {
 
     private static final String TAG = "FANG_ACTIVITY_CONV";
 
@@ -323,4 +324,18 @@ public class ConversationActivity extends AppCompatActivity {
     } // end onCreate
 
 
+    @Override
+    public void updateEvent(int code, String message) {
+
+    }
+
+    @Override
+    public boolean dialogAttached() {
+        return false;
+    }
+
+    @Override
+    public void dialogDetached() {
+
+    }
 }

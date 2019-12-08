@@ -16,6 +16,12 @@ public class AppConstant {
     public static final int ITEM_MAIN_CATEGORY_CODE_ARMOR = 1;
     public static final int ITEM_MAIN_CATEGORY_CODE_AID = 2;
 
+    public static final int NOTIFY_TYPE_ITEM = 0;
+    public static final int NOTIFY_TYPE_HERO = 1;
+    public static final int NOTIFY_TYPE_RELIC= 2;
+    public static final int NOTIFY_TYPE_ITEM_HERO = 3;
+    public static final int NOTIFY_TYPE_HERO_RELIC= 4;
+
     public static final int GUARDIAN_INIT_VALUE = 0;
     public static final int GRADE_INIT_VALUE = 3;
     public static final String[] guardians = {"청룡","주작","백호","현무"};

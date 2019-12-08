@@ -160,11 +160,15 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
                 try {
                     ItemSim itemSim = new ItemSim(item_selected);
                     //Log.d(TAG,"itemSim" + itemSim.getItemID() + " created");
+                    if( realm.isInTransaction() ) {
+                        realm.commitTransaction();
+                    }
                     realm.beginTransaction();
                     realm.copyToRealm(itemSim);
-                    realm.commitTransaction();
+                    //realm.commitTransaction();
                     //Log.d(TAG,"copy to realm : success");
-                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_ADD_ITEM);
+                    String message = item_selected.getItemName() + " " + resources.getString(R.string.added_kor);
+                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_ADD_ITEM, message);
                 } catch( RealmPrimaryKeyConstraintException | RealmException e ) {
                     Log.d(TAG,e.toString());
                 }

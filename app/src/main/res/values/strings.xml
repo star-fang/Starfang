@@ -204,6 +204,10 @@
     <string name="modify_kor">변경</string>
     <string name="create_kor">생성</string>
     <string name="cancel_kor">취소</string>
+    <string name="cancel_transaction_kor">실행 취소</string>
+    <string name="transaction_canceled_kor">실행 취소됨</string>
+    <string name="modified_kor">변경됨</string>
+    <string name="added_kor">추가됨</string>
     <string name="add_kor">추가</string>
     <string name="setting_kor">설정</string>
     <string name="setting">SETTING</string>
@@ -227,7 +231,11 @@
     <string name="picked_kor">선택된</string>
     <string name="colon">:</string>
     <string name="slot_kor">슬롯</string>
+    <string name="relic_slot_kor">보패 슬롯</string>
     <string name="relic_kor">보패</string>
     <string name="available_relic_list_kor">착용가능 보패 목록</string>
+    <string name="desc_relic_level_init">: 보패 레벨 초기화</string>
+    <string name="desc_relic_level_up">: 보패 레벨</string>
+
 
 </resources>

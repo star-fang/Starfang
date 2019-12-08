@@ -13,8 +13,10 @@
     <color name="red">#FF0900</color>
     <color name="orange">#FFA500</color>
     <color name="blue">#0000FF</color>
+    <color name="blue_bright">#0066FF</color>
     <color name="yellow">#FFF300</color>
     <color name="purple">#800080</color>
+    <color name="purple_bright">#FF00FF</color>
     <color name="green">#00FF00</color>
     <color name="cyan">#00FFFF</color>
     <color name="colorCheckedText">#FD5696</color>
@@ -23,10 +25,10 @@
 
     <array name="color_suffix">
         <item>@color/red</item>
-        <item>@color/blue</item>
+        <item>@color/blue_bright</item>
         <item>@color/orange</item>
         <item>@color/yellow</item>
-        <item>@color/purple</item>
+        <item>@color/purple_bright</item>
         <item>@color/green</item>
         <item>@color/cyan</item>
     </array>

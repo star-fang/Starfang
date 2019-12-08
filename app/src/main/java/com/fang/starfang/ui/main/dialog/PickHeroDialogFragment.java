@@ -107,6 +107,9 @@ public class PickHeroDialogFragment extends UpdateDialogFragment {
                             HeroSim hero_before = itemSim.getHeroWhoHasThis();
                             HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, hero_selected.getHeroNo()).findFirst();
                             if (heroSim != null) {
+                                if(realm.isInTransaction()) {
+                                    realm.commitTransaction();
+                                }
                                 realm.beginTransaction();
                                 switch(itemCate.getItemMainCate()) {
                                     case AppConstant.WEAPON_KOR :
@@ -140,8 +143,10 @@ public class PickHeroDialogFragment extends UpdateDialogFragment {
                                         heroSim.setHeroAid(itemSim);
                                 } // end switch
                                 itemSim.setHeroWhoHasThis(heroSim);
-                                realm.commitTransaction();
-                                onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
+                                //realm.commitTransaction();
+                                String message = item.getItemName() + ": " + hero_selected.getHeroName() + " " +  (hero_before == null ? resources.getString(R.string.wear_kor) :
+                                        ( "← " + hero_before.getHero().getHeroName() + " " + resources.getString(R.string.modified_kor) ) );
+                                onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message );
                             }
                         }
                     }).setNegativeButton(R.string.cancel_kor, null);

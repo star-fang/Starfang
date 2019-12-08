@@ -117,11 +117,14 @@ public class AddRelicDialogFragment extends UpdateDialogFragment{
                 RelicPRFX relicPRFX = realm.where(RelicPRFX.class).equalTo(RelicPRFX.FIELD_NAME,prefix).findFirst();
                 if( relicSFX != null ) {
                     RelicSim relicSim = new RelicSim( relicSFX, relicPRFX );
+                    if( realm.isInTransaction() ) {
+                        realm.commitTransaction();
+                    }
                     realm.beginTransaction();
                     realm.copyToRealm(relicSim);
-                    realm.commitTransaction();
-                    Log.d(TAG, relicSim.toString());
-                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_ADD_RELIC);
+                    //realm.commitTransaction();
+                    String message = prefix + " " + suffix + " " + resources.getString(R.string.star_filled) + grade + resources.getString(R.string.added_kor);
+                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_ADD_RELIC, message);
                 }
 
             })).setNegativeButton(R.string.cancel_kor,null);

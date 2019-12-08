@@ -2,6 +2,7 @@ package com.fang.starfang.ui.main.dialog;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ public class UpdateDialogFragment extends DialogFragment {
     Activity mActivity;
     Realm realm;
     FragmentManager fragmentManager;
+    Resources resources;
     private boolean dismissNormally;
 
     @Override
@@ -24,6 +26,7 @@ public class UpdateDialogFragment extends DialogFragment {
 
         realm = Realm.getDefaultInstance();
         fragmentManager = getFragmentManager();
+        resources = getResources();
         dismissNormally = true;
 
         Log.d(TAG, "_onAttach");
@@ -59,7 +62,7 @@ public class UpdateDialogFragment extends DialogFragment {
 
 
     public interface OnUpdateEventListener {
-        void updateEvent(int code);
+        void updateEvent(int code, String message);
         boolean dialogAttached();
         void dialogDetached();
     }

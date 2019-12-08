@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -24,7 +25,10 @@ import com.fang.starfang.util.ScreenUtils;
 
 public class PickItemSimDialogFragment extends UpdateDialogFragment {
 
+    private static final String TAG = "FANG_DIA_PICK_ITEM";
+
     public static PickItemSimDialogFragment newInstance( int heroID, String itemSubCate, int itemMainCate ) {
+
         Bundle args = new Bundle();
         args.putInt(AppConstant.INTENT_KEY_HERO_ID, heroID);
         args.putString(AppConstant.INTENT_KEY_ITEM_CATE_SUB, itemSubCate);
@@ -73,7 +77,12 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
                     ItemSim itemSim_selected = itemSimsRealmAdapter.getSelectedItem();
                     if (itemSim_selected != null) {
                         HeroSim hero_before = itemSim_selected.getHeroWhoHasThis();
-                            realm.beginTransaction();
+                        if(realm.isInTransaction()) {
+                            Log.d(TAG,"realm is already in a write transaction");
+                            realm.commitTransaction();
+                            Log.d(TAG,"commitTransaction");
+                        }
+                        realm.beginTransaction();
                         switch (itemMainCate) {
                             case 0:
                                 ItemSim weapon_before = heroSim.getHeroWeapon();
@@ -107,11 +116,12 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
                         }
 
                         itemSim_selected.setHeroWhoHasThis( heroSim );
-                        realm.commitTransaction();
+                        //realm.commitTransaction();
 
 
                         Fragment targetFragment = getTargetFragment();
                         if(targetFragment != null) {
+                            realm.commitTransaction();
                             Intent intent = new Intent();
                             Item item = itemSim_selected.getItem();
                             intent.putExtra(AppConstant.INTENT_KEY_ITEM_NAME, item.getItemName());
@@ -124,7 +134,9 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
                             intent.putExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate );
                             targetFragment.onActivityResult(AppConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT,Activity.RESULT_OK,intent);
                         } else {
-                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM);
+                            String message = itemSim_selected.getItem().getItemName()+ ": " + heroSim.getHero().getHeroName() + " " +  (hero_before == null ? resources.getString(R.string.wear_kor) :
+                                    ( "← " + hero_before.getHero().getHeroName() + " " + resources.getString(R.string.modified_kor) ) );
+                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
                         }
                     }
                 }).setNegativeButton(R.string.cancel_kor, null);

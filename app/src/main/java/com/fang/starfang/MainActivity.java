@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -129,38 +130,40 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
     }
 
     @Override
-    public void updateEvent(int code) {
+    public void updateEvent(int code, String message) {
+        int notifyType;
         switch (code) {
             case AppConstant.RESULT_CODE_SUCCESS_ADD_ITEM:
-                itemFloatAdapter.notifyDataSetChanged();
-                itemFixAdapter.notifyDataSetChanged();
-                Log.d(TAG, "보물 추가");
+                notifyType = AppConstant.NOTIFY_TYPE_ITEM;
+                notifyToAdapter(notifyType);
+                Log.d(TAG, "item added:" + message);
                 break;
             case AppConstant.RESULT_CODE_SUCCESS_ADD_HERO:
-                heroFloatAdapter.notifyDataSetChanged();
-                heroFixAdapter.notifyDataSetChanged();
-                Log.d(TAG, "장수 추가");
+                notifyType = AppConstant.NOTIFY_TYPE_HERO;
+                notifyToAdapter(notifyType);
+                Log.d(TAG, "hero added:" + message);
                 break;
             case AppConstant.RESULT_CODE_SUCCESS_MODIFY_HERO:
-                heroFloatAdapter.notifyDataSetChanged();
-                heroFixAdapter.notifyDataSetChanged();
-                Log.d(TAG, "장수 변경");
+                notifyType = AppConstant.NOTIFY_TYPE_HERO;
+                notifyToAdapter(notifyType);
+                Log.d(TAG, "hero modified:" + message);
                 break;
             case AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM:
-                itemFloatAdapter.notifyDataSetChanged();
-                itemFixAdapter.notifyDataSetChanged();
-                heroFloatAdapter.notifyDataSetChanged();
-                heroFixAdapter.notifyDataSetChanged();
-                Snackbar.make(view,"보물 변경됨" , Snackbar.LENGTH_SHORT).setAction(R.string.cancel_kor, v -> {
-                    Log.d(TAG, "취소함?");
-                }).show();
+                notifyType = AppConstant.NOTIFY_TYPE_ITEM_HERO;
+                notifyToAdapter(notifyType);
+                Log.d(TAG, "item modified:" + message);
                 break;
             case AppConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC:
-                heroFloatAdapter.notifyDataSetChanged();
-                heroFixAdapter.notifyDataSetChanged();
-                Log.d(TAG, "보패 변경");
+                notifyType = AppConstant.NOTIFY_TYPE_HERO;
+                notifyToAdapter(notifyType);
+                Log.d(TAG, "relic modified:" + message);
                 break;
             default:
+                notifyType = -1;
+        } // end switch
+
+        if(message != null) {
+            showCancelableSnackBar(view, message,notifyType);
         }
 
     }
@@ -178,5 +181,53 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
     @Override
     public void dialogDetached() {
         dialogIsBeingShown = false;
+    }
+
+    private void showCancelableSnackBar(View view, String message, int notifyType) {
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.cancel_transaction_kor, v -> {
+           if( realm.isInTransaction() ) {
+               realm.cancelTransaction();
+               notifyToAdapter(notifyType);
+               Toast.makeText(this,R.string.transaction_canceled_kor,Toast.LENGTH_SHORT).show();
+           } else {
+               Log.d(TAG, "cancelTransaction failure");
+           }
+        });
+
+        snackbar.addCallback( new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                if(realm.isInTransaction()) {
+                    realm.commitTransaction();
+                    Log.d(TAG, "commitTransaction");
+                } else {
+                    Log.d(TAG, "commitTransaction failure");
+                }
+            }
+        });
+
+        snackbar.show();
+    }
+
+    private void notifyToAdapter(int notifyType) {
+        switch( notifyType ) {
+            case AppConstant.NOTIFY_TYPE_ITEM:
+                itemFloatAdapter.notifyDataSetChanged();
+                itemFixAdapter.notifyDataSetChanged();
+                break;
+            case AppConstant.NOTIFY_TYPE_HERO:
+                heroFloatAdapter.notifyDataSetChanged();
+                heroFixAdapter.notifyDataSetChanged();
+                break;
+            case AppConstant.NOTIFY_TYPE_RELIC:
+                break;
+            case AppConstant.NOTIFY_TYPE_ITEM_HERO:
+                itemFloatAdapter.notifyDataSetChanged();
+                itemFixAdapter.notifyDataSetChanged();
+                heroFloatAdapter.notifyDataSetChanged();
+                heroFixAdapter.notifyDataSetChanged();
+            default:
+        }
     }
 }
