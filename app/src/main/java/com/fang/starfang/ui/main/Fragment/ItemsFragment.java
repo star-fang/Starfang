@@ -15,9 +15,9 @@ import com.fang.starfang.AppConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFixedRealmAdapter;
-import com.fang.starfang.ui.main.recycler.adapter.ItemSimsFloatingRealmAdapter;
-import com.fang.starfang.ui.main.custom.DiagonalScrollRecyclerView;
+import com.fang.starfang.ui.main.adapter.ItemSimsFixedRealmAdapter;
+import com.fang.starfang.ui.main.adapter.ItemSimsFloatingRealmAdapter;
+import com.fang.starfang.ui.common.DiagonalScrollRecyclerView;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;

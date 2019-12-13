@@ -30,8 +30,9 @@ import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.NormalItem;
-import com.fang.starfang.ui.main.recycler.adapter.PowersRecyclerAdapter;
-import com.fang.starfang.ui.main.recycler.adapter.SpecsRecycleAdapter;
+import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.main.adapter.PowersRecyclerAdapter;
+import com.fang.starfang.ui.main.adapter.SpecsRecycleAdapter;
 import com.fang.starfang.util.ScreenUtils;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -586,7 +587,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                             button_reinforce_picked_item.setOnClickListener(vReinforce -> {
                                 ItemSim reinforcingItem = itemSims.get(finalI);
                                 if(reinforcingItem != null) {
-                                    ReinforceDialogFragment reinforceDialogFragment = ReinforceDialogFragment.newInstance(reinforcingItem.getItemID(), finalI);
+                                    ReinforceItemDialogFragment reinforceDialogFragment = ReinforceItemDialogFragment.newInstance(reinforcingItem.getItemID(), finalI);
                                     reinforceDialogFragment.setTargetFragment(HeroesDialogFragment.this, AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT);
                                     reinforceDialogFragment.show(fragmentManager, TAG);
                                 }

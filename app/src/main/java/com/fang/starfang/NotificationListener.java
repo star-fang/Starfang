@@ -105,6 +105,9 @@ public class NotificationListener extends NotificationListenerService {
         if( isAvailablePackage ) {
             Conversation conversation = new Conversation(from,room,sbn.getTag(),packageName,text);
             Realm realm = Realm.getDefaultInstance();
+            if( realm.isInTransaction() ) {
+                realm.commitTransaction();
+            }
             realm.beginTransaction();
             realm.copyToRealm(conversation);
             realm.commitTransaction();

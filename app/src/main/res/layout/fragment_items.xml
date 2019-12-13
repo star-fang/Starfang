@@ -37,7 +37,7 @@
 
 
 
-        <com.fang.starfang.ui.main.custom.DiagonalScrollRecyclerView
+        <com.fang.starfang.ui.common.DiagonalScrollRecyclerView
             android:id="@+id/recycler_view_items_content"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -93,7 +93,7 @@
             </LinearLayout>
 
 
-        </com.fang.starfang.ui.main.custom.DiagonalScrollRecyclerView>
+        </com.fang.starfang.ui.common.DiagonalScrollRecyclerView>
         </LinearLayout>
 
 

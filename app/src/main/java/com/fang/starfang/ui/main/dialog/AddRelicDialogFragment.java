@@ -14,10 +14,11 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.RelicPRFX;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
+import com.fang.starfang.ui.common.UpdateDialogFragment;
 
 import io.realm.RealmResults;
 
-public class AddRelicDialogFragment extends UpdateDialogFragment{
+public class AddRelicDialogFragment extends UpdateDialogFragment {
     private static final String TAG = "FANG_DIALOG_ADD_RELIC";
 
 
@@ -36,7 +37,9 @@ public class AddRelicDialogFragment extends UpdateDialogFragment{
         final NumberPicker picker_add_relic_prefix = view.findViewById(R.id.picker_add_relic_prefix);
         final NumberPicker picker_add_relic_suffix = view.findViewById(R.id.picker_add_relic_suffix);
         final NumberPicker picker_add_relic_grade = view.findViewById(R.id.picker_add_relic_grade);
-        final NumberPicker picker_add_relic_num = view.findViewById(R.id.picker_add_relic_num);
+        //final NumberPicker picker_add_relic_num = view.findViewById(R.id.picker_add_relic_num);
+
+        final String[] GUARDIANS = resources.getStringArray(R.array.guardians);
 
         try {
             RealmResults<RelicSFX> relicGuardians = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_TYPE).findAll();
@@ -44,7 +47,7 @@ public class AddRelicDialogFragment extends UpdateDialogFragment{
             for(int i = 0; i < relicGuardiansStr.length; i++) {
                 RelicSFX relicGuardian = relicGuardians.get(i);
                 if(relicGuardian != null) {
-                    relicGuardiansStr[i] = AppConstant.guardians[relicGuardian.getGuardianType()-1];
+                    relicGuardiansStr[i] = GUARDIANS[relicGuardian.getGuardianType()-1];
                 }
             }
             picker_add_relic_guardian.setMinValue(0);

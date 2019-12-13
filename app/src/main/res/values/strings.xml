@@ -71,6 +71,13 @@
         <item>@string/power5</item>
     </string-array>
 
+    <string-array name="guardians">
+        <item>@string/guardian_blue_dragon</item>
+        <item>@string/guardian_red_bird</item>
+        <item>@string/guardian_white_tiger</item>
+        <item>@string/guardian_black_tortoise</item>
+    </string-array>
+
 
     <string name="notifications">Notifications</string>
     <string name="start_bot">냥봇 시작</string>
@@ -206,6 +213,7 @@
     <string name="cancel_kor">취소</string>
     <string name="cancel_transaction_kor">실행 취소</string>
     <string name="transaction_canceled_kor">실행 취소됨</string>
+    <string name="transaction_cancel_failure_kor">실행 취소 실패</string>
     <string name="modified_kor">변경됨</string>
     <string name="added_kor">추가됨</string>
     <string name="add_kor">추가</string>
@@ -236,6 +244,11 @@
     <string name="available_relic_list_kor">착용가능 보패 목록</string>
     <string name="desc_relic_level_init">: 보패 레벨 초기화</string>
     <string name="desc_relic_level_up">: 보패 레벨</string>
+
+    <string name="guardian_blue_dragon">청룡</string>
+    <string name="guardian_red_bird">주작</string>
+    <string name="guardian_white_tiger">백호</string>
+    <string name="guardian_black_tortoise">현무</string>
 
 
 </resources>

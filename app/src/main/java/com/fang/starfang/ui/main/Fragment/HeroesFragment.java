@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.ui.main.custom.DiagonalScrollRecyclerView;
-import com.fang.starfang.ui.main.recycler.adapter.HeroesFixedRealmAdapter;
-import com.fang.starfang.ui.main.recycler.adapter.HeroesFloatingRealmAdapter;
-import com.fang.starfang.ui.main.recycler.filter.HeroSimFilter;
+import com.fang.starfang.ui.common.DiagonalScrollRecyclerView;
+import com.fang.starfang.ui.main.adapter.HeroesFixedRealmAdapter;
+import com.fang.starfang.ui.main.adapter.HeroesFloatingRealmAdapter;
+import com.fang.starfang.ui.main.adapter.filter.HeroSimFilter;
 
 public class HeroesFragment extends PlaceholderFragment {
 

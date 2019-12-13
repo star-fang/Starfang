@@ -17,7 +17,8 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-import com.fang.starfang.ui.main.recycler.adapter.ItemsRealmAdapter;
+import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.main.adapter.ItemsRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 
 import org.apache.commons.lang3.math.NumberUtils;

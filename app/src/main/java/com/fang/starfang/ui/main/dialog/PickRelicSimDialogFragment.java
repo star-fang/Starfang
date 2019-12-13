@@ -18,7 +18,8 @@ import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.RelicPRFX;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
-import com.fang.starfang.ui.main.recycler.adapter.PickRelicSimRealmAdapter;
+import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.main.adapter.PickRelicSimRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 
 import java.util.ArrayList;
@@ -72,13 +73,15 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                 final NumberPicker picker_pick_relic_suffix = view.findViewById(R.id.picker_pick_relic_suffix);
                 final NumberPicker picker_pick_relic_grade = view.findViewById(R.id.picker_pick_relic_grade);
 
+                final String[] GUARDIANS = resources.getStringArray(R.array.guardians);
+
                 try {
                     RealmResults<RelicSFX> relicGuardians = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_TYPE).findAll();
                     ArrayList<String> relicGuardianList = new ArrayList<>();
                     relicGuardianList.add(AppConstant.ALL_PICK_KOR);
                     for (RelicSFX relicGuardian : relicGuardians) {
                         if (relicGuardian != null) {
-                            relicGuardianList.add( AppConstant.guardians[relicGuardian.getGuardianType() - 1] );
+                            relicGuardianList.add( GUARDIANS[relicGuardian.getGuardianType() - 1] );
                         }
                     }
                     picker_pick_relic_guardian.setMinValue(0);

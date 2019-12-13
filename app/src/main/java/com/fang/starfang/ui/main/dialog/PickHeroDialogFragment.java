@@ -17,7 +17,8 @@ import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-import com.fang.starfang.ui.main.recycler.adapter.PickHeroSimRealmAdapter;
+import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.main.adapter.PickHeroSimRealmAdapter;
 
 import org.apache.commons.lang3.math.NumberUtils;
 

@@ -18,7 +18,8 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
-import com.fang.starfang.ui.main.recycler.adapter.PickItemSimRealmAdapter;
+import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.main.adapter.PickItemSimRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 
 
