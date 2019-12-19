@@ -74,11 +74,13 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                 final NumberPicker picker_pick_relic_grade = view.findViewById(R.id.picker_pick_relic_grade);
 
                 final String[] GUARDIANS = resources.getStringArray(R.array.guardians);
+                final String GRADE_KOR = resources.getString(R.string.grade_kor);
+                final String ALL_PICK_KOR = resources.getString(R.string.all_pick_kor);
 
                 try {
                     RealmResults<RelicSFX> relicGuardians = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_TYPE).findAll();
                     ArrayList<String> relicGuardianList = new ArrayList<>();
-                    relicGuardianList.add(AppConstant.ALL_PICK_KOR);
+                    relicGuardianList.add(ALL_PICK_KOR);
                     for (RelicSFX relicGuardian : relicGuardians) {
                         if (relicGuardian != null) {
                             relicGuardianList.add( GUARDIANS[relicGuardian.getGuardianType() - 1] );
@@ -91,7 +93,7 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
 
                     RealmResults<RelicPRFX> relicPRFXes = realm.where(RelicPRFX.class).distinct(RelicPRFX.FIELD_NAME).findAll();
                     ArrayList<String> relicPrefixList = new ArrayList<>();
-                    relicPrefixList.add(AppConstant.ALL_PICK_KOR);
+                    relicPrefixList.add(ALL_PICK_KOR);
                     for (RelicPRFX relicPRFX : relicPRFXes) {
                         if (relicPRFX != null) {
                             relicPrefixList.add(relicPRFX.getRelicPrefixName());
@@ -104,10 +106,10 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
 
                     RealmResults<RelicSFX> relicSFXGrades = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_GRD).findAll();
                     ArrayList<String> relicGradeList = new ArrayList<>();
-                    relicGradeList.add(AppConstant.ALL_PICK_KOR);
+                    relicGradeList.add(ALL_PICK_KOR);
                     for (RelicSFX relicSFXGrade : relicSFXGrades) {
                         if (relicSFXGrade != null) {
-                            relicGradeList.add(relicSFXGrade.getRelicSuffixGrade() + AppConstant.GRADE_KOR);
+                            relicGradeList.add(relicSFXGrade.getRelicSuffixGrade() + GRADE_KOR);
                         }
                     }
                     picker_pick_relic_grade.setMinValue(0);
@@ -116,7 +118,7 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
 
                     RealmResults<RelicSFX> relicSFXes = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_NAME).equalTo(RelicSFX.FIELD_TYPE, AppConstant.GUARDIAN_INIT_VALUE + 1).findAll();
                     ArrayList<String> relicSuffixList = new ArrayList<>();
-                    relicSuffixList.add(AppConstant.ALL_PICK_KOR);
+                    relicSuffixList.add(ALL_PICK_KOR);
                     for (RelicSFX relicSFX:relicSFXes) {
                         if (relicSFX != null) {
                             relicSuffixList.add(relicSFX.getRelicSuffixName());
@@ -127,9 +129,9 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                     picker_pick_relic_suffix.setDisplayedValues(relicSuffixList.toArray(new String[0]));
 
                     picker_pick_relic_guardian.setOnValueChangedListener((picker, oldVal, newVal) -> {
-                        RealmResults<RelicSFX> newRelicSFXes = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_NAME).equalTo(RelicSFX.FIELD_TYPE, newVal + 1).findAll();
+                        RealmResults<RelicSFX> newRelicSFXes = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_NAME).equalTo(RelicSFX.FIELD_TYPE, newVal).findAll();
                         relicSuffixList.clear();
-                        relicSuffixList.add(AppConstant.ALL_PICK_KOR);
+                        relicSuffixList.add(ALL_PICK_KOR);
                         for (RelicSFX relicSFX : newRelicSFXes) {
                             if (relicSFX != null) {
                                 relicSuffixList.add(relicSFX.getRelicSuffixName());
@@ -142,17 +144,12 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                             picker_pick_relic_suffix.setMaxValue(newRelicSFXes.size());
                             picker_pick_relic_suffix.setDisplayedValues(relicSuffixList.toArray(new String[0]));
 
+                            String cs = newVal + AppConstant.CONSTRAINT_SEPARATOR
+                                    + relicPrefixList.get(picker_pick_relic_prefix.getValue()) + AppConstant.CONSTRAINT_SEPARATOR
+                                    + picker_pick_relic_grade.getValue() + AppConstant.CONSTRAINT_SEPARATOR
+                                    + relicSuffixList.get(picker_pick_relic_suffix.getValue());
 
-                            String guardianType = relicGuardianList.get(newVal);
-                            String prefix = relicPrefixList.get(picker_pick_relic_prefix.getValue());
-                            String grade = relicGradeList.get(picker_pick_relic_grade.getValue());
-                            String suffix = relicSuffixList.get(picker_pick_relic_suffix.getValue());
-                            String cs = guardianType + AppConstant.CONSTRAINT_SEPARATOR
-                                    + prefix + AppConstant.CONSTRAINT_SEPARATOR
-                                    + grade + AppConstant.CONSTRAINT_SEPARATOR
-                                    + suffix;
-
-                            pickRelicSimRealmAdapter.getFilter().filter( cs );
+                            pickRelicSimRealmAdapter.getFilter().filter( cs.replace(ALL_PICK_KOR,"") );
 
                         } catch (ArrayIndexOutOfBoundsException e) {
                             Log.d(TAG, "suffix error :" + e.toString());
@@ -160,56 +157,50 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                     });
 
                     picker_pick_relic_prefix.setOnValueChangedListener((picker, oldVal, newVal) -> {
-                        String guardianType = relicGuardianList.get(picker_pick_relic_guardian.getValue());
-                        String prefix = relicPrefixList.get(newVal);
-                        String grade = relicGradeList.get(picker_pick_relic_grade.getValue());
-                        String suffix = relicSuffixList.get(picker_pick_relic_suffix.getValue());
-                        String cs = guardianType + AppConstant.CONSTRAINT_SEPARATOR
-                                + prefix + AppConstant.CONSTRAINT_SEPARATOR
-                                + grade + AppConstant.CONSTRAINT_SEPARATOR
-                                + suffix;
-                        pickRelicSimRealmAdapter.getFilter().filter( cs );
+                        String cs = picker_pick_relic_guardian.getValue() + AppConstant.CONSTRAINT_SEPARATOR
+                                + relicPrefixList.get(newVal) + AppConstant.CONSTRAINT_SEPARATOR
+                                + picker_pick_relic_grade.getValue() + AppConstant.CONSTRAINT_SEPARATOR
+                                + relicSuffixList.get(picker_pick_relic_suffix.getValue());
+                        pickRelicSimRealmAdapter.getFilter().filter( cs.replace(ALL_PICK_KOR,"") );
                     });
 
                     picker_pick_relic_grade.setOnValueChangedListener((picker, oldVal, newVal) -> {
-                        String guardianType = relicGuardianList.get(picker_pick_relic_guardian.getValue());
-                        String prefix = relicPrefixList.get(picker_pick_relic_prefix.getValue());
-                        String grade = relicGradeList.get(newVal);
-                        String suffix = relicSuffixList.get(picker_pick_relic_suffix.getValue());
-                        String cs = guardianType + AppConstant.CONSTRAINT_SEPARATOR
-                                + prefix + AppConstant.CONSTRAINT_SEPARATOR
-                                + grade + AppConstant.CONSTRAINT_SEPARATOR
-                                + suffix;
-                        pickRelicSimRealmAdapter.getFilter().filter( cs );
+                        String cs = picker_pick_relic_guardian.getValue() + AppConstant.CONSTRAINT_SEPARATOR
+                                + relicPrefixList.get(picker_pick_relic_prefix.getValue()) + AppConstant.CONSTRAINT_SEPARATOR
+                                + newVal + AppConstant.CONSTRAINT_SEPARATOR
+                                + relicSuffixList.get(picker_pick_relic_suffix.getValue());
+                        pickRelicSimRealmAdapter.getFilter().filter( cs.replace(ALL_PICK_KOR,"") );
                     });
 
                     picker_pick_relic_suffix.setOnValueChangedListener((picker, oldVal, newVal) -> {
-                        String guardianType = relicGuardianList.get(picker_pick_relic_guardian.getValue());
-                        String prefix = relicPrefixList.get(picker_pick_relic_prefix.getValue());
-                        String grade = relicGradeList.get(picker_pick_relic_grade.getValue());
-                        String suffix = relicSuffixList.get(newVal);
-                        String cs = guardianType + AppConstant.CONSTRAINT_SEPARATOR
-                                + prefix + AppConstant.CONSTRAINT_SEPARATOR
-                                + grade + AppConstant.CONSTRAINT_SEPARATOR
-                                + suffix;
-                        pickRelicSimRealmAdapter.getFilter().filter( cs );
+                        String cs = picker_pick_relic_guardian.getValue() + AppConstant.CONSTRAINT_SEPARATOR
+                                + relicPrefixList.get(picker_pick_relic_prefix.getValue()) + AppConstant.CONSTRAINT_SEPARATOR
+                                + picker_pick_relic_grade.getValue() + AppConstant.CONSTRAINT_SEPARATOR
+                                + relicSuffixList.get(newVal);
+                        pickRelicSimRealmAdapter.getFilter().filter( cs.replace(ALL_PICK_KOR, "") );
                     });
                     builder.setView(view).setPositiveButton(R.string.wear_kor, (dialog, which) -> {
 
                         RelicSim selectedRelic = pickRelicSimRealmAdapter.getSelectedRelic();
                         if( selectedRelic != null ) {
-                            if( realm.isInTransaction()) {
-                                realm.commitTransaction();
-                            }
-                            realm.beginTransaction();
-                            selectedRelic.setHeroWhoHasThis(heroSim);
-                            heroSim.addRelic(selectedRelic,relicSlot,relicPosition);
-                            //realm.commitTransaction();
-                            RelicPRFX relicPrefix = selectedRelic.getPrefix();
-                            RelicSFX relicSuffix = selectedRelic.getSuffix();
-                            String message = heroSim.getHero().getHeroName() + ": " + (relicPrefix != null ? relicPrefix.getRelicPrefixName() : "" ) + " " +
-                                    relicSuffix.getNameStarGrade() + " " + resources.getString(R.string.wear_kor);
-                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC, message);
+                            int relicID = selectedRelic.getRelicID();
+                            realm.executeTransactionAsync( bgRealm -> {
+                                HeroSim bgHeroSim = bgRealm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, heroID).findFirst();
+                                RelicSim bgRelic = bgRealm.where(RelicSim.class).equalTo(RelicSim.FIELD_ID, relicID).findFirst();
+                                if( bgHeroSim != null && bgRelic != null ) {
+                                    bgRelic.setHeroWhoHasThis(bgHeroSim);
+                                    bgHeroSim.addRelic(bgRelic,relicSlot,relicPosition);
+                                    bgHeroSim.setRelicCombinations(relicSlot, bgRealm);
+                                }
+                            }, () -> {
+                                RelicPRFX relicPrefix = selectedRelic.getPrefix();
+                                RelicSFX relicSuffix = selectedRelic.getSuffix();
+                                String message = heroSim.getHero().getHeroName() + ": " + (relicPrefix != null ? relicPrefix.getRelicPrefixName() : "" ) + " " +
+                                        relicSuffix.getNameStarGrade() + " " + resources.getString(R.string.wear_kor);
+                                onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC, message);
+                            });
+
+
                         }
                     }).setNegativeButton(R.string.cancel_kor, null);
 

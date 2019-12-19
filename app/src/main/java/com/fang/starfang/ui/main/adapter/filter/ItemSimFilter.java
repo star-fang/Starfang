@@ -49,11 +49,12 @@ public class ItemSimFilter extends Filter {
         String itemSimItemField = ItemSim.FIELD_ITEM + ".";
 
         try {
-            if (!csSplit[0].equals(AppConstant.ALL_PICK_KOR)) {
-                query.equalTo( itemSimItemField + Item.FIELD_GRD, csSplit[0].replace(AppConstant.GRADE_KOR, ""));
+            if (!csSplit[0].isEmpty()) {
+                String digits = csSplit[0].replaceAll("[^0-9]","");
+                query.equalTo(itemSimItemField + Item.FIELD_GRD, digits.isEmpty() ? csSplit[0] : digits);
             }
 
-            if (!csSplit[1].equals(AppConstant.ALL_PICK_KOR)) {
+            if (!csSplit[1].isEmpty()) {
                 query.and().beginGroup().alwaysFalse();
                 RealmResults<ItemCate> categories = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_MAIN_CATE, csSplit[1]).findAll();
                 for (ItemCate cate : categories) {
@@ -62,7 +63,7 @@ public class ItemSimFilter extends Filter {
                 query.endGroup();
             }
 
-            if( !csSplit[2].equals(AppConstant.ALL_PICK_KOR) ) {
+            if( !csSplit[2].isEmpty() ) {
                 if ( !csSplit[2].equals(AppConstant.AID_KOR) &&
                         csSplit[1].equals(AppConstant.AID_KOR)) {
                     query.and().beginGroup().isNull(itemSimItemField + Item.FIELD_RESTRICT_BRANCH).or().

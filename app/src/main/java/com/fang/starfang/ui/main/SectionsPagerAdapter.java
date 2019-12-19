@@ -19,7 +19,7 @@ public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
     private static final int[] TAB_TITLES = new int[]{R.string.tab_text_4,R.string.tab_text_1, R.string.tab_text_5};
     private final Context mContext;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm) {
+    SectionsPagerAdapter(Context context, FragmentManager fm) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mContext = context;
     }

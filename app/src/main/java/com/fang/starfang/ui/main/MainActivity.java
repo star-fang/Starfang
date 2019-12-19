@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -165,11 +164,11 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
                 Log.d(TAG, "relic modified:" + message);
                 break;
             default:
-                notifyType = -1;
         } // end switch
 
         if(message != null) {
-            showCancelableSnackBar(view, message,notifyType);
+            Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+            //showCancelableSnackBar(view, message,notifyType);
         }
 
     }
@@ -189,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
         dialogIsBeingShown = false;
     }
 
+    /*
     private void showCancelableSnackBar(View view, String message, int notifyType) {
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.cancel_transaction_kor, v -> {
@@ -216,6 +216,8 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
 
         snackbar.show();
     }
+
+     */
 
     private void notifyToAdapter(int notifyType) {
         switch( notifyType ) {

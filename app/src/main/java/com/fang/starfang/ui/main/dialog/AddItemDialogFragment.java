@@ -54,15 +54,17 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
         final NumberPicker picker_item_grade = view.findViewById(R.id.picker_item_grade);
         final NumberPicker picker_item_category_main = view.findViewById(R.id.picker_item_category_main);
         final NumberPicker picker_item_category_sub = view.findViewById(R.id.picker_item_category_sub);
+        final String GRADE_KOR = resources.getString(R.string.grade_kor);
+        final String ALL_PICK_KOR = resources.getString(R.string.all_pick_kor);
 
         try {
             RealmResults<Item> grades = realm.where(Item.class).distinct(Item.FIELD_GRD).findAll().sort(Item.FIELD_GRD, Sort.DESCENDING);
             ArrayList<String> gradeList = new ArrayList<>();
-            gradeList.add(AppConstant.ALL_PICK_KOR);
+            gradeList.add(ALL_PICK_KOR);
             for (Item grade : grades) {
                 if (grade != null) {
                     String gradeStr = grade.getItemGrade();
-                    gradeStr += NumberUtils.isDigits(gradeStr) ? AppConstant.GRADE_KOR : "";
+                    gradeStr += NumberUtils.isDigits(gradeStr) ? GRADE_KOR : "";
                     gradeList.add(gradeStr);
                 }
             }
@@ -73,7 +75,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
 
             RealmResults<ItemCate> itemCategories_main = realm.where(ItemCate.class).distinct(ItemCate.FIELD_MAIN_CATE).findAll();
             ArrayList<String> mainCategoryList = new ArrayList<>();
-            mainCategoryList.add(AppConstant.ALL_PICK_KOR);
+            mainCategoryList.add(ALL_PICK_KOR);
             for (ItemCate cate_main : itemCategories_main) {
                 if (cate_main != null) {
                     String mainCateStr = cate_main.getItemMainCate();
@@ -88,7 +90,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
 
             RealmResults<ItemCate> itemCategories_sub = realm.where(ItemCate.class).distinct(ItemCate.FIELD_SUB_CATE).findAll();
             ArrayList<String> subCategoryList = new ArrayList<>();
-            subCategoryList.add(AppConstant.ALL_PICK_KOR);
+            subCategoryList.add(ALL_PICK_KOR);
             for (ItemCate cate_sub : itemCategories_sub) {
                 if (cate_sub != null) {
                     String subCateStr = cate_sub.getItemSubCate();
@@ -106,7 +108,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
                 String selected_category_main = mainCategoryList.get(picker_item_category_main.getValue());
                 String selected_category_sub = subCategoryList.get(picker_item_category_sub.getValue());
                 String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
-                itemsRealmAdapter.getFilter().filter(cs);
+                itemsRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
             });
 
 
@@ -120,7 +122,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
                 }
                 RealmResults<ItemCate> categories_sub = categories_sub_query.findAll();
                 subCategoryList.clear();
-                subCategoryList.add(AppConstant.ALL_PICK_KOR);
+                subCategoryList.add(ALL_PICK_KOR);
                 for (ItemCate cate_sub : categories_sub) {
                     if (cate_sub != null) {
                         String subCateStr = cate_sub.getItemSubCate();
@@ -136,7 +138,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
 
                     String selected_category_sub = subCategoryList.get(picker_item_category_sub.getValue());
                     String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
-                    itemsRealmAdapter.getFilter().filter(cs);
+                    itemsRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Log.d(TAG,"subCate : " + e.toString());
                 }
@@ -147,32 +149,38 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
                 String selected_category_main = mainCategoryList.get(picker_item_category_main.getValue());
                 String selected_category_sub = subCategoryList.get(newVal);
                 String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
-                itemsRealmAdapter.getFilter().filter(cs);
+                itemsRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
             });
 
 
         } catch( IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
             Log.d(TAG, e.toString());
         }
-
         builder.setView(view).setPositiveButton(R.string.create_kor, (dialogInterface, i) -> {
             Item item_selected = itemsRealmAdapter.getSelectedItem();
-            if(item_selected!= null) {
-                try {
-                    ItemSim itemSim = new ItemSim(item_selected);
-                    //Log.d(TAG,"itemSim" + itemSim.getItemID() + " created");
-                    if( realm.isInTransaction() ) {
-                        realm.commitTransaction();
-                    }
-                    realm.beginTransaction();
-                    realm.copyToRealm(itemSim);
-                    //realm.commitTransaction();
-                    //Log.d(TAG,"copy to realm : success");
-                    String message = item_selected.getItemName() + " " + resources.getString(R.string.added_kor);
-                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_ADD_ITEM, message);
-                } catch( RealmPrimaryKeyConstraintException | RealmException e ) {
-                    Log.d(TAG,e.toString());
-                }
+            if(item_selected != null) {
+                final int itemNo = item_selected.getItemNo();
+                    realm.executeTransactionAsync( bgRealm -> {
+                        Item bgItem = bgRealm.where(Item.class).equalTo(Item.FIELD_NO, itemNo).findFirst();
+                        if( bgItem != null ) {
+                            try {
+                                ItemSim itemSim = new ItemSim(bgItem);
+                                bgRealm.copyToRealm(itemSim);
+                            } catch (RealmPrimaryKeyConstraintException | RealmException e) {
+                                Log.d(TAG, e.toString());
+                            }
+
+
+
+                        }
+                    }, () -> {
+                        final String message = item_selected.getItemName() + " " + resources.getString(R.string.added_kor);
+                        onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_ADD_ITEM, message);
+                    });
+
+
+
+
             }
         }).setNegativeButton(R.string.cancel_kor, null);
 

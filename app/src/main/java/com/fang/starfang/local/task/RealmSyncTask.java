@@ -73,6 +73,7 @@ import java.util.concurrent.TimeoutException;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.exceptions.RealmPrimaryKeyConstraintException;
 
 public class RealmSyncTask  extends AsyncTask<String,String, String> {
@@ -170,7 +171,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
             realmForUT.commitTransaction();
             ut = newUT;
         }
-        String utStr = ut.getLatestUpadateTime();
+        String utStr = ut.getLatestUpdateTime();
         realmForUT.close();
         String mJSONURLString = address + REALM_BASE_URL + GET_JSON_PHP + "?pref_t=" + pref_table.replace(" ","%20")
                 +"&lut="+utStr.replace(" ","%20");
@@ -339,6 +340,14 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                                     RelicCombination comb = gson.fromJson(json, RelicCombination.class);
                                     realm.copyToRealm(comb);
                             }
+
+                            for( int i = 0; i < HeroSim.FIELD_COMB_IDS.length; i++ ) {
+                                RealmResults<HeroSim> heroSims = realm.where(HeroSim.class).notEqualTo(HeroSim.FIELD_COMB_IDS[i], 0).findAll();
+                                int slot = i + 1;
+                                for( HeroSim heroSim : heroSims ) {
+                                    heroSim.updateRelicCombination( slot, realm );
+                                }
+                            }
                             Log.d(TAG, "SYNC RelicCombination REALM COMPLETE!");
                             break;
                         case RelicPRFX.PREF_TABLE:
@@ -401,7 +410,6 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                             Log.d(TAG, "SYNC REALM failure : empty table name");
                     }
                     realm.commitTransaction();
-                    realm.refresh();
                     realm.close();
 
 

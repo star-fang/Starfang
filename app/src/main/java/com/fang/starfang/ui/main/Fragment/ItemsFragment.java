@@ -84,14 +84,17 @@ public class ItemsFragment extends PlaceholderFragment {
         final NumberPicker picker_item_sim_category_main = view.findViewById(R.id.picker_item_sim_category_main);
         final NumberPicker picker_item_sim_category_sub = view.findViewById(R.id.picker_item_sim_category_sub);
 
+        final String GRADE_KOR = getResources().getString(R.string.grade_kor);
+        final String ALL_PICK_KOR = getResources().getString(R.string.all_pick_kor);
+
         try {
             RealmResults<Item> grades = realm.where(Item.class).distinct(Item.FIELD_GRD).findAll().sort(Item.FIELD_GRD, Sort.DESCENDING);
             ArrayList<String> gradeList = new ArrayList<>();
-            gradeList.add(AppConstant.ALL_PICK_KOR);
+            gradeList.add(ALL_PICK_KOR);
             for (Item grade : grades) {
                 if (grade != null) {
                     String gradeStr = grade.getItemGrade();
-                    gradeStr += NumberUtils.isDigits(gradeStr) ? AppConstant.GRADE_KOR : "";
+                    gradeStr += NumberUtils.isDigits(gradeStr) ? GRADE_KOR : "";
                     gradeList.add(gradeStr);
                 }
             }
@@ -102,7 +105,7 @@ public class ItemsFragment extends PlaceholderFragment {
 
             RealmResults<ItemCate> itemCategories_main = realm.where(ItemCate.class).distinct(ItemCate.FIELD_MAIN_CATE).findAll();
             ArrayList<String> mainCategoryList = new ArrayList<>();
-            mainCategoryList.add(AppConstant.ALL_PICK_KOR);
+            mainCategoryList.add(ALL_PICK_KOR);
             for (ItemCate cate_main : itemCategories_main) {
                 if (cate_main != null) {
                     String mainCateStr = cate_main.getItemMainCate();
@@ -117,7 +120,7 @@ public class ItemsFragment extends PlaceholderFragment {
 
             RealmResults<ItemCate> itemCategories_sub = realm.where(ItemCate.class).distinct(ItemCate.FIELD_SUB_CATE).findAll();
             ArrayList<String> subCategoryList = new ArrayList<>();
-            subCategoryList.add(AppConstant.ALL_PICK_KOR);
+            subCategoryList.add(ALL_PICK_KOR);
             for (ItemCate cate_sub : itemCategories_sub) {
                 if (cate_sub != null) {
                     String subCateStr = cate_sub.getItemSubCate();
@@ -135,8 +138,8 @@ public class ItemsFragment extends PlaceholderFragment {
                 String selected_category_main = mainCategoryList.get(picker_item_sim_category_main.getValue());
                 String selected_category_sub = subCategoryList.get(picker_item_sim_category_sub.getValue());
                 String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
-                itemSimsFixedRealmAdapter.getFilter().filter(cs);
-                itemSimsFloatingRealmAdapter.getFilter().filter(cs);
+                itemSimsFixedRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
+                itemSimsFloatingRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
             });
 
 
@@ -150,7 +153,7 @@ public class ItemsFragment extends PlaceholderFragment {
                 }
                 RealmResults<ItemCate> categories_sub = categories_sub_query.findAll();
                 subCategoryList.clear();
-                subCategoryList.add(AppConstant.ALL_PICK_KOR);
+                subCategoryList.add(ALL_PICK_KOR);
                 for (ItemCate cate_sub : categories_sub) {
                     if (cate_sub != null) {
                         String subCateStr = cate_sub.getItemSubCate();
@@ -166,8 +169,8 @@ public class ItemsFragment extends PlaceholderFragment {
 
                     String selected_category_sub = subCategoryList.get(picker_item_sim_category_sub.getValue());
                     String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
-                    itemSimsFixedRealmAdapter.getFilter().filter(cs);
-                    itemSimsFloatingRealmAdapter.getFilter().filter(cs);
+                    itemSimsFixedRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
+                    itemSimsFloatingRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Log.d(TAG,"subCate : " + e.toString());
                 }
@@ -178,8 +181,8 @@ public class ItemsFragment extends PlaceholderFragment {
                 String selected_category_main = mainCategoryList.get(picker_item_sim_category_main.getValue());
                 String selected_category_sub = subCategoryList.get(newVal);
                 String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
-                itemSimsFixedRealmAdapter.getFilter().filter(cs);
-                itemSimsFloatingRealmAdapter.getFilter().filter(cs);
+                itemSimsFixedRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
+                itemSimsFloatingRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
             });
 
 

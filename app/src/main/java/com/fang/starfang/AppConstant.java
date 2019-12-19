@@ -26,7 +26,6 @@ public class AppConstant {
 
     public static final int GUARDIAN_INIT_VALUE = 0;
     public static final int GRADE_INIT_VALUE = 3;
-    //public static final String[] guardians = {"청룡","주작","백호","현무"};
 
     public static final String INTENT_KEY_ITEM_NAME = "itemName";
     public static final String INTENT_KEY_ITEM_ID = "itemID";
@@ -39,14 +38,9 @@ public class AppConstant {
     public static final String INTENT_KEY_RELIC_POSITION = "relicPosition";
     public static final String INTENT_KEY_RELIC_SLOT = "relicSlot";
 
-    public static final String ALL_PICK_KOR = "전체";
-    public static final String GRADE_KOR = "등급";
     public static final String WEAPON_KOR = "무기";
     public static final String ARMOR_KOR = "방어구";
     public static final String AID_KOR = "보조구";
-    public static final String WEAR_KOR = "착용";
-    public static final String RELEASE_KOR = "해제";
-    public static final String REINFORCE_KOR = "강화";
 
     public static final String ITEM_GRADE_NO_REINFORCE = "연의";
 

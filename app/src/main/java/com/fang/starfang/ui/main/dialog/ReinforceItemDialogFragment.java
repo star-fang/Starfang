@@ -104,33 +104,36 @@ public class ReinforceItemDialogFragment extends UpdateDialogFragment {
                         }
                     });
 
-                    builder.setView(view).setPositiveButton(R.string.reinforce_grade_kor, (dialog, which) -> {
+                    builder.setView(view).setPositiveButton(R.string.reinforcement_kor, (dialog, which) -> {
                         int reinforceValue = seek_bar_item_reinforce.getProgress();
-                        if( realm.isInTransaction()) {
-                            realm.commitTransaction();
-                        }
-                        realm.beginTransaction();
-                        for (int i = 0; i < HeroSim.POWERS_KOR.length; i++) {
-                            itemSim.setItemPlusPowers(itemPlusPowers.get(i), i);
-                            itemSim.setItemPowers(itemPowers.get(i), i);
-                        }
-                        itemSim.setItemReinforcement(reinforceValue);
 
-                        //realm.commitTransaction();
+                        realm.executeTransactionAsync( bgRealm-> {
+                            ItemSim bgItemSim = bgRealm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID, itemID).findFirst();
+                            if(bgItemSim != null ) {
+                                for (int i = 0; i < HeroSim.POWERS_KOR.length; i++) {
+                                    bgItemSim.setItemPlusPowers(itemPlusPowers.get(i), i);
+                                    bgItemSim.setItemPowers(itemPowers.get(i), i);
+                                }
+                                bgItemSim.setItemReinforcement(reinforceValue);
+                            }
+                        }, () -> {
+                            Fragment targetFragment = getTargetFragment();
+                            if (targetFragment != null) {
+                                Intent intent = new Intent();
+                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN,itemMainCate);
+                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE,
+                                        AppConstant.ITEM_GRADE_NO_REINFORCE.equals(itemSim.getItem().getItemGrade()) ?
+                                                "" : "+" + reinforceValue);
+                                targetFragment.onActivityResult(AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT, Activity.RESULT_OK, intent);
+                            } else {
+                                String message = item.getItemName() + ": +" + reinforceValue + " " + resources.getString(R.string.reinforcement_kor);
+                                onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
+                            }
+                        });
 
-                        Fragment targetFragment = getTargetFragment();
-                        if (targetFragment != null) {
-                            realm.commitTransaction();
-                            Intent intent = new Intent();
-                            intent.putExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN,itemMainCate);
-                            intent.putExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE,
-                                    AppConstant.ITEM_GRADE_NO_REINFORCE.equals(itemSim.getItem().getItemGrade()) ?
-                                    "" : "+" + reinforceValue);
-                            targetFragment.onActivityResult(AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT, Activity.RESULT_OK, intent);
-                        } else {
-                            String message = item.getItemName() + ": +" + reinforceValue + " " + resources.getString(R.string.reinforcement_kor);
-                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
-                        }
+
+
+
                     }).setNegativeButton(R.string.cancel_kor, null);
                 }
             }

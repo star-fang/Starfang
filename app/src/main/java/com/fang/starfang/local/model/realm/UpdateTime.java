@@ -7,7 +7,7 @@ public class UpdateTime extends RealmObject {
     public static String FIELD_TABLE = "prefTable";
 
     private String prefTable;
-    private String latestUpadateTime = "0";
+    private String latestUpdateTime = "0";
 
     public String getPrefTable() {
         return prefTable;
@@ -17,11 +17,11 @@ public class UpdateTime extends RealmObject {
         this.prefTable = prefTable;
     }
 
-    public String getLatestUpadateTime() {
-        return latestUpadateTime;
+    public String getLatestUpdateTime() {
+        return latestUpdateTime;
     }
 
     public void setLatestUpadateTime(String latestUpadateTime) {
-        this.latestUpadateTime = latestUpadateTime;
+        this.latestUpdateTime = latestUpadateTime;
     }
 }

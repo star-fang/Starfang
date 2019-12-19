@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -23,10 +22,9 @@ import com.fang.starfang.ui.main.adapter.PickItemSimRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 
 
-
 public class PickItemSimDialogFragment extends UpdateDialogFragment {
 
-    private static final String TAG = "FANG_DIA_PICK_ITEM";
+    //private static final String TAG = "FANG_DIA_PICK_ITEM";
 
     public static PickItemSimDialogFragment newInstance( int heroID, String itemSubCate, int itemMainCate ) {
 
@@ -60,15 +58,15 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
 
                 switch (itemMainCate) {
                     case 0:
-                        itemSimsRealmAdapter.getFilter().filter(AppConstant.ALL_PICK_KOR +
+                        itemSimsRealmAdapter.getFilter().filter(
                                 AppConstant.CONSTRAINT_SEPARATOR + AppConstant.WEAPON_KOR + AppConstant.CONSTRAINT_SEPARATOR + itemSubCate);
                         break;
                     case 1:
-                        itemSimsRealmAdapter.getFilter().filter(AppConstant.ALL_PICK_KOR +
+                        itemSimsRealmAdapter.getFilter().filter(
                                 AppConstant.CONSTRAINT_SEPARATOR + AppConstant.ARMOR_KOR + AppConstant.CONSTRAINT_SEPARATOR + itemSubCate);
                         break;
                     default:
-                        itemSimsRealmAdapter.getFilter().filter(AppConstant.ALL_PICK_KOR +
+                        itemSimsRealmAdapter.getFilter().filter(
                                 AppConstant.CONSTRAINT_SEPARATOR + AppConstant.AID_KOR + AppConstant.CONSTRAINT_SEPARATOR + heroSim.getHero().getBranchNo());
                 }
 
@@ -77,68 +75,66 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
                 builder.setView(view).setPositiveButton(R.string.wear_kor, (dialogInterface, i) -> {
                     ItemSim itemSim_selected = itemSimsRealmAdapter.getSelectedItem();
                     if (itemSim_selected != null) {
-                        HeroSim hero_before = itemSim_selected.getHeroWhoHasThis();
-                        if(realm.isInTransaction()) {
-                            Log.d(TAG,"realm is already in a write transaction");
-                            realm.commitTransaction();
-                            Log.d(TAG,"commitTransaction");
-                        }
-                        realm.beginTransaction();
-                        switch (itemMainCate) {
-                            case 0:
-                                ItemSim weapon_before = heroSim.getHeroWeapon();
-                                if( weapon_before != null ) {
-                                    weapon_before.setHeroWhoHasThis( null );
+                        int itemID = itemSim_selected.getItemID();
+                        realm.executeTransactionAsync(bgRealm -> {
+                            HeroSim bgHeroSim = bgRealm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, heroID).findFirst();
+                            ItemSim bgItemSim = bgRealm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID,itemID).findFirst();
+                            if(bgHeroSim != null && bgItemSim != null ) {
+                                HeroSim hero_before = bgItemSim.getHeroWhoHasThis();
+                                switch (itemMainCate) {
+                                    case 0:
+                                        ItemSim weapon_before = bgHeroSim.getHeroWeapon();
+                                        if (weapon_before != null) {
+                                            weapon_before.setHeroWhoHasThis(null);
+                                        }
+                                        if (hero_before != null) {
+                                            hero_before.setHeroWeapon(null);
+                                        }
+                                        bgHeroSim.setHeroWeapon(bgItemSim);
+                                        break;
+                                    case 1:
+                                        ItemSim armor_before = bgHeroSim.getHeroArmor();
+                                        if (armor_before != null) {
+                                            armor_before.setHeroWhoHasThis(null);
+                                        }
+                                        if (hero_before != null) {
+                                            hero_before.setHeroArmor(null);
+                                        }
+                                        bgHeroSim.setHeroArmor(bgItemSim);
+                                        break;
+                                    default:
+                                        ItemSim aid_before = bgHeroSim.getHeroAid();
+                                        if (aid_before != null) {
+                                            aid_before.setHeroWhoHasThis(null);
+                                        }
+                                        if (hero_before != null) {
+                                            hero_before.setHeroAid(null);
+                                        }
+                                        bgHeroSim.setHeroAid(bgItemSim);
                                 }
-                                if(hero_before != null ) {
-                                    hero_before.setHeroWeapon( null );
-                                }
-                                heroSim.setHeroWeapon(itemSim_selected);
-                                break;
-                            case 1:
-                                ItemSim armor_before = heroSim.getHeroArmor();
-                                if( armor_before != null ) {
-                                    armor_before.setHeroWhoHasThis( null );
-                                }
-                                if(hero_before != null ) {
-                                    hero_before.setHeroArmor( null );
-                                }
-                                heroSim.setHeroArmor(itemSim_selected);
-                                break;
-                            default:
-                                ItemSim aid_before = heroSim.getHeroAid();
-                                if( aid_before != null ) {
-                                    aid_before.setHeroWhoHasThis( null );
-                                }
-                                if(hero_before != null ) {
-                                    hero_before.setHeroAid( null );
-                                }
-                                heroSim.setHeroAid(itemSim_selected);
-                        }
-
-                        itemSim_selected.setHeroWhoHasThis( heroSim );
-                        //realm.commitTransaction();
+                                bgItemSim.setHeroWhoHasThis( bgHeroSim );
+                            }
 
 
-                        Fragment targetFragment = getTargetFragment();
-                        if(targetFragment != null) {
-                            realm.commitTransaction();
-                            Intent intent = new Intent();
-                            Item item = itemSim_selected.getItem();
-                            intent.putExtra(AppConstant.INTENT_KEY_ITEM_NAME, item.getItemName());
-                            intent.putExtra(AppConstant.INTENT_KEY_ITEM_ID, itemSim_selected.getItemID());
-                            int reinforceValue = itemSim_selected.getItemReinforcement();
-                            String itemGrade = item.getItemGrade();
-                            String reinforceStr = AppConstant.ITEM_GRADE_NO_REINFORCE.equals(itemGrade) ? null :
-                                    "+" + reinforceValue;
-                            intent.putExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE, reinforceStr );
-                            intent.putExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate );
-                            targetFragment.onActivityResult(AppConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT,Activity.RESULT_OK,intent);
-                        } else {
-                            String message = itemSim_selected.getItem().getItemName()+ ": " + heroSim.getHero().getHeroName() + " " +  (hero_before == null ? resources.getString(R.string.wear_kor) :
-                                    ( "← " + hero_before.getHero().getHeroName() + " " + resources.getString(R.string.modified_kor) ) );
-                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
-                        }
+                        }, () -> {
+                            Fragment targetFragment = getTargetFragment();
+                            if(targetFragment != null) {
+                                Intent intent = new Intent();
+                                Item item = itemSim_selected.getItem();
+                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_NAME, item.getItemName());
+                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_ID, itemSim_selected.getItemID());
+                                int reinforceValue = itemSim_selected.getItemReinforcement();
+                                String itemGrade = item.getItemGrade();
+                                String reinforceStr = AppConstant.ITEM_GRADE_NO_REINFORCE.equals(itemGrade) ? null :
+                                        "+" + reinforceValue;
+                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE, reinforceStr );
+                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate );
+                                targetFragment.onActivityResult(AppConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT,Activity.RESULT_OK,intent);
+                            } else {
+                                String message = heroSim.getHero().getHeroName() + " " + itemSim_selected.getItem().getItemName() + " " +   resources.getString(R.string.wear_kor);
+                                onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
+                            }
+                        });
                     }
                 }).setNegativeButton(R.string.cancel_kor, null);
             }

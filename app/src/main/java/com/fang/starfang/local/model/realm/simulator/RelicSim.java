@@ -18,8 +18,6 @@ public class RelicSim extends RealmObject {
     public static final String FIELD_LEVEL = "relicLevel";
     public static final String FIELD_HERO = "heroWhoHasThis";
 
-    private static RelicSim emptyInstance = null;
-
     @PrimaryKey
     private int relicID;
     private int prefixID;

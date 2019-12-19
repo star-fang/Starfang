@@ -4,6 +4,8 @@ import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
+import com.fang.starfang.local.model.realm.source.RelicCombination;
+import com.fang.starfang.local.model.realm.source.RelicSFX;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +13,8 @@ import java.util.Arrays;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 //11-13 ~ 할일
@@ -28,6 +32,8 @@ public class HeroSim extends RealmObject {
     public static final String FIELD_HERO = "hero";
     public static final String FIELD_GRADE = "heroGrade";
     public static final String FIELD_LEVEL = "heroLevel";
+    public static final String[] FIELD_COMB_IDS =
+            {"heroRelicCombinationID1", "heroRelicCombinationID2", "heroRelicCombinationID3" };
     private static final Integer[] SPEC_LEVELS = {1, 10, 15, 20, 25, 30, 50, 70, 90};
     private static final Integer[] SPEC_SCORES_BY_LEVEL_INDEX = {2, 6, 14, 24, 48, 36, 48, 72, 84};
     private static final String[] GROWTH_RATES_GRADE = {"S", "A", "B", "C", "D"};
@@ -44,8 +50,15 @@ public class HeroSim extends RealmObject {
     private RealmList<RealmInteger> heroPlusStats; // 교본작
     private RealmList<Integer> heroSpecsChecked; //  체크된 효과 인덱스 (~3개)
     private RealmList<RelicSim> heroRelicSlot1; // 보패 슬롯1
+    private int heroRelicCombinationID1;
+    private RelicCombination heroRelicCombination1;
     private RealmList<RelicSim> heroRelicSlot2; // 보패 슬롯2
-    private int currentRelicSlot; // 1, 2
+    private int heroRelicCombinationID2;
+    private RelicCombination heroRelicCombination2;
+    private RealmList<RelicSim> heroRelicSlot3; // 보패 슬롯3
+    private int heroRelicCombinationID3;
+    private RelicCombination heroRelicCombination3;
+    private int currentRelicSlot; // 1, 2, 3
     private ItemSim heroWeapon;
     private ItemSim heroArmor;
     private ItemSim heroAid;
@@ -87,6 +100,7 @@ public class HeroSim extends RealmObject {
         this.heroSpecsChecked = null;
         this.heroRelicSlot1 = new RealmList<>(); // empty slot
         this.heroRelicSlot2 = new RealmList<>(); // position information belong to RelicSim
+        this.heroRelicSlot3 = new RealmList<>(); // position information belong to RelicSim
         this.heroWeapon = null;
         this.heroArmor = null;
         this.heroAid = null;
@@ -98,6 +112,12 @@ public class HeroSim extends RealmObject {
         this.heroPlusStatSum = 0;
         this.heroBranch = null;
         this.currentRelicSlot = 1;
+        this.heroRelicCombinationID1 = 0;
+        this.heroRelicCombination1 = null;
+        this.heroRelicCombinationID2 = 0;
+        this.heroRelicCombination2 = null;
+        this.heroRelicCombinationID3 = 0;
+        this.heroRelicCombination3 = null;
     }
 
     public static Integer getSpecScoreByLevel(int level) {
@@ -348,6 +368,8 @@ public class HeroSim extends RealmObject {
                 return heroRelicSlot1;
             case 2:
                 return heroRelicSlot2;
+            case 3:
+                return heroRelicSlot3;
             default:
                 return null;
         }
@@ -381,18 +403,97 @@ public class HeroSim extends RealmObject {
         }
     }
 
-    public int setRelicLevelUp( int slot, int position ) {
+    public void relicLevelUp( int slot, int position ) {
+        RealmList<RelicSim> heroRelicSlot = getHeroRelicSlot(slot);
+        if( heroRelicSlot != null ) {
+            RelicSim heroRelic = getHeroRelic( heroRelicSlot, position );
+            if (heroRelic != null) {
+                int currLevel = heroRelic.getRelicLevel();
+                int level = currLevel == 5 ? 1 : currLevel + 1;
+                heroRelic.setRelicLevel(  level );
+            } // end if
+        } // end if
+        //return level;
+    }
+
+    public int getRelicLevel( int slot, int position ) {
         RealmList<RelicSim> heroRelicSlot = getHeroRelicSlot(slot);
         int level = 0;
         if( heroRelicSlot != null ) {
             RelicSim heroRelic = getHeroRelic( heroRelicSlot, position );
             if (heroRelic != null) {
-                int currLevel = heroRelic.getRelicLevel();
-                level = currLevel == 5 ? 1 : currLevel + 1;
-                heroRelic.setRelicLevel(  level );
+                level = heroRelic.getRelicLevel();
             } // end if
         } // end if
         return level;
     }
 
+    public void updateRelicCombination( int slot, Realm realm ) {
+        RelicCombination relicCombination = realm.where(RelicCombination.class).equalTo(RelicCombination.FIELD_ID, getRelicCombinationID(slot)).findFirst();
+        setRelicCombination( slot, relicCombination );
+    }
+
+    public void setRelicCombinations( int slot, Realm realm ) {
+        RealmList<RelicSim> relicSlot = getHeroRelicSlot(slot);
+        RelicCombination relicCombination = null;
+        if(relicSlot.size() == 4) {
+            int minRelicGrade = 4;
+            RealmQuery<RelicCombination> combQuery = realm.where(RelicCombination.class).alwaysTrue();
+            for(RelicSim relicSim : relicSlot ) {
+                RelicSFX relicSFX = relicSim.getSuffix();
+                int currentRelicGrade = relicSFX.getRelicSuffixGrade();
+                minRelicGrade = Math.min( minRelicGrade, currentRelicGrade );
+                combQuery.and().equalTo(RelicCombination.FIELD_SFX+"."+RealmString.VALUE, relicSFX.getRelicSuffixName());
+            }
+            combQuery.and().lessThanOrEqualTo(RelicCombination.FIELD_GRADE, minRelicGrade);
+            relicCombination = combQuery.sort(RelicCombination.FIELD_GRADE, Sort.DESCENDING).findFirst();
+        }
+
+        setRelicCombination( slot, relicCombination );
+    }
+
+    public RelicCombination getRelicCombination( int slot ) {
+        switch ( slot ) {
+            case 1:
+                return heroRelicCombination1;
+            case 2:
+                return heroRelicCombination2;
+            case 3:
+                return heroRelicCombination3;
+            default:
+                return null;
+        }
+    }
+
+    private int getRelicCombinationID( int slot ) {
+        switch ( slot ) {
+            case 1:
+                return heroRelicCombinationID1;
+            case 2:
+                return heroRelicCombinationID2;
+            case 3:
+                return heroRelicCombinationID3;
+            default:
+                return 0;
+        }
+    }
+
+    private void setRelicCombination( int slot, RelicCombination relicCombination ) {
+        int relicCombinationID = relicCombination == null ? 0 : relicCombination.getRelicCombinationID();
+        switch ( slot ) {
+            case 1:
+                heroRelicCombinationID1 = relicCombinationID;
+                heroRelicCombination1 = relicCombination;
+                break;
+            case 2:
+                heroRelicCombinationID2 = relicCombinationID;
+                heroRelicCombination2 = relicCombination;
+                break;
+            case 3:
+                heroRelicCombinationID3 = relicCombinationID;
+                heroRelicCombination3 = relicCombination;
+                break;
+            default:
+        }
+    }
 }

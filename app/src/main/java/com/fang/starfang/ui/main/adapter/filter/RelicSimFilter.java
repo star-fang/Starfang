@@ -53,24 +53,23 @@ public class RelicSimFilter extends Filter {
         String relicSimSuffixField = RelicSim.FIELD_SUFFIX + ".";
 
         try {
-            if (!csSplit[0].equals(AppConstant.ALL_PICK_KOR)) {
-                int guardianType = NumberUtils.toInt(csSplit[0],-1);
+            int guardianType = NumberUtils.toInt(csSplit[0],0);
+            if (guardianType > 0) {
                 query.and().equalTo( relicSimSuffixField + RelicSFX.FIELD_TYPE, guardianType);
             }
 
-            if (!csSplit[1].equals(AppConstant.ALL_PICK_KOR)) {
+            if (!csSplit[1].isEmpty()) {
                 query.and().equalTo(relicSimPrefixField + RelicPRFX.FIELD_NAME, csSplit[1]);
             }
 
-            if( !csSplit[2].equals(AppConstant.ALL_PICK_KOR) ) {
+            if( !csSplit[2].isEmpty() ) {
                 query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_NAME, csSplit[2]);
 
             }
 
-            if( !csSplit[3].equals(AppConstant.ALL_PICK_KOR) ) {
-                int grade = NumberUtils.toInt(csSplit[3].replace(AppConstant.GRADE_KOR,""), 0);
+            int grade = NumberUtils.toInt(csSplit[3],0);
+            if( grade > 0 ) {
                 query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_GRD, grade);
-
             }
 
         } catch( ArrayIndexOutOfBoundsException | IllegalArgumentException e ) {

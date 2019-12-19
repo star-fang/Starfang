@@ -7,9 +7,11 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class RelicCombination extends RealmObject {
+    public static final String FIELD_ID = "relicCombinationID";
     public static final String PREF_TABLE = "보패 조합";
     public static final String FIELD_SPEC = "relicCombinationSpec";
     public static final String FIELD_SFX = "relicSFXes";
+    public static final String FIELD_GRADE = "relicCombinationGrade";
 
     @PrimaryKey
     private int relicCombinationID;

@@ -39,6 +39,7 @@ public class AddRelicDialogFragment extends UpdateDialogFragment {
         final NumberPicker picker_add_relic_grade = view.findViewById(R.id.picker_add_relic_grade);
         //final NumberPicker picker_add_relic_num = view.findViewById(R.id.picker_add_relic_num);
 
+        final String GRADE_KOR = resources.getString(R.string.grade_kor);
         final String[] GUARDIANS = resources.getStringArray(R.array.guardians);
 
         try {
@@ -71,7 +72,7 @@ public class AddRelicDialogFragment extends UpdateDialogFragment {
             for (int i = 0; i < relicSFXGradesStr.length; i++) {
                 RelicSFX relicSFXGrade = relicSFXGrades.get(i);
                 if (relicSFXGrade != null) {
-                    relicSFXGradesStr[i] = relicSFXGrade.getRelicSuffixGrade() + AppConstant.GRADE_KOR;
+                    relicSFXGradesStr[i] = relicSFXGrade.getRelicSuffixGrade() + GRADE_KOR;
                 }
             }
             picker_add_relic_grade.setMinValue(0);
@@ -112,23 +113,26 @@ public class AddRelicDialogFragment extends UpdateDialogFragment {
             picker_add_relic_grade.setValue(AppConstant.GRADE_INIT_VALUE);
 
             builder.setView(view).setPositiveButton(R.string.add_kor, ((dialog, which) -> {
-                //String guardian = relicGuardiansStr[picker_add_relic_guardian.getValue()];
+
                 String prefix = relicPRFXesStr[picker_add_relic_prefix.getValue()];
                 String suffix = relicSFXesStr[picker_add_relic_suffix.getValue()];
                 int grade = picker_add_relic_grade.getValue() + 1;
-                RelicSFX relicSFX = realm.where(RelicSFX.class).equalTo(RelicSFX.FIELD_NAME, suffix).and().equalTo(RelicSFX.FIELD_GRD, grade).findFirst();
-                RelicPRFX relicPRFX = realm.where(RelicPRFX.class).equalTo(RelicPRFX.FIELD_NAME,prefix).findFirst();
-                if( relicSFX != null ) {
-                    RelicSim relicSim = new RelicSim( relicSFX, relicPRFX );
-                    if( realm.isInTransaction() ) {
-                        realm.commitTransaction();
+
+                realm.executeTransactionAsync( bgRealm -> {
+
+                    RelicSFX relicSFX = bgRealm.where(RelicSFX.class).equalTo(RelicSFX.FIELD_NAME, suffix).and().equalTo(RelicSFX.FIELD_GRD, grade).findFirst();
+                    RelicPRFX relicPRFX = bgRealm.where(RelicPRFX.class).equalTo(RelicPRFX.FIELD_NAME,prefix).findFirst();
+                    if( relicSFX != null ) {
+                        RelicSim relicSim = new RelicSim( relicSFX, relicPRFX );
+                        bgRealm.copyToRealm(relicSim);
                     }
-                    realm.beginTransaction();
-                    realm.copyToRealm(relicSim);
-                    //realm.commitTransaction();
+
+
+                }, () -> {
                     String message = prefix + " " + suffix + " " + resources.getString(R.string.star_filled) + grade + resources.getString(R.string.added_kor);
                     onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_ADD_RELIC, message);
-                }
+                });
+
 
             })).setNegativeButton(R.string.cancel_kor,null);
         } catch ( IllegalArgumentException | ArrayIndexOutOfBoundsException e) {

@@ -39,4 +39,5 @@ dependencies {
     implementation 'io.realm:android-adapters:2.1.0'
     implementation group: 'org.mozilla', name: 'rhino', version: '1.7.10'
     implementation 'com.google.android:flexbox:1.1.0'
+    implementation 'org.jetbrains:annotations:15.0'
 }

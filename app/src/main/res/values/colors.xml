@@ -33,14 +33,11 @@
         <item>@color/cyan</item>
     </array>
 
-    <array name="color_suffix_pastel">
-        <item>@color/red_pastel</item>
-        <item>@color/blue_pastel</item>
-        <item>@color/orange_pastel</item>
-        <item>@color/yellow_pastel</item>
-        <item>@color/purple_pastel</item>
-        <item>@color/green_pastel</item>
-        <item>@color/cyan_pastel</item>
+    <array name="color_guardian">
+        <item>@color/blue_bright</item>
+        <item>@color/red</item>
+        <item>#FFF</item>
+        <item>#000</item>
     </array>
 
 </resources>

@@ -115,7 +115,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/grade_item_kor"
+                android:text="@string/grade_kor"
                 android:gravity="center"/>
             <NumberPicker
                 android:id="@+id/picker_item_sim_grade"

@@ -3,6 +3,7 @@ package com.fang.starfang.ui.main.adapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
+import com.fang.starfang.local.model.realm.source.RelicCombination;
 import com.fang.starfang.local.model.realm.source.RelicPRFX;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
 import com.fang.starfang.ui.main.dialog.PickItemSimDialogFragment;
@@ -78,13 +80,16 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
     private Resources resources;
     private int color_text_checked;
     private int color_text_unchecked;
-    //private TypedArray colors_relic_suffix_pastel;
     private TypedArray colors_relic_suffix;
+    private TypedArray colors_relic_guardian;
+    private Drawable[] relicSlotDrawables;
     private FragmentManager fragmentManager;
     private Context context;
+    private String[] guardians;
+    private String[] relicGradeSuperScripts;
     private static HeroesFloatingRealmAdapter instance;
 
-
+    @org.jetbrains.annotations.Contract(pure = true)
     public static HeroesFloatingRealmAdapter getInstance() {
         return instance;
     }
@@ -93,7 +98,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         instance = new HeroesFloatingRealmAdapter(realm, fragmentManager, context);
     }
 
-    private HeroesFloatingRealmAdapter(Realm realm, FragmentManager fragmentManager, Context context) {
+    private HeroesFloatingRealmAdapter(@NonNull Realm realm, FragmentManager fragmentManager, @NonNull Context context) {
         super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO + "." + Heroes.FIELD_NAME).
                 sort(HeroSim.FIELD_GRADE, Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING), false);
         this.realm = realm;
@@ -102,8 +107,16 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         this.resources = context.getResources();
         this.color_text_checked = ContextCompat.getColor(context, R.color.colorCheckedText);
         this.color_text_unchecked = ContextCompat.getColor(context, R.color.colorUnCheckedText);
-        //colors_relic_suffix_pastel  = resources.obtainTypedArray(R.array.color_suffix_pastel);
-        colors_relic_suffix = resources.obtainTypedArray(R.array.color_suffix);
+        this.colors_relic_suffix = resources.obtainTypedArray(R.array.color_suffix);
+        this.colors_relic_guardian = resources.obtainTypedArray(R.array.color_guardian);
+        this.relicSlotDrawables = new Drawable[]{
+                ContextCompat.getDrawable(context, R.drawable.ic_looks_one_white_24dp),
+                ContextCompat.getDrawable(context, R.drawable.ic_looks_two_white_24dp),
+                ContextCompat.getDrawable(context, R.drawable.ic_looks_3_white_24dp)
+        };
+
+        this.guardians = resources.getStringArray(R.array.guardians);
+        this.relicGradeSuperScripts = resources.getStringArray(R.array.relic_grade_super_scripts);
         this.fragmentManager = fragmentManager;
         Log.d(TAG, "constructed");
     }
@@ -188,21 +201,23 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
         private AppCompatTextView[][] text_relic_level_slot;
 
         private NestedScrollView scroll_hero_relic_slot;
-        private AppCompatTextView text_relic_slot_number;
+        private AppCompatTextView text_relic_slot_guardian;
         private AppCompatTextView text_relic_slot_combination;
+        private AppCompatTextView text_relic_slot_combination_val;
         private AppCompatImageButton button_relic_change_slot;
 
         private HeroesFloatingViewHolder(View itemView) {
             super(itemView);
 
             scroll_hero_relic_slot = itemView.findViewById(R.id.scroll_hero_relic_slot);
-            text_relic_slot_number = itemView.findViewById(R.id.text_relic_slot_number);
+            text_relic_slot_guardian = itemView.findViewById(R.id.text_relic_slot_guardian);
             text_relic_slot_combination = itemView.findViewById(R.id.text_relic_slot_combination);
+            text_relic_slot_combination_val = itemView.findViewById(R.id.text_relic_slot_combination_val);
             button_relic_change_slot = itemView.findViewById(R.id.button_relic_change_slot);
 
-            text_relic_prefix_slot = new AppCompatTextView[2][];
-            text_relic_suffix_slot = new AppCompatTextView[2][];
-            text_relic_level_slot = new AppCompatTextView[2][];
+            text_relic_prefix_slot = new AppCompatTextView[3][];
+            text_relic_suffix_slot = new AppCompatTextView[3][];
+            text_relic_level_slot = new AppCompatTextView[3][];
 
             text_hero_grade_star = new AppCompatTextView[5];
             text_hero_grade_cost = new AppCompatTextView[5];
@@ -279,7 +294,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             }
 
 
-            for(int i = 0; i < 2; i++ ) {
+            for(int i = 0; i < 3; i++ ) {
                 text_relic_prefix_slot[i] = new AppCompatTextView[4];
                 text_relic_suffix_slot[i] = new AppCompatTextView[4];
                 text_relic_level_slot[i] = new AppCompatTextView[4];
@@ -300,6 +315,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
 
         private void bind(final HeroSim heroSim) throws NullPointerException, ArrayIndexOutOfBoundsException {
 
+            final int heroID = heroSim.getHeroNo();
             Heroes hero = heroSim.getHero();
             Branch branch = heroSim.getHeroBranch();
             RealmList<RealmInteger> heroStats = hero.getHeroStats();
@@ -482,10 +498,10 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                                 subCate = AppConstant.AID_KOR;
                                 break;
                             default:
-                                subCate = AppConstant.ALL_PICK_KOR;
+                                subCate = "";
                         }
                     } else {
-                        subCate = AppConstant.ALL_PICK_KOR;
+                        subCate = "";
                     }
                     PickItemSimDialogFragment.newInstance(heroSim.getHeroNo(), subCate, finalI).show(
                             fragmentManager, TAG);
@@ -493,7 +509,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                 });
             }
 
-            for( int i = 0; i < 2; i++) {
+            for( int i = 0; i < 3; i++) {
                 RealmList<RelicSim> slot = heroSim.getHeroRelicSlot(i + 1);
 
                 String[] prefixStr = new String[4];
@@ -511,7 +527,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                                 relicPRFX.getRelicPrefixName();
 
                         suffixStr[position - 1] = relicSFX == null ? null :
-                                relicSFX.getNameStarGrade();
+                                relicSFX.getRelicSuffixName() + " " + relicGradeSuperScripts[relicSFX.getRelicSuffixGrade() - 1];
 
                         color_suffix[position - 1] = relicSFX == null ? 0 :
                                 colors_relic_suffix.getColor(relicSFX.getRelicSuffixID() % 7, 0);
@@ -528,17 +544,14 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                         text_relic_level_slot[i][j].setText(levelStr[j]);
                         final int relicSlot = i + 1;
                         final int relicPosition = j + 1;
-                        text_relic_suffix_slot[i][j].setOnClickListener( v -> {
-                            //Log.d(TAG, heroSim.getHeroNo() + " " + relicPosition + " " + relicSlot + "clicked");
-                            PickRelicSimDialogFragment.newInstance(heroSim.getHeroNo(), relicPosition, relicSlot).show(fragmentManager, TAG);
-                        });
-                        text_relic_level_slot[i][j].setOnClickListener( v -> {
-                            if(realm.isInTransaction()) {
-                                realm.commitTransaction();
+                        text_relic_suffix_slot[i][j].setOnClickListener( v -> PickRelicSimDialogFragment.newInstance(heroSim.getHeroNo(), relicPosition, relicSlot).show(fragmentManager, TAG));
+                        text_relic_level_slot[i][j].setOnClickListener( v -> realm.executeTransactionAsync(bgRealm -> {
+                            HeroSim bgHeroSim = bgRealm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, heroID).findFirst();
+                            if( bgHeroSim != null ) {
+                                bgHeroSim.relicLevelUp(relicSlot, relicPosition);
                             }
-                            realm.beginTransaction();
-                            int relicLevel = heroSim.setRelicLevelUp(relicSlot, relicPosition);
-                            realm.commitTransaction();
+                        }, () -> {
+                            int relicLevel = heroSim.getRelicLevel(relicSlot, relicPosition);
                             String relicLevelStr;
                             switch( relicLevel ) {
                                 case 0:
@@ -547,45 +560,60 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                                 case 1:Toast.makeText( context, suffixStr[relicPosition - 1]  + resources.getString(R.string.desc_relic_level_init), Toast.LENGTH_SHORT).show();
                                     relicLevelStr = resources.getString(R.string.level) + 1;
                                     text_relic_level_slot[relicSlot - 1][relicPosition - 1].setText(relicLevelStr);
-                                break;
+                                    break;
                                 default:
                                     Toast.makeText( context, suffixStr[relicPosition - 1]  + resources.getString(R.string.desc_relic_level_up)  + relicLevel, Toast.LENGTH_SHORT).show();
                                     relicLevelStr = resources.getString(R.string.level) + relicLevel;
                                     text_relic_level_slot[relicSlot - 1][relicPosition - 1].setText(relicLevelStr);
                             }
-                        });
+
+                        }));
 
                     }
 
             }
 
-            int currentRelicSlot = heroSim.getCurrentRelicSlot();
-            text_relic_slot_number.setText(String.valueOf(currentRelicSlot));
-            int slotHeight = scroll_hero_relic_slot.getChildAt(0).getHeight();
-            int slotScrollHeight = scroll_hero_relic_slot.getHeight();
-            int slotScrollBottom = slotHeight - slotScrollHeight;
-            scroll_hero_relic_slot.scrollTo(0, (currentRelicSlot - 1) * slotScrollBottom);
+            final int currentRelicSlot = heroSim.getCurrentRelicSlot();
+            final RelicCombination currentRelicCombination = heroSim.getRelicCombination( currentRelicSlot );
+            text_relic_slot_combination.setText( currentRelicCombination == null ? null : currentRelicCombination.getRelicCombinationSpec());
+            text_relic_slot_combination_val.setText( currentRelicCombination == null ? null : currentRelicCombination.getRelicCombinationSpecVal() );
+            int currentGuardianType = currentRelicCombination == null ? 0 :  currentRelicCombination.getGuardianType(); // 1,2,3,4
+            boolean currentArrayIndexOutOfBounds = currentGuardianType <= 0  || currentGuardianType > guardians.length;
+            text_relic_slot_guardian.setText( currentArrayIndexOutOfBounds ? null : guardians[currentGuardianType - 1] );
+            text_relic_slot_guardian.setTextColor( currentArrayIndexOutOfBounds ? 0: colors_relic_guardian.getColor(currentGuardianType - 1, 0 ) );
+            final int slotScrollHeight = scroll_hero_relic_slot.getHeight();
+            button_relic_change_slot.setImageDrawable( relicSlotDrawables[currentRelicSlot - 1]);
+            scroll_hero_relic_slot.scrollTo(0, (currentRelicSlot - 1) * slotScrollHeight);
 
             button_relic_change_slot.setOnClickListener( v -> {
                 int relicSlot = heroSim.getCurrentRelicSlot();
-                // 1 <-> 2
-                int changedRelicSlot = 3 - relicSlot;
-                if(realm.isInTransaction()) {
-                    realm.commitTransaction();
-                }
-                realm.beginTransaction();
-                heroSim.setCurrentRelicSlot(changedRelicSlot);
-                realm.commitTransaction();
-                String message = hero.getHeroName() + ": " + resources.getString(R.string.relic_slot_kor) + changedRelicSlot + resources.getString(R.string.wear_kor);
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                scroll_hero_relic_slot.smoothScrollTo(0, (changedRelicSlot - 1) * slotScrollBottom);
-                text_relic_slot_number.setText(String.valueOf(changedRelicSlot));
-            });
+                // 0 -> 1, 1 -> 2, 2 -> 0
+                // a + 1 % 3
+                int changedRelicSlot = ( relicSlot ) % 3 + 1;
 
-            scroll_hero_relic_slot = itemView.findViewById(R.id.scroll_hero_relic_slot);
-            text_relic_slot_number = itemView.findViewById(R.id.text_relic_slot_number);
-            text_relic_slot_combination = itemView.findViewById(R.id.text_relic_slot_combination);
-            button_relic_change_slot = itemView.findViewById(R.id.button_relic_change_slot);
+                final String message = hero.getHeroName() + " " + resources.getString(R.string.relic_slot_kor) + changedRelicSlot + resources.getString(R.string.wear_kor);
+
+                realm.executeTransactionAsync( bgRealm -> {
+                    HeroSim bgHeroSim = bgRealm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, heroID).findFirst();
+                    if( bgHeroSim != null) {
+                        bgHeroSim.setCurrentRelicSlot(changedRelicSlot);
+                    }
+
+                }, () -> {
+                    RelicCombination changedRelicCombination = heroSim.getRelicCombination( changedRelicSlot );
+                    text_relic_slot_combination.setText(changedRelicCombination == null ? null : changedRelicCombination.getRelicCombinationSpec());
+                    text_relic_slot_combination_val.setText(changedRelicCombination == null ? null : changedRelicCombination.getRelicCombinationSpecVal());
+                    int changedGuardianType = changedRelicCombination == null ? 0 :  changedRelicCombination.getGuardianType(); // 1,2,3,4
+                    boolean changedArrayIndexOutOfBounds = changedGuardianType <= 0  || changedGuardianType > guardians.length;
+                    text_relic_slot_guardian.setText( changedArrayIndexOutOfBounds ? null : guardians[changedGuardianType - 1] );
+                    text_relic_slot_guardian.setTextColor( changedArrayIndexOutOfBounds ? 0: colors_relic_guardian.getColor(changedGuardianType - 1, 0 ) );
+                    button_relic_change_slot.setImageDrawable( relicSlotDrawables[changedRelicSlot - 1]);
+                    scroll_hero_relic_slot.smoothScrollTo(0, (changedRelicSlot - 1) * slotScrollHeight);
+
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                });
+
+            });
 
 
         } // end bind()

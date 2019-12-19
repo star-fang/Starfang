@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#303E55D6"
@@ -112,7 +113,8 @@
             android:maxLines="1"
             android:padding="10dp"
             android:hint="@string/insert_name_kor"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:importantForAutofill="no" />
         <Button
             android:id="@+id/button_insert_name"
             android:layout_alignParentTop="true"
@@ -153,6 +155,9 @@
             android:icon="@drawable/ic_info_white_24dp"
             android:padding="10dp"
             android:text="@string/host_address_1"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            tools:ignore="LabelFor" />
     </RelativeLayout>
 </RelativeLayout>

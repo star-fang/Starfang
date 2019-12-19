@@ -9,6 +9,8 @@ import com.fang.starfang.AppConstant;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
@@ -47,20 +49,21 @@ public class ItemFilter extends Filter {
         RealmQuery<Item> query = realm.where(Item.class);
 
         try {
-            if (!csSplit[0].equals(AppConstant.ALL_PICK_KOR)) {
-                query.equalTo(Item.FIELD_GRD, csSplit[0].replace(AppConstant.GRADE_KOR, ""));
+            if (!csSplit[0].isEmpty()) {
+                String digits = csSplit[0].replaceAll("[^0-9]","");
+                query.equalTo(Item.FIELD_GRD, digits.isEmpty() ? csSplit[0] : digits);
             }
 
-            if (!csSplit[1].equals(AppConstant.ALL_PICK_KOR)) {
+            if (!csSplit[1].isEmpty()) {
                 query.and().beginGroup().alwaysFalse();
-                RealmResults<ItemCate> cates = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_MAIN_CATE, csSplit[1]).findAll();
-                for (ItemCate cate : cates) {
-                    query.or().equalTo(Item.FIELD_SUB_CATE, cate.getItemSubCate());
+                RealmResults<ItemCate> categories = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_MAIN_CATE, csSplit[1]).findAll();
+                for (ItemCate category : categories) {
+                    query.or().equalTo(Item.FIELD_SUB_CATE, category.getItemSubCate());
                 }
                 query.endGroup();
             }
 
-            if (!csSplit[2].equals(AppConstant.ALL_PICK_KOR)) {
+            if (!csSplit[2].isEmpty()) {
                 query.and().equalTo(Item.FIELD_SUB_CATE, csSplit[2]);
             }
         } catch( ArrayIndexOutOfBoundsException | IllegalArgumentException e ) {
