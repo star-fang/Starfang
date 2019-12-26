@@ -14,6 +14,7 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
+import io.realm.RealmResults;
 import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
@@ -437,16 +438,26 @@ public class HeroSim extends RealmObject {
         RealmList<RelicSim> relicSlot = getHeroRelicSlot(slot);
         RelicCombination relicCombination = null;
         if(relicSlot.size() == 4) {
-            int minRelicGrade = 4;
-            RealmQuery<RelicCombination> combQuery = realm.where(RelicCombination.class).alwaysTrue();
+            RealmQuery<RelicSFX> sfxQuery = realm.where(RelicSFX.class).alwaysFalse();
             for(RelicSim relicSim : relicSlot ) {
                 RelicSFX relicSFX = relicSim.getSuffix();
                 int currentRelicGrade = relicSFX.getRelicSuffixGrade();
-                minRelicGrade = Math.min( minRelicGrade, currentRelicGrade );
-                combQuery.and().equalTo(RelicCombination.FIELD_SFX+"."+RealmString.VALUE, relicSFX.getRelicSuffixName());
+                sfxQuery.or().beginGroup().equalTo(RelicSFX.FIELD_NAME, relicSFX.getRelicSuffixName())
+                .and().equalTo(RelicSFX.FIELD_GRD, currentRelicGrade).endGroup();
             }
-            combQuery.and().lessThanOrEqualTo(RelicCombination.FIELD_GRADE, minRelicGrade);
-            relicCombination = combQuery.sort(RelicCombination.FIELD_GRADE, Sort.DESCENDING).findFirst();
+            RealmResults<RelicSFX> relicSFXES = sfxQuery.findAll();
+
+            if(relicSFXES.size() == 4) {
+                int minRelicGrade = 4;
+                RealmQuery<RelicCombination> combQuery = realm.where(RelicCombination.class).alwaysTrue();
+                for(RelicSFX relicSFX : relicSFXES ) {
+                    int currentRelicGrade = relicSFX.getRelicSuffixGrade();
+                    minRelicGrade = Math.min( minRelicGrade, currentRelicGrade );
+                    combQuery.and().equalTo(RelicCombination.FIELD_SFX+"."+RealmString.VALUE, relicSFX.getRelicSuffixName());
+                }
+                combQuery.and().lessThanOrEqualTo(RelicCombination.FIELD_GRADE, minRelicGrade);
+                relicCombination = combQuery.sort(RelicCombination.FIELD_GRADE, Sort.DESCENDING).findFirst();
+            }
         }
 
         setRelicCombination( slot, relicCombination );
