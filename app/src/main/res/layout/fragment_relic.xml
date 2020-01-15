@@ -1,11 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.github.mikephil.charting.charts.RadarChart
+    <com.fang.starfang.ui.common.DraggableRadarChart
         android:id="@+id/chart_relic"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_above="@id/radio_guardians"
+        />
 
-</LinearLayout>
+
+
+        <RadioGroup
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/radio_guardians"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:layout_margin="5dp"
+            android:id="@+id/radio_blue_dragon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/guardian_blue_dragon"
+            android:checked="true"/>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:layout_margin="5dp"
+            android:id="@+id/radio_red_bird"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/guardian_red_bird"/>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:layout_margin="5dp"
+            android:id="@+id/radio_white_tiger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/guardian_white_tiger"/>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:layout_margin="5dp"
+            android:id="@+id/radio_black_tortoise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/guardian_black_tortoise"/>
+
+        </RadioGroup>
+
+</RelativeLayout>

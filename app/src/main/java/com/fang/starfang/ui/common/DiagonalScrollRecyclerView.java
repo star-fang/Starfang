@@ -35,9 +35,8 @@ public class DiagonalScrollRecyclerView extends HorizontalScrollView {
 
     @Override
     public boolean performClick() {
-        super.performClick();
         Log.d(TAG,"click");
-        return  true;
+        return super.performClick();
     }
 
     @Override
