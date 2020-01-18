@@ -32,6 +32,7 @@ public class AppConstant {
     public static final String INTENT_KEY_ITEM_REINFORCE = "itemReinforce";
     public static final String INTENT_KEY_ITEM_CATE_SUB = "itemSubCate";
     public static final String INTENT_KEY_ITEM_CATE_MAIN = "itemMainCate";
+    public static final String INTENT_KEY_SUFFIX_ID = "suffixID";
 
     public static final String INTENT_KEY_HERO_ID = "heroID";
 

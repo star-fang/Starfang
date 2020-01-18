@@ -67,6 +67,10 @@ public class RelicFragment extends PlaceholderFragment {
         MarkerView markerView = new MarkerView(mActivity, R.layout.radar_markerview);
         markerView.setChartView(radarChart);
         radarChart.setMarker(markerView);
+        markerView.setOnClickListener(v-> {
+            //markerView.ddd
+            //todo: create custom markerView which show y-axis value & edit button
+        });
 
         draw(1, 4, radarChart);
 
