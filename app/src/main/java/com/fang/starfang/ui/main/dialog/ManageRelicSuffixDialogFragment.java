@@ -21,20 +21,30 @@ import com.fang.starfang.local.model.realm.source.RelicSFX;
 import com.fang.starfang.ui.common.UpdateDialogFragment;
 import com.fang.starfang.ui.main.adapter.ManageRelicSimRealmAdapter;
 
+import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class ManageRelicSuffixDialogFragment extends UpdateDialogFragment {
 
-    public static ManageRelicSuffixDialogFragment getInstance(int suffixID) {
+    public static ManageRelicSuffixDialogFragment getInstance( int guardianType, int suffixNo ) {
 
         ManageRelicSuffixDialogFragment manageRelicSuffixDialogFragment =
                 new ManageRelicSuffixDialogFragment();
 
         Bundle args = new Bundle();
-        args.putInt(AppConstant.INTENT_KEY_SUFFIX_ID, suffixID);
 
+        Realm realm_tmp = Realm.getDefaultInstance();
+        RealmResults<RelicSFX> sfxes = realm_tmp.where(RelicSFX.class).equalTo(RelicSFX.FIELD_TYPE, guardianType).and()
+                .equalTo(RelicSFX.FIELD_GRD,4).and().findAll();
+        if( sfxes != null ) {
+            RelicSFX sfx = sfxes.get(suffixNo);
+            if( sfx != null ) {
+                int suffixID = sfx.getRelicSuffixID();
+                args.putInt(AppConstant.INTENT_KEY_SUFFIX_ID, suffixID);
+            }
+        }
         manageRelicSuffixDialogFragment.setArguments(args);
-
+        realm_tmp.close();
         return manageRelicSuffixDialogFragment;
 
     }
@@ -81,6 +91,8 @@ public class ManageRelicSuffixDialogFragment extends UpdateDialogFragment {
 
             }
         }
+
+        builder.setView(view);
         return builder.create();
     }
 }

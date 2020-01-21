@@ -88,7 +88,8 @@ public class ManageRelicSimRealmAdapter extends RealmRecyclerViewAdapter<RelicSi
         private void bind(RelicSim relicSim) {
             HeroSim heroSim = relicSim.getHeroWhoHasThis();
             RelicPRFX relicPRFX = relicSim.getPrefix();
-            text_relic_id.setText(relicSim.getRelicID());
+            String relicID = relicSim.getRelicID() + "";
+            text_relic_id.setText(relicID);
             text_relic_prefix.setText( relicPRFX == null ? null : relicPRFX.getRelicPrefixName());
             text_relic_hero.setText( heroSim == null ? null : heroSim.getHero().getHeroName());
             checkbox_relic.setOnCheckedChangeListener((compoundButton, isChecked)->{
@@ -99,7 +100,8 @@ public class ManageRelicSimRealmAdapter extends RealmRecyclerViewAdapter<RelicSi
                 }
 
                 int count_selected = relics_selected.size();
-                text_selected_relic_count.setText(count_selected);
+                String text_count_selected = count_selected  + "";
+                text_selected_relic_count.setText(text_count_selected);
                 if(count_selected > 0 ) {
                     layout_edit_relic_group.setVisibility(View.VISIBLE);
                 } else {

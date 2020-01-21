@@ -3,15 +3,10 @@ package com.fang.starfang.ui.main.Fragment;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.DragEvent;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -19,10 +14,10 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
 import com.fang.starfang.ui.common.DraggableRadarChart;
+import com.fang.starfang.ui.common.RadarChartMarkerView;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.RadarChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.RadarData;
@@ -64,13 +59,13 @@ public class RelicFragment extends PlaceholderFragment {
         radarChart.setWebColorInner(Color.LTGRAY);
         radarChart.setWebAlpha(100);
 
-        MarkerView markerView = new MarkerView(mActivity, R.layout.radar_markerview);
+        RadarChartMarkerView markerView = new RadarChartMarkerView(mActivity, R.layout.radar_markerview);
         markerView.setChartView(radarChart);
         radarChart.setMarker(markerView);
-        markerView.setOnClickListener(v-> {
+        //markerView.setOnClickListener(v-> {
             //markerView.ddd
             //todo: create custom markerView which show y-axis value & edit button
-        });
+        //});
 
         draw(1, 4, radarChart);
 
@@ -99,7 +94,7 @@ public class RelicFragment extends PlaceholderFragment {
                     draw( 3, 4, radarChart );
                     break;
                 case R.id.radio_black_tortoise:
-                    draw( 4, 4, radarChart );
+                    //draw( 4, 4, radarChart );
                     break;
                     default:
             }
@@ -107,6 +102,12 @@ public class RelicFragment extends PlaceholderFragment {
 
         });
 
+        radarChart.setOutputComponents(
+                view.findViewById(R.id.text_suffix_info),
+                view.findViewById(R.id.button_suffix_info),
+                radioGroup,
+                getFragmentManager()
+        );
 
         return view;
 

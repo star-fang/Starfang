@@ -6,21 +6,13 @@
     android:background="@drawable/radar_marker"
     tools:ignore="Overdraw">
 
-    <TextView
-        android:id="@+id/tvContent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="3dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:text=""
-        android:textSize="10sp"
-        android:textColor="@android:color/white"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        tools:ignore="SmallSp" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_radar_marker"
+        tools:text="@string/guardian_blue_dragon"
+        android:gravity="top"
+        android:textAlignment="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00000000"/>
 
 </RelativeLayout>

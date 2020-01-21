@@ -11,6 +11,28 @@
         android:layout_above="@id/radio_guardians"
         />
 
+    <LinearLayout
+        android:layout_alignParentEnd="true"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:id="@+id/layout_relic_suffix_info"
+        android:layout_above="@id/radio_guardians"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:id="@+id/text_suffix_info"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:id="@+id/button_suffix_info"/>
+
+
+
+    </LinearLayout>
+
 
 
         <RadioGroup
