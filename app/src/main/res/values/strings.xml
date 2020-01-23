@@ -267,6 +267,10 @@
     <string name="wear_off_kor">착용해제</string>
     <string name="delete_kor">삭제</string>
     <string name="complete_kor">완료</string>
+    <string name="hint_spreadsheet_id">Spreadsheet ID</string>
+    <string name="spreadsheets_kor">스프레드시트</string>
+    <string name="check_realm_instances">check realm instances</string>
+    <string name="ep">!</string>
 
 
 </resources>

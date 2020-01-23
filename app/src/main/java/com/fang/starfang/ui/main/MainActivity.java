@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.fang.starfang.AppConstant;
+import com.fang.starfang.spreadsheets.SheetsActivity;
 import com.fang.starfang.ui.conversation.ConversationActivity;
 import com.fang.starfang.R;
 import com.fang.starfang.SettingActivity;
@@ -70,6 +71,10 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
             case R.id.menu_item_setting:
                 Intent start_setting = new Intent(this, SettingActivity.class);
                 startActivity(start_setting);
+                break;
+            case R.id.menu_item_sheet:
+                Intent start_sheet = new Intent(this, SheetsActivity.class);
+                startActivity(start_sheet);
                 break;
             default:
         }

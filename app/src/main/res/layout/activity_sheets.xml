@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/text_sheet_id"
+            android:layout_toStartOf="@id/button_read_sheet_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_spreadsheet_id"/>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_read_sheet_info"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_cloud_white_24dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spinner_sheet"
+            android:layout_toStartOf="@id/text_sheet_range_ep"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_sheet_range_ep"
+            android:layout_toStartOf="@id/text_sheet_range1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ep"
+            android:textSize="25sp"
+            android:layout_margin="2dp"
+            android:layout_centerVertical="true"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_toStartOf="@id/text_sheet_range_colon"
+            android:id="@+id/text_sheet_range1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="A12"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_sheet_range_colon"
+            android:layout_toStartOf="@id/text_sheet_range2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/colon"
+            android:textSize="25sp"
+            android:layout_margin="2dp"
+            android:layout_centerVertical="true"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:layout_toStartOf="@id/button_upload_sheet"
+            android:id="@+id/text_sheet_range2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="B15"/>
+
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:layout_toStartOf="@id/button_download_sheet"
+            android:id="@+id/button_upload_sheet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_file_upload_white_24dp"/>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:layout_alignParentEnd="true"
+            android:id="@+id/button_download_sheet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_file_download_white_24dp"/>
+    </RelativeLayout>
+
+   <androidx.appcompat.widget.AppCompatEditText
+       android:id="@+id/text_sheet_result"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"/>
+
+
+
+
+
+</LinearLayout>

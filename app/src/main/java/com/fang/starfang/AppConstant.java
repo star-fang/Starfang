@@ -34,6 +34,10 @@ public class AppConstant {
     public static final String INTENT_KEY_ITEM_CATE_MAIN = "itemMainCate";
     public static final String INTENT_KEY_SUFFIX_ID = "suffixID";
 
+    public static final String READ_SHEET_MODE_INFO = "readSheetInfo";
+    public static final String READ_SHEET_MODE_DOWN = "readSheetDown";
+    public static final String READ_SHEET_MODE_UP = "readSheetUp";
+
     public static final String INTENT_KEY_HERO_ID = "heroID";
 
     public static final String INTENT_KEY_RELIC_POSITION = "relicPosition";

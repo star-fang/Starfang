@@ -42,4 +42,6 @@ dependencies {
     implementation group: 'org.mozilla', name: 'rhino', version: '1.7.10'
     implementation 'com.google.android:flexbox:1.1.0'
     implementation 'org.jetbrains:annotations:15.0'
+    implementation 'com.google.apis:google-api-services-sheets:v4-rev516-1.23.0'
+    implementation 'com.google.api-client:google-api-client-android:1.23.0'
 }
