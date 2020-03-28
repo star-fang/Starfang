@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/menu_item_check"
-        android:title="@string/check_realm_instances"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_check_pink_24dp"
-        />
-
-    <item
-        android:id="@+id/menu_item_chat"
-        android:title="@string/chat"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_chat_bubble_white_24dp"
-        />
 
     <item
         android:id="@+id/menu_item_setting"
@@ -23,9 +10,32 @@
         />
 
     <item
+        android:id="@+id/menu_item_chat"
+        android:title="@string/chat"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_chat_bubble_white_24dp"
+        />
+
+    <!--
+    <item
+        android:id="@+id/menu_item_check"
+        android:title="@string/check_realm_instances"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_check_pink_24dp"
+        />
+
+
+
+
+
+
+
+    <item
         android:id="@+id/menu_item_sheet"
         android:title="@string/spreadsheets_kor"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_grid_on_white_24dp"
         />
+
+          -->
 </menu>

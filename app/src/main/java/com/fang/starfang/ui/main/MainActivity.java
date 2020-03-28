@@ -12,11 +12,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.fang.starfang.AppConstant;
-import com.fang.starfang.spreadsheets.SheetsActivity;
-import com.fang.starfang.ui.conversation.ConversationActivity;
 import com.fang.starfang.R;
 import com.fang.starfang.SettingActivity;
 import com.fang.starfang.ui.common.MovableFloatingActionButton;
+import com.fang.starfang.ui.conversation.ConversationActivity;
 import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
 import com.fang.starfang.ui.main.dialog.AddRelicDialogFragment;
 import com.fang.starfang.ui.common.UpdateDialogFragment;
@@ -28,7 +27,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 
 public class MainActivity extends AppCompatActivity implements UpdateDialogFragment.OnUpdateEventListener {
@@ -52,6 +50,21 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+            case R.id.menu_item_setting:
+            Intent start_setting = new Intent(this, SettingActivity.class);
+            startActivity(start_setting);
+            break;
+
+            case R.id.menu_item_chat:
+                if(realm.isInTransaction()) {
+                    realm.commitTransaction();
+                }
+                Intent start_chat = new Intent(this, ConversationActivity.class);
+                startActivity(start_chat);
+                break;
+                default:
+
+                /*
             case R.id.menu_item_check:
                 RealmConfiguration config = Realm.getDefaultConfiguration();
                 if (config != null) {
@@ -68,15 +81,12 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
                 Intent start_chat = new Intent(this, ConversationActivity.class);
                 startActivity(start_chat);
                 break;
-            case R.id.menu_item_setting:
-                Intent start_setting = new Intent(this, SettingActivity.class);
-                startActivity(start_setting);
-                break;
+
             case R.id.menu_item_sheet:
                 Intent start_sheet = new Intent(this, SheetsActivity.class);
                 startActivity(start_sheet);
                 break;
-            default:
+                 */
         }
 
         return super.onOptionsItemSelected(item);

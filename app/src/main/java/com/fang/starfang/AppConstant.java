@@ -56,4 +56,10 @@ public class AppConstant {
 
     static final String SERVICE_STATUS_START = "start";
     static final String SERVICE_STATUS_STOP = "stop";
+
+    static final String RECORD_STATUS_START = "recording";
+    static final String RECORD_STATUS_STOP = "stop";
+
+    static final String FORE_NOTIFY_CHANNEL_ID = "fc01";
+    static final String FORE_NOTIFY_CHANNEL_NAME = "channel_fangcat";
 }

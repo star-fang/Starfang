@@ -28,7 +28,7 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
     private static final String COMMAND_START = "start";
     private static final String COMMAND_STOP = "stop";
     private static final String COMMAND_START_KOR = "시작";
-    private static final String COMMAND_STOP_KOR = "중지";
+    private static final String COMMAND_STOP_KOR = "정지";
 
 
     public PrefixHandler(Context context, String sendCat, String catRoom, StatusBarNotification sbn, boolean isLocalRequest, String botName) {
@@ -84,7 +84,7 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
                         if(checkStop(realm)) {
                             return;
                         }
-                        result = new LocalDataHandlerCat(context.get(), sendCat, catRoom).handleRequest(request,realm);
+                        result = new LocalDataHandlerCat(context.get(), catRoom).handleRequest(request,realm);
 
                     }
 
@@ -93,7 +93,7 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
                     if(checkStop(realm)) {
                         return;
                     }
-                    result = new LocalDataHandlerDog().handleRequest(request, realm);
+                    result = new LocalDataHandlerDog().handleRequest(request);
                 }
             }
 
@@ -102,7 +102,7 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
 
     }
 
-    private String handleByRoomCommandStart( Realm realm) {
+    private String handleByRoomCommandStart( Realm realm ) {
         if(catRoom == null) {
             return "시작: 단톡방에서만 사용가능한 명령입니다.";
         }
@@ -129,7 +129,7 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
 
     private String handleByRoomCommandStop(Realm realm) {
         if(catRoom == null) {
-            return "중지: 단톡방에서만 사용가능한 명령입니다.";
+            return "정지: 단톡방에서만 사용가능한 명령입니다.";
         }
 
             RoomCommand roomCommand = realm.where(RoomCommand.class).equalTo(RoomCommand.FIELD_ROOM, catRoom).findFirst();
@@ -150,7 +150,7 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
                 }
             }
 
-        return catRoom+ " 냥봇 중지";
+        return catRoom+ " 냥봇 정지";
 
 
 
@@ -159,7 +159,7 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
 
     private void commitResult(String result, Realm realm) {
         if (isLocalRequest) {
-            result = result == null ? "검색결과가 없다옹" : result;
+            result = result == null ? "ㅇㅅㅇ..." : result;
             StringTokenizer st = new StringTokenizer(result,"," );
             realm.beginTransaction();
             while( st.hasMoreTokens()) {
@@ -193,7 +193,7 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
             RoomCommand roomCommand = realm.where(RoomCommand.class).equalTo(RoomCommand.FIELD_ROOM, catRoom).findFirst();
             if (roomCommand != null) {
                 if (roomCommand.getStatus().equals("stop")) {
-                    Log.d(TAG,catRoom + "중지됨...");
+                    Log.d(TAG,catRoom + " stopped");
                     return true;
                 }
             }

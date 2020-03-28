@@ -21,7 +21,7 @@ public class UpdateTime extends RealmObject {
         return latestUpdateTime;
     }
 
-    public void setLatestUpadateTime(String latestUpadateTime) {
-        this.latestUpdateTime = latestUpadateTime;
+    public void setLatestUpadateTime(String latestUpdateTime) {
+        this.latestUpdateTime = latestUpdateTime;
     }
 }

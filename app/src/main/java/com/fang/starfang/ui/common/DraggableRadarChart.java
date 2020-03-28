@@ -56,6 +56,7 @@ public class DraggableRadarChart extends RadarChart {
         return super.performClick();
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         int pointerCount = motionEvent.getPointerCount();
@@ -107,11 +108,28 @@ public class DraggableRadarChart extends RadarChart {
                     break;
                 case MotionEvent.ACTION_UP:
                     if( moving_responses > 14 ) {
+                        // 각 기 미 심 방 저 항
+                        // 0 7 6 5 4 3 2 1
+
                         // 0 -1 5 4 3 2 1
                         // 7 8 2 3 4 5 6
                         // 0 1 2 3 4 5 6
-                        int suffixNo = (7 - (int)((this.getRotationAngle()-90f) / 360f * 7f)) % 7;
-                        //Log.d(TAG,"angle:" + angle);
+                        float angle = this.getRotationAngle();
+
+                        Log.d(TAG,"angle:" + angle);
+
+                        int suffixNo = (7 - (int)( ( angle -90f) / 360f * 7f) ) % 7;
+
+                        //setRotation( ((float)suffixNo * 360f / 7f) + 90f);
+                        //
+                        // 90 40 346 300 248 197 144
+
+                        //
+
+                        // 0 -50 256 210 158 107 54
+
+                        // 0 -1 5 4 3 2 1
+
                         String suffix ="suffixNo: " + suffixNo;
                         text_suffix_info.setText(suffix);
 

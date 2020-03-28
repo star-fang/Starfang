@@ -24,9 +24,9 @@
         <item>보패 조합</item>
         <item>도트</item>
         <item>책략</item>
-        <item>연합전 병종</item>
+        <!--<item>연합전 병종</item>
         <item>연합전 스킬</item>
-        <item>연합전 능력</item>
+        <item>연합전 능력</item>-->
         <item>일정</item>
     </string-array>
 

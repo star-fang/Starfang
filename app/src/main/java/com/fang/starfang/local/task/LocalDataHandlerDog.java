@@ -1,40 +1,25 @@
 package com.fang.starfang.local.task;
 
-import android.util.Log;
-
-import com.fang.starfang.local.model.realm.union.UnionBranch;
-import com.fang.starfang.local.model.realm.union.UnionSkill;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
-
-
-
 class LocalDataHandlerDog {
 
-    private static final String TAG = "LOCAL_HANDLER";
-
     private enum COMMAND_CERTAIN_ENUM_UNION {
-        COMMAND_BRANCH_UNION,COMMAND_SPEC_UNION,COMMAND_SKILL_UNION,COMMAND_DESC_UNION, COMMAND_PIRATE,COMMAND_PIRATED, COMMAND_PIRATE_R, COMMAND_DEFAULT_UNION }
+        COMMAND_DESC_UNION, COMMAND_PIRATE,COMMAND_PIRATED, COMMAND_PIRATE_R, COMMAND_DEFAULT_UNION }
     private static final String[] COMMAND_CERTAIN_UNION = {
-            "병종","능력", "스킬", "설명","약탈","당함","보조"};
+            "설명","약탈","당함","보조"};
 
-    private static final String[] PRFX_COMMAND_UNION = {"","","","","","","약탈"};
-    private static final String[] SFX_COMMAND_UNION = {"","","","","","보조",""};
+    private static final String[] PRFX_COMMAND_UNION = {"","","","약탈"};
+    private static final String[] SFX_COMMAND_UNION = {"","","보조",""};
 
-    private static final String CRLF = "\r\n";
     private static final String BLANK = " ";
     private static final String EMPTY = "";
-    private static final String COMMA = ",";
-    private static final String SEPARATOR = "-------------------------------\n";
     private final static String[] cmdMine = { "동광", "서광", "남광", "북광", "중광" };
 
-    String handleRequest(String req, Realm realm ) {
+    String handleRequest(String req) {
 
 
             req = req.substring(0, req.length() - 1).trim();
@@ -67,150 +52,10 @@ class LocalDataHandlerDog {
             }
 
 
-            // 연합전 병종 정보 검색 : 상병 병종멍, 병종멍, 기마대 병종멍
-            HandleLocalDB searchBranchInfo = ( q -> {
-
-                Log.d(TAG,"searchBranchInfo activated");
-
-                q = q.replace(BLANK,EMPTY);
-                StringBuilder lambdaResult = new StringBuilder();
-
-                if( q.isEmpty() ) {
-                    return null;
-                }
-
-                if( q.equals("전체")) {
-                    q = "";
-                }
-
-                RealmResults<UnionBranch> uBranchResult = realm.where(UnionBranch.class).contains(UnionBranch.FIELD_CLASS,q).findAll();
-
-                if( !uBranchResult.isEmpty() ) {
-                    int ubSize = uBranchResult.size();
-                    lambdaResult.append("연합전 ").append(q).append(" 병종").append(CRLF);
-                    lambdaResult.append("검색 결과: ").append(ubSize).append("개").append(CRLF);
-
-                    lambdaResult.append(SEPARATOR).append("병종계열 병과분류 등급").append(CRLF).append(SEPARATOR);
 
 
-                    for (UnionBranch uBranch : uBranchResult) {
-                        lambdaResult.append(String.format("%-4s", uBranch.getuBranch()).replace(' ', '　'))
-                                .append(BLANK).append(String.format("%-4s", uBranch.getuBranchClass()).replace(' ', '　'))
-                                .append(BLANK).append(uBranch.getuBranckGrade()).append(CRLF);
-                    }
-
-                    return lambdaResult.toString();
-                }
-
-
-                uBranchResult = realm.where(UnionBranch.class).contains(UnionBranch.FIELD_NAME,q).findAll();
-
-                if( !uBranchResult.isEmpty() ) {
-                    for (UnionBranch uBranch : uBranchResult) {
-                        lambdaResult.append("[").append(uBranch.getuBranchClass()).append("]")
-                                .append(BLANK).append(uBranch.getuBranch())
-                                .append(BLANK).append(uBranch.getuBranckGrade()).append(CRLF);
-
-                        lambdaResult.append("HP").append(uBranch.getuBranchHP()).append(BLANK)
-                                .append("EP").append(uBranch.getuBranchEP()).append(BLANK)
-                                .append("이동력").append(uBranch.getuBranchMove()).append(CRLF);
-
-                        lambdaResult.append("*병종 능력치(상대값)").append(CRLF);
-                        lambdaResult.append(" -공격력: ").append(uBranch.getuBranchAttackPower()).append(CRLF);
-                        lambdaResult.append(" -정신력: ").append(uBranch.getuBranchMentalPower()).append(CRLF);
-                        lambdaResult.append(" -방어력: ").append(uBranch.getuBranchDefensePower()).append(CRLF);
-                        lambdaResult.append(" -순발력: ").append(uBranch.getuBranchAgilityPower()).append(CRLF);
-                        lambdaResult.append(" -사기　: ").append(uBranch.getuBranchMoralePower()).append(CRLF);
-
-                        lambdaResult.append("*병종 능력").append(CRLF);
-                        for (int i = 0; i < 4; i++) {
-                            String val = uBranch.getuBranchSpecValue().get(i);
-                            String spec = uBranch.getuBranchSpec().get(i);
-                            if( spec != null ) {
-                                lambdaResult.append(" -")
-                                        .append(uBranch.getuBranchSpec().get(i)).append(BLANK)
-                                        .append(val == null ? EMPTY : val).append(CRLF);
-                            }
-                        }
-
-                        lambdaResult.append("*병종 설명").append(CRLF);
-                        lambdaResult.append(uBranch.getuBranchDesc());
-                        lambdaResult.append(COMMA).append(CRLF);
-                    }
-                } else {
-                    return null;
-                }
-
-
-                return lambdaResult.toString();
-            } );
-
-
-            // 연합전 스킬 정보 검색 : 초열 스킬멍, 스킬멍, 원융노병 스킬멍
-            HandleLocalDB searchSkillInfo = ( q-> {
-
-                StringBuilder lambdaResult = new StringBuilder();
-
-                if(q.isEmpty()) {
-                    return null;
-                }
-
-                RealmResults<UnionBranch> uBranchResult = realm.where(UnionBranch.class).contains(UnionBranch.FIELD_NAME,q).findAll();
-
-                if(!uBranchResult.isEmpty()) {
-                    for(UnionBranch uBranch : uBranchResult) {
-                        lambdaResult.append(uBranch.getuBranch()).append(" 스킬").append(CRLF)
-                                .append(SEPARATOR);
-                        String skills = uBranch.getuBranchSkill();
-                        for(String skill: skills.split(",")) {
-                            skill = skill.trim();
-                            UnionSkill uSkill = realm.where(UnionSkill.class).equalTo(UnionSkill.FIELD_NAME,skill).findFirst();
-                            lambdaResult.append("[").append(uSkill != null ? uSkill.getuSkillType() : null).append("] ").append(skill).append(CRLF);
-                        }
-
-                        lambdaResult.append(COMMA).append(CRLF);
-                    }
-                    return lambdaResult.toString();
-                }
-
-                RealmResults<UnionSkill> uSkillResult = realm.where(UnionSkill.class).contains(UnionSkill.FIELD_NAME,q).findAll();
-
-                if( !uSkillResult.isEmpty() ) {
-                    for( UnionSkill uSkill : uSkillResult ) {
-                        lambdaResult.append("[").append(uSkill.getuSkillType()).append("]")
-                                .append(uSkill.getuSkillName()).append(CRLF)
-                                .append("*소모EP: ").append(uSkill.getuSkillEP()).append(CRLF)
-                                .append("*쿨타임: ").append(uSkill.getuSkillCooldown()).append("초").append(CRLF)
-                                .append("스킬 파워:" ).append(uSkill.getuSkillPower()).append(CRLF)
-                                .append("효과 범위: ").append(uSkill.getuSkillEffectArea()).append(CRLF)
-                                .append("시전 범위: ").append(uSkill.getuSkillTargetArea()).append(CRLF)
-                                .append(uSkill.getuSkillDesc()).append(COMMA).append(CRLF);
-                    }
-
-                    return lambdaResult.toString();
-                }
-
-
-                return null;
-            } );
-
-            Log.d(TAG,"searchSkillInfo activated");
-
-            String result = null;
+            String result;
             switch (certainCMD) {
-                case COMMAND_BRANCH_UNION:
-                    result = searchBranchInfo.handle(req);
-                    result = (result==null)?"병종 이름을 정확하게 입력해 주세요!" : result;
-                    break;
-                case COMMAND_SPEC_UNION:
-                    break;
-                case COMMAND_SKILL_UNION :
-                    result = searchSkillInfo.handle(req);
-                    result = (result==null)?"스킬 이름이나 병종을 정확하게 입력해 주세요!" : result;
-                    break;
-                case COMMAND_DESC_UNION:
-                    result = "설명 준비중";
-                    break;
                 case COMMAND_PIRATE:
                     result = pirate(req,false);
                     break;
@@ -221,20 +66,12 @@ class LocalDataHandlerDog {
                     result = pirated(req);
                     break;
                 default:
-                    result = searchBranchInfo.handle(req);
-                    result = (result==null)?searchSkillInfo.handle(req) : result;
-                    result = (result==null)?"병종 -> 책략 검색 결과 : 없음" : result;
+                    result = "starfang-c3971.firebaseapp.com";
 
             }
 
         return result;
     }
-
-    private interface HandleLocalDB {
-        String handle(String req);
-    }
-
-
 
     private final String[] loot1 = { "식량", "제작", "강화", "보존", "은전" };
     private final String[] loot2 = { "강화", "은전", "은전", "제작", "보존" };

@@ -17,6 +17,10 @@ public class Spec extends RealmObject {
     private String specNameNoBlank;
     private String specDescription;
     private String specName2;
+    private int specAccumulate; // 1 : available, 0 : impossible, -1: out of the field
+    private String specTriggerTile;
+    private int specTriggerType; // 0 : non, 1,2,3...: trigger
+    private String specParent;
 
     public int getSpecID() { return specID; }
     public String getSpecName() { return specName; }
@@ -28,5 +32,8 @@ public class Spec extends RealmObject {
     public void setSpecNameNoBlank(String noBlank) { specNameNoBlank = noBlank; }
     public String getSpecName2() { return specName2; }
     public void setSpecName2( String name2 ) { specName2 = name2; }
-
+    public int getSpecAccumulate() { return specAccumulate; }
+    public String getSpecTriggerTile() { return specTriggerTile; }
+    public int getSpecTriggerType() { return specTriggerType; }
+    public String getSpecParent() { return specParent; }
 }
