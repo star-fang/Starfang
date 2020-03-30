@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
@@ -36,8 +36,8 @@ public class ReinforceItemDialogFragment extends UpdateDialogFragment {
     public static ReinforceItemDialogFragment newInstance(int itemID, int itemMainCate ) {
 
         Bundle args = new Bundle();
-        args.putInt(AppConstant.INTENT_KEY_ITEM_ID, itemID);
-        args.putInt(AppConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate);
+        args.putInt(FangConstant.INTENT_KEY_ITEM_ID, itemID);
+        args.putInt(FangConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate);
         ReinforceItemDialogFragment reinforceDialogFragment = new ReinforceItemDialogFragment();
         reinforceDialogFragment.setArguments(args);
         return reinforceDialogFragment;
@@ -51,8 +51,8 @@ public class ReinforceItemDialogFragment extends UpdateDialogFragment {
         View view = View.inflate(mActivity, R.layout.dialog_reinforce_item, null);
         Bundle args = getArguments();
         if(args != null) {
-            int itemID = args.getInt(AppConstant.INTENT_KEY_ITEM_ID);
-            int itemMainCate = args.getInt(AppConstant.INTENT_KEY_ITEM_CATE_MAIN);
+            int itemID = args.getInt(FangConstant.INTENT_KEY_ITEM_ID);
+            int itemMainCate = args.getInt(FangConstant.INTENT_KEY_ITEM_CATE_MAIN);
             ItemSim itemSim = realm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID, itemID).findFirst();
             if (itemSim != null) {
                 Item item = itemSim.getItem();
@@ -120,14 +120,14 @@ public class ReinforceItemDialogFragment extends UpdateDialogFragment {
                             Fragment targetFragment = getTargetFragment();
                             if (targetFragment != null) {
                                 Intent intent = new Intent();
-                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN,itemMainCate);
-                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE,
-                                        AppConstant.ITEM_GRADE_NO_REINFORCE.equals(itemSim.getItem().getItemGrade()) ?
+                                intent.putExtra(FangConstant.INTENT_KEY_ITEM_CATE_MAIN,itemMainCate);
+                                intent.putExtra(FangConstant.INTENT_KEY_ITEM_REINFORCE,
+                                        FangConstant.ITEM_GRADE_NO_REINFORCE.equals(itemSim.getItem().getItemGrade()) ?
                                                 "" : "+" + reinforceValue);
-                                targetFragment.onActivityResult(AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT, Activity.RESULT_OK, intent);
+                                targetFragment.onActivityResult(FangConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT, Activity.RESULT_OK, intent);
                             } else {
                                 String message = item.getItemName() + ": +" + reinforceValue + " " + resources.getString(R.string.reinforcement_kor);
-                                onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
+                                onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
                             }
                         });
 

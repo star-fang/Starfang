@@ -21,7 +21,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
@@ -488,14 +488,14 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
                     String subCate;
                     if (branch != null) {
                         switch (finalI) {
-                            case AppConstant.ITEM_MAIN_CATEGORY_CODE_WEAPON:
+                            case FangConstant.ITEM_MAIN_CATEGORY_CODE_WEAPON:
                                 subCate = branch.getBranchWeaponSubCate();
                                 break;
-                            case AppConstant.ITEM_MAIN_CATEGORY_CODE_ARMOR:
+                            case FangConstant.ITEM_MAIN_CATEGORY_CODE_ARMOR:
                                 subCate = branch.getBranchArmorSubCate();
                                 break;
-                            case AppConstant.ITEM_MAIN_CATEGORY_CODE_AID:
-                                subCate = AppConstant.AID_KOR;
+                            case FangConstant.ITEM_MAIN_CATEGORY_CODE_AID:
+                                subCate = FangConstant.AID_KOR;
                                 break;
                             default:
                                 subCate = "";

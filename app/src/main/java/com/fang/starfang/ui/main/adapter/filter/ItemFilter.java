@@ -5,11 +5,9 @@ import android.widget.Filter;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-
-import org.apache.commons.lang3.math.NumberUtils;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
@@ -45,7 +43,7 @@ public class ItemFilter extends Filter {
         }
 
         cs = cs.trim();
-        String[] csSplit = cs.split(AppConstant.CONSTRAINT_SEPARATOR);
+        String[] csSplit = cs.split(FangConstant.CONSTRAINT_SEPARATOR);
         RealmQuery<Item> query = realm.where(Item.class);
 
         try {

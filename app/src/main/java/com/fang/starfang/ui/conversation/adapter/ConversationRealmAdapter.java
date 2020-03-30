@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.NotificationListener;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Conversation;
 
@@ -103,10 +103,10 @@ public class ConversationRealmAdapter
 
             if(packageStr != null) {
                 switch (packageStr) {
-                    case NotificationListener.PACKAGE_KAKAO:
+                    case FangConstant.PACKAGE_KAKAO:
                         conv_conversation.setBackgroundResource(R.drawable.kakao_border);
                         break;
-                    case NotificationListener.PACKAGE_DISCORD:
+                    case FangConstant.PACKAGE_DISCORD:
                         conv_conversation.setBackgroundResource(R.drawable.discord_border);
                         break;
                     default:

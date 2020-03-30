@@ -3,6 +3,7 @@ package com.fang.starfang.local.task;
 import android.content.Context;
 import android.util.Log;
 
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.CustomAgenda;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
@@ -277,7 +278,7 @@ class LocalDataHandlerCat {
                             if (personality != null) {
                                 lambdaResult.append("성격: ").append(personality).append(CRLF);
                             }
-                            lambdaResult.append(COMMA);
+                            lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
                         }
                     }
 
@@ -559,7 +560,7 @@ class LocalDataHandlerCat {
                     lambdaEachResult.append(level_pivot > 0 ? "검색 결과: " + count_each + "개" + CRLF : EMPTY);
                     lambdaEachResult.append(heroListBuilder);
                     valid_hero_count_total += count_each;
-                    lambdaResult.append(count_each > 0 ? lambdaEachResult.toString() + COMMA + CRLF : EMPTY);
+                    lambdaResult.append(count_each > 0 ? lambdaEachResult.toString() + FangConstant.CONSTRAINT_SEPARATOR + CRLF : EMPTY);
                 }
             }
 
@@ -726,7 +727,7 @@ class LocalDataHandlerCat {
                         Log.d(TAG, e.toString());
                     }
 
-                    lambdaResult.append(",");
+                    lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
 
 
                 }
@@ -842,7 +843,7 @@ class LocalDataHandlerCat {
                             } // end for
                         } // end if(branchGrades != null)
 
-                        lambdaResult.append(COMMA).append(CRLF);
+                        lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR).append(CRLF);
                     } // end if branch != null
                 }
             } // end while
@@ -995,10 +996,10 @@ class LocalDataHandlerCat {
                         }
                     } catch (NullPointerException ignored) {
                     }
-                    lambdaResult.append(COMMA);
+                    lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
                 }
             } else {
-                return "그런 인연 없다옹";
+                return null;
             }
 
             return lambdaResult.toString();
@@ -1147,7 +1148,7 @@ class LocalDataHandlerCat {
                             }
                         }  // end for
                     }
-                    lambdaResult.append(COMMA);
+                    lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
                 }
             } else {
 
@@ -1211,7 +1212,7 @@ class LocalDataHandlerCat {
                                     lambdaResult.append("(").append(STAR_FILLED).append(item.getItemGrade()).append(")");
                                 lambdaResult.append(CRLF);
                             }
-                            lambdaResult.append(COMMA);
+                            lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
                         }
                     }
                     if (count == 0)
@@ -1379,7 +1380,7 @@ class LocalDataHandlerCat {
                     }
 
 
-                    lambdaResult.append(COMMA);
+                    lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
                 }
             } else {
                 if (q.length() < 2) {
@@ -1403,7 +1404,7 @@ class LocalDataHandlerCat {
                                 }
                             }
                         }
-                        lambdaResult.append(COMMA);
+                        lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
                     }
                 } else {
                     RealmResults<Spec> specs = realm.where(Spec.class).contains(Spec.FIELD_NAME, "보패:").and().
@@ -1429,7 +1430,7 @@ class LocalDataHandlerCat {
                             }
 
                         }
-                        lambdaResult.append(COMMA);
+                        lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
                     }
                 }
 
@@ -1550,7 +1551,7 @@ class LocalDataHandlerCat {
                         .append(tmpHealType.equals(DASH) ? "" : CRLF + "*치료 타입: " + tmpHealType)
                         .append(tmpStreak == 0 ? "" : CRLF + "*연속 발동 가능")
                         .append(tmpObstructive == 0 ? "" : CRLF + "*방해계 책략")
-                        .append(CRLF).append(magic.getMagicDesc()).append(",");
+                        .append(CRLF).append(magic.getMagicDesc()).append(FangConstant.CONSTRAINT_SEPARATOR);
             }
             return lambdaResult.toString();
         });
@@ -1582,7 +1583,7 @@ class LocalDataHandlerCat {
                         lambdaResult.append(magic.getMagicName()).append(CRLF);
                         count++;
                     }
-                    lambdaResult.append(",");
+                    lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
                 }
             }
 
@@ -1830,7 +1831,7 @@ class LocalDataHandlerCat {
                     Log.d(TAG, e.toString());
                 }
 
-                lambdaResult.append(COMMA);
+                lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
             }
 
 
@@ -2030,6 +2031,7 @@ class LocalDataHandlerCat {
                 break;
             case COMMAND_DEST:
                 result = destinyByKey.handle(req);
+                result = (result == null) ?  "그런 인연 없다냥..." : result;
                 break;
             case COMMAND_ITEM:
                 result = itemByKey.handle(req);
@@ -2085,7 +2087,8 @@ class LocalDataHandlerCat {
                 result = (result == null) ? itemByKey.handle(req) : result;
                 result = (result == null) ? searchMagicByName.handle(req) : result;
                 result = (result == null) ? descBySpec.handle(req) : result;
-                result = (result == null) ? "장수->특성->보물->책략->설명 검색결과: 없음" : result;
+                result = (result == null) ? destinyByKey.handle(req) : result;
+                result = (result == null) ? "장수->특성->보물->책략->설명->인연 검색결과: 없음" : result;
         }
 
 

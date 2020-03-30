@@ -17,8 +17,20 @@ public class Conversation extends RealmObject {
 
     private static final String CONVERSATION_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    public Conversation() {
+    private String sendCat;
+    private String catRoom;
+    private String replyID;
+    private String timestamp;
+    private long timeValue;
+    private String packageName;
+    private String conversation;
 
+    public Conversation() {
+        Date curDate = new Date();
+        String timestamp =  new SimpleDateFormat(CONVERSATION_TIME_FORMAT, Locale.KOREA).format(curDate);
+        long timeValue = curDate.getTime();
+        this.timestamp = timestamp;
+        this.timeValue = timeValue;
     }
 
     public Conversation(String sendCat, String catRoom, String replyID, String packageName, String conversation) {
@@ -50,13 +62,7 @@ public class Conversation extends RealmObject {
 
 
 
-    private String sendCat;
-    private String catRoom;
-    private String replyID;
-    private String timestamp;
-    private long timeValue;
-    private String packageName;
-    private String conversation;
+
 
 
 

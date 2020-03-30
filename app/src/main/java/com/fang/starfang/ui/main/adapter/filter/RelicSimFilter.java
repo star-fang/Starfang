@@ -5,7 +5,7 @@ import android.widget.Filter;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.RelicPRFX;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
@@ -47,7 +47,7 @@ public class RelicSimFilter extends Filter {
         // 사신, 접두사, 접미사, 등급
 
         cs = cs.trim();
-        String[] csSplit = cs.split(AppConstant.CONSTRAINT_SEPARATOR);
+        String[] csSplit = cs.split(FangConstant.CONSTRAINT_SEPARATOR);
         RealmQuery<RelicSim> query = realm.where(RelicSim.class).isNull(RelicSim.FIELD_HERO);
         String relicSimPrefixField = RelicSim.FIELD_PREFIX + ".";
         String relicSimSuffixField = RelicSim.FIELD_SUFFIX + ".";

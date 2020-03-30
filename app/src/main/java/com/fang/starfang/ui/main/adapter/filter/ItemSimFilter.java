@@ -5,7 +5,7 @@ import android.widget.Filter;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
@@ -44,7 +44,7 @@ public class ItemSimFilter extends Filter {
         }
 
         cs = cs.trim();
-        String[] csSplit = cs.split(AppConstant.CONSTRAINT_SEPARATOR);
+        String[] csSplit = cs.split(FangConstant.CONSTRAINT_SEPARATOR);
         RealmQuery<ItemSim> query = realm.where(ItemSim.class);
         String itemSimItemField = ItemSim.FIELD_ITEM + ".";
 
@@ -64,8 +64,8 @@ public class ItemSimFilter extends Filter {
             }
 
             if( !csSplit[2].isEmpty() ) {
-                if ( !csSplit[2].equals(AppConstant.AID_KOR) &&
-                        csSplit[1].equals(AppConstant.AID_KOR)) {
+                if ( !csSplit[2].equals(FangConstant.AID_KOR) &&
+                        csSplit[1].equals(FangConstant.AID_KOR)) {
                     query.and().beginGroup().isNull(itemSimItemField + Item.FIELD_RESTRICT_BRANCH).or().
                             isEmpty(itemSimItemField + Item.FIELD_RESTRICT_BRANCH).or().
                             contains(itemSimItemField + Item.FIELD_RESTRICT_BRANCH, csSplit[2]).endGroup();

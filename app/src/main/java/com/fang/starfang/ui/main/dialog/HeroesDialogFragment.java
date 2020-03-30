@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.primitive.RealmInteger;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
@@ -69,7 +69,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
 
         HeroesDialogFragment heroesDialogFragment = new HeroesDialogFragment();
         Bundle args = new Bundle();
-        args.putInt(AppConstant.INTENT_KEY_HERO_ID, heroID);
+        args.putInt(FangConstant.INTENT_KEY_HERO_ID, heroID);
         heroesDialogFragment.setArguments(args);
 
         return heroesDialogFragment;
@@ -81,14 +81,14 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         if (resultCode == Activity.RESULT_OK) {
-            int itemMainCate = intent.getIntExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN, -1);
+            int itemMainCate = intent.getIntExtra(FangConstant.INTENT_KEY_ITEM_CATE_MAIN, -1);
             if (itemMainCate > -1) {
                 try {
                     switch (requestCode) {
-                        case AppConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT:
-                            String itemName = intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_NAME);
-                            String itemReinforce = intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE);
-                            int itemID = intent.getIntExtra(AppConstant.INTENT_KEY_ITEM_ID,0);
+                        case FangConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT:
+                            String itemName = intent.getStringExtra(FangConstant.INTENT_KEY_ITEM_NAME);
+                            String itemReinforce = intent.getStringExtra(FangConstant.INTENT_KEY_ITEM_REINFORCE);
+                            int itemID = intent.getIntExtra(FangConstant.INTENT_KEY_ITEM_ID,0);
                             ItemSim itemSim = realm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID, itemID).findFirst();
                             itemSims.set(itemMainCate, itemSim);
                             texts_item_reinforcement[itemMainCate].setText(itemReinforce);
@@ -97,13 +97,13 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                             button_release_picked_item.setEnabled(true);
                             button_reinforce_picked_item.setEnabled(itemReinforce != null);
                             Snackbar.make(view,  itemReinforce + " " + itemName + " 착용", Snackbar.LENGTH_SHORT).show();
-                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
+                            onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
                             break;
-                        case AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT:
-                            itemReinforce = intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE);
-                            texts_item_reinforcement[itemMainCate].setText(intent.getStringExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE));
+                        case FangConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT:
+                            itemReinforce = intent.getStringExtra(FangConstant.INTENT_KEY_ITEM_REINFORCE);
+                            texts_item_reinforcement[itemMainCate].setText(intent.getStringExtra(FangConstant.INTENT_KEY_ITEM_REINFORCE));
                             Snackbar.make(view,  itemReinforce + " 강화", Snackbar.LENGTH_SHORT).show();
-                            onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
+                            onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
                             break;
                         default:
                     } // end switch
@@ -127,7 +127,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            int heroID = getArguments().getInt(AppConstant.INTENT_KEY_HERO_ID);
+            int heroID = getArguments().getInt(FangConstant.INTENT_KEY_HERO_ID);
             HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, heroID).findFirst();
             if (heroSim != null) {
                 Heroes hero = heroSim.getHero();
@@ -537,7 +537,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                     ItemSim curItemSim = itemSims.get(i);
                     Item curItem = curItemSim == null ? null : curItemSim.getItem();
                     boolean reinforceImpossible = curItem == null
-                            || AppConstant.ITEM_GRADE_NO_REINFORCE.equals(curItem.getItemGrade());
+                            || FangConstant.ITEM_GRADE_NO_REINFORCE.equals(curItem.getItemGrade());
                     texts_item_reinforcement[i].setText(reinforceImpossible ? null
                             : "+" + curItemSim.getItemReinforcement());
                     texts_item_name[i].setText(curItem == null ? null : curItem.getItemName());
@@ -578,7 +578,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                             button_modify_picked_item.setOnClickListener(vModify -> {
                                 PickItemSimDialogFragment pickItemSimDialogFragment =
                                         PickItemSimDialogFragment.newInstance(heroSim.getHeroNo(), getItemSubCate(finalI, branch), finalI);
-                                pickItemSimDialogFragment.setTargetFragment(HeroesDialogFragment.this, AppConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT);
+                                pickItemSimDialogFragment.setTargetFragment(HeroesDialogFragment.this, FangConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT);
                                 pickItemSimDialogFragment.show(fragmentManager, TAG);
 
                             });
@@ -587,7 +587,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                                 ItemSim reinforcingItem = itemSims.get(finalI);
                                 if(reinforcingItem != null) {
                                     ReinforceItemDialogFragment reinforceDialogFragment = ReinforceItemDialogFragment.newInstance(reinforcingItem.getItemID(), finalI);
-                                    reinforceDialogFragment.setTargetFragment(HeroesDialogFragment.this, AppConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT);
+                                    reinforceDialogFragment.setTargetFragment(HeroesDialogFragment.this, FangConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT);
                                     reinforceDialogFragment.show(fragmentManager, TAG);
                                 }
                             });
@@ -613,7 +613,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                                         text_picked_item_name.setText(null);
                                         powerAdapter.notifyDataSetChanged();
                                         Snackbar.make(view, releasingItem.getItemName() + " 해제", Snackbar.LENGTH_SHORT).show();
-                                        onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
+                                        onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
                                     });
                                 }
                             });
@@ -661,7 +661,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                     }
                 }, () -> {
                     final String message = heroSim.getHero().getHeroName() + " " + resources.getString(R.string.modified_kor);
-                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_HERO, message);
+                    onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_HERO, message);
                 })).setNegativeButton(R.string.cancel_kor, null);
 
             } // end if heroSim != null
@@ -687,11 +687,11 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
 
     private int getMainCateIndex( String mainCate ) {
         switch( mainCate ) {
-            case AppConstant.WEAPON_KOR:
+            case FangConstant.WEAPON_KOR:
                 return 0;
-            case AppConstant.ARMOR_KOR:
+            case FangConstant.ARMOR_KOR:
                 return 1;
-            case AppConstant.AID_KOR:
+            case FangConstant.AID_KOR:
                 return 2;
             default:
                 return -1;
@@ -701,11 +701,11 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
     private String getMainCateName( int index ) {
         switch( index ) {
             case 0:
-                return AppConstant.WEAPON_KOR;
+                return FangConstant.WEAPON_KOR;
             case 1:
-                return AppConstant.ARMOR_KOR;
+                return FangConstant.ARMOR_KOR;
             default:
-                return AppConstant.AID_KOR;
+                return FangConstant.AID_KOR;
         }
     }
 

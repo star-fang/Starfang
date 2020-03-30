@@ -12,7 +12,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
@@ -107,7 +107,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
                 String selected_grade = gradeList.get(newVal);
                 String selected_category_main = mainCategoryList.get(picker_item_category_main.getValue());
                 String selected_category_sub = subCategoryList.get(picker_item_category_sub.getValue());
-                String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
+                String cs = selected_grade + FangConstant.CONSTRAINT_SEPARATOR + selected_category_main + FangConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                 itemsRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
             });
 
@@ -137,7 +137,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
 
 
                     String selected_category_sub = subCategoryList.get(picker_item_category_sub.getValue());
-                    String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
+                    String cs = selected_grade + FangConstant.CONSTRAINT_SEPARATOR + selected_category_main + FangConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                     itemsRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Log.d(TAG,"subCate : " + e.toString());
@@ -148,7 +148,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
                 String selected_grade = gradeList.get(picker_item_grade.getValue());
                 String selected_category_main = mainCategoryList.get(picker_item_category_main.getValue());
                 String selected_category_sub = subCategoryList.get(newVal);
-                String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
+                String cs = selected_grade + FangConstant.CONSTRAINT_SEPARATOR + selected_category_main + FangConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                 itemsRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
             });
 
@@ -175,7 +175,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
                         }
                     }, () -> {
                         final String message = item_selected.getItemName() + " " + resources.getString(R.string.added_kor);
-                        onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_ADD_ITEM, message);
+                        onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_ADD_ITEM, message);
                     });
 
 

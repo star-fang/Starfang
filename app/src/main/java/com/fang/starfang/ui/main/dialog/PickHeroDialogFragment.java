@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
@@ -31,7 +31,7 @@ public class PickHeroDialogFragment extends UpdateDialogFragment {
 
     public static PickHeroDialogFragment newInstance( int itemID ) {
         Bundle args = new Bundle();
-        args.putInt(AppConstant.INTENT_KEY_ITEM_ID, itemID);
+        args.putInt(FangConstant.INTENT_KEY_ITEM_ID, itemID);
         PickHeroDialogFragment pickHeroDialogFragment = new PickHeroDialogFragment();
         pickHeroDialogFragment.setArguments(args);
         return pickHeroDialogFragment;
@@ -44,7 +44,7 @@ public class PickHeroDialogFragment extends UpdateDialogFragment {
         View view = View.inflate(mActivity, R.layout.dialog_pick_hero, null);
         Bundle args = getArguments();
         if(args != null) {
-            final int itemID = args.getInt(AppConstant.INTENT_KEY_ITEM_ID);
+            final int itemID = args.getInt(FangConstant.INTENT_KEY_ITEM_ID);
 
 
             ItemSim itemSim = realm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID, itemID).findFirst();
@@ -79,10 +79,10 @@ public class PickHeroDialogFragment extends UpdateDialogFragment {
                             RealmQuery<Branch> branchRealmQuery = realm.where(Branch.class);
 
                             switch (itemCate.getItemMainCate()) {
-                                case AppConstant.WEAPON_KOR:
+                                case FangConstant.WEAPON_KOR:
                                     branchRealmQuery.equalTo(Branch.FIELD_CATE_WEAPON, itemSubCate);
                                     break;
-                                case AppConstant.ARMOR_KOR:
+                                case FangConstant.ARMOR_KOR:
                                     branchRealmQuery.equalTo(Branch.FIELD_CATE_ARMOR, itemSubCate);
                                     break;
                                 default:
@@ -113,7 +113,7 @@ public class PickHeroDialogFragment extends UpdateDialogFragment {
                                         if( bgHeroSim != null && bgItemSim != null ) {
                                             HeroSim hero_before = bgItemSim.getHeroWhoHasThis();
                                             switch (mainCate) {
-                                                case AppConstant.WEAPON_KOR:
+                                                case FangConstant.WEAPON_KOR:
                                                     if (hero_before != null) {
                                                         hero_before.setHeroWeapon(null);
                                                     }
@@ -123,7 +123,7 @@ public class PickHeroDialogFragment extends UpdateDialogFragment {
                                                     }
                                                     bgHeroSim.setHeroWeapon(bgItemSim);
                                                     break;
-                                                case AppConstant.ARMOR_KOR:
+                                                case FangConstant.ARMOR_KOR:
                                                     if (hero_before != null) {
                                                         hero_before.setHeroArmor(null);
                                                     }
@@ -148,7 +148,7 @@ public class PickHeroDialogFragment extends UpdateDialogFragment {
                                         }
                                     }, () -> {
                                         String message = hero_selected.getHeroName() + " " + item.getItemName() + " " + resources.getString(R.string.wear_kor);
-                                        onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
+                                        onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
                                     });
 
                             }

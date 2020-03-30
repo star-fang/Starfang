@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
@@ -29,9 +29,9 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
     public static PickItemSimDialogFragment newInstance( int heroID, String itemSubCate, int itemMainCate ) {
 
         Bundle args = new Bundle();
-        args.putInt(AppConstant.INTENT_KEY_HERO_ID, heroID);
-        args.putString(AppConstant.INTENT_KEY_ITEM_CATE_SUB, itemSubCate);
-        args.putInt(AppConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate);
+        args.putInt(FangConstant.INTENT_KEY_HERO_ID, heroID);
+        args.putString(FangConstant.INTENT_KEY_ITEM_CATE_SUB, itemSubCate);
+        args.putInt(FangConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate);
         PickItemSimDialogFragment pickItemSimDialogFragment = new PickItemSimDialogFragment();
         pickItemSimDialogFragment.setArguments(args);
         return pickItemSimDialogFragment;
@@ -45,11 +45,11 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
 
         Bundle args = getArguments();
         if( args != null ) {
-            int heroID = args.getInt(AppConstant.INTENT_KEY_HERO_ID);
+            int heroID = args.getInt(FangConstant.INTENT_KEY_HERO_ID);
             HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, heroID).findFirst();
             if(heroSim != null) {
-                String itemSubCate = args.getString(AppConstant.INTENT_KEY_ITEM_CATE_SUB);
-                int itemMainCate = args.getInt(AppConstant.INTENT_KEY_ITEM_CATE_MAIN);
+                String itemSubCate = args.getString(FangConstant.INTENT_KEY_ITEM_CATE_SUB);
+                int itemMainCate = args.getInt(FangConstant.INTENT_KEY_ITEM_CATE_MAIN);
 
                 final RecyclerView recycler_view_pick_item_sim = view.findViewById(R.id.recycler_view_pick_item_sim);
                 recycler_view_pick_item_sim.setLayoutManager(new GridLayoutManager(mActivity, ScreenUtils.calculateNoOfColumns(mActivity, 75)));
@@ -59,15 +59,15 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
                 switch (itemMainCate) {
                     case 0:
                         itemSimsRealmAdapter.getFilter().filter(
-                                AppConstant.CONSTRAINT_SEPARATOR + AppConstant.WEAPON_KOR + AppConstant.CONSTRAINT_SEPARATOR + itemSubCate);
+                                FangConstant.CONSTRAINT_SEPARATOR + FangConstant.WEAPON_KOR + FangConstant.CONSTRAINT_SEPARATOR + itemSubCate);
                         break;
                     case 1:
                         itemSimsRealmAdapter.getFilter().filter(
-                                AppConstant.CONSTRAINT_SEPARATOR + AppConstant.ARMOR_KOR + AppConstant.CONSTRAINT_SEPARATOR + itemSubCate);
+                                FangConstant.CONSTRAINT_SEPARATOR + FangConstant.ARMOR_KOR + FangConstant.CONSTRAINT_SEPARATOR + itemSubCate);
                         break;
                     default:
                         itemSimsRealmAdapter.getFilter().filter(
-                                AppConstant.CONSTRAINT_SEPARATOR + AppConstant.AID_KOR + AppConstant.CONSTRAINT_SEPARATOR + heroSim.getHero().getBranchNo());
+                                FangConstant.CONSTRAINT_SEPARATOR + FangConstant.AID_KOR + FangConstant.CONSTRAINT_SEPARATOR + heroSim.getHero().getBranchNo());
                 }
 
                 recycler_view_pick_item_sim.setAdapter(itemSimsRealmAdapter);
@@ -121,18 +121,18 @@ public class PickItemSimDialogFragment extends UpdateDialogFragment {
                             if(targetFragment != null) {
                                 Intent intent = new Intent();
                                 Item item = itemSim_selected.getItem();
-                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_NAME, item.getItemName());
-                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_ID, itemSim_selected.getItemID());
+                                intent.putExtra(FangConstant.INTENT_KEY_ITEM_NAME, item.getItemName());
+                                intent.putExtra(FangConstant.INTENT_KEY_ITEM_ID, itemSim_selected.getItemID());
                                 int reinforceValue = itemSim_selected.getItemReinforcement();
                                 String itemGrade = item.getItemGrade();
-                                String reinforceStr = AppConstant.ITEM_GRADE_NO_REINFORCE.equals(itemGrade) ? null :
+                                String reinforceStr = FangConstant.ITEM_GRADE_NO_REINFORCE.equals(itemGrade) ? null :
                                         "+" + reinforceValue;
-                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_REINFORCE, reinforceStr );
-                                intent.putExtra(AppConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate );
-                                targetFragment.onActivityResult(AppConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT,Activity.RESULT_OK,intent);
+                                intent.putExtra(FangConstant.INTENT_KEY_ITEM_REINFORCE, reinforceStr );
+                                intent.putExtra(FangConstant.INTENT_KEY_ITEM_CATE_MAIN, itemMainCate );
+                                targetFragment.onActivityResult(FangConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT,Activity.RESULT_OK,intent);
                             } else {
                                 String message = heroSim.getHero().getHeroName() + " " + itemSim_selected.getItem().getItemName() + " " +   resources.getString(R.string.wear_kor);
-                                onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
+                                onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
                             }
                         });
                     }

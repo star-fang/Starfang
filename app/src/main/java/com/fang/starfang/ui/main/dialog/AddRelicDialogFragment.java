@@ -9,7 +9,7 @@ import android.widget.NumberPicker;
 
 import androidx.annotation.NonNull;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.RelicPRFX;
@@ -79,7 +79,7 @@ public class AddRelicDialogFragment extends UpdateDialogFragment {
             picker_add_relic_grade.setMaxValue(relicSFXGradesStr.length - 1);
             picker_add_relic_grade.setDisplayedValues(relicSFXGradesStr);
 
-            RealmResults<RelicSFX> relicSFXes = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_NAME).equalTo(RelicSFX.FIELD_TYPE,  AppConstant.GUARDIAN_INIT_VALUE + 1).findAll();
+            RealmResults<RelicSFX> relicSFXes = realm.where(RelicSFX.class).distinct(RelicSFX.FIELD_NAME).equalTo(RelicSFX.FIELD_TYPE,  FangConstant.GUARDIAN_INIT_VALUE + 1).findAll();
             String[] relicSFXesStr = new String[relicSFXes.size()];
             for (int i = 0; i < relicSFXesStr.length; i++) {
                 RelicSFX relicSFX = relicSFXes.get(i);
@@ -109,8 +109,8 @@ public class AddRelicDialogFragment extends UpdateDialogFragment {
                     Log.d(TAG, "suffix error :" + e.toString());
                 }
             });
-            picker_add_relic_guardian.setValue(AppConstant.GUARDIAN_INIT_VALUE);
-            picker_add_relic_grade.setValue(AppConstant.GRADE_INIT_VALUE);
+            picker_add_relic_guardian.setValue(FangConstant.GUARDIAN_INIT_VALUE);
+            picker_add_relic_grade.setValue(FangConstant.GRADE_INIT_VALUE);
 
             builder.setView(view).setPositiveButton(R.string.add_kor, ((dialog, which) -> {
 
@@ -130,7 +130,7 @@ public class AddRelicDialogFragment extends UpdateDialogFragment {
 
                 }, () -> {
                     String message = prefix + " " + suffix + " " + resources.getString(R.string.star_filled) + grade + resources.getString(R.string.added_kor);
-                    onUpdateEventListener.updateEvent(AppConstant.RESULT_CODE_SUCCESS_ADD_RELIC, message);
+                    onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_ADD_RELIC, message);
                 });
 
 

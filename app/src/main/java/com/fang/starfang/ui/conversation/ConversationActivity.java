@@ -1,6 +1,9 @@
 package com.fang.starfang.ui.conversation;
 
 import android.app.ActionBar;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
@@ -13,14 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
-import com.fang.starfang.NotificationListener;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
-import com.fang.starfang.local.task.PrefixHandler;
 import com.fang.starfang.ui.common.UpdateDialogFragment;
 import com.fang.starfang.ui.conversation.adapter.ConversationFilter;
 import com.fang.starfang.ui.conversation.adapter.ConversationFilterObject;
@@ -29,6 +31,8 @@ import com.fang.starfang.ui.conversation.dialog.RoomFilterDialogFragment;
 import com.fang.starfang.ui.conversation.dialog.SendCatFilterDialogFragment;
 import com.fang.starfang.ui.conversation.dialog.TimeFilterDatePickerDialog;
 import com.fang.starfang.util.ScreenUtils;
+import com.fang.starfang.util.VersionUtils;
+
 import java.util.Calendar;
 
 import io.realm.Realm;
@@ -46,6 +50,10 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
     private ConstraintDocBuilder docBuilder;
     private ConversationRealmAdapter conversationRecyclerAdapter;
 
+    private NotificationManager mNM;
+    private static final int NOTIFICATION_ID = 202;
+    private static final String CHANNEL_ID = "channel-fangcat";
+    private static final String CHANNEL_NAME = "fangcat";
 
     @Override
     protected void onRestart() {
@@ -63,6 +71,12 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
         Log.d(TAG,"_on Stop : remove realm change listener / realm closed");
     }
 
+    @Override
+    public void onDestroy() {
+        mNM.cancel(NOTIFICATION_ID);
+        Log.d(TAG,"_on Destroy : remove notification");
+        super.onDestroy();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,7 +125,15 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
         setContentView(R.layout.activity_conversation);
         this.realm = Realm.getDefaultInstance();
         this.fragmentManager = getSupportFragmentManager();
-
+        this.mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        if(VersionUtils.isOreo() ) {
+            NotificationChannel mChannel = new NotificationChannel(
+                    CHANNEL_ID, CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            mNM.createNotificationChannel(mChannel);
+            Log.d(TAG,"Notification channel created");
+        }
 
         ActionBar actionBar = getActionBar();
         if( actionBar != null) {
@@ -183,7 +205,14 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
             String text = editable.toString();
 
             if(text.length() > 1 ) {
-                new PrefixHandler(this,null,null, null,true, NotificationListener.getName() ).execute(text);
+                Notification notification = new NotificationCompat.Builder( this, CHANNEL_ID )
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
+                        .setContentTitle("Starfang")
+                        .setContentText(text)
+                        .setSubText("debug")
+                        .build();
+                   mNM.notify(NOTIFICATION_ID, notification);
+
             } else {
                 int itemCount = conversationRecyclerAdapter.getItemCount();
                 Log.d(TAG,"count: " + itemCount);
@@ -329,7 +358,7 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
 
     @Override
     public void updateEvent(int code, String message) {
-        if( code == AppConstant.NOTIFY_TYPE_CONVERSATION) {
+        if( code == FangConstant.NOTIFY_TYPE_CONVERSATION) {
             conversationRecyclerAdapter.notifyDataSetChanged();
         }
     }

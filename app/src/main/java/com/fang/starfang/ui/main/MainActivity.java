@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
-import com.fang.starfang.SettingActivity;
+import com.fang.starfang.ui.setting.SettingActivity;
 import com.fang.starfang.ui.common.MovableFloatingActionButton;
 import com.fang.starfang.ui.conversation.ConversationActivity;
 import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
@@ -153,28 +153,28 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
     public void updateEvent(int code, String message) {
         int notifyType;
         switch (code) {
-            case AppConstant.RESULT_CODE_SUCCESS_ADD_ITEM:
-                notifyType = AppConstant.NOTIFY_TYPE_ITEM;
+            case FangConstant.RESULT_CODE_SUCCESS_ADD_ITEM:
+                notifyType = FangConstant.NOTIFY_TYPE_ITEM;
                 notifyToAdapter(notifyType);
                 Log.d(TAG, "item added:" + message);
                 break;
-            case AppConstant.RESULT_CODE_SUCCESS_ADD_HERO:
-                notifyType = AppConstant.NOTIFY_TYPE_HERO;
+            case FangConstant.RESULT_CODE_SUCCESS_ADD_HERO:
+                notifyType = FangConstant.NOTIFY_TYPE_HERO;
                 notifyToAdapter(notifyType);
                 Log.d(TAG, "hero added:" + message);
                 break;
-            case AppConstant.RESULT_CODE_SUCCESS_MODIFY_HERO:
-                notifyType = AppConstant.NOTIFY_TYPE_HERO;
+            case FangConstant.RESULT_CODE_SUCCESS_MODIFY_HERO:
+                notifyType = FangConstant.NOTIFY_TYPE_HERO;
                 notifyToAdapter(notifyType);
                 Log.d(TAG, "hero modified:" + message);
                 break;
-            case AppConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM:
-                notifyType = AppConstant.NOTIFY_TYPE_ITEM_HERO;
+            case FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM:
+                notifyType = FangConstant.NOTIFY_TYPE_ITEM_HERO;
                 notifyToAdapter(notifyType);
                 Log.d(TAG, "item modified:" + message);
                 break;
-            case AppConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC:
-                notifyType = AppConstant.NOTIFY_TYPE_HERO;
+            case FangConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC:
+                notifyType = FangConstant.NOTIFY_TYPE_HERO;
                 notifyToAdapter(notifyType);
                 Log.d(TAG, "relic modified:" + message);
                 break;
@@ -236,17 +236,17 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
 
     private void notifyToAdapter(int notifyType) {
         switch( notifyType ) {
-            case AppConstant.NOTIFY_TYPE_ITEM:
+            case FangConstant.NOTIFY_TYPE_ITEM:
                 itemFloatAdapter.notifyDataSetChanged();
                 itemFixAdapter.notifyDataSetChanged();
                 break;
-            case AppConstant.NOTIFY_TYPE_HERO:
+            case FangConstant.NOTIFY_TYPE_HERO:
                 heroFloatAdapter.notifyDataSetChanged();
                 heroFixAdapter.notifyDataSetChanged();
                 break;
-            case AppConstant.NOTIFY_TYPE_RELIC:
+            case FangConstant.NOTIFY_TYPE_RELIC:
                 break;
-            case AppConstant.NOTIFY_TYPE_ITEM_HERO:
+            case FangConstant.NOTIFY_TYPE_ITEM_HERO:
                 itemFloatAdapter.notifyDataSetChanged();
                 itemFixAdapter.notifyDataSetChanged();
                 heroFloatAdapter.notifyDataSetChanged();

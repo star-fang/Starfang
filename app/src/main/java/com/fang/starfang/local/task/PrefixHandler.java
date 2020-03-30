@@ -1,63 +1,88 @@
 package com.fang.starfang.local.task;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import com.fang.starfang.NotificationListener;
+import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Conversation;
 import com.fang.starfang.local.model.realm.RoomCommand;
-import com.fang.starfang.util.KakaoReplier;
+import com.fang.starfang.util.NotificationReplier;
 
 import java.lang.ref.WeakReference;
-import java.util.StringTokenizer;
 
 import io.realm.Realm;
 
 public class PrefixHandler extends AsyncTask<String, Integer, String> {
 
     private WeakReference<Context> context;
+    private String packageName;
     private String sendCat;
     private String catRoom;
     private StatusBarNotification sbn;
     private boolean isLocalRequest;
     private String botName;
+    private boolean record;
 
     private static final String TAG = "FANG_PRFX_HANDLER";
     private static final String COMMAND_START = "start";
     private static final String COMMAND_STOP = "stop";
     private static final String COMMAND_START_KOR = "시작";
     private static final String COMMAND_STOP_KOR = "정지";
+    private static final String COMMAND_RESTART_COUNT = "죽었";
+    private static final String COMMAND_NAME = "이름";
 
 
-    public PrefixHandler(Context context, String sendCat, String catRoom, StatusBarNotification sbn, boolean isLocalRequest, String botName) {
+    public PrefixHandler(Context context, String packageName,
+                         String sendCat, String catRoom,
+                         StatusBarNotification sbn, boolean isLocalRequest,
+                         String botName, boolean record ) {
         this.context = new WeakReference<>(context);
+        this.packageName = packageName;
         this.sendCat = sendCat;
         this.catRoom = catRoom;
         this.sbn = sbn;
         this.isLocalRequest = isLocalRequest;
         this.botName = botName;
+        this.record = record;
     }
 
     @Override
     protected String doInBackground(String... strings) {
+        String request = strings[0];
         try(Realm realm = Realm.getDefaultInstance()) {
-            selectRequest(strings[0], realm);
-        } catch ( RuntimeException ignore ) {
+            if( record || isLocalRequest ) {
+                realm.executeTransaction(bgRealm -> {
+                    Conversation conversation = bgRealm.createObject(Conversation.class);
+                    conversation.setSendCat(sendCat);
+                    conversation.setCatRoom(catRoom);
+                    conversation.setPackageName(packageName);
+                    conversation.setReplyID(sbn.getTag());
+                    conversation.setConversation(request);
+                });
+            }
+            selectRequest(request, realm);
 
+
+        } catch ( RuntimeException e ) {
+            e.printStackTrace();
         }
+
         return null;
     }
 
-    private void selectRequest(String request, Realm realm ) {
+
+    private void selectRequest(String request, Realm realm ) throws RuntimeException {
 
         String result = null;
 
             if (request != null) {
 
                 // 멍멍시작냥
-                if (request.substring(request.length() - 1).equals(NotificationListener.getCommandCat()) && request.length() > 2) {
+                if (request.substring(request.length() - 1).equals("냥") && request.length() > 2) {
 
                     request = request.substring(0, request.length() - 1).trim(); // 냥 제거> 멍멍시작
 
@@ -69,26 +94,38 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
 
                             switch (command) {
                                 case COMMAND_START_KOR:
-                                    result = handleByRoomCommandStart(realm);
-                                    break;
+                                    handleByRoomCommandStart(realm);
+                                    return;
                                 case COMMAND_STOP_KOR:
-                                    result = handleByRoomCommandStop(realm);
-                                    break;
+                                    handleByRoomCommandStop(realm);
+                                    return;
+                                case COMMAND_RESTART_COUNT:
+                                    handleByCommandCount();
+                                    return;
                                 default:
                             }
 
                         }
+                    } else if( request.length() == 2) {
+                        switch (request) {
+                            case COMMAND_RESTART_COUNT:
+                                handleByCommandCount();
+                                return;
+                            case COMMAND_NAME:
+                                commitResult(botName);
+                                return;
+                                default:
+                        }
+
                     }
 
-                    if( result == null ) {
                         if(checkStop(realm)) {
                             return;
                         }
                         result = new LocalDataHandlerCat(context.get(), catRoom).handleRequest(request,realm);
 
-                    }
 
-                } else if (request.substring(request.length() - 1).equals(NotificationListener.getCommandDog()) && request.length() > 2) {
+                } else if (request.substring(request.length() - 1).equals("멍") && request.length() > 2) {
 
                     if(checkStop(realm)) {
                         return;
@@ -97,102 +134,84 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
                 }
             }
 
-            commitResult(result, realm);
+            commitResult(result);
 
 
     }
 
-    private String handleByRoomCommandStart( Realm realm ) {
+    private void handleByCommandCount() {
+
+        Resources resources = context.get().getResources();
+        SharedPreferences sharedPref = context.get().getSharedPreferences(
+                resources.getString(R.string.shared_preference_store_name),
+                Context.MODE_PRIVATE);
+
+        int restartCount = sharedPref.getInt(
+                resources.getString(R.string.shared_preference_key_restart_count)
+                , 0 );
+        String resultString = ( restartCount > 0 )?
+                restartCount + "번 죽었다냥.." : "한번도 안죽었다냥 ㅎㅅㅎ";
+
+        commitResult(resultString);
+    }
+
+    private void handleByRoomCommandStart( Realm realm ) throws RuntimeException {
         if(catRoom == null) {
-            return "시작: 단톡방에서만 사용가능한 명령입니다.";
-        }
-        RoomCommand roomCommand = realm.where(RoomCommand.class).equalTo(RoomCommand.FIELD_ROOM, catRoom).findFirst();
-        if(roomCommand == null) {
-            roomCommand = new RoomCommand();
-            roomCommand.setRoomName(catRoom);
-            roomCommand.setStatus(COMMAND_START);
-            realm.beginTransaction();
-            realm.copyToRealm(roomCommand);
-            realm.commitTransaction();
+            commitResult( COMMAND_START_KOR + ": 단톡방에서만 사용가능한 명령입니다." );
         } else {
-            String status = roomCommand.getStatus();
-            if(!status.equals(COMMAND_START)) {
-                realm.beginTransaction();
-                roomCommand.setStatus(COMMAND_START);
-                realm.commitTransaction();
-            }
-        }
-
-
-        return catRoom+ " 냥봇 시작";
-    }
-
-    private String handleByRoomCommandStop(Realm realm) {
-        if(catRoom == null) {
-            return "정지: 단톡방에서만 사용가능한 명령입니다.";
-        }
-
-            RoomCommand roomCommand = realm.where(RoomCommand.class).equalTo(RoomCommand.FIELD_ROOM, catRoom).findFirst();
-            if(roomCommand == null) {
-                roomCommand = new RoomCommand();
-                roomCommand.setRoomName(catRoom);
-                roomCommand.setStatus(COMMAND_STOP);
-                realm.beginTransaction();
-                realm.copyToRealm(roomCommand);
-                realm.commitTransaction();
-
-            } else {
-                String status = roomCommand.getStatus();
-                if(!status.equals(COMMAND_STOP)) {
-                    realm.beginTransaction();
-                    roomCommand.setStatus(COMMAND_STOP);
-                    realm.commitTransaction();
-                }
-            }
-
-        return catRoom+ " 냥봇 정지";
-
-
-
-
-    }
-
-    private void commitResult(String result, Realm realm) {
-        if (isLocalRequest) {
-            result = result == null ? "ㅇㅅㅇ..." : result;
-            StringTokenizer st = new StringTokenizer(result,"," );
-            realm.beginTransaction();
-            while( st.hasMoreTokens()) {
-                String tmpRes = st.nextToken();
-                if( tmpRes.substring(0,2).equals("\r\n")) {
-                    tmpRes = tmpRes.substring(2);
-                }
-                try {
-                    if( tmpRes.substring(tmpRes.length()-2).equals("\r\n")) {
-                        tmpRes = tmpRes.substring(0,tmpRes.length()-2);
+            realm.executeTransaction(bgRealm -> {
+                RoomCommand roomCommand = bgRealm.where(RoomCommand.class).equalTo(RoomCommand.FIELD_ROOM, catRoom).findFirst();
+                if (roomCommand == null) {
+                    RoomCommand newCommand = bgRealm.createObject(RoomCommand.class);
+                    newCommand.setRoomName(catRoom);
+                    newCommand.setStatus(COMMAND_START);
+                } else {
+                    String status = roomCommand.getStatus();
+                    if (!status.equals(COMMAND_START)) {
+                        roomCommand.setStatus(COMMAND_START);
                     }
-                    Conversation conversationRep = new Conversation( null, null,null,NotificationListener.PACKAGE_STARFANG,tmpRes);
-                    realm.copyToRealm(conversationRep);
-
-                } catch (NullPointerException | StringIndexOutOfBoundsException | ArrayIndexOutOfBoundsException ignored) {
                 }
-            }
-            realm.commitTransaction();
 
+            });
+            commitResult(catRoom + " 냥봇 시작");
+        }
+
+    }
+
+    private void handleByRoomCommandStop(Realm realm) throws RuntimeException {
+        if(catRoom == null) {
+            commitResult( COMMAND_STOP_KOR + ": 단톡방에서만 사용가능한 명령입니다." );
         } else {
+            realm.executeTransaction(bgRealm -> {
+                RoomCommand roomCommand = bgRealm.where(RoomCommand.class).equalTo(RoomCommand.FIELD_ROOM, catRoom).findFirst();
+                if (roomCommand == null) {
+                    RoomCommand newCommand = bgRealm.createObject(RoomCommand.class);
+                    newCommand.setRoomName(catRoom);
+                    newCommand.setStatus(COMMAND_STOP);
+                } else {
+                    String status = roomCommand.getStatus();
+                    if (!status.equals(COMMAND_STOP)) {
+                        roomCommand.setStatus(COMMAND_STOP);
+                    }
+                }
+            });
+            commitResult(catRoom + " 냥봇 정지");
+        }
+    }
+
+    private void commitResult(String result) throws RuntimeException {
             if (result != null) {
-                KakaoReplier replier = new KakaoReplier(context.get(), sendCat, sbn);
+                NotificationReplier replier = new NotificationReplier(context.get(), sendCat, catRoom, sbn, isLocalRequest, record);
                 replier.execute(result, botName);
             }
-        }
-        realm.close();
+
     }
 
     private boolean checkStop(Realm realm) {
         if(catRoom!=null) {
             RoomCommand roomCommand = realm.where(RoomCommand.class).equalTo(RoomCommand.FIELD_ROOM, catRoom).findFirst();
             if (roomCommand != null) {
-                if (roomCommand.getStatus().equals("stop")) {
+                if (roomCommand.getStatus().equals(COMMAND_STOP)) {
                     Log.d(TAG,catRoom + " stopped");
                     return true;
                 }

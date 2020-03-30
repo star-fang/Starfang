@@ -14,7 +14,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
@@ -40,7 +40,7 @@ public class ManageRelicSuffixDialogFragment extends UpdateDialogFragment {
             RelicSFX sfx = sfxes.get(suffixNo);
             if( sfx != null ) {
                 int suffixID = sfx.getRelicSuffixID();
-                args.putInt(AppConstant.INTENT_KEY_SUFFIX_ID, suffixID);
+                args.putInt(FangConstant.INTENT_KEY_SUFFIX_ID, suffixID);
             }
         }
         manageRelicSuffixDialogFragment.setArguments(args);
@@ -56,7 +56,7 @@ public class ManageRelicSuffixDialogFragment extends UpdateDialogFragment {
         View view = View.inflate(mActivity, R.layout.dialog_manage_relic_suffix, null);
         Bundle args = this.getArguments();
         if (args != null) {
-            final int suffixID = args.getInt(AppConstant.INTENT_KEY_SUFFIX_ID);
+            final int suffixID = args.getInt(FangConstant.INTENT_KEY_SUFFIX_ID);
             RelicSFX sfx = realm.where(RelicSFX.class).equalTo(RelicSFX.FIELD_ID, suffixID).findFirst();
             if (sfx != null) {
                 AppCompatTextView text_title_manage_suffix = view.findViewById(R.id.text_title_manage_suffix);

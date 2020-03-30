@@ -6,13 +6,43 @@
     android:background="#303E55D6"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="5dp">
+
+            <Switch
+                android:id="@+id/record_start"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:layout_centerVertical="true"
+                android:defaultValue="false"/>
+
+            <TextView
+                android:layout_below="@id/record_start"
+                android:id="@+id/text_record_start"
+                android:layout_width="80dp"
+                android:layout_height="20dp"
+                android:text="@string/start_record"
+                android:textAlignment="center"/>
+        </RelativeLayout>
+        <RelativeLayout
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginBottom="10dp"
-        android:orientation="horizontal"
-        android:layout_above="@id/row_notification_setting"
-        android:layout_alignParentEnd="true">
+        android:layout_marginBottom="15dp"
+        >
 
         <Switch
             android:id="@+id/notifications_start"
@@ -29,20 +59,11 @@
             android:layout_height="20dp"
             android:text="@string/start_bot"
             android:textAlignment="center"/>
-
-
     </RelativeLayout>
-
-
-
-
-    <RelativeLayout
-        android:id="@+id/row_notification_setting"
+        <RelativeLayout
         android:layout_width="80dp"
         android:layout_height="60dp"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@id/row_sync_all"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="15dp">
 
         <Button
             android:id="@+id/notifications_setting"
@@ -62,14 +83,11 @@
             android:gravity="center_horizontal"
             android:text="@string/notifications_setting" />
     </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/row_sync_all"
+        <RelativeLayout
         android:layout_width="80dp"
         android:layout_height="60dp"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true">
+        android:layout_marginBottom="15dp"
+        >
 
         <Button
             android:id="@+id/start_sync_key_all"
@@ -91,6 +109,8 @@
             android:text="@string/sync_kor" />
     </RelativeLayout>
 
+    </LinearLayout>
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/row_et_name"
@@ -144,8 +164,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginBottom="10dp"
-        android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@id/row_sync_all">
+        android:layout_alignParentBottom="true">
         <EditText
             android:id="@+id/text_address"
             android:layout_width="200dp"

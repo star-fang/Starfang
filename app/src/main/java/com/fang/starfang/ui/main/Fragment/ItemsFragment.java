@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fang.starfang.AppConstant;
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
@@ -137,7 +137,7 @@ public class ItemsFragment extends PlaceholderFragment {
                 String selected_grade = gradeList.get(newVal);
                 String selected_category_main = mainCategoryList.get(picker_item_sim_category_main.getValue());
                 String selected_category_sub = subCategoryList.get(picker_item_sim_category_sub.getValue());
-                String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
+                String cs = selected_grade + FangConstant.CONSTRAINT_SEPARATOR + selected_category_main + FangConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                 itemSimsFixedRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
                 itemSimsFloatingRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
             });
@@ -168,7 +168,7 @@ public class ItemsFragment extends PlaceholderFragment {
 
 
                     String selected_category_sub = subCategoryList.get(picker_item_sim_category_sub.getValue());
-                    String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
+                    String cs = selected_grade + FangConstant.CONSTRAINT_SEPARATOR + selected_category_main + FangConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                     itemSimsFixedRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
                     itemSimsFloatingRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
                 } catch (ArrayIndexOutOfBoundsException e) {
@@ -180,7 +180,7 @@ public class ItemsFragment extends PlaceholderFragment {
                 String selected_grade = gradeList.get(picker_item_sim_grade.getValue());
                 String selected_category_main = mainCategoryList.get(picker_item_sim_category_main.getValue());
                 String selected_category_sub = subCategoryList.get(newVal);
-                String cs = selected_grade + AppConstant.CONSTRAINT_SEPARATOR + selected_category_main + AppConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
+                String cs = selected_grade + FangConstant.CONSTRAINT_SEPARATOR + selected_category_main + FangConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                 itemSimsFixedRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
                 itemSimsFloatingRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
             });
