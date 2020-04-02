@@ -110,7 +110,8 @@ public class RoomFilterRealmAdapter extends RealmRecyclerViewAdapter<Conversatio
                 });
 
 
-            } catch( NullPointerException ignored) {
+            } catch( NullPointerException e) {
+                e.printStackTrace();
             }
         }
 

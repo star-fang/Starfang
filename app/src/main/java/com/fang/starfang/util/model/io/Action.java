@@ -13,9 +13,6 @@ import androidx.core.app.RemoteInput;
 
 import java.util.ArrayList;
 
-
-// 카톡 알림에 대한 답장을 전송
-@SuppressWarnings("unchecked")
 public class Action implements Parcelable {
 
 	private final String text;
@@ -24,7 +21,7 @@ public class Action implements Parcelable {
 	private final boolean isQuickReply;
 	private final ArrayList<RemoteInputParcel> remoteInputs = new ArrayList<>();
 
-	public Action(Parcel in) {
+	private Action(Parcel in) {
 		text = in.readString();
 		packageName = in.readString();
 		p = in.readParcelable(PendingIntent.class.getClassLoader());
@@ -77,7 +74,7 @@ public class Action implements Parcelable {
 			actualInputs.add(builder.build());
 		}
 
-		RemoteInput[] inputs = actualInputs.toArray(new RemoteInput[actualInputs.size()]);
+		RemoteInput[] inputs = actualInputs.toArray(new RemoteInput[0]);
 		RemoteInput.addResultsToIntent(inputs, intent, bundle);
 		p.send(context, 0, intent);
 	}

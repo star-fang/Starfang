@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.fang.starfang.FangConstant;
@@ -28,29 +29,46 @@ public class FangcatService extends NotificationListenerService {
     @Override
     public void onCreate() {
         super.onCreate();
-        super.stopSelf();
         isWorking = false;
-        Log.d(TAG, "Notification Listener created");
+        Resources resources = getResources();
+        SharedPreferences sharedPref = getSharedPreferences(
+                resources.getString(R.string.shared_preference_store),
+                Context.MODE_PRIVATE);
+        String start_count_key = resources.getString(R.string.start_count);
+        int startCount = sharedPref.getInt(start_count_key, 0) + 1;
+        Log.d(TAG, "NotificationListenerService: " + startCount + "th(st|nd|rd) created");
+        sharedPref.edit().putInt(start_count_key, startCount).apply();
     }
 
     @Override
-    public int onStartCommand( Intent intent, int flags, int startId) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Notification Listener receive start command");
         Bundle bundle = intent.getExtras();
         Resources resources = getResources();
-        isWorking = true;
-        if( bundle != null ) {
+        if (bundle != null) {
             String command = bundle.getString(
-                    resources.getString(R.string.bot_status_change),
+                    resources.getString(R.string.bot_status),
                     resources.getString(R.string.bot_status_start)
             );
-            if( command.equals(resources.getString(R.string.bot_status_stop))) {
+            if (command.equals(resources.getString(R.string.bot_status_stop))) {
+                Log.d(TAG, "service stop");
                 isWorking = false;
                 stopSelf();
-                Log.d(TAG, "Notification Listener stop itself");
             } else {
-                Log.d(TAG, "Notification Listener started");
-               return super.onStartCommand(intent, flags, startId);
+                isWorking = true;
+                if (command.equals(resources.getString(R.string.bot_status_restart))) {
+                    SharedPreferences sharedPref = getSharedPreferences(
+                            resources.getString(R.string.shared_preference_store),
+                            Context.MODE_PRIVATE);
+                    String restart_count_key = resources.getString(R.string.restart_count);
+                    int restartCount = sharedPref.getInt(
+                            restart_count_key, 0) + 1;
+                    Log.d(TAG, "service restart: " + restartCount + "th(st|nd|rd) restart command");
+                    sharedPref.edit().putInt(restart_count_key, restartCount).apply();
+                } else {
+                    Log.d(TAG, "service start");
+                }
+                return super.onStartCommand(intent, flags, startId);
             }
         }
         return START_NOT_STICKY;
@@ -60,25 +78,29 @@ public class FangcatService extends NotificationListenerService {
     public void onDestroy() {
         super.onDestroy();
 
-        if( isWorking ) {
+        if (isWorking) {
             Log.d(TAG, "Notification Listener destroyed abnormally");
             final Calendar c = Calendar.getInstance();
             c.setTimeInMillis(System.currentTimeMillis());
-            c.add(Calendar.SECOND, 1);
+            c.add(Calendar.SECOND, 3);
             Intent intent = new Intent(FangcatService.this, AlarmReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(FangcatService.this, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(FangcatService.this, 0, intent,
+                    PendingIntent.FLAG_CANCEL_CURRENT);
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+            if (alarmManager != null) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+            }
         } else {
             Resources resources = getResources();
             SharedPreferences sharedPref = getSharedPreferences(
-                    resources.getString(R.string.shared_preference_store_name)
+                    resources.getString(R.string.shared_preference_store)
                     , Context.MODE_PRIVATE
             );
             sharedPref.edit().putString(
-                    resources.getString(R.string.shared_preference_key_botStatus),
+                    resources.getString(R.string.bot_status),
                     resources.getString(R.string.bot_status_stop)
             ).apply();
+
             Log.d(TAG, "Notification Listener destroyed ");
         }
     }
@@ -101,72 +123,82 @@ public class FangcatService extends NotificationListenerService {
         super.onRebind(intent);
     }
 
-    public void addNotification(StatusBarNotification sbn)  {
-        //Log.d(TAG, "addNotification activated");
+    public void addNotification(StatusBarNotification sbn
+            , boolean isLocalRequest) {
 
-            Notification mNotification = sbn.getNotification();
-            Bundle extras = mNotification.extras;
+        Notification mNotification = sbn.getNotification();
+        Bundle extras = mNotification.extras;
 
-        String from = null;
-        String text = null;
-        String room = null;
-        String packageName = sbn.getPackageName();
-
-        boolean isAvailablePackage = false;
-        boolean isLocalRequest = false;
-
-        switch ( packageName.toLowerCase() ) {
-            case FangConstant.PACKAGE_STARFANG:
-                isLocalRequest = true;
-            case FangConstant.PACKAGE_KAKAO:
-                from = extras.getString(Notification.EXTRA_TITLE);
-                text = extras.getString(Notification.EXTRA_TEXT);
-                room = extras.getString(Notification.EXTRA_SUB_TEXT);
-                isAvailablePackage = true;
-                break;
-            case FangConstant.PACKAGE_DISCORD:
-                text = extras.getCharSequence(Notification.EXTRA_TEXT)+"";
-                from = extras.getCharSequence(Notification.EXTRA_TITLE)+"";
-                room = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)+"";
-                //isAvailablePackage = true;
-                break;
-                default:
+        String text;
+        CharSequence textChars = extras.getCharSequence(Notification.EXTRA_TEXT);
+        if (!TextUtils.isEmpty(textChars)) {
+            text = textChars.toString();
+        } else if (!TextUtils.isEmpty((textChars = extras.getString(Notification.EXTRA_SUMMARY_TEXT)))) {
+            text = textChars.toString();
+        } else {
+            text = null;
         }
 
-        if( isAvailablePackage ) {
-
-            Resources resources = getResources();
-            SharedPreferences sharedPref = getSharedPreferences(
-                    resources.getString(R.string.shared_preference_store_name),
-                    Context.MODE_PRIVATE);
-            String botRecord = sharedPref.getString(
-                    resources.getString(R.string.shared_preference_key_botRecord), //
-                    resources.getString(R.string.bot_status_stop) ); // default : stop record
-
-            boolean record = ( botRecord != null && botRecord.equals(resources.getString(R.string.bot_status_start)) );
-
-            String botName = sharedPref.getString(
-                    resources.getString(R.string.shared_preference_key_botName),
-                    resources.getString(R.string.bot_name_default)
-            );
-            new PrefixHandler(this, packageName,from,room,sbn,isLocalRequest, botName, record  ).execute(text);
-            //Log.d(TAG, sbn.getPackageName() + ">> from: " + from + ", text: " + text + ", room: " + room);
+        String from;
+        CharSequence fromChars = extras.getCharSequence(Notification.EXTRA_TITLE);
+        if (!TextUtils.isEmpty(fromChars)) {
+            from = fromChars.toString();
+        } else {
+            from = null;
         }
+
+        String room;
+        CharSequence roomChars = extras.getCharSequence(Notification.EXTRA_SUB_TEXT);
+        if (!TextUtils.isEmpty(roomChars)) {
+            room = roomChars.toString();
+        } else {
+            room = null;
+        }
+
+        Resources resources = getResources();
+        SharedPreferences sharedPref = getSharedPreferences(
+                resources.getString(R.string.shared_preference_store),
+                Context.MODE_PRIVATE);
+        String botRecord = sharedPref.getString(
+                resources.getString(R.string.bot_record),
+                resources.getString(R.string.bot_status_stop)); // default : stop record
+
+        boolean record = botRecord.equals(resources.getString(R.string.bot_status_start));
+
+        String botName = sharedPref.getString(
+                resources.getString(R.string.bot_name),
+                resources.getString(R.string.bot_name_default)
+        );
+        new PrefixHandler(this, from, room, sbn, isLocalRequest, botName, record).execute(text);
+        //Log.d(TAG, sbn.getPackageName() + ">> from: " + from + ", text: " + text + ", room: " + room);
+
     }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
 
-        if ( sbn!=null && isWorking ) {
-            String sbnPackage = sbn.getPackageName();
-            String sbnTag = sbn.getTag();
+        if (sbn != null && isWorking) {
             //Log.d(TAG, sbnPackage + " posted!");
+            boolean isAvailablePackage = false;
+            boolean isLocalRequest = false;
+            String packageName = sbn.getPackageName();
 
-            if ( ( sbnTag != null &&  sbnPackage.equalsIgnoreCase(FangConstant.PACKAGE_KAKAO) ) ||
-                    sbnPackage.equalsIgnoreCase(FangConstant.PACKAGE_DISCORD) ||
-                    sbnPackage.equalsIgnoreCase(FangConstant.PACKAGE_STARFANG)
-            ) {
-                addNotification(sbn);
+            switch (packageName.toLowerCase()) {
+                case FangConstant.PACKAGE_STARFANG:
+                    isLocalRequest = true;
+                    isAvailablePackage = true;
+                    break;
+                case FangConstant.PACKAGE_KAKAO:
+                    isAvailablePackage = sbn.getTag() != null;
+                    break;
+                case FangConstant.PACKAGE_DISCORD:
+                    //isAvailablePackage = true;
+                    break;
+                default:
+            }
+
+            if (isAvailablePackage) {
+                addNotification(sbn, isLocalRequest);
             }
         }
     }

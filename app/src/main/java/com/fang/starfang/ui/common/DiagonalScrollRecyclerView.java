@@ -59,10 +59,12 @@ public class DiagonalScrollRecyclerView extends HorizontalScrollView {
 
                         try {
                             View v = findChildAtLocation(recyclerView, (int) event.getRawX(), (int) event.getRawY());
-                            v.performClick();
-                            Log.d(TAG,v.toString());
+                            if( v != null ) {
+                                v.performClick();
+                                Log.d(TAG, v.toString());
+                            }
                         } catch (Exception e) {
-                            Log.d(TAG, "onTouch : " + e.getMessage());
+                            e.printStackTrace();
                         }
 
                 }

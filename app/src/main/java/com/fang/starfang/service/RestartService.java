@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -31,13 +32,16 @@ public class RestartService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId ) {
-        startForegroundService("rsChannel","RestartServiceChannel");
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG,"restart service activated");
 
-        Intent startServiceIntent = new Intent( RestartService.this, FangcatService.class );
+        startForegroundService("rsChannel", "RestartServiceChannel");
+
+        Intent startServiceIntent = new Intent(RestartService.this, FangcatService.class);
         Resources resources = getResources();
-        startServiceIntent.putExtra(resources.getString(R.string.bot_status_change),
-                resources.getString(R.string.bot_status_start));
+        startServiceIntent.putExtra(
+                resources.getString(R.string.bot_status),
+                resources.getString(R.string.bot_status_restart));
         startService(startServiceIntent);
 
         stopForeground(true);
@@ -52,11 +56,11 @@ public class RestartService extends Service {
                 notificationIntent, 0);
 
         String channelId = "";
-        if( VersionUtils.isOreo() ) {
+        if (VersionUtils.isOreo()) {
             channelId = createNotificationChannel(id, name);
         }
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId );
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
         Notification notification = notificationBuilder.setOngoing(true)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -72,10 +76,12 @@ public class RestartService extends Service {
     private String createNotificationChannel(String channelId, String channelName) {
         NotificationChannel channel = new NotificationChannel(channelId,
                 channelName, NotificationManager.IMPORTANCE_HIGH);
-        channel.setLightColor( Color.BLUE );
-        channel.setLockscreenVisibility( Notification.VISIBILITY_PRIVATE );
-        NotificationManager service = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        service.createNotificationChannel(channel);
+        channel.setLightColor(Color.BLUE);
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager service = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (service != null) {
+            service.createNotificationChannel(channel);
+        }
         return channelId;
     }
 }

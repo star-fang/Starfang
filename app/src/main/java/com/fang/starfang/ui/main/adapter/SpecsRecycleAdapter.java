@@ -139,13 +139,11 @@ implements Filterable {
                                         if(specValStr.contains("/")) {
                                             int titleValue = NumberUtils.toInt(titleStr.replaceAll("[^0-9]", ""),0);
                                             String[] specValSplit = specValStr.split("/");
-                                            String specValCurCS;
-                                            try {
-                                                specValCurCS = specValSplit[cs - titleValue];
-                                            } catch( StringIndexOutOfBoundsException e ) {
-                                                specValCurCS = specValSplit[specValSplit.length - 1];
-                                                Log.d(TAG,e.toString());
+                                            int index = (cs - titleValue);
+                                            if( index >= specValSplit.length || index < 0 ) {
+                                                index = specValSplit.length - 1;
                                             }
+                                            String specValCurCS = specValSplit[index];
                                                 String specValCurCSValue = specValCurCS.replaceAll("[^0-9]", "");
                                                 if (specValStr.contains("%")) {
                                                     specValStr = specValCurCSValue + "%";

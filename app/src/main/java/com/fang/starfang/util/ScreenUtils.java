@@ -52,7 +52,7 @@ public class ScreenUtils {
 
         View focusedView = activity.getCurrentFocus();
 
-        if (focusedView != null) {
+        if (focusedView != null && inputMethodManager != null) {
             inputMethodManager.hideSoftInputFromWindow(
                     focusedView.getWindowToken(), 0);
         }
@@ -62,7 +62,9 @@ public class ScreenUtils {
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
                     activiry.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+            if (imm != null) {
+                imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+            }
         }
     }
 

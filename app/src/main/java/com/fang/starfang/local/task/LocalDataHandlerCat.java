@@ -108,30 +108,35 @@ class LocalDataHandlerCat {
         COMMAND_CERTAIN_ENUM certainCMD = COMMAND_CERTAIN_ENUM.COMMAND_DEFAULT;
         for (COMMAND_CERTAIN_ENUM certain : COMMAND_CERTAIN_ENUM.values()) {
             try {
-                String probKey = COMMAND_CERTAIN[certain.ordinal()];
-                String suffix = SFX_COMMAND[certain.ordinal()];
-                String prefix = PRFX_COMMAND[certain.ordinal()];
+                int certainIndex = certain.ordinal();
+                if (certainIndex < COMMAND_CERTAIN.length) {
+                    String probKey = COMMAND_CERTAIN[certainIndex];
+                    String suffix = SFX_COMMAND[certainIndex];
+                    String prefix = PRFX_COMMAND[certainIndex];
 
-                String reqWithoutSFX = req;
-                try {
-                    if (!suffix.isEmpty())
-                        reqWithoutSFX = (req.substring(req.length() - suffix.length()).equals(suffix)) ?
-                                req.substring(0, req.length() - suffix.length()) : req;
-                } catch (StringIndexOutOfBoundsException ignore) {
-                }
-
-                try {
-                    if (reqWithoutSFX.substring(reqWithoutSFX.length() - probKey.length()).equals(probKey)) {
-                        certainCMD = certain;
-                        req = req.replace(prefix, EMPTY);
-                        req = req.replace(suffix, EMPTY).trim();
-                        req = req.substring(0, req.length() - probKey.length()).trim();
-                        break;
+                    String reqWithoutSFX = req;
+                    try {
+                        if (!suffix.isEmpty())
+                            reqWithoutSFX = (req.substring(req.length() - suffix.length()).equals(suffix)) ?
+                                    req.substring(0, req.length() - suffix.length()) : req;
+                    } catch (StringIndexOutOfBoundsException e) {
+                        e.printStackTrace();
                     }
-                } catch (StringIndexOutOfBoundsException ignore) {
-                }
 
-            } catch (ArrayIndexOutOfBoundsException ignore) {
+                    try {
+                        if (reqWithoutSFX.substring(reqWithoutSFX.length() - probKey.length()).equals(probKey)) {
+                            certainCMD = certain;
+                            req = req.replace(prefix, EMPTY);
+                            req = req.replace(suffix, EMPTY).trim();
+                            req = req.substring(0, req.length() - probKey.length()).trim();
+                            break;
+                        }
+                    } catch (StringIndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
             }
         }
 
@@ -238,13 +243,13 @@ class LocalDataHandlerCat {
                             lambdaResult.append(Heroes.INIT_LINEAGE).append(COLON).append(BLANK)
                                     .append(tmpHero.getHeroLineage()).append(CRLF);
 
-                            if(destinies != null) {
+                            if (destinies != null) {
                                 String[] destinyArr = destinies.split(COLON);
-                                if( destinyArr.length == 1) {
+                                if (destinyArr.length == 1) {
                                     lambdaResult.append(Heroes.INIT_DESTINY + COLON + BLANK).append(destinyArr[0]).append(CRLF);
-                                } else if( destinyArr.length > 1) {
+                                } else if (destinyArr.length > 1) {
                                     for (int i = 0; i < destinyArr.length; i++) {
-                                        lambdaResult.append(Heroes.INIT_DESTINY).append((i+1)).append(COLON).append(BLANK).append(destinyArr[i]).append(CRLF);
+                                        lambdaResult.append(Heroes.INIT_DESTINY).append((i + 1)).append(COLON).append(BLANK).append(destinyArr[i]).append(CRLF);
                                     }
                                 }
                             }
@@ -265,7 +270,8 @@ class LocalDataHandlerCat {
                                             val = tmpSpecValue.toString();
                                         }
                                     }
-                                } catch (ArrayIndexOutOfBoundsException ignore) {
+                                } catch (ArrayIndexOutOfBoundsException e) {
+                                    e.printStackTrace();
 
                                 }
                                 lambdaResult.append(Heroes.INIT_SPECS[i]).append(COLON).append(BLANK)
@@ -323,14 +329,17 @@ class LocalDataHandlerCat {
                                     if (NumberUtils.toInt(desValueStr.substring(0, 1)) <= mapDestinyValue) {
                                         lambdaResult.append(SEPARATOR).append(des.getDesName()).append(CRLF);
                                         for (String joinEffect : des.getdesJoinEffect()) {
-                                            String[] joinEffectSplit = joinEffect.split(COLON);
-                                            lambdaResult.append(NumberUtils.isDigits(joinEffectSplit[0]) ? EMPTY : joinEffectSplit[0] + " 시 ");
-                                            lambdaResult.append(joinEffectSplit[1]).append(BLANK).append(joinEffectSplit[2]).append(CRLF);
+                                            if( joinEffect != null ) {
+                                                String[] joinEffectSplit = joinEffect.split(COLON);
+                                                lambdaResult.append(NumberUtils.isDigits(joinEffectSplit[0]) ? EMPTY : joinEffectSplit[0] + " 시 ");
+                                                lambdaResult.append(joinEffectSplit[1]).append(BLANK).append(joinEffectSplit[2]).append(CRLF);
+                                            }
                                         }
                                     }
                                 }
                             }
-                        } catch (NullPointerException ignored) {
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -380,7 +389,7 @@ class LocalDataHandlerCat {
                 level_pivot = level_pivot < 50 && level_pivot >= 30 ? 30 : level_pivot;
                 level_pivot = level_pivot < 70 && level_pivot >= 50 ? 50 : level_pivot;
                 level_pivot = level_pivot < 90 && level_pivot >= 70 ? 70 : level_pivot;
-                level_pivot = level_pivot >= 90 ? 90 : level_pivot;
+                level_pivot = Math.min(level_pivot, 90);
                 q = q.replace("특성", EMPTY).replaceAll(REGEX_DIGITS, EMPTY).trim();
                 if (q.replace(BLANK, EMPTY).isEmpty())
                     return null;
@@ -487,8 +496,11 @@ class LocalDataHandlerCat {
                     for (int k = j; k < colSize; k++) {
                         try {
                             base *= validSpecs[k].length;
-                            underBase *= validSpecs[k + 1].length;
-                        } catch (ArrayIndexOutOfBoundsException | NullPointerException ignore) {
+                            if (validSpecs.length > k + 1) {
+                                underBase *= validSpecs[k + 1].length;
+                            }
+                        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+                            e.printStackTrace();
                         }
                     }
                     int specNo = i % base / underBase;
@@ -632,22 +644,22 @@ class LocalDataHandlerCat {
                             lambdaResult.append(spec.getSpecName()).
                                     append(spec.getSpecName2() != null ? "\r\na.k.a. " + spec.getSpecName2().replace(COLON, "，") + CRLF : CRLF);
                             int specAccFlag = spec.getSpecAccumulate();
-                            if(specAccFlag >= 0) {
+                            if (specAccFlag >= 0) {
                                 lambdaResult.append("*동일 효과 중첩 ").append((specAccFlag == 0) ? "불가" : "가능").append(CRLF);
                             }
 
                             String triggerTile = spec.getSpecTriggerTile();
-                            if(triggerTile != null) {
+                            if (triggerTile != null) {
                                 lambdaResult.append("*트리거 지형: ").append(triggerTile).append(CRLF);
                             }
 
                             int triggerType = spec.getSpecTriggerType();
-                            if(triggerType > 0) {
+                            if (triggerType > 0) {
                                 lambdaResult.append("*트리거 타입: ").append(triggerType).append(CRLF);
                             }
 
                             String specParent = spec.getSpecParent();
-                            if(specParent != null) {
+                            if (specParent != null) {
                                 lambdaResult.append("*상속 효과: ").append(specParent).append(CRLF);
                             }
 
@@ -724,7 +736,7 @@ class LocalDataHandlerCat {
                         }
 
                     } catch (NullPointerException e) {
-                        Log.d(TAG, e.toString());
+                        e.printStackTrace();
                     }
 
                     lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
@@ -800,7 +812,7 @@ class LocalDataHandlerCat {
                                                 valCur = valSplit[grade - branchPasvSpecGrade.toInt()]
                                                         .replaceAll(REGEX_EXCEPT_DIGITS, BLANK).trim();
                                             } catch (ArrayIndexOutOfBoundsException e) {
-                                                Log.d(TAG, e.toString());
+                                                e.printStackTrace();
                                             }
                                             if (val.contains("[")) {
                                                 valCur = "[" + valCur + "]";
@@ -985,7 +997,8 @@ class LocalDataHandlerCat {
                             if (condition != null)
                                 lambdaResult.append(Destiny.INIT_CONDITIONS[i]).append(condition).append(CRLF);
                         }
-                    } catch (NullPointerException ignored) {
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
                     }
                     try {
                         lambdaResult.append(Destiny.INIT_LASTING_EFFECT).append(destiny.getDesLastingEffect()).append(CRLF);
@@ -994,7 +1007,8 @@ class LocalDataHandlerCat {
                             lambdaResult.append(effectSplit[0]).append(NumberUtils.isDigits(effectSplit[0]) ? "명 이상 출진: "
                                     : "시 발동: ").append(effectSplit[1]).append(BLANK).append(effectSplit[2]).append(CRLF);
                         }
-                    } catch (NullPointerException ignored) {
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
                     }
                     lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
                 }
@@ -1373,7 +1387,8 @@ class LocalDataHandlerCat {
                                 i++;
                                 //lambdaResult.append(StringUtils.leftPad(stat+EMPTY,2,'0')).append(BLANK);
                             }
-                        } catch (NullPointerException ignore) {
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
                         }
 
                         lambdaResult.append(CRLF);
@@ -1643,7 +1658,7 @@ class LocalDataHandlerCat {
 
             String dateInfo = q.replaceAll(REGEX_EXCEPT_DIGITS, "");
             Date date = new Date();
-            date.setTime(date.getTime());
+            //date.setTime(date.getTime());
             SimpleDateFormat df_ymd = new SimpleDateFormat("yyMMdd", Locale.KOREA);
             try {
                 if (dateInfo.length() == 6) {
@@ -1655,22 +1670,26 @@ class LocalDataHandlerCat {
                     date = df_ymd.parse(dateInfo);
                 }
 
-            } catch (ParseException ignore) {
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
 
-
             Date date_before = new Date();
-            date_before.setTime(date.getTime() - 21 * 24 * 60 * 60 * 1000);
             Date date_after = new Date();
-            date_after.setTime(date.getTime() + 22 * 24 * 60 * 60 * 1000);
+            if (date != null) {
+                date_before.setTime(date.getTime() - 21 * 24 * 60 * 60 * 1000);
+                date_after.setTime(date.getTime() + 22 * 24 * 60 * 60 * 1000);
+            }
 
             int dateBeforeInt = Integer.parseInt(df_ymd.format(date_before));
             int dateAfterInt = Integer.parseInt(df_ymd.format(date_after));
             String map = q.trim();
 
 
-            lambdaResult.append(new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(date)).
-                    append(BLANK).append(division).append("일정").append(CRLF).append(SEPARATOR);
+            if (date != null) {
+                lambdaResult.append(new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(date)).
+                        append(BLANK).append(division).append("일정").append(CRLF).append(SEPARATOR);
+            }
 
             RealmResults<Agenda> agendaRealmResults;
             if (map.equals("")) {
@@ -1693,14 +1712,18 @@ class LocalDataHandlerCat {
                 try {
                     Date start_date = df_ymd.parse(agenda.getAgendaStart() + "");
                     Date end_date = new Date();
-                    end_date.setTime(start_date.getTime() + 6 * 24 * 60 * 60 * 1000);
+                    if (start_date != null) {
+                        end_date.setTime(start_date.getTime() + 6 * 24 * 60 * 60 * 1000);
+                        if (date != null) {
+                            lambdaResult.append(df_md.format(start_date)).append("~").append(df_md.format(end_date)).append(BLANK).append(agenda.getAgendaMap())
+                                    .append(((start_date.getTime() <= date.getTime())
+                                            && (end_date.getTime() + 24 * 60 * 60 * 1000 > date.getTime())) ? " V" : "")
+                                    .append(CRLF);
+                        }
+                    }
 
-                    lambdaResult.append(df_md.format(start_date)).append("~").append(df_md.format(end_date)).append(BLANK).append(agenda.getAgendaMap())
-                            .append(((start_date.getTime() <= date.getTime())
-                                    && (end_date.getTime() + 24 * 60 * 60 * 1000 > date.getTime())) ? " V" : "")
-                            .append(CRLF);
-
-                } catch (ParseException ignore) {
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -1711,15 +1734,15 @@ class LocalDataHandlerCat {
         HandleLocalDB getCustomAgenda = q -> {
 
             if (catRoom == null) {
-               return "단톡방에서만 사용가능한 기능입니다.";
-           }
+                return "단톡방에서만 사용가능한 기능입니다.";
+            }
 
             q = q.trim();
 
             StringBuilder lambdaResult = new StringBuilder();
             if (q.isEmpty()) {
 
-                RealmResults<CustomAgenda> allCustomAgenda = realm.where(CustomAgenda.class).equalTo(CustomAgenda.FIELD_ROOM,catRoom).findAll();
+                RealmResults<CustomAgenda> allCustomAgenda = realm.where(CustomAgenda.class).equalTo(CustomAgenda.FIELD_ROOM, catRoom).findAll();
                 lambdaResult.append(catRoom).append(CRLF).append("등록된 모든 일정들").append(CRLF).append(SEPARATOR);
                 for (CustomAgenda customAgenda : allCustomAgenda) {
                     lambdaResult.append(customAgenda.getTitle()).append(CRLF);
@@ -1744,7 +1767,8 @@ class LocalDataHandlerCat {
                     date = df_ymd.parse(dateInfo);
                 }
 
-            } catch (ParseException ignore) {
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
 
             RealmResults<CustomAgenda> customAgendaRealmResults =
@@ -1756,17 +1780,23 @@ class LocalDataHandlerCat {
                 lambdaResult.append(customAgenda.getTitle()).append(BLANK).append(remarks == null ? "" :
                         "- " + remarks).append(CRLF);
                 Date curDate = new Date();
-                curDate.setTime(date.getTime());
+                if (date != null) {
+                    curDate.setTime(date.getTime());
+                }
                 try {
                     Date startDate = df_ymd.parse(customAgenda.getAgendaStart() + "");
-                    String startDateStr = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(
-                            startDate
-                    );
+
+                    String startDateStr = startDate == null ? EMPTY :
+                            new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).
+                                    format(startDate
+                                    );
                     switch (customAgenda.getInterval()) {
                         case 7:
 
                             Calendar calendar = Calendar.getInstance();
-                            calendar.setTime(startDate);
+                            if (startDate != null) {
+                                calendar.setTime(startDate);
+                            }
 
                             int repeatWeekNum = calendar.get(Calendar.DAY_OF_WEEK);
                             lambdaResult.append("시작 날짜: ").append(startDateStr
@@ -1790,7 +1820,10 @@ class LocalDataHandlerCat {
                                 curDate.setTime(curDate.getTime() + correctionValue * 24 * 60 * 60 * 1000);
                             }
 
-                            int diffWeek = (int) ((curDate.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+                            int diffWeek = 0;
+                            if (startDate != null) {
+                                diffWeek = (int) ((curDate.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+                            }
                             lambdaResult.append(new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(curDate))
                                     .append(BLANK).append(guardians.size() > 0 ? guardians.get(diffWeek % guardians.size()) + BLANK : EMPTY)
                                     .append(LEFT_ARROW);
@@ -1809,7 +1842,10 @@ class LocalDataHandlerCat {
                             lambdaResult.append("시작날짜: ").append(startDateStr).append(CRLF)
                                     .append("매일 반복").append(CRLF).append(SEPARATOR);
 
-                            int diffDate = (int) ((curDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+                            int diffDate = 0;
+                            if (startDate != null) {
+                                diffDate = (int) ((curDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+                            }
                             lambdaResult.append(new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(curDate))
                                     .append(BLANK).append(guardians.size() > 0 ? guardians.get(diffDate % guardians.size()) + BLANK : EMPTY)
                                     .append(LEFT_ARROW).append("오늘");
@@ -1828,7 +1864,7 @@ class LocalDataHandlerCat {
                     }
 
                 } catch (ParseException | ArrayIndexOutOfBoundsException e) {
-                    Log.d(TAG, e.toString());
+                    e.printStackTrace();
                 }
 
                 lambdaResult.append(FangConstant.CONSTRAINT_SEPARATOR);
@@ -1866,10 +1902,16 @@ class LocalDataHandlerCat {
                     date = df_ymd.parse(dateInfo);
                 }
 
-            } catch (ParseException ignore) {
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (date == null) {
+                return null;
             }
 
             Calendar calendar = Calendar.getInstance();
+
             calendar.setTime(date);
 
             int interval = 0;
@@ -1943,6 +1985,7 @@ class LocalDataHandlerCat {
                 }
 
             } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
                 return "입력 오류발생";
             }
 
@@ -1964,6 +2007,7 @@ class LocalDataHandlerCat {
 
                 Log.d(TAG, "new agenda:" + customAgenda.getCustomID());
             } catch (RealmPrimaryKeyConstraintException e) {
+                e.printStackTrace();
                 return "오류발생: 다시 시도하라옹";
             }
 
@@ -2031,7 +2075,7 @@ class LocalDataHandlerCat {
                 break;
             case COMMAND_DEST:
                 result = destinyByKey.handle(req);
-                result = (result == null) ?  "그런 인연 없다냥..." : result;
+                result = (result == null) ? "그런 인연 없다냥..." : result;
                 break;
             case COMMAND_ITEM:
                 result = itemByKey.handle(req);
@@ -2070,8 +2114,8 @@ class LocalDataHandlerCat {
                     mContext.setOptimizationLevel(-1);
                     Scriptable scope = mContext.initSafeStandardObjects();
                     result = mContext.evaluateString(scope, req, "<cmd>", 1, null).toString();
-                } catch (Exception ignore) {
-
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 break;
 

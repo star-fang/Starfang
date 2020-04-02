@@ -19,7 +19,6 @@ import io.realm.Realm;
 public class PrefixHandler extends AsyncTask<String, Integer, String> {
 
     private WeakReference<Context> context;
-    private String packageName;
     private String sendCat;
     private String catRoom;
     private StatusBarNotification sbn;
@@ -32,16 +31,16 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
     private static final String COMMAND_STOP = "stop";
     private static final String COMMAND_START_KOR = "시작";
     private static final String COMMAND_STOP_KOR = "정지";
+    private static final String COMMAND_CHECK_COUNT = "살았";
     private static final String COMMAND_RESTART_COUNT = "죽었";
     private static final String COMMAND_NAME = "이름";
 
 
-    public PrefixHandler(Context context, String packageName,
+    public PrefixHandler(Context context,
                          String sendCat, String catRoom,
                          StatusBarNotification sbn, boolean isLocalRequest,
                          String botName, boolean record ) {
         this.context = new WeakReference<>(context);
-        this.packageName = packageName;
         this.sendCat = sendCat;
         this.catRoom = catRoom;
         this.sbn = sbn;
@@ -59,9 +58,10 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
                     Conversation conversation = bgRealm.createObject(Conversation.class);
                     conversation.setSendCat(sendCat);
                     conversation.setCatRoom(catRoom);
-                    conversation.setPackageName(packageName);
+                    conversation.setPackageName(sbn.getPackageName());
                     conversation.setReplyID(sbn.getTag());
                     conversation.setConversation(request);
+                    conversation.setTimeValue(sbn.getNotification().when);
                 });
             }
             selectRequest(request, realm);
@@ -99,8 +99,9 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
                                 case COMMAND_STOP_KOR:
                                     handleByRoomCommandStop(realm);
                                     return;
+                                case COMMAND_CHECK_COUNT:
                                 case COMMAND_RESTART_COUNT:
-                                    handleByCommandCount();
+                                    handleByCommandCount( command );
                                     return;
                                 default:
                             }
@@ -108,8 +109,9 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
                         }
                     } else if( request.length() == 2) {
                         switch (request) {
+                            case COMMAND_CHECK_COUNT:
                             case COMMAND_RESTART_COUNT:
-                                handleByCommandCount();
+                                handleByCommandCount( request );
                                 return;
                             case COMMAND_NAME:
                                 commitResult(botName);
@@ -139,20 +141,26 @@ public class PrefixHandler extends AsyncTask<String, Integer, String> {
 
     }
 
-    private void handleByCommandCount() {
+    private void handleByCommandCount( String command ) {
 
         Resources resources = context.get().getResources();
         SharedPreferences sharedPref = context.get().getSharedPreferences(
-                resources.getString(R.string.shared_preference_store_name),
+                resources.getString(R.string.shared_preference_store),
                 Context.MODE_PRIVATE);
 
         int restartCount = sharedPref.getInt(
-                resources.getString(R.string.shared_preference_key_restart_count)
+                resources.getString(R.string.restart_count)
                 , 0 );
-        String resultString = ( restartCount > 0 )?
-                restartCount + "번 죽었다냥.." : "한번도 안죽었다냥 ㅎㅅㅎ";
 
-        commitResult(resultString);
+        int startCount = sharedPref.getInt(
+                resources.getString(R.string.start_count)
+                , 0 );
+
+        if( command.equals( COMMAND_CHECK_COUNT ) ) {
+            commitResult("그렇다냥...");
+        } else {
+            commitResult("살아 있다냥 ㅎㅅㅎ \r\n => 시작: " + startCount + "번 // 죽음: " + restartCount + "번");
+        }
     }
 
     private void handleByRoomCommandStart( Realm realm ) throws RuntimeException {

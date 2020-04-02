@@ -66,8 +66,8 @@ public class ConversationFilter extends Filter {
                 query = (time_before < 0) ? query :
                         query.and().lessThanOrEqualTo(Conversation.FIELD_TIME_VALUE, time_before_day_after);
                 //Log.d(TAG, "time_before: " + time_before_day_after);
-            } catch (ArithmeticException ignored) {
-
+            } catch (ArithmeticException e) {
+                e.printStackTrace();
             }
 
 

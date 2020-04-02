@@ -47,12 +47,12 @@ public class ItemFilter extends Filter {
         RealmQuery<Item> query = realm.where(Item.class);
 
         try {
-            if (!csSplit[0].isEmpty()) {
+            if ( csSplit.length > 0 && !csSplit[0].isEmpty()) {
                 String digits = csSplit[0].replaceAll("[^0-9]","");
                 query.equalTo(Item.FIELD_GRD, digits.isEmpty() ? csSplit[0] : digits);
             }
 
-            if (!csSplit[1].isEmpty()) {
+            if ( csSplit.length > 1 && !csSplit[1].isEmpty()) {
                 query.and().beginGroup().alwaysFalse();
                 RealmResults<ItemCate> categories = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_MAIN_CATE, csSplit[1]).findAll();
                 for (ItemCate category : categories) {
@@ -61,7 +61,7 @@ public class ItemFilter extends Filter {
                 query.endGroup();
             }
 
-            if (!csSplit[2].isEmpty()) {
+            if ( csSplit.length > 2 && !csSplit[2].isEmpty() ) {
                 query.and().equalTo(Item.FIELD_SUB_CATE, csSplit[2]);
             }
         } catch( ArrayIndexOutOfBoundsException | IllegalArgumentException e ) {

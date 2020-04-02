@@ -1,6 +1,5 @@
 package com.fang.starfang.ui.main.adapter.filter;
 
-import android.util.Log;
 import android.widget.Filter;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +18,7 @@ import io.realm.Sort;
 
 public class RelicSimFilter extends Filter {
 
-    private static final String TAG = "FANG_FILTER_ITEM_SIM";
+    //private static final String TAG = "FANG_FILTER_ITEM_SIM";
     private RealmRecyclerViewAdapter<RelicSim, RecyclerView.ViewHolder> adapter;
     private Realm realm;
 
@@ -53,27 +52,31 @@ public class RelicSimFilter extends Filter {
         String relicSimSuffixField = RelicSim.FIELD_SUFFIX + ".";
 
         try {
-            int guardianType = NumberUtils.toInt(csSplit[0],0);
-            if (guardianType > 0) {
-                query.and().equalTo( relicSimSuffixField + RelicSFX.FIELD_TYPE, guardianType);
+            if( csSplit.length > 0 ) {
+                int guardianType = NumberUtils.toInt(csSplit[0], 0);
+                if (guardianType > 0) {
+                    query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_TYPE, guardianType);
+                }
             }
 
-            if (!csSplit[1].isEmpty()) {
+            if (csSplit.length > 1 && !csSplit[1].isEmpty()) {
                 query.and().equalTo(relicSimPrefixField + RelicPRFX.FIELD_NAME, csSplit[1]);
             }
 
-            if( !csSplit[2].isEmpty() ) {
+            if( csSplit.length > 2 && !csSplit[2].isEmpty() ) {
                 query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_NAME, csSplit[2]);
 
             }
 
-            int grade = NumberUtils.toInt(csSplit[3],0);
-            if( grade > 0 ) {
-                query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_GRD, grade);
+            if( csSplit.length > 3 ) {
+                int grade = NumberUtils.toInt(csSplit[3], 0);
+                if (grade > 0) {
+                    query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_GRD, grade);
+                }
             }
 
         } catch( ArrayIndexOutOfBoundsException | IllegalArgumentException e ) {
-            Log.d(TAG, e.toString());
+            e.printStackTrace();
         }
         adapter.updateData(query.findAll().sort(RelicSim.FIELD_LEVEL, Sort.DESCENDING));
     }

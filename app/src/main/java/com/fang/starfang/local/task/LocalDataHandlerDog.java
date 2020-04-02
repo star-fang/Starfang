@@ -36,7 +36,9 @@ class LocalDataHandlerDog {
                             reqWithoutSFX = (req.substring(req.length() - suffix.length()).equals(suffix)) ?
                                     req.substring(0, req.length() - suffix.length()) : req;
                         }
-                    } catch( StringIndexOutOfBoundsException  ignore ) { }
+                    } catch( StringIndexOutOfBoundsException  e ) {
+                        e.printStackTrace();
+                    }
 
                     try {
                         if (reqWithoutSFX.substring(reqWithoutSFX.length() - probKey.length()).equals(probKey)) {
@@ -46,9 +48,13 @@ class LocalDataHandlerDog {
                             req = req.substring(0, req.length() - probKey.length()).trim();
                             break;
                         }
-                    } catch( StringIndexOutOfBoundsException  ignore ) { }
+                    } catch( StringIndexOutOfBoundsException  e ) {
+                        e.printStackTrace();
+                    }
 
-                } catch (ArrayIndexOutOfBoundsException ignore) { }
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
             }
 
 
@@ -160,7 +166,7 @@ class LocalDataHandlerDog {
                         return str;
                     } catch (ParseException e) {
 
-                        // e.printStackTrace();
+                         e.printStackTrace();
                         return "\"[광이름] 00시00분 약탈당함\"<양식 맞추라옹";
                     }
 

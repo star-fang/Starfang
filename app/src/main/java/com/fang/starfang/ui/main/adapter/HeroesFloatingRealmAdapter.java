@@ -138,7 +138,7 @@ public class HeroesFloatingRealmAdapter extends RealmRecyclerViewAdapter<HeroSim
             try {
                 heroesViewHolder.bind(heroSim);
             } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
-                Log.d(TAG, e.toString());
+                e.printStackTrace();
             }
         }
     }

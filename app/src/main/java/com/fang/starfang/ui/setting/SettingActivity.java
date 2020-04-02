@@ -45,7 +45,7 @@ public class SettingActivity extends AppCompatActivity {
 
         final Resources resources = getResources();
         SharedPreferences sharedPref = getSharedPreferences(
-                resources.getString(R.string.shared_preference_store_name),
+                resources.getString(R.string.shared_preference_store),
                 Context.MODE_PRIVATE);
 
         ActionBar actionBar = getActionBar();
@@ -80,23 +80,21 @@ public class SettingActivity extends AppCompatActivity {
 
 
         String recordStatus = sharedPref.getString(
-                resources.getString(R.string.shared_preference_key_botRecord),
+                resources.getString(R.string.bot_record),
                 resources.getString(R.string.bot_status_stop) );
-        if( recordStatus != null ) {
-            Log.d(TAG, "record status : " + recordStatus );
-            switch_record.setChecked(recordStatus.equals(resources.getString(R.string.bot_status_start)));
-        }
+        Log.d(TAG, "record status : " + recordStatus );
+        switch_record.setChecked(recordStatus.equals(resources.getString(R.string.bot_status_start)));
 
         switch_record.setOnCheckedChangeListener((view, isChecked)-> {
             if(isChecked) {
                 sharedPref.edit().putString(
-                        resources.getString(R.string.shared_preference_key_botRecord),
+                        resources.getString(R.string.bot_record),
                         resources.getString(R.string.bot_status_start)
                 ).apply();
                 Snackbar.make(view,"대화 녹화 시작",Snackbar.LENGTH_SHORT).show();
             } else {
                 sharedPref.edit().putString(
-                        resources.getString(R.string.shared_preference_key_botRecord),
+                        resources.getString(R.string.bot_record),
                         resources.getString(R.string.bot_status_stop)
                 ).apply();
                 Snackbar.make(view,"대화 녹화 정지",Snackbar.LENGTH_SHORT).show();
@@ -104,12 +102,10 @@ public class SettingActivity extends AppCompatActivity {
         });
 
         String botStatus = sharedPref.getString(
-                resources.getString(R.string.shared_preference_key_botStatus),
+                resources.getString(R.string.bot_status),
                 resources.getString(R.string.bot_status_stop) );
-        if( botStatus != null ) {
-            Log.d(TAG, "bot status : " + botStatus );
-            switch_bot.setChecked(botStatus.equals(resources.getString(R.string.bot_status_start)));
-        }
+        Log.d(TAG, "bot status : " + botStatus );
+        switch_bot.setChecked(botStatus.equals(resources.getString(R.string.bot_status_start)));
 
         switch_bot.setOnCheckedChangeListener((view,isChecked)->{
 
@@ -120,29 +116,31 @@ public class SettingActivity extends AppCompatActivity {
                     switch_bot.setChecked(false);
                 } else {
                     Snackbar.make(view,"냥봇 시작",Snackbar.LENGTH_SHORT).show();
-                    intent.putExtra(resources.getString(R.string.bot_status_change),
+                    intent.putExtra(resources.getString(R.string.bot_status),
                             resources.getString(R.string.bot_status_start));
                     startService( intent );
                     sharedPref.edit().putString(
-                            resources.getString(R.string.shared_preference_key_botStatus),
+                            resources.getString(R.string.bot_status),
                             resources.getString(R.string.bot_status_start)
                     ).apply();
+
                 }
             } else {
                 Snackbar.make(view,"냥봇 정지",Snackbar.LENGTH_SHORT).show();
-                intent.putExtra(resources.getString(R.string.bot_status_change),
+                intent.putExtra(resources.getString(R.string.bot_status),
                         resources.getString(R.string.bot_status_stop));
                 startService( intent );
                 sharedPref.edit().putString(
-                        resources.getString(R.string.shared_preference_key_botStatus),
+                        resources.getString(R.string.bot_status),
                         resources.getString(R.string.bot_status_stop)
                 ).apply();
+
             }
         });
 
 
         text_name.setText( sharedPref.getString(
-                resources.getString(R.string.shared_preference_key_botName),
+                resources.getString(R.string.bot_name),
                 resources.getString(R.string.bot_name_default)) );
 
         button_insert_name.setOnClickListener(view-> {
@@ -163,14 +161,16 @@ public class SettingActivity extends AppCompatActivity {
 
     public static boolean isServiceRunning(Context context, Class<?> serviceClass, boolean checkForeground) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                if( checkForeground ) {
-                    if( service.foreground ) {
+        if (manager != null) {
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.getName().equals(service.service.getClassName())) {
+                    if( checkForeground ) {
+                        if( service.foreground ) {
+                            return true;
+                        }
+                    } else {
                         return true;
                     }
-                } else {
-                    return true;
                 }
             }
         }

@@ -225,199 +225,190 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
                JSONArray jsonArray = jsonObject.getJSONArray("data");
 
-                if (jsonArray!=null) {
+            realm.beginTransaction();
 
-                    realm.beginTransaction();
-
-                    switch ( pref_table ) {
-                        case Terrain.PREF_TABLE:
-                            realm.delete(Terrain.class);
-                            realm.createAllFromJson(Terrain.class,jsonArray);
-                            Log.d(TAG, "SYNC Terrain REALM COMPLETE!");
-                            break;
-                        case Heroes.PREF_TABLE:
-                            realm.delete(Heroes.class);
-                            for(int i = 0; i < jsonArray.length(); i++ ) {
-                                    String json = jsonArray.get(i).toString();
-                                    Heroes hero = gson.fromJson(json,Heroes.class);
-                                    //realm.copyToRealm(hero);
-                                    HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID,hero.getHeroNo()).findFirst();
-                                    if(heroSim == null) {
-                                        heroSim = new HeroSim(hero);
-                                        realm.copyToRealm(heroSim);
-                                    } else {
-                                        realm.copyToRealm(hero);
-                                        heroSim.updateHero(realm);
-                                    }
+            switch ( pref_table ) {
+                case Terrain.PREF_TABLE:
+                    realm.delete(Terrain.class);
+                    realm.createAllFromJson(Terrain.class,jsonArray);
+                    Log.d(TAG, "SYNC Terrain REALM COMPLETE!");
+                    break;
+                case Heroes.PREF_TABLE:
+                    realm.delete(Heroes.class);
+                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                            String json = jsonArray.get(i).toString();
+                            Heroes hero = gson.fromJson(json,Heroes.class);
+                            //realm.copyToRealm(hero);
+                            HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID,hero.getHeroNo()).findFirst();
+                            if(heroSim == null) {
+                                heroSim = new HeroSim(hero);
+                                realm.copyToRealm(heroSim);
+                            } else {
+                                realm.copyToRealm(hero);
+                                heroSim.updateHero(realm);
                             }
-                            Log.d(TAG, "SYNC Hero REALM COMPLETE!");
-                            break;
-                        case Destiny.PREF_TABLE:
-                            realm.delete(Destiny.class);
-                            realm.createAllFromJson(Destiny.class, jsonArray);
-                            for(Destiny des : realm.where(Destiny.class).findAll())
-                                des.setDesNameNoBlank(des.getDesName().replace(" ", ""));
-                            Log.d(TAG, "SYNC Destiny REALM COMPLETE!");
-                            break;
-                        case Spec.PREF_TABLE:
-                            realm.delete(Spec.class);
-
-                            for(int i = 0; i < jsonArray.length(); i++ ) {
-                                    String json = jsonArray.get(i).toString();
-                                    Spec spec = gson.fromJson(json,Spec.class);
-                                    spec.setSpecNameNoBlank(spec.getSpecName().replace(" ",""));
-                                    realm.copyToRealm(spec);
-                            }
-                            Log.d(TAG, "SYNC Spec REALM COMPLETE!");
-                            break;
-                        case Branch.PREF_TABLE:
-                            realm.delete(Branch.class);
-
-                            for(int i = 0; i < jsonArray.length(); i++ ) {
-                                    String json = jsonArray.get(i).toString();
-                                    Branch branch = gson.fromJson(json,Branch.class);
-                                    realm.copyToRealm(branch);
-                            }
-
-                            for(HeroSim heroSim : realm.where(HeroSim.class).findAll()) {
-                                heroSim.updateBranch(realm);
-                                heroSim.updateBasePower();
-                            }
-
-
-                            Log.d(TAG, "SYNC Branch REALM COMPLETE!");
-                            break;
-                        case Item.PREF_TABLE:
-                            realm.delete(Item.class);
-                            for(int i = 0; i < jsonArray.length(); i++ ) {
-                                    String json = jsonArray.get(i).toString();
-                                    Item item = gson.fromJson(json,Item.class);
-                                    item.setItemNameNoBlank(item.getItemName().replace(" ",""));
-                                    realm.copyToRealm(item);
-                            }
-
-                            for(ItemSim itemSim : realm.where(ItemSim.class).findAll()) {
-                                itemSim.updateItem( realm );
-                            }
-                            Log.d(TAG, "SYNC Item REALM COMPLETE!");
-                            break;
-                        case ItemCate.PREF_TABLE:
-                            realm.delete(ItemCate.class);
-                            for(int i = 0; i < jsonArray.length(); i++ ) {
-                                String json = jsonArray.get(i).toString();
-                                ItemCate itemCate = gson.fromJson(json,ItemCate.class);
-                                realm.copyToRealm(itemCate);
-                            }
-                            Log.d(TAG, "SYNC ItemCate REALM COMPLETE!");
-                            break;
-                        case ItemReinforcement.PREF_TABLE:
-                            realm.delete(ItemReinforcement.class);
-                            for(int i = 0; i < jsonArray.length(); i++ ) {
-                                    String json = jsonArray.get(i).toString();
-                                    ItemReinforcement itemReinforcement = gson.fromJson(json,ItemReinforcement.class);
-                                    realm.copyToRealm(itemReinforcement);
-                            }
-                            Log.d(TAG, "SYNC ItemReinforcement REALM COMPLETE!");
-                            break;
-                        case NormalItem.PREF_TABLE:
-                            realm.delete(NormalItem.class);
-                            for(int i = 0; i < jsonArray.length(); i++) {
-                                String json = jsonArray.get(i).toString();
-                                NormalItem normalItem = gson.fromJson(json, NormalItem.class);
-                                realm.copyToRealm(normalItem);
-                            }
-                            Log.d(TAG, "SYNC normalItem REALM COMPLETE!");
-                            break;
-                        case Relation.PREF_TABLE:
-                            realm.delete((Relation.class));
-                            realm.createAllFromJson(Relation.class, jsonArray);
-                            Log.d(TAG, "SYNC Relation REALM COMPLETE!");
-                            break;
-                        case RelicCombination.PREF_TABLE:
-                            realm.delete(RelicCombination.class);
-                            for(int i = 0; i < jsonArray.length(); i++ ) {
-                                    String json = jsonArray.get(i).toString();
-                                    RelicCombination comb = gson.fromJson(json, RelicCombination.class);
-                                    realm.copyToRealm(comb);
-                            }
-
-                            for( int i = 0; i < HeroSim.FIELD_COMB_IDS.length; i++ ) {
-                                RealmResults<HeroSim> heroSims = realm.where(HeroSim.class).notEqualTo(HeroSim.FIELD_COMB_IDS[i], 0).findAll();
-                                int slot = i + 1;
-                                for( HeroSim heroSim : heroSims ) {
-                                    heroSim.updateRelicCombination( slot, realm );
-                                }
-                            }
-                            Log.d(TAG, "SYNC RelicCombination REALM COMPLETE!");
-                            break;
-                        case RelicPRFX.PREF_TABLE:
-                            realm.delete(RelicPRFX.class);
-                            for(int i = 0; i < jsonArray.length(); i++ ) {
-                                String json = jsonArray.get(i).toString();
-                                RelicPRFX relicPRFX = gson.fromJson(json, RelicPRFX.class);
-                                realm.copyToRealm(relicPRFX);
-                            }
-
-                            for( RelicSim relicSim : realm.where(RelicSim.class).findAll()) {
-                                relicSim.updatePrefix( realm );
-                            }
-                            Log.d(TAG, "SYNC  RelicPRFX REALM COMPLETE!");
-                            break;
-                        case RelicSFX.PREF_TABLE:
-                            realm.delete(RelicSFX.class);
-                            for(int i = 0; i < jsonArray.length(); i++ ) {
-                                String json = jsonArray.get(i).toString();
-                                RelicSFX relicSFX = gson.fromJson(json, RelicSFX.class);
-                                realm.copyToRealm(relicSFX);
-                            }
-
-                            for( RelicSim relicSim : realm.where(RelicSim.class).findAll()) {
-                                relicSim.updateSuffix( realm );
-                            }
-                            Log.d(TAG, "SYNC RelicSFX REALM COMPLETE!");
-                            break;
-                        case Dot.PREF_TABLE:
-                            realm.delete(Dot.class);
-                            realm.createAllFromJson(Dot.class, jsonArray);
-                            Log.d(TAG, "SYNC Dot REALM COMPLETE!");
-                            break;
-                        case Magic.PREF_TABLE:
-                            realm.delete(Magic.class);
-                            realm.createAllFromJson(Magic.class, jsonArray);
-                            Log.d(TAG, "SYNC Magic REALM COMPLETE!");
-                            break;
-                        case UnionBranch.PREF_TABLE:
-                            realm.delete(UnionBranch.class);
-                            realm.createAllFromJson(UnionBranch.class, jsonArray);
-                            Log.d(TAG, "SYNC UnionBranch REALM COMPLETE!");
-                            break;
-                        case UnionSkill.PREF_TABLE:
-                            realm.delete(UnionSkill.class);
-                            realm.createAllFromJson(UnionSkill.class, jsonArray);
-                            Log.d(TAG, "SYNC UnionSkill REALM COMPLETE!");
-                            break;
-                        case UnionSpec.PREF_TABLE:
-                            realm.delete(UnionSpec.class);
-                            realm.createAllFromJson(UnionSpec.class, jsonArray);
-                            Log.d(TAG, "SYNC UnionSpec REALM COMPLETE!");
-                            break;
-                        case Agenda.PREF_TABLE:
-                            realm.delete(Agenda.class);
-                            realm.createAllFromJson(Agenda.class,jsonArray);
-                            Log.d(TAG, "SYNC Agenda REALM COMPLETE!");
-                            break;
-                        default:
-                            Log.d(TAG, "SYNC REALM failure : empty table name");
                     }
-                    realm.commitTransaction();
-                    realm.close();
+                    Log.d(TAG, "SYNC Hero REALM COMPLETE!");
+                    break;
+                case Destiny.PREF_TABLE:
+                    realm.delete(Destiny.class);
+                    realm.createAllFromJson(Destiny.class, jsonArray);
+                    for(Destiny des : realm.where(Destiny.class).findAll())
+                        des.setDesNameNoBlank(des.getDesName().replace(" ", ""));
+                    Log.d(TAG, "SYNC Destiny REALM COMPLETE!");
+                    break;
+                case Spec.PREF_TABLE:
+                    realm.delete(Spec.class);
+
+                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                            String json = jsonArray.get(i).toString();
+                            Spec spec = gson.fromJson(json,Spec.class);
+                            spec.setSpecNameNoBlank(spec.getSpecName().replace(" ",""));
+                            realm.copyToRealm(spec);
+                    }
+                    Log.d(TAG, "SYNC Spec REALM COMPLETE!");
+                    break;
+                case Branch.PREF_TABLE:
+                    realm.delete(Branch.class);
+
+                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                            String json = jsonArray.get(i).toString();
+                            Branch branch = gson.fromJson(json,Branch.class);
+                            realm.copyToRealm(branch);
+                    }
+
+                    for(HeroSim heroSim : realm.where(HeroSim.class).findAll()) {
+                        heroSim.updateBranch(realm);
+                        heroSim.updateBasePower();
+                    }
 
 
-                } else {
-                    jsonResult[0] = "fail";
-                    jsonResult[1] = "데이터 값 없음";
-                }
+                    Log.d(TAG, "SYNC Branch REALM COMPLETE!");
+                    break;
+                case Item.PREF_TABLE:
+                    realm.delete(Item.class);
+                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                            String json = jsonArray.get(i).toString();
+                            Item item = gson.fromJson(json,Item.class);
+                            item.setItemNameNoBlank(item.getItemName().replace(" ",""));
+                            realm.copyToRealm(item);
+                    }
 
+                    for(ItemSim itemSim : realm.where(ItemSim.class).findAll()) {
+                        itemSim.updateItem( realm );
+                    }
+                    Log.d(TAG, "SYNC Item REALM COMPLETE!");
+                    break;
+                case ItemCate.PREF_TABLE:
+                    realm.delete(ItemCate.class);
+                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                        String json = jsonArray.get(i).toString();
+                        ItemCate itemCate = gson.fromJson(json,ItemCate.class);
+                        realm.copyToRealm(itemCate);
+                    }
+                    Log.d(TAG, "SYNC ItemCate REALM COMPLETE!");
+                    break;
+                case ItemReinforcement.PREF_TABLE:
+                    realm.delete(ItemReinforcement.class);
+                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                            String json = jsonArray.get(i).toString();
+                            ItemReinforcement itemReinforcement = gson.fromJson(json,ItemReinforcement.class);
+                            realm.copyToRealm(itemReinforcement);
+                    }
+                    Log.d(TAG, "SYNC ItemReinforcement REALM COMPLETE!");
+                    break;
+                case NormalItem.PREF_TABLE:
+                    realm.delete(NormalItem.class);
+                    for(int i = 0; i < jsonArray.length(); i++) {
+                        String json = jsonArray.get(i).toString();
+                        NormalItem normalItem = gson.fromJson(json, NormalItem.class);
+                        realm.copyToRealm(normalItem);
+                    }
+                    Log.d(TAG, "SYNC normalItem REALM COMPLETE!");
+                    break;
+                case Relation.PREF_TABLE:
+                    realm.delete((Relation.class));
+                    realm.createAllFromJson(Relation.class, jsonArray);
+                    Log.d(TAG, "SYNC Relation REALM COMPLETE!");
+                    break;
+                case RelicCombination.PREF_TABLE:
+                    realm.delete(RelicCombination.class);
+                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                            String json = jsonArray.get(i).toString();
+                            RelicCombination comb = gson.fromJson(json, RelicCombination.class);
+                            realm.copyToRealm(comb);
+                    }
+
+                    for( int i = 0; i < HeroSim.FIELD_COMB_IDS.length; i++ ) {
+                        RealmResults<HeroSim> heroSims = realm.where(HeroSim.class).notEqualTo(HeroSim.FIELD_COMB_IDS[i], 0).findAll();
+                        int slot = i + 1;
+                        for( HeroSim heroSim : heroSims ) {
+                            heroSim.updateRelicCombination( slot, realm );
+                        }
+                    }
+                    Log.d(TAG, "SYNC RelicCombination REALM COMPLETE!");
+                    break;
+                case RelicPRFX.PREF_TABLE:
+                    realm.delete(RelicPRFX.class);
+                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                        String json = jsonArray.get(i).toString();
+                        RelicPRFX relicPRFX = gson.fromJson(json, RelicPRFX.class);
+                        realm.copyToRealm(relicPRFX);
+                    }
+
+                    for( RelicSim relicSim : realm.where(RelicSim.class).findAll()) {
+                        relicSim.updatePrefix( realm );
+                    }
+                    Log.d(TAG, "SYNC  RelicPRFX REALM COMPLETE!");
+                    break;
+                case RelicSFX.PREF_TABLE:
+                    realm.delete(RelicSFX.class);
+                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                        String json = jsonArray.get(i).toString();
+                        RelicSFX relicSFX = gson.fromJson(json, RelicSFX.class);
+                        realm.copyToRealm(relicSFX);
+                    }
+
+                    for( RelicSim relicSim : realm.where(RelicSim.class).findAll()) {
+                        relicSim.updateSuffix( realm );
+                    }
+                    Log.d(TAG, "SYNC RelicSFX REALM COMPLETE!");
+                    break;
+                case Dot.PREF_TABLE:
+                    realm.delete(Dot.class);
+                    realm.createAllFromJson(Dot.class, jsonArray);
+                    Log.d(TAG, "SYNC Dot REALM COMPLETE!");
+                    break;
+                case Magic.PREF_TABLE:
+                    realm.delete(Magic.class);
+                    realm.createAllFromJson(Magic.class, jsonArray);
+                    Log.d(TAG, "SYNC Magic REALM COMPLETE!");
+                    break;
+                case UnionBranch.PREF_TABLE:
+                    realm.delete(UnionBranch.class);
+                    realm.createAllFromJson(UnionBranch.class, jsonArray);
+                    Log.d(TAG, "SYNC UnionBranch REALM COMPLETE!");
+                    break;
+                case UnionSkill.PREF_TABLE:
+                    realm.delete(UnionSkill.class);
+                    realm.createAllFromJson(UnionSkill.class, jsonArray);
+                    Log.d(TAG, "SYNC UnionSkill REALM COMPLETE!");
+                    break;
+                case UnionSpec.PREF_TABLE:
+                    realm.delete(UnionSpec.class);
+                    realm.createAllFromJson(UnionSpec.class, jsonArray);
+                    Log.d(TAG, "SYNC UnionSpec REALM COMPLETE!");
+                    break;
+                case Agenda.PREF_TABLE:
+                    realm.delete(Agenda.class);
+                    realm.createAllFromJson(Agenda.class,jsonArray);
+                    Log.d(TAG, "SYNC Agenda REALM COMPLETE!");
+                    break;
+                default:
+                    Log.d(TAG, "SYNC REALM failure : empty table name");
+            }
+            realm.commitTransaction();
+            realm.close();
 
 
         } catch (InterruptedException | ExecutionException e) {
@@ -475,28 +466,19 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         textView_msg.setText(values[2]);
 
         LinearLayout progress_layout = progress_list.get();
+        ScrollView scroll_progress = scroll_progress_list.get();
+
         if(values[1].equals("")) {
             progress_layout.addView(row_progress);
+            scroll_progress.post(() -> scroll_progress.fullScroll(ScrollView.FOCUS_DOWN));
             currentProgressView = new WeakReference<>(row_progress);
-            ScrollView scroll_progress = scroll_progress_list.get();
-            int innerHeight = progress_layout.getHeight();
-            int scrollHeight = scroll_progress.getHeight();
-            int scrollY = innerHeight - scrollHeight;
-            if( scrollY > 0 ) {
-                Log.d(TAG, "scroll to : " + scrollY );
-                scroll_progress.smoothScrollTo( 0 , scrollY );
-            }
         } else {
             progress_layout.removeView(currentProgressView.get());
             progressBar.setVisibility(View.INVISIBLE);
             progress_layout.addView(row_progress);
         }
-
-
-
-
-
     }
+
 
     // When all async task done
     @Override
@@ -517,7 +499,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         }
     }
 
-    public class RealmStringDeserializer implements
+    public static class RealmStringDeserializer implements
             JsonDeserializer<RealmList<RealmString>> {
 
         @Override
@@ -541,7 +523,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
 
 
-    public class RealmIntegerDeserializer implements
+    public static class RealmIntegerDeserializer implements
             JsonDeserializer<RealmList<RealmInteger>> {
 
         @Override

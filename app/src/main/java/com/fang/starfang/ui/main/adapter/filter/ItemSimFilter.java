@@ -1,6 +1,5 @@
 package com.fang.starfang.ui.main.adapter.filter;
 
-import android.util.Log;
 import android.widget.Filter;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +16,7 @@ import io.realm.RealmResults;
 
 public class ItemSimFilter extends Filter {
 
-    private static final String TAG = "FANG_FILTER_ITEM_SIM";
+    //private static final String TAG = "FANG_FILTER_ITEM_SIM";
     private RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> adapter;
     private Realm realm;
 
@@ -49,12 +48,12 @@ public class ItemSimFilter extends Filter {
         String itemSimItemField = ItemSim.FIELD_ITEM + ".";
 
         try {
-            if (!csSplit[0].isEmpty()) {
+            if ( csSplit.length > 0 && !csSplit[0].isEmpty() ) {
                 String digits = csSplit[0].replaceAll("[^0-9]","");
                 query.equalTo(itemSimItemField + Item.FIELD_GRD, digits.isEmpty() ? csSplit[0] : digits);
             }
 
-            if (!csSplit[1].isEmpty()) {
+            if ( csSplit.length > 1 && !csSplit[1].isEmpty() ) {
                 query.and().beginGroup().alwaysFalse();
                 RealmResults<ItemCate> categories = realm.where(ItemCate.class).equalTo(ItemCate.FIELD_MAIN_CATE, csSplit[1]).findAll();
                 for (ItemCate cate : categories) {
@@ -63,7 +62,7 @@ public class ItemSimFilter extends Filter {
                 query.endGroup();
             }
 
-            if( !csSplit[2].isEmpty() ) {
+            if( csSplit.length > 2 && !csSplit[2].isEmpty() ) {
                 if ( !csSplit[2].equals(FangConstant.AID_KOR) &&
                         csSplit[1].equals(FangConstant.AID_KOR)) {
                     query.and().beginGroup().isNull(itemSimItemField + Item.FIELD_RESTRICT_BRANCH).or().
@@ -74,7 +73,7 @@ public class ItemSimFilter extends Filter {
                 }
             }
         } catch( ArrayIndexOutOfBoundsException | IllegalArgumentException e ) {
-            Log.d(TAG, e.toString());
+            e.printStackTrace();
         }
         adapter.updateData(query.findAll().sort(itemSimItemField+Item.FIELD_SUB_CATE));
     }
