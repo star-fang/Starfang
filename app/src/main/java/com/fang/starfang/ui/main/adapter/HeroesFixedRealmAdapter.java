@@ -22,29 +22,20 @@ import com.fang.starfang.ui.main.adapter.filter.HeroSimFilter;
 import java.util.ArrayList;
 
 import io.realm.OrderedRealmCollection;
-import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.Sort;
 
 public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, RecyclerView.ViewHolder> implements Filterable {
 
-    private final String TAG  = "FANG_ADAPTER_FIXED";
+    private final String TAG  = "FANG_ADPT_HERO_FIX";
     private FragmentManager fragmentManager;
-    private static HeroesFixedRealmAdapter instance ;
-    private Realm realm;
 
-    public static HeroesFixedRealmAdapter getInstance() {
-        return instance;
-    }
-    public static void setInstance(Realm realm, FragmentManager fragmentManager) {
-        instance = new HeroesFixedRealmAdapter(realm, fragmentManager);
-    }
 
-    private HeroesFixedRealmAdapter(Realm realm, FragmentManager fragmentManager) {
-        super(realm.where(HeroSim.class).findAll().sort(HeroSim.FIELD_HERO+"."+Heroes.FIELD_NAME).
-                sort(HeroSim.FIELD_GRADE,Sort.DESCENDING).sort(HeroSim.FIELD_LEVEL, Sort.DESCENDING),false);
+    public HeroesFixedRealmAdapter(
+            OrderedRealmCollection<HeroSim> heroCollection
+            , FragmentManager fragmentManager) {
+        super(heroCollection,false);
         this.fragmentManager = fragmentManager;
-        this.realm = realm;
 
         Log.d(TAG,"constructed");
     }
@@ -84,7 +75,7 @@ public class HeroesFixedRealmAdapter extends RealmRecyclerViewAdapter<HeroSim, R
 
     @Override
     public Filter getFilter() {
-        return new HeroSimFilter(this, realm);
+        return new HeroSimFilter(this );
     }
 
     private class HeroesViewHolder extends RecyclerView.ViewHolder {

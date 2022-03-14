@@ -19,12 +19,24 @@ import io.realm.RealmList;
 
 public class ItemPowersRecyclerAdapter extends RecyclerView.Adapter<ItemPowersRecyclerAdapter.ItemPowersViewHolder> {
 
-    private static final String TAG = "FANG_ADAPTER_ITEM_POWER";
+    private static final String TAG = "FANG_ADPT_ITEM_POW";
     private RealmList<RealmInteger> itemBasePowers;
     private ArrayList<Integer> itemPlusPowers;
     private ArrayList<Integer> itemPowers;
     private Reinforcement reinforcement;
     private int reinforceValue;
+
+    public ItemPowersRecyclerAdapter(
+            RealmList<RealmInteger> itemBasePowers
+            , ArrayList<Integer> itemPlusPowers
+            , ArrayList<Integer> itemPowers
+            , Reinforcement reinforcement) {
+        this.itemBasePowers = itemBasePowers;
+        this.itemPlusPowers = itemPlusPowers;
+        this.itemPowers = itemPowers;
+        this.reinforcement = reinforcement;
+        Log.d(TAG, "constructed");
+    }
 
     @NonNull
     @Override
@@ -41,14 +53,6 @@ public class ItemPowersRecyclerAdapter extends RecyclerView.Adapter<ItemPowersRe
     @Override
     public int getItemCount() {
         return itemPlusPowers.size();
-    }
-
-    public ItemPowersRecyclerAdapter(RealmList<RealmInteger> itemBasePowers, ArrayList<Integer> itemPlusPowers, ArrayList<Integer> itemPowers, Reinforcement reinforcement) {
-        this.itemBasePowers = itemBasePowers;
-        this.itemPlusPowers = itemPlusPowers;
-        this.itemPowers = itemPowers;
-        this.reinforcement = reinforcement;
-        Log.d(TAG, "constructed");
     }
 
     public void setReinforceValue( int reinforceValue ) {

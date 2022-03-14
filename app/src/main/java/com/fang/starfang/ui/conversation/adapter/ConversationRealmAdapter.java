@@ -15,6 +15,7 @@ import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.Conversation;
 
+import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
@@ -23,7 +24,6 @@ public class ConversationRealmAdapter
         implements Filterable {
 
     private static final String TAG = "FANG_ADAPTER_CONV";
-    private Realm realm;
 
     @NonNull
     @Override
@@ -43,16 +43,15 @@ public class ConversationRealmAdapter
 
     }
 
-    public ConversationRealmAdapter(Realm realm) {
-        super(realm.where(Conversation.class).findAll(),true);
+    public ConversationRealmAdapter(OrderedRealmCollection<Conversation> conversations) {
+        super(conversations,false);
         Log.d(TAG,"constructed");
-        this.realm = realm;
     }
 
 
     @Override
     public Filter getFilter() {
-        return new ConversationFilter(this, realm);
+        return new ConversationFilter(this );
     }
 
 

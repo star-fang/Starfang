@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SeekBar;
@@ -23,7 +24,7 @@ import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.task.Reinforcement;
-import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 import com.fang.starfang.ui.main.adapter.ItemPowersRecyclerAdapter;
 
 import io.realm.RealmList;
@@ -31,7 +32,6 @@ import io.realm.RealmList;
 import java.util.ArrayList;
 
 public class ReinforceItemDialogFragment extends UpdateDialogFragment {
-
 
     public static ReinforceItemDialogFragment newInstance(int itemID, int itemMainCate ) {
 
@@ -41,14 +41,13 @@ public class ReinforceItemDialogFragment extends UpdateDialogFragment {
         ReinforceItemDialogFragment reinforceDialogFragment = new ReinforceItemDialogFragment();
         reinforceDialogFragment.setArguments(args);
         return reinforceDialogFragment;
-
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        View view = View.inflate(mActivity, R.layout.dialog_reinforce_item, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        View view = View.inflate(mContext, R.layout.dialog_reinforce_item, null);
         Bundle args = getArguments();
         if(args != null) {
             int itemID = args.getInt(FangConstant.INTENT_KEY_ITEM_ID);
@@ -57,6 +56,10 @@ public class ReinforceItemDialogFragment extends UpdateDialogFragment {
             if (itemSim != null) {
                 Item item = itemSim.getItem();
                 if (item != null) {
+
+                    Resources resources = getResources();
+                    String grade_no_reinforce = resources.getString(R.string.grade_no_reinforce);
+
                     final AppCompatSeekBar seek_bar_item_reinforce = view.findViewById(R.id.seek_bar_item_reinforce);
                     int curReinforce = itemSim.getItemReinforcement();
                     seek_bar_item_reinforce.setProgress(curReinforce);
@@ -67,10 +70,11 @@ public class ReinforceItemDialogFragment extends UpdateDialogFragment {
                     ArrayList<Integer> itemPlusPowers = itemSim.getItemPlusPowersList();
                     ArrayList<Integer> itemPowers = itemSim.getItemPowersList();
                     Reinforcement reinforcement = new Reinforcement(realm, item);
-                    final ItemPowersRecyclerAdapter itemPowersRecyclerAdapter = new ItemPowersRecyclerAdapter(itemBasePowers, itemPlusPowers, itemPowers, reinforcement);
+                    final ItemPowersRecyclerAdapter itemPowersRecyclerAdapter = new ItemPowersRecyclerAdapter(
+                            itemBasePowers, itemPlusPowers, itemPowers, reinforcement);
                     itemPowersRecyclerAdapter.setReinforceValue(curReinforce);
                     final RecyclerView recycler_view_dialog_reinforce_power = view.findViewById(R.id.recycler_view_dialog_reinforce_power);
-                    recycler_view_dialog_reinforce_power.setLayoutManager(new LinearLayoutManager(mActivity));
+                    recycler_view_dialog_reinforce_power.setLayoutManager(new LinearLayoutManager(mContext));
                     recycler_view_dialog_reinforce_power.setAdapter(itemPowersRecyclerAdapter);
 
                     final AppCompatTextView text_dialog_item_desc = view.findViewById(R.id.text_dialog_item_desc);
@@ -122,12 +126,14 @@ public class ReinforceItemDialogFragment extends UpdateDialogFragment {
                                 Intent intent = new Intent();
                                 intent.putExtra(FangConstant.INTENT_KEY_ITEM_CATE_MAIN,itemMainCate);
                                 intent.putExtra(FangConstant.INTENT_KEY_ITEM_REINFORCE,
-                                        FangConstant.ITEM_GRADE_NO_REINFORCE.equals(itemSim.getItem().getItemGrade()) ?
+                                        grade_no_reinforce.equals(itemSim.getItem().getItemGrade()) ?
                                                 "" : "+" + reinforceValue);
                                 targetFragment.onActivityResult(FangConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT, Activity.RESULT_OK, intent);
                             } else {
                                 String message = item.getItemName() + ": +" + reinforceValue + " " + resources.getString(R.string.reinforcement_kor);
-                                onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, message);
+                                for(OnUpdateEventListener listener : listeners ) {
+                                    listener.updateEvent(FangConstant.RESULT_CODE_SUCCESS, message, null);
+                                }
                             }
                         });
 

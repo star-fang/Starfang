@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 import com.fang.starfang.ui.conversation.ConstraintDocBuilder;
 import com.fang.starfang.ui.conversation.adapter.RoomFilterRealmAdapter;
 import com.fang.starfang.ui.conversation.adapter.ConversationFilter;
@@ -26,8 +26,8 @@ public class RoomFilterDialogFragment extends UpdateDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        View view = View.inflate(mActivity, R.layout.dialog_filter_room, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        View view = View.inflate(mContext, R.layout.dialog_filter_room, null);
 
         final ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
         final RoomFilterRealmAdapter roomFilterRealmAdapter =
@@ -36,7 +36,7 @@ public class RoomFilterDialogFragment extends UpdateDialogFragment {
                         view.findViewById(R.id.text_filter_room_count_desc));
 
         final RecyclerView recycler_view_filter_room = view.findViewById(R.id.recycler_view_filter_room);
-        recycler_view_filter_room.setLayoutManager(new LinearLayoutManager(mActivity));
+        recycler_view_filter_room.setLayoutManager(new LinearLayoutManager(mContext));
         recycler_view_filter_room.setAdapter(roomFilterRealmAdapter);
 
         builder.setView(view).setPositiveButton(R.string.setting_kor, (dialog, which) -> {

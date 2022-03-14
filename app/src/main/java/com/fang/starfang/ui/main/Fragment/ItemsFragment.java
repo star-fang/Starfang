@@ -13,22 +13,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
+import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 import com.fang.starfang.ui.main.adapter.ItemSimsFixedRealmAdapter;
 import com.fang.starfang.ui.main.adapter.ItemSimsFloatingRealmAdapter;
-import com.fang.starfang.ui.common.DiagonalScrollRecyclerView;
+import com.fang.starfang.ui.creative.DiagonalScrollRecyclerView;
+import com.google.android.material.snackbar.Snackbar;
+
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 
+import io.realm.OrderedRealmCollection;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-public class ItemsFragment extends PlaceholderFragment {
+public class ItemsFragment extends PlaceholderFragment implements UpdateDialogFragment.OnUpdateEventListener {
 
     private final static String TAG = "FANG_FRAG_ITEM";
+    private ItemSimsFixedRealmAdapter itemFixAdapter;
+    private ItemSimsFloatingRealmAdapter itemFloatAdapter;
 
     static ItemsFragment newInstance(int index) {
         ItemsFragment itemsFragment = new ItemsFragment();
@@ -38,21 +45,26 @@ public class ItemsFragment extends PlaceholderFragment {
         return itemsFragment;
     }
 
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_items, container, false);
         final RecyclerView recycler_view_items_fixed = view.findViewById(R.id.recycler_view_items_fixed);
         final RecyclerView recycler_view_items_floating = view.findViewById(R.id.recycler_view_items_floating);
-        recycler_view_items_fixed.setLayoutManager(new LinearLayoutManager(mActivity));
-        recycler_view_items_floating.setLayoutManager(new LinearLayoutManager(mActivity));
+        OrderedRealmCollection<ItemSim> itemCollection = realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF);
+
+        itemFloatAdapter = new ItemSimsFloatingRealmAdapter( itemCollection, getParentFragmentManager(), mActivity);
+        itemFixAdapter = new ItemSimsFixedRealmAdapter( itemCollection, getParentFragmentManager(), mActivity);
+            recycler_view_items_fixed.setLayoutManager(new LinearLayoutManager(mActivity));
+            recycler_view_items_floating.setLayoutManager(new LinearLayoutManager(mActivity));
+            recycler_view_items_fixed.setAdapter(itemFixAdapter);
+            recycler_view_items_floating.setAdapter(itemFloatAdapter);
+
+
         final DiagonalScrollRecyclerView recycler_view_items_content = view.findViewById(R.id.recycler_view_items_content);
         recycler_view_items_content.setRecyclerView(recycler_view_items_floating);
 
-        final ItemSimsFixedRealmAdapter itemSimsFixedRealmAdapter = ItemSimsFixedRealmAdapter.getInstance();
-        recycler_view_items_fixed.setAdapter(itemSimsFixedRealmAdapter);
 
-        final ItemSimsFloatingRealmAdapter itemSimsFloatingRealmAdapter = ItemSimsFloatingRealmAdapter.getInstance();
-        recycler_view_items_floating.setAdapter(itemSimsFloatingRealmAdapter);
 
 
         final RecyclerView.OnScrollListener[] itemRecyclerViewListeners =
@@ -83,6 +95,7 @@ public class ItemsFragment extends PlaceholderFragment {
         final NumberPicker picker_item_sim_grade = view.findViewById(R.id.picker_item_sim_grade);
         final NumberPicker picker_item_sim_category_main = view.findViewById(R.id.picker_item_sim_category_main);
         final NumberPicker picker_item_sim_category_sub = view.findViewById(R.id.picker_item_sim_category_sub);
+
 
         final String GRADE_KOR = getResources().getString(R.string.grade_kor);
         final String ALL_PICK_KOR = getResources().getString(R.string.all_pick_kor);
@@ -138,8 +151,8 @@ public class ItemsFragment extends PlaceholderFragment {
                 String selected_category_main = mainCategoryList.get(picker_item_sim_category_main.getValue());
                 String selected_category_sub = subCategoryList.get(picker_item_sim_category_sub.getValue());
                 String cs = selected_grade + FangConstant.CONSTRAINT_SEPARATOR + selected_category_main + FangConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
-                itemSimsFixedRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
-                itemSimsFloatingRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
+                itemFixAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
+                itemFloatAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
             });
 
 
@@ -169,10 +182,10 @@ public class ItemsFragment extends PlaceholderFragment {
 
                     String selected_category_sub = subCategoryList.get(picker_item_sim_category_sub.getValue());
                     String cs = selected_grade + FangConstant.CONSTRAINT_SEPARATOR + selected_category_main + FangConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
-                    itemSimsFixedRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
-                    itemSimsFloatingRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
+                    itemFixAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
+                    itemFloatAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    Log.d(TAG,"subCate : " + e.toString());
+                    Log.e(TAG,Log.getStackTraceString(e));
                 }
             });
 
@@ -181,18 +194,31 @@ public class ItemsFragment extends PlaceholderFragment {
                 String selected_category_main = mainCategoryList.get(picker_item_sim_category_main.getValue());
                 String selected_category_sub = subCategoryList.get(newVal);
                 String cs = selected_grade + FangConstant.CONSTRAINT_SEPARATOR + selected_category_main + FangConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
-                itemSimsFixedRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
-                itemSimsFloatingRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
+                itemFixAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
+                itemFloatAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
             });
 
 
         } catch( IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
-            Log.d(TAG, e.toString());
+            Log.e(TAG,Log.getStackTraceString(e));
         }
 
 
         return view;
 
+    }
+
+    @Override
+    public void updateEvent(int resultCode, String message, int[] pos) {
+        if( resultCode == FangConstant.RESULT_CODE_SUCCESS ) {
+            itemFloatAdapter.notifyDataSetChanged();
+            itemFixAdapter.notifyDataSetChanged();
+        }
+
+        View view  = getView();
+        if (message != null && view != null) {
+            Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
 }

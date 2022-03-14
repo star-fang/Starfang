@@ -14,7 +14,7 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.RelicPRFX;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
-import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 
 import io.realm.RealmResults;
 
@@ -30,8 +30,8 @@ public class AddRelicDialogFragment extends UpdateDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        View view = View.inflate(mActivity, R.layout.dialog_add_relic, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        View view = View.inflate(mContext, R.layout.dialog_add_relic, null);
 
         final NumberPicker picker_add_relic_guardian = view.findViewById(R.id.picker_add_relic_guardian);
         final NumberPicker picker_add_relic_prefix = view.findViewById(R.id.picker_add_relic_prefix);
@@ -106,7 +106,7 @@ public class AddRelicDialogFragment extends UpdateDialogFragment {
                     picker_add_relic_suffix.setMaxValue(relicSFXesStr.length - 1);
                     picker_add_relic_suffix.setDisplayedValues(relicSFXesStr);
                 } catch( ArrayIndexOutOfBoundsException e ) {
-                    Log.d(TAG, "suffix error :" + e.toString());
+                    Log.e(TAG,Log.getStackTraceString(e));
                 }
             });
             picker_add_relic_guardian.setValue(FangConstant.GUARDIAN_INIT_VALUE);
@@ -130,13 +130,15 @@ public class AddRelicDialogFragment extends UpdateDialogFragment {
 
                 }, () -> {
                     String message = prefix + " " + suffix + " " + resources.getString(R.string.star_filled) + grade + resources.getString(R.string.added_kor);
-                    onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_ADD_RELIC, message);
+                    for(OnUpdateEventListener listener : listeners ) {
+                        listener.updateEvent(FangConstant.RESULT_CODE_SUCCESS, message, null);
+                    }
                 });
 
 
             })).setNegativeButton(R.string.cancel_kor,null);
         } catch ( IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
-            Log.d(TAG,e.toString());
+            Log.e(TAG,Log.getStackTraceString(e));
         }
 
         return builder.create();

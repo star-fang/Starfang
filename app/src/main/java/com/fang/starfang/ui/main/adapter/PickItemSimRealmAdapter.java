@@ -1,5 +1,6 @@
 package com.fang.starfang.ui.main.adapter;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,7 @@ import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.ui.main.adapter.filter.ItemSimFilter;
 
-import io.realm.Realm;
+import io.realm.OrderedRealmCollection;
 import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
 
@@ -27,7 +28,18 @@ public class PickItemSimRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, R
     private static final String TAG = "FANG_ADAPTER_ITEM_SIM";
     private AppCompatTextView text_info;
     private ItemSim item_selected;
-    private Realm realm;
+    private Context context;
+
+    public PickItemSimRealmAdapter(
+            OrderedRealmCollection<ItemSim> itemCollection
+            , AppCompatTextView text_info
+            , Context context) {
+        super(itemCollection, false);
+        this.text_info = text_info;
+        this.item_selected = null;
+        this.context = context;
+        Log.d(TAG, "constructed");
+    }
 
     @NonNull
     @Override
@@ -45,22 +57,13 @@ public class PickItemSimRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, R
         }
     }
 
-
-    public PickItemSimRealmAdapter(Realm realm, AppCompatTextView text_info) {
-        super(realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF), false);
-        this.text_info = text_info;
-        this.item_selected = null;
-        this.realm = realm;
-        Log.d(TAG, "constructed");
-    }
-
     public ItemSim getSelectedItem() {
         return item_selected;
     }
 
     @Override
     public Filter getFilter() {
-        return new ItemSimFilter(this, realm);
+        return new ItemSimFilter(this, context);
     }
 
     public class ItemSimsViewHolder extends RecyclerView.ViewHolder {

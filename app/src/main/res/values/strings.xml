@@ -2,23 +2,64 @@
     <string name="app_name">Starfang</string>
 
     <string name="bot_name_default">고냐옹</string>
-    <string name="bot_status_stop">stop</string>
-    <string name="bot_status_start">start</string>
-    <string name="bot_status_restart">restart</string>
-    <string name="bot_status">botStatus</string>
-    <string name="shared_preference_store">constants</string>
-    <string name="bot_name">botName</string>
-    <string name="bot_record">botRecord</string>
-    <string name="start_count">startCount</string>
-    <string name="restart_count">restartCount</string>
     <string name ="command_bot_start">시작</string>
     <string name ="command_bot_stop">정지</string>
+
+    <string name ="label_reply">답장</string>
+    <string name ="notify_debug_room">디버그</string>
+    <string name ="notify_debug_who">Starfang</string>
 
     <string name="tab_text_1">장수</string>
     <string name="tab_text_2">대화</string>
     <string name="tab_text_3">냥봇</string>
     <string name="tab_text_4">보물</string>
     <string name="tab_text_5">보패</string>
+
+    <string name="column_name">이름</string>
+    <string name="column_level">level</string>
+    <string name="column_branch">병종</string>
+
+    <string-array name="column_list_fix">
+        <item>@string/column_branch</item>
+        <item>@string/column_name</item>
+    </string-array>
+
+    <integer-array name="width_list_fix">
+        <item>100</item>
+        <item>100</item>
+    </integer-array>
+
+    <string name="column_force">무력</string>
+    <string name="column_intelligence">지력</string>
+    <string name="column_command">통솔</string>
+    <string name="column_agility">민첩</string>
+    <string name="column_luck">행운</string>
+
+    <string name="column_weapon">무기</string>
+    <string name="column_armor">방어구</string>
+    <string name="column_aid">보조구</string>
+
+    <string name="column_cost">COST</string>
+    <string name="column_linage">계보</string>
+    <string name="column_personality">성격</string>
+
+    <string-array name="column_list_float">
+        <item>@string/column_cost</item>
+        <item>@string/column_linage</item>
+       <!-- <item>@string/column_force</item>
+        <item>@string/column_intelligence</item>
+        <item>@string/column_command</item>
+        <item>@string/column_agility</item>
+        <item>@string/column_luck</item>
+        -->
+        <item>@string/column_personality</item>
+    </string-array>
+
+    <integer-array name="width_list_float">
+        <item>200</item>
+        <item>200</item>
+        <item>200</item>
+    </integer-array>
 
     <string-array name="pref_list_table">
         <item>장수 정보</item>
@@ -52,12 +93,6 @@
         <item>@string/stat_kor</item>
         <item>@string/power_kor</item>
         <item>@string/spec_score</item>
-    </string-array>
-
-    <string-array name="option_sort_stat_prefix">
-        <item>교본작 전</item>
-        <item>교본작 후</item>
-        <item>교본</item>
     </string-array>
 
     <string-array name="option_sort_stat">
@@ -158,6 +193,7 @@
     <string name="branch_spec1">Lv01</string>
     <string name="plus_stat_sum">교본 합</string>
 
+    <string name="grade_no_reinforce">연의</string>
     <string name="weapon">무기</string>
     <string name="shield">방어구</string>
     <string name="aid">보조구</string>

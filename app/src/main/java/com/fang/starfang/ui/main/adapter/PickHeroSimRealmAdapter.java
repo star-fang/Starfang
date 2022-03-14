@@ -21,6 +21,13 @@ public class PickHeroSimRealmAdapter extends RealmRecyclerViewAdapter<Heroes, Re
 
     private static final String TAG = "FANG_ADAPTER_PICK_HERO";
     private Heroes hero_selected;
+
+    public PickHeroSimRealmAdapter(RealmResults<Heroes> realmResults) {
+        super(realmResults, false);
+        this.hero_selected = null;
+        Log.d(TAG, "constructed");
+    }
+
     @NonNull
     @Override
     public PickHeroSimRealmAdapter.PickHeroViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -35,13 +42,6 @@ public class PickHeroSimRealmAdapter extends RealmRecyclerViewAdapter<Heroes, Re
         if( hero != null ) {
             itemsViewHolder.bind(hero);
         }
-    }
-
-
-    public PickHeroSimRealmAdapter(RealmResults<Heroes> realmResults) {
-        super(realmResults, false);
-        this.hero_selected = null;
-        Log.d(TAG, "constructed");
     }
 
     public Heroes getSelectedHero() {

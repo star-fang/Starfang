@@ -8,37 +8,25 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 import com.fang.starfang.ui.setting.SettingActivity;
-import com.fang.starfang.ui.common.MovableFloatingActionButton;
+import com.fang.starfang.ui.creative.MovableFloatingActionButton;
 import com.fang.starfang.ui.conversation.ConversationActivity;
 import com.fang.starfang.ui.main.dialog.AddItemDialogFragment;
 import com.fang.starfang.ui.main.dialog.AddRelicDialogFragment;
-import com.fang.starfang.ui.common.UpdateDialogFragment;
-import com.fang.starfang.ui.main.adapter.HeroesFixedRealmAdapter;
-import com.fang.starfang.ui.main.adapter.HeroesFloatingRealmAdapter;
-import com.fang.starfang.ui.main.adapter.ItemSimsFixedRealmAdapter;
-import com.fang.starfang.ui.main.adapter.ItemSimsFloatingRealmAdapter;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
-import io.realm.Realm;
 
+public class MainActivity extends AppCompatActivity {
 
-public class MainActivity extends AppCompatActivity implements UpdateDialogFragment.OnUpdateEventListener {
+    private static final int REQ_CODE_SYNC_DB = 0;
 
-    private static final String TAG = "FANG_ACTIVITY_MAIN";
-    private View view;
-    private Realm realm;
-    private HeroesFloatingRealmAdapter heroFloatAdapter;
-    private HeroesFixedRealmAdapter heroFixAdapter;
-    private ItemSimsFloatingRealmAdapter itemFloatAdapter;
-    private ItemSimsFixedRealmAdapter itemFixAdapter;
-    private boolean dialogIsBeingShown;
+    private static final String TAG = "FANG_MAIN";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -51,18 +39,15 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
 
         switch (item.getItemId()) {
             case R.id.menu_item_setting:
-            Intent start_setting = new Intent(this, SettingActivity.class);
-            startActivity(start_setting);
-            break;
+                Intent start_setting = new Intent(this, SettingActivity.class);
+                startActivityForResult(start_setting, REQ_CODE_SYNC_DB);
+                break;
 
             case R.id.menu_item_chat:
-                if(realm.isInTransaction()) {
-                    realm.commitTransaction();
-                }
                 Intent start_chat = new Intent(this, ConversationActivity.class);
                 startActivity(start_chat);
                 break;
-                default:
+            default:
 
                 /*
             case R.id.menu_item_check:
@@ -95,36 +80,29 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
     @Override
     protected void onRestart() {
         super.onRestart();
-        realm = Realm.getDefaultInstance();
+        Log.d(TAG, "onRestart");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        realm.close();
+        Log.d(TAG, "onStop");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
 
-        dialogIsBeingShown = false;
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-        realm = Realm.getDefaultInstance();
-        HeroesFloatingRealmAdapter.setInstance(realm, fragmentManager, this);
-        HeroesFixedRealmAdapter.setInstance(realm, fragmentManager);
-        ItemSimsFloatingRealmAdapter.setInstance(realm, fragmentManager);
-        ItemSimsFixedRealmAdapter.setInstance(realm, fragmentManager);
-
-        heroFloatAdapter = HeroesFloatingRealmAdapter.getInstance();
-        heroFixAdapter = HeroesFixedRealmAdapter.getInstance();
-        itemFloatAdapter = ItemSimsFloatingRealmAdapter.getInstance();
-        itemFixAdapter = ItemSimsFixedRealmAdapter.getInstance();
+        /*
+        application context : stable resources
+        base context(activity) : activity ui
+         */
 
         setContentView(R.layout.activity_main);
-        view = this.findViewById(android.R.id.content).getRootView();
+        View view = this.findViewById(android.R.id.content).getRootView();
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, fragmentManager);
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         final ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         final TabLayout tabs = findViewById(R.id.tabs);
@@ -144,64 +122,32 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
             }
         });
 
-        view.findViewById(R.id.button_add_item).setOnClickListener(v -> AddItemDialogFragment.newInstance().show(fragmentManager, TAG));
-        view.findViewById(R.id.button_add_relic).setOnClickListener(v -> AddRelicDialogFragment.newInstance().show(fragmentManager, TAG));
+        view.findViewById(R.id.button_add_item).setOnClickListener(v -> AddItemDialogFragment.newInstance().show(getSupportFragmentManager(), TAG));
+        view.findViewById(R.id.button_add_relic).setOnClickListener(v -> AddRelicDialogFragment.newInstance().show(getSupportFragmentManager(), TAG));
 
     }
 
     @Override
-    public void updateEvent(int code, String message) {
-        int notifyType;
-        switch (code) {
-            case FangConstant.RESULT_CODE_SUCCESS_ADD_ITEM:
-                notifyType = FangConstant.NOTIFY_TYPE_ITEM;
-                notifyToAdapter(notifyType);
-                Log.d(TAG, "item added:" + message);
-                break;
-            case FangConstant.RESULT_CODE_SUCCESS_ADD_HERO:
-                notifyType = FangConstant.NOTIFY_TYPE_HERO;
-                notifyToAdapter(notifyType);
-                Log.d(TAG, "hero added:" + message);
-                break;
-            case FangConstant.RESULT_CODE_SUCCESS_MODIFY_HERO:
-                notifyType = FangConstant.NOTIFY_TYPE_HERO;
-                notifyToAdapter(notifyType);
-                Log.d(TAG, "hero modified:" + message);
-                break;
-            case FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM:
-                notifyType = FangConstant.NOTIFY_TYPE_ITEM_HERO;
-                notifyToAdapter(notifyType);
-                Log.d(TAG, "item modified:" + message);
-                break;
-            case FangConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC:
-                notifyType = FangConstant.NOTIFY_TYPE_HERO;
-                notifyToAdapter(notifyType);
-                Log.d(TAG, "relic modified:" + message);
-                break;
-            default:
-        } // end switch
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        //Log.d(TAG, "onActivityResult");
+        if (requestCode == REQ_CODE_SYNC_DB && resultCode == SettingActivity.RESULT_CODE_SYNC_SUCCESS) {
 
-        if(message != null) {
-            Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
-            //showCancelableSnackBar(view, message,notifyType);
-        }
+            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                if (fragment instanceof UpdateDialogFragment.OnUpdateEventListener && fragment.isVisible()) {
+                    Log.d(TAG, "sync: " + fragment.getClass().getName());
+                    ((UpdateDialogFragment.OnUpdateEventListener) fragment).updateEvent(
+                            FangConstant.RESULT_CODE_SUCCESS
+                            , null, null);
+                }
+            }
 
-    }
-
-    @Override
-    public boolean dialogAttached() {
-        if(dialogIsBeingShown) {
-            return true;
-        } else {
-            dialogIsBeingShown = true;
-            return false;
         }
     }
 
-    @Override
-    public void dialogDetached() {
-        dialogIsBeingShown = false;
-    }
+
+
+
 
     /*
     private void showCancelableSnackBar(View view, String message, int notifyType) {
@@ -234,24 +180,4 @@ public class MainActivity extends AppCompatActivity implements UpdateDialogFragm
 
      */
 
-    private void notifyToAdapter(int notifyType) {
-        switch( notifyType ) {
-            case FangConstant.NOTIFY_TYPE_ITEM:
-                itemFloatAdapter.notifyDataSetChanged();
-                itemFixAdapter.notifyDataSetChanged();
-                break;
-            case FangConstant.NOTIFY_TYPE_HERO:
-                heroFloatAdapter.notifyDataSetChanged();
-                heroFixAdapter.notifyDataSetChanged();
-                break;
-            case FangConstant.NOTIFY_TYPE_RELIC:
-                break;
-            case FangConstant.NOTIFY_TYPE_ITEM_HERO:
-                itemFloatAdapter.notifyDataSetChanged();
-                itemFixAdapter.notifyDataSetChanged();
-                heroFloatAdapter.notifyDataSetChanged();
-                heroFixAdapter.notifyDataSetChanged();
-            default:
-        }
-    }
 }

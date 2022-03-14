@@ -44,8 +44,6 @@ import com.fang.starfang.local.model.realm.union.UnionSkill;
 import com.fang.starfang.local.model.realm.union.UnionSpec;
 import com.fang.starfang.local.model.realm.UpdateTime;
 import com.fang.starfang.local.model.realm.primitive.RealmString;
-import com.fang.starfang.ui.main.adapter.HeroesFixedRealmAdapter;
-import com.fang.starfang.ui.main.adapter.HeroesFloatingRealmAdapter;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -76,11 +74,16 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.exceptions.RealmPrimaryKeyConstraintException;
 
-public class RealmSyncTask  extends AsyncTask<String,String, String> {
+public class RealmSyncTask extends AsyncTask<String, String, String> {
 
-    private final static String TAG = "FANG_SYNC";
-    private final static String REALM_BASE_URL = "/fangcat/convertToRealm/";
-    private final static String GET_JSON_PHP = "convertToJSON.php";
+    private static final String TAG = "FANG_SYNC";
+    private static final String REALM_BASE_URL = "/fangcat/convertToRealm/";
+    private static final String GET_JSON_PHP = "convertToJSON.php";
+
+    private static final String STATUS_LATEST = "latest";
+    private static final String STATUS_FAIL = "fail";
+    private static final String STATUS_UPDATE = "update";
+
     private WeakReference<Context> context;
     private Gson gson;
     private String address;
@@ -91,11 +94,15 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
     private WeakReference<TextView> progress_result;
     private WeakReference<Button> button_close;
 
-    public RealmSyncTask(String address, Context context)
-    {
+    private int updateCount;
+    private WeakReference<OnTaskCompleted> listener;
 
+    public RealmSyncTask(String address, Context context, OnTaskCompleted listener) {
+
+        this.updateCount = 0;
         this.context = new WeakReference<>(context);
         this.address = address;
+        this.listener = new WeakReference<>(listener);
 
         GsonBuilder gsonBuilder = new GsonBuilder()
                 .setExclusionStrategies(new ExclusionStrategy() {
@@ -121,30 +128,35 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         AlertDialog progressDialog = getDialogProgressBar().create();
         progressDialog.setCancelable(false);
 
-        button_close.get().setOnClickListener(v-> progressDialog.dismiss());
+        button_close.get().setOnClickListener(v -> progressDialog.dismiss());
         progressDialog.show();
     }
 
     @Override
     protected String doInBackground(String... tasks) {
-        int count = tasks.length;
+        int count_tasks = tasks.length;
         int count_latest = 0;
         int count_fail = 0;
-
 
         for (String currentTask : tasks) {
             publishProgress(currentTask, "", "동기화 중 입니다.");
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.e(TAG,Log.getStackTraceString(e));
             }
             String[] jsonResult = getAllData(currentTask);
             publishProgress(currentTask, jsonResult[0], jsonResult[1]);
-            if (jsonResult[0].equals("fail")) {
-                count_fail++;
-            } else if (jsonResult[0].equals("latest")) {
-                count_latest++;
+            switch (jsonResult[0].toLowerCase()) {
+                case STATUS_FAIL:
+                    count_fail++;
+                    break;
+                case STATUS_LATEST:
+                    count_latest++;
+                    break;
+                case STATUS_UPDATE:
+                    updateCount++;
+                    break;
             }
 
 
@@ -153,38 +165,43 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
             }
         }
 
-        return "동기화 완료: 전체:" + count + "개, 갱신: " +
-                (count - count_fail - count_latest) + "개, 최신:" + count_latest +
-                "개, 실패:" + count_fail + "개";
+        int count_unknown = count_tasks - updateCount - count_latest - count_fail;
+
+        return "동기화 완료: 전체:" + count_tasks + "개, 갱신: " +
+                updateCount + "개, 최신:" + count_latest +
+                "개, 실패:" + (count_fail + count_unknown) + "개";
     }
 
     private String[] getAllData(String pref_table) {
 
-        Realm realmForUT = Realm.getDefaultInstance();
-        UpdateTime ut = realmForUT.where(UpdateTime.class).equalTo(UpdateTime.FIELD_TABLE,pref_table).findFirst();
-        if(ut == null) {
-            UpdateTime newUT = new UpdateTime();
-            newUT.setLatestUpadateTime("0");
-            newUT.setPrefTable(pref_table);
-            realmForUT.beginTransaction();
-            realmForUT.copyToRealm(newUT);
-            realmForUT.commitTransaction();
-            ut = newUT;
+        String utStr = "";
+        try (Realm realmForUT = Realm.getDefaultInstance()) {
+            UpdateTime ut = realmForUT.where(UpdateTime.class).equalTo(UpdateTime.FIELD_TABLE, pref_table).findFirst();
+            if (ut == null) {
+                UpdateTime newUT = new UpdateTime();
+                newUT.setLatestUpadateTime("0");
+                newUT.setPrefTable(pref_table);
+                realmForUT.beginTransaction();
+                realmForUT.copyToRealm(newUT);
+                realmForUT.commitTransaction();
+                ut = newUT;
+            }
+            utStr = "&lut=" + ut.getLatestUpdateTime().replace(" ", "%20");
+        } catch (RuntimeException e) {
+            Log.e(TAG,Log.getStackTraceString(e));
         }
-        String utStr = ut.getLatestUpdateTime();
-        realmForUT.close();
-        String mJSONURLString = address + REALM_BASE_URL + GET_JSON_PHP + "?pref_t=" + pref_table.replace(" ","%20")
-                +"&lut="+utStr.replace(" ","%20");
-        Log.d(TAG,"get method: " + mJSONURLString );
+        String mJSONURLString = address + REALM_BASE_URL + GET_JSON_PHP +
+                "?pref_t=" + pref_table.replace(" ", "%20") + utStr;
+        Log.d(TAG, "get method: " + mJSONURLString);
 
         final String[] jsonResult = {"", ""};
 
         RequestQueue requestQueue = Volley.newRequestQueue(context.get());
 
-        RequestFuture<JSONObject> requestFuture= RequestFuture.newFuture();
+        RequestFuture<JSONObject> requestFuture = RequestFuture.newFuture();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.GET, mJSONURLString,null,
-                requestFuture, requestFuture ) {
+                Request.Method.GET, mJSONURLString, null,
+                requestFuture, requestFuture) {
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
@@ -202,82 +219,79 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         requestQueue.add(jsonObjectRequest);
 
 
-        try {
+        try (Realm realm = Realm.getDefaultInstance()) {
             JSONObject jsonObject = requestFuture.get(5, TimeUnit.SECONDS);
 
-                Realm realm = Realm.getDefaultInstance();
-                    jsonResult[0] = jsonObject.get("status").toString();
-                    jsonResult[1] = jsonObject.get("message").toString();
+            jsonResult[0] = jsonObject.get("status").toString();
+            jsonResult[1] = jsonObject.get("message").toString();
 
-                    String lut = jsonObject.get("time").toString();
-                    realm.beginTransaction();
-                    UpdateTime updateTime = realm.where(UpdateTime.class).equalTo(UpdateTime.FIELD_TABLE,pref_table).findFirst();
-                    if (updateTime != null) {
-                        updateTime.setLatestUpadateTime(lut);
-                    }
-                    realm.commitTransaction();
+            String lut = jsonObject.get("time").toString();
+            realm.beginTransaction();
+            UpdateTime updateTime = realm.where(UpdateTime.class).equalTo(UpdateTime.FIELD_TABLE, pref_table).findFirst();
+            if (updateTime != null) {
+                updateTime.setLatestUpadateTime(lut);
+            }
+            realm.commitTransaction();
 
-                if(jsonResult[0].equals("latest") || jsonResult[0].equals("fail") ) {
+            if( !jsonResult[0].equalsIgnoreCase(STATUS_UPDATE) ) {
+                return jsonResult;
+            }
 
-                    return jsonResult;
-                }
-
-
-               JSONArray jsonArray = jsonObject.getJSONArray("data");
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
 
             realm.beginTransaction();
 
-            switch ( pref_table ) {
+            switch (pref_table) {
                 case Terrain.PREF_TABLE:
                     realm.delete(Terrain.class);
-                    realm.createAllFromJson(Terrain.class,jsonArray);
+                    realm.createAllFromJson(Terrain.class, jsonArray);
                     Log.d(TAG, "SYNC Terrain REALM COMPLETE!");
                     break;
                 case Heroes.PREF_TABLE:
                     realm.delete(Heroes.class);
-                    for(int i = 0; i < jsonArray.length(); i++ ) {
-                            String json = jsonArray.get(i).toString();
-                            Heroes hero = gson.fromJson(json,Heroes.class);
-                            //realm.copyToRealm(hero);
-                            HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID,hero.getHeroNo()).findFirst();
-                            if(heroSim == null) {
-                                heroSim = new HeroSim(hero);
-                                realm.copyToRealm(heroSim);
-                            } else {
-                                realm.copyToRealm(hero);
-                                heroSim.updateHero(realm);
-                            }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        String json = jsonArray.get(i).toString();
+                        Heroes hero = gson.fromJson(json, Heroes.class);
+                        //realm.copyToRealm(hero);
+                        HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, hero.getHeroNo()).findFirst();
+                        if (heroSim == null) {
+                            heroSim = new HeroSim(hero);
+                            realm.copyToRealm(heroSim);
+                        } else {
+                            realm.copyToRealm(hero);
+                            heroSim.updateHero(realm);
+                        }
                     }
                     Log.d(TAG, "SYNC Hero REALM COMPLETE!");
                     break;
                 case Destiny.PREF_TABLE:
                     realm.delete(Destiny.class);
                     realm.createAllFromJson(Destiny.class, jsonArray);
-                    for(Destiny des : realm.where(Destiny.class).findAll())
+                    for (Destiny des : realm.where(Destiny.class).findAll())
                         des.setDesNameNoBlank(des.getDesName().replace(" ", ""));
                     Log.d(TAG, "SYNC Destiny REALM COMPLETE!");
                     break;
                 case Spec.PREF_TABLE:
                     realm.delete(Spec.class);
 
-                    for(int i = 0; i < jsonArray.length(); i++ ) {
-                            String json = jsonArray.get(i).toString();
-                            Spec spec = gson.fromJson(json,Spec.class);
-                            spec.setSpecNameNoBlank(spec.getSpecName().replace(" ",""));
-                            realm.copyToRealm(spec);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        String json = jsonArray.get(i).toString();
+                        Spec spec = gson.fromJson(json, Spec.class);
+                        spec.setSpecNameNoBlank(spec.getSpecName().replace(" ", ""));
+                        realm.copyToRealm(spec);
                     }
                     Log.d(TAG, "SYNC Spec REALM COMPLETE!");
                     break;
                 case Branch.PREF_TABLE:
                     realm.delete(Branch.class);
 
-                    for(int i = 0; i < jsonArray.length(); i++ ) {
-                            String json = jsonArray.get(i).toString();
-                            Branch branch = gson.fromJson(json,Branch.class);
-                            realm.copyToRealm(branch);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        String json = jsonArray.get(i).toString();
+                        Branch branch = gson.fromJson(json, Branch.class);
+                        realm.copyToRealm(branch);
                     }
 
-                    for(HeroSim heroSim : realm.where(HeroSim.class).findAll()) {
+                    for (HeroSim heroSim : realm.where(HeroSim.class).findAll()) {
                         heroSim.updateBranch(realm);
                         heroSim.updateBasePower();
                     }
@@ -287,39 +301,39 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                     break;
                 case Item.PREF_TABLE:
                     realm.delete(Item.class);
-                    for(int i = 0; i < jsonArray.length(); i++ ) {
-                            String json = jsonArray.get(i).toString();
-                            Item item = gson.fromJson(json,Item.class);
-                            item.setItemNameNoBlank(item.getItemName().replace(" ",""));
-                            realm.copyToRealm(item);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        String json = jsonArray.get(i).toString();
+                        Item item = gson.fromJson(json, Item.class);
+                        item.setItemNameNoBlank(item.getItemName().replace(" ", ""));
+                        realm.copyToRealm(item);
                     }
 
-                    for(ItemSim itemSim : realm.where(ItemSim.class).findAll()) {
-                        itemSim.updateItem( realm );
+                    for (ItemSim itemSim : realm.where(ItemSim.class).findAll()) {
+                        itemSim.updateItem(realm);
                     }
                     Log.d(TAG, "SYNC Item REALM COMPLETE!");
                     break;
                 case ItemCate.PREF_TABLE:
                     realm.delete(ItemCate.class);
-                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         String json = jsonArray.get(i).toString();
-                        ItemCate itemCate = gson.fromJson(json,ItemCate.class);
+                        ItemCate itemCate = gson.fromJson(json, ItemCate.class);
                         realm.copyToRealm(itemCate);
                     }
                     Log.d(TAG, "SYNC ItemCate REALM COMPLETE!");
                     break;
                 case ItemReinforcement.PREF_TABLE:
                     realm.delete(ItemReinforcement.class);
-                    for(int i = 0; i < jsonArray.length(); i++ ) {
-                            String json = jsonArray.get(i).toString();
-                            ItemReinforcement itemReinforcement = gson.fromJson(json,ItemReinforcement.class);
-                            realm.copyToRealm(itemReinforcement);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        String json = jsonArray.get(i).toString();
+                        ItemReinforcement itemReinforcement = gson.fromJson(json, ItemReinforcement.class);
+                        realm.copyToRealm(itemReinforcement);
                     }
                     Log.d(TAG, "SYNC ItemReinforcement REALM COMPLETE!");
                     break;
                 case NormalItem.PREF_TABLE:
                     realm.delete(NormalItem.class);
-                    for(int i = 0; i < jsonArray.length(); i++) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         String json = jsonArray.get(i).toString();
                         NormalItem normalItem = gson.fromJson(json, NormalItem.class);
                         realm.copyToRealm(normalItem);
@@ -333,44 +347,44 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                     break;
                 case RelicCombination.PREF_TABLE:
                     realm.delete(RelicCombination.class);
-                    for(int i = 0; i < jsonArray.length(); i++ ) {
-                            String json = jsonArray.get(i).toString();
-                            RelicCombination comb = gson.fromJson(json, RelicCombination.class);
-                            realm.copyToRealm(comb);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        String json = jsonArray.get(i).toString();
+                        RelicCombination comb = gson.fromJson(json, RelicCombination.class);
+                        realm.copyToRealm(comb);
                     }
 
-                    for( int i = 0; i < HeroSim.FIELD_COMB_IDS.length; i++ ) {
+                    for (int i = 0; i < HeroSim.FIELD_COMB_IDS.length; i++) {
                         RealmResults<HeroSim> heroSims = realm.where(HeroSim.class).notEqualTo(HeroSim.FIELD_COMB_IDS[i], 0).findAll();
                         int slot = i + 1;
-                        for( HeroSim heroSim : heroSims ) {
-                            heroSim.updateRelicCombination( slot, realm );
+                        for (HeroSim heroSim : heroSims) {
+                            heroSim.updateRelicCombination(slot, realm);
                         }
                     }
                     Log.d(TAG, "SYNC RelicCombination REALM COMPLETE!");
                     break;
                 case RelicPRFX.PREF_TABLE:
                     realm.delete(RelicPRFX.class);
-                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         String json = jsonArray.get(i).toString();
                         RelicPRFX relicPRFX = gson.fromJson(json, RelicPRFX.class);
                         realm.copyToRealm(relicPRFX);
                     }
 
-                    for( RelicSim relicSim : realm.where(RelicSim.class).findAll()) {
-                        relicSim.updatePrefix( realm );
+                    for (RelicSim relicSim : realm.where(RelicSim.class).findAll()) {
+                        relicSim.updatePrefix(realm);
                     }
                     Log.d(TAG, "SYNC  RelicPRFX REALM COMPLETE!");
                     break;
                 case RelicSFX.PREF_TABLE:
                     realm.delete(RelicSFX.class);
-                    for(int i = 0; i < jsonArray.length(); i++ ) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         String json = jsonArray.get(i).toString();
                         RelicSFX relicSFX = gson.fromJson(json, RelicSFX.class);
                         realm.copyToRealm(relicSFX);
                     }
 
-                    for( RelicSim relicSim : realm.where(RelicSim.class).findAll()) {
-                        relicSim.updateSuffix( realm );
+                    for (RelicSim relicSim : realm.where(RelicSim.class).findAll()) {
+                        relicSim.updateSuffix(realm);
                     }
                     Log.d(TAG, "SYNC RelicSFX REALM COMPLETE!");
                     break;
@@ -401,36 +415,34 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
                     break;
                 case Agenda.PREF_TABLE:
                     realm.delete(Agenda.class);
-                    realm.createAllFromJson(Agenda.class,jsonArray);
+                    realm.createAllFromJson(Agenda.class, jsonArray);
                     Log.d(TAG, "SYNC Agenda REALM COMPLETE!");
                     break;
                 default:
                     Log.d(TAG, "SYNC REALM failure : empty table name");
             }
             realm.commitTransaction();
-            realm.close();
-
 
         } catch (InterruptedException | ExecutionException e) {
-            Log.d(TAG,e.toString());
-
+            Log.e(TAG,Log.getStackTraceString(e));
             jsonResult[0] = "fail";
             jsonResult[1] = "전송 정보 오류";
-
-
         } catch (TimeoutException e) {
-            Log.d(TAG,e.toString());
+            Log.e(TAG,Log.getStackTraceString(e));
             jsonResult[0] = "fail";
             jsonResult[1] = "시간 초과";
-
         } catch (JSONException | RealmPrimaryKeyConstraintException e) {
-            Log.d(TAG,e.toString());
+            Log.e(TAG,Log.getStackTraceString(e));
             jsonResult[0] = "fail";
             jsonResult[1] = "파싱 오류";
-        } catch( NullPointerException e ) {
-            Log.d(TAG,e.toString());
+        } catch (NullPointerException e) {
+            Log.e(TAG,Log.getStackTraceString(e));
             jsonResult[0] = "fail";
             jsonResult[1] = "심각한 오류";
+        } catch ( RuntimeException e ) {
+            Log.e(TAG,Log.getStackTraceString(e));
+            jsonResult[0] = "fail";
+            jsonResult[1] = "런타임 오류";
         }
         return jsonResult;
     }
@@ -453,10 +465,10 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
     // After each task done
     @Override
-    protected void onProgressUpdate(String... values){
+    protected void onProgressUpdate(String... values) {
 
         LayoutInflater inflater = LayoutInflater.from(context.get());
-        View row_progress = inflater.inflate(R.layout.row_progress,progress_list.get(),false);
+        View row_progress = inflater.inflate(R.layout.row_progress, progress_list.get(), false);
         ProgressBar progressBar = row_progress.findViewById(R.id.progressBar);
         TextView textView_progress = row_progress.findViewById(R.id.progressBar_text);
         textView_progress.setText(values[1]);
@@ -468,7 +480,7 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
         LinearLayout progress_layout = progress_list.get();
         ScrollView scroll_progress = scroll_progress_list.get();
 
-        if(values[1].equals("")) {
+        if (values[1].equals("")) {
             progress_layout.addView(row_progress);
             scroll_progress.post(() -> scroll_progress.fullScroll(ScrollView.FOCUS_DOWN));
             currentProgressView = new WeakReference<>(row_progress);
@@ -482,21 +494,10 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
     // When all async task done
     @Override
-    protected void onPostExecute(String result){
+    protected void onPostExecute(String result) {
         button_close.get().setVisibility(View.VISIBLE);
         progress_result.get().setText(result);
-
-        HeroesFixedRealmAdapter heroesFixedRealmAdapter = HeroesFixedRealmAdapter.getInstance();
-        if(heroesFixedRealmAdapter != null ) {
-            heroesFixedRealmAdapter.notifyDataSetChanged();
-            Log.d(TAG, "notify to HeroesFixedRealmAdapter");
-        }
-
-        HeroesFloatingRealmAdapter heroesFloatingRealmAdapter = HeroesFloatingRealmAdapter.getInstance();
-        if(heroesFloatingRealmAdapter != null ) {
-            heroesFloatingRealmAdapter.notifyDataSetChanged();
-            Log.d(TAG, "notify to HeroesFloatingRealmAdapter");
-        }
+        listener.get().onTaskCompleted(updateCount);
     }
 
     public static class RealmStringDeserializer implements
@@ -522,13 +523,12 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
     }
 
 
-
     public static class RealmIntegerDeserializer implements
             JsonDeserializer<RealmList<RealmInteger>> {
 
         @Override
         public RealmList<RealmInteger> deserialize(JsonElement json, Type typeOfT,
-                                                  JsonDeserializationContext context) throws JsonParseException {
+                                                   JsonDeserializationContext context) throws JsonParseException {
 
             RealmList<RealmInteger> realmIntegers = new RealmList<>();
             JsonArray stringList = json.getAsJsonArray();
@@ -542,11 +542,13 @@ public class RealmSyncTask  extends AsyncTask<String,String, String> {
 
         private int getNullAsZeroInt(JsonElement jsonElement) {
             String valueStr = jsonElement.isJsonNull() ? "" : jsonElement.getAsString();
-            return NumberUtils.toInt(valueStr,0);
+            return NumberUtils.toInt(valueStr, 0);
         }
     }
 
-
+    public interface OnTaskCompleted {
+        void onTaskCompleted(int count);
+    }
 
 
 }

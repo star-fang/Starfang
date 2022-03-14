@@ -23,7 +23,7 @@ import com.fang.starfang.ui.main.adapter.filter.RelicSimFilter;
 
 import java.util.ArrayList;
 
-import io.realm.Realm;
+import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
 
@@ -33,6 +33,17 @@ public class ManageRelicSimRealmAdapter extends RealmRecyclerViewAdapter<RelicSi
     private AppCompatTextView text_selected_relic_count;
     private LinearLayout layout_edit_relic_group;
     private ArrayList<RelicSim> relics_selected;
+
+    public ManageRelicSimRealmAdapter(
+            OrderedRealmCollection<RelicSim> relicCollection,
+            LinearLayout layout_edit_relic_group,
+            AppCompatTextView text_selected_relic_count ) {
+        super(relicCollection, false);
+        this.text_selected_relic_count = text_selected_relic_count;
+        this.layout_edit_relic_group = layout_edit_relic_group;
+        this.relics_selected = new ArrayList<>();
+        Log.d(TAG, "constructed");
+    }
 
     @NonNull
     @Override
@@ -48,16 +59,6 @@ public class ManageRelicSimRealmAdapter extends RealmRecyclerViewAdapter<RelicSi
         if( relicSim != null ) {
             itemsViewHolder.bind(relicSim);
         }
-    }
-
-
-    public ManageRelicSimRealmAdapter(RealmResults<RelicSim> relicSims,
-            LinearLayout layout_edit_relic_group, AppCompatTextView text_selected_relic_count ) {
-        super(relicSims, false);
-        this.text_selected_relic_count = text_selected_relic_count;
-        this.layout_edit_relic_group = layout_edit_relic_group;
-        this.relics_selected = new ArrayList<>();
-        Log.d(TAG, "constructed");
     }
 
     public ArrayList<RelicSim> getSelectedRelics() {

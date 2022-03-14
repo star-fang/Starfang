@@ -1,5 +1,6 @@
 package com.fang.starfang.ui.main.adapter;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,24 +20,24 @@ import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.ui.main.dialog.PickHeroDialogFragment;
 import com.fang.starfang.ui.main.adapter.filter.ItemSimFilter;
 
-import io.realm.Realm;
+import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 
 public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemSim, RecyclerView.ViewHolder> implements Filterable {
 
-    private static final String TAG = "FANG_ADAPTER_ITEM_FLOAT";
-
-    private static ItemSimsFloatingRealmAdapter instance;
+    private static final String TAG = "FANG_ADPT_ITEM_FLOAT";
 
     private FragmentManager fragmentManager;
-    private Realm realm;
+    private Context context;
 
-
-    public static ItemSimsFloatingRealmAdapter getInstance() {
-        return instance;
-    }
-    public static void setInstance( Realm realm, FragmentManager fragmentManager ) {
-        instance = new ItemSimsFloatingRealmAdapter(realm, fragmentManager);
+    public ItemSimsFloatingRealmAdapter(
+            OrderedRealmCollection<ItemSim> itemCollection
+            , FragmentManager fragmentManager
+            , Context context) {
+        super(itemCollection, false);
+        this.fragmentManager = fragmentManager;
+        this.context = context;
+        Log.d(TAG, "constructed");
     }
 
     @NonNull
@@ -55,17 +56,9 @@ public class ItemSimsFloatingRealmAdapter extends RealmRecyclerViewAdapter<ItemS
         }
     }
 
-
-    private ItemSimsFloatingRealmAdapter(Realm realm, FragmentManager fragmentManager) {
-        super(realm.where(ItemSim.class).findAll().sort(ItemSim.FIELD_REINF), false);
-        this.realm = realm;
-        this.fragmentManager = fragmentManager;
-        Log.d(TAG, "constructed");
-    }
-
     @Override
     public Filter getFilter() {
-        return new ItemSimFilter(this,realm);
+        return new ItemSimFilter(this, context);
     }
 
 

@@ -4,6 +4,11 @@ import android.app.ActionBar;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
@@ -17,13 +22,16 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.RemoteInput;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
-import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.local.model.realm.Conversation;
+import com.fang.starfang.service.FangcatReceiver;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 import com.fang.starfang.ui.conversation.adapter.ConversationFilter;
 import com.fang.starfang.ui.conversation.adapter.ConversationFilterObject;
 import com.fang.starfang.ui.conversation.adapter.ConversationRealmAdapter;
@@ -37,6 +45,7 @@ import java.util.Calendar;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.Sort;
 
 public class ConversationActivity extends AppCompatActivity implements UpdateDialogFragment.OnUpdateEventListener {
 
@@ -60,7 +69,7 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
         super.onRestart();
         realm = Realm.getDefaultInstance();
         realm.addChangeListener(realmChangeListener);
-        Log.d(TAG,"_on Restart : add change listener to new realm instance");
+        Log.d(TAG, "_on Restart : add change listener to new realm instance");
     }
 
     @Override
@@ -68,13 +77,13 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
         super.onStop();
         realm.removeChangeListener(realmChangeListener);
         realm.close();
-        Log.d(TAG,"_on Stop : remove realm change listener / realm closed");
+        Log.d(TAG, "_on Stop : remove realm change listener / realm closed");
     }
 
     @Override
     public void onDestroy() {
         mNM.cancel(NOTIFICATION_ID);
-        Log.d(TAG,"_on Destroy : remove notification");
+        Log.d(TAG, "_on Destroy : remove notification");
         super.onDestroy();
     }
 
@@ -87,15 +96,15 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch( item.getItemId() ) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
             case R.id.menu_item_filter_send_cat:
-                SendCatFilterDialogFragment.newInstance().show(fragmentManager,TAG);
+                SendCatFilterDialogFragment.newInstance().show(fragmentManager, TAG);
                 break;
             case R.id.menu_item_filter_room:
-                RoomFilterDialogFragment.newInstance().show(fragmentManager,TAG);
+                RoomFilterDialogFragment.newInstance().show(fragmentManager, TAG);
                 break;
             case R.id.menu_item_filter_time:
                 Calendar calendar = Calendar.getInstance();
@@ -121,32 +130,34 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"_ON CREATE");
+        Log.d(TAG, "_ON CREATE");
         setContentView(R.layout.activity_conversation);
         this.realm = Realm.getDefaultInstance();
         this.fragmentManager = getSupportFragmentManager();
-        this.mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        if(VersionUtils.isOreo() ) {
+        this.mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (VersionUtils.isOreo()) {
             NotificationChannel mChannel = new NotificationChannel(
                     CHANNEL_ID, CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_HIGH
             );
             mNM.createNotificationChannel(mChannel);
-            Log.d(TAG,"Notification channel created");
+            Log.d(TAG, "Notification channel created");
         }
 
         ActionBar actionBar = getActionBar();
-        if( actionBar != null) {
+        if (actionBar != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         final RecyclerView conversation_recycler_view = findViewById(R.id.conversation_recycler_view);
-        conversationRecyclerAdapter = new ConversationRealmAdapter( realm );
+        conversationRecyclerAdapter = new ConversationRealmAdapter(
+                realm.where(Conversation.class).findAll().sort(Conversation.FIELD_TIME_VALUE, Sort.ASCENDING)
+        );
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         conversation_recycler_view.setLayoutManager(layoutManager);
         conversation_recycler_view.setAdapter(conversationRecyclerAdapter);
         conversation_recycler_view.scrollToPosition(conversationRecyclerAdapter.getItemCount() - 1);
-        this.conversationFilter = ((ConversationFilter)conversationRecyclerAdapter.getFilter());
+        this.conversationFilter = ((ConversationFilter) conversationRecyclerAdapter.getFilter());
         this.filterObject = ConversationFilterObject.getInstance();
         conversationFilter.filter("on");
 
@@ -155,7 +166,7 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
         final AppCompatButton button_clear_conversation = findViewById(R.id.button_clear_conversation);
         final AppCompatTextView text_filter_summary = findViewById(R.id.text_filter_summary);
         final AppCompatButton button_scroll_bottom = findViewById(R.id.button_scroll_bottom);
-        this.docBuilder = new ConstraintDocBuilder(realm,text_filter_summary,filterObject);
+        this.docBuilder = new ConstraintDocBuilder(realm, text_filter_summary, filterObject);
         docBuilder.build();
 
 
@@ -165,64 +176,97 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
                     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                         super.onScrollStateChanged(recyclerView, newState);
                         RecyclerView.Adapter adapter = recyclerView.getAdapter();
-                        if(adapter == null) {
+                        if (adapter == null) {
                             return;
                         }
                         int itemLastPosition = (adapter.getItemCount() - 1);
-                        if(itemLastPosition < 0 ) {
+                        if (itemLastPosition < 0) {
                             return;
                         }
-                        if(newState == RecyclerView.SCROLL_STATE_IDLE ) {
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                             int itemPosition = layoutManager.findLastVisibleItemPosition();
-                            if( itemPosition == itemLastPosition ) {
-                                button_scroll_bottom.setVisibility( View.GONE );
-                            } else if( itemLastPosition > 3 ) {
-                                if( itemPosition <  itemLastPosition - 3 ) {
-                                    button_scroll_bottom.setVisibility( View.VISIBLE );
+                            if (itemPosition == itemLastPosition) {
+                                button_scroll_bottom.setVisibility(View.GONE);
+                            } else if (itemLastPosition > 3) {
+                                if (itemPosition < itemLastPosition - 3) {
+                                    button_scroll_bottom.setVisibility(View.VISIBLE);
                                 }
                             }
                         }
                     }
-                } );
-        button_scroll_bottom.setOnClickListener( v -> {
+                });
+        button_scroll_bottom.setOnClickListener(v -> {
             RecyclerView.Adapter adapter = conversation_recycler_view.getAdapter();
-            if(adapter == null ) {
+            if (adapter == null) {
                 return;
             }
 
             int itemCount = adapter.getItemCount();
-            Log.d(TAG,"count: " + itemCount);
+            Log.d(TAG, "count: " + itemCount);
             conversation_recycler_view.scrollToPosition(itemCount - 1);
-            button_scroll_bottom.setVisibility( View.GONE );
+            button_scroll_bottom.setVisibility(View.GONE);
         });
 
         final View.OnClickListener searchButton_default_listener = v -> {
 
             Editable editable = text_conversation.getText();
-            if( editable == null ) {
+            if (editable == null) {
                 return;
             }
             String text = editable.toString();
 
-            if(text.length() > 1 ) {
-                Notification notification = new NotificationCompat.Builder( this, CHANNEL_ID )
-                        .setSmallIcon(R.mipmap.ic_launcher_round)
-                        .setContentTitle("Starfang")
-                        .setContentText(text)
-                        .setSubText("debug")
+            if (text.length() > 0) {
+
+                Resources resources = getResources();
+                SharedPreferences sharedPref = getSharedPreferences(
+                        FangConstant.SHARED_PREF_STORE,
+                        Context.MODE_PRIVATE
+                );
+                String botName = sharedPref.getString(
+                        FangConstant.BOT_NAME_KEY,
+                        resources.getString(R.string.bot_name_default));
+                Intent fangcatIntent = new Intent(this, FangcatReceiver.class);
+                Bundle information = new Bundle();
+                information.putString(Notification.EXTRA_TITLE, botName);
+                information.putString(Notification.EXTRA_SUB_TEXT, resources.getString(R.string.notify_debug_room));
+                fangcatIntent.putExtra(FangConstant.EXTRA_INFORMATION,information);
+
+                String replyLabel = resources.getString(R.string.label_reply);
+
+                RemoteInput remoteInput = new RemoteInput.Builder(FangConstant.REPLY_KEY_LOCAL)
+                        .setLabel(replyLabel)
                         .build();
-                   mNM.notify(NOTIFICATION_ID, notification);
+
+                PendingIntent replyPendingIntent =
+                        PendingIntent.getBroadcast(getApplicationContext(),
+                                0, fangcatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                NotificationCompat.Action replyAction =
+                        new NotificationCompat.Action.Builder(R.drawable.ic_sentiment_very_satisfied_black_24dp,
+                                replyLabel, replyPendingIntent)
+                                .addRemoteInput(remoteInput)
+                                .setAllowGeneratedReplies(true)
+                                .build();
+
+                Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
+                        .setContentTitle(resources.getString(R.string.notify_debug_who))
+                        .setContentText(text)
+                        .setSubText(resources.getString(R.string.notify_debug_room))
+                        .addAction(replyAction)
+                        .build();
+                mNM.notify(NOTIFICATION_ID, notification);
 
             } else {
                 int itemCount = conversationRecyclerAdapter.getItemCount();
-                Log.d(TAG,"count: " + itemCount);
+                Log.d(TAG, "count: " + itemCount);
                 conversation_recycler_view.scrollToPosition(itemCount - 1);
             }
             text_conversation.setText("");
             ScreenUtils.hideSoftKeyboard(this);
         };
         button_conversation.setOnClickListener(searchButton_default_listener);
-        button_clear_conversation.setOnClickListener( v -> text_conversation.setText(""));
+        button_clear_conversation.setOnClickListener(v -> text_conversation.setText(""));
 
 
         /*
@@ -249,7 +293,8 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
                     text_input_filter_conversation.setText(filterStr_conv);
                     filterObject.setConversations(filterStr_conv.split(","));
                     conversationFilter.filter("on");
-                } catch (NullPointerException ignored) {
+                } catch (NullPointerException e) {
+                Log.e(TAG,Log.getStackTraceString(e));
                 }
             }
         };
@@ -340,15 +385,15 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
             conversationRecyclerAdapter.notifyDataSetChanged();
             //sendCatFilterRealmAdapter.notifyDataSetChanged();
             //roomFilterRealmAdapter.notifyDataSetChanged();
-            Log.d(TAG,"realm changed!");
+            Log.d(TAG, "realm changed!");
             int itemPosition = layoutManager.findLastVisibleItemPosition();
             int itemLastPosition = (conversationRecyclerAdapter.getItemCount() - 1);
-            if( itemLastPosition < 0 ) {
+            if (itemLastPosition < 0) {
                 return;
             }
 
-            if( itemPosition > itemLastPosition - 4 ) {
-                conversation_recycler_view.scrollToPosition(conversationRecyclerAdapter.getItemCount()-1);
+            if (itemPosition > itemLastPosition - 4) {
+                conversation_recycler_view.scrollToPosition(conversationRecyclerAdapter.getItemCount() - 1);
             }
         };
         realm.addChangeListener(realmChangeListener);
@@ -357,19 +402,9 @@ public class ConversationActivity extends AppCompatActivity implements UpdateDia
 
 
     @Override
-    public void updateEvent(int code, String message) {
-        if( code == FangConstant.NOTIFY_TYPE_CONVERSATION) {
+    public void updateEvent(int resultCode, String message, int[] pos) {
+        if (resultCode == FangConstant.RESULT_CODE_SUCCESS) {
             conversationRecyclerAdapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public boolean dialogAttached() {
-        return false;
-    }
-
-    @Override
-    public void dialogDetached() {
-
     }
 }

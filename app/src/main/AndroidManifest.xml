@@ -35,7 +35,7 @@
             android:enabled="true" />
 
         <receiver android:name="com.fang.starfang.service.AlarmReceiver" />
-
+        <receiver android:name="com.fang.starfang.service.FangcatReceiver" />
 
         <activity
             android:name=".ui.main.MainActivity"

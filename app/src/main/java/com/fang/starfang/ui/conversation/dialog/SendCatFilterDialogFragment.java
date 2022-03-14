@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.R;
-import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 import com.fang.starfang.ui.conversation.ConstraintDocBuilder;
 import com.fang.starfang.ui.conversation.adapter.SendCatFilterRealmAdapter;
 import com.fang.starfang.ui.conversation.adapter.ConversationFilter;
@@ -24,8 +24,8 @@ public class SendCatFilterDialogFragment extends UpdateDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        View view = View.inflate(mActivity, R.layout.dialog_filter_send_cat, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        View view = View.inflate(mContext, R.layout.dialog_filter_send_cat, null);
 
         final ConversationFilterObject filterObject = ConversationFilterObject.getInstance();
         final SendCatFilterRealmAdapter sendCatFilterRealmAdapter =
@@ -34,7 +34,7 @@ public class SendCatFilterDialogFragment extends UpdateDialogFragment {
                         view.findViewById(R.id.text_filter_sendCat_count_desc));
 
         final RecyclerView recycler_view_filter_send_cat = view.findViewById(R.id.recycler_view_filter_send_cat);
-        recycler_view_filter_send_cat.setLayoutManager(new LinearLayoutManager(mActivity));
+        recycler_view_filter_send_cat.setLayoutManager(new LinearLayoutManager(mContext));
         recycler_view_filter_send_cat.setAdapter(sendCatFilterRealmAdapter);
 
         builder.setView(view).setPositiveButton(R.string.setting_kor, (dialog, which) -> {

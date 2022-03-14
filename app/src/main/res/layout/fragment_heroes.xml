@@ -13,180 +13,108 @@
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:layout_alignParentStart="true"
             android:id="@+id/button_sort_hero"
             android:layout_width="75dp"
             android:layout_height="match_parent"
-            android:layout_marginEnd="5dp"
+            android:layout_alignParentStart="true"
             android:layout_marginStart="5dp"
-            android:text="@string/sort_kor"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/rect_button"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:text="@string/sort_kor" />
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:layout_toEndOf="@id/button_sort_hero"
             android:id="@+id/simulation_et_search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginEnd="85dp"
+            android:layout_toEndOf="@id/button_sort_hero"
             android:autofillHints=""
+            android:background="#FFF"
             android:focusedByDefault="false"
             android:hint="@string/search_kor"
-            android:background="#FFF"
-            android:textColor="#000"
             android:inputType="textNoSuggestions"
+            android:textColor="#000"
             tools:targetApi="o" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/button_search_hero"
-            android:layout_alignParentEnd="true"
             android:layout_width="75dp"
             android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/rect_button"
             android:fontFamily="@font/krona_one"
-            android:textSize="12sp"
-            android:text="@string/search" />
+            android:text="@string/search"
+            android:textSize="12sp" />
 
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/simulation_content_layout"
+    <com.fang.starfang.ui.creative.DynamicSheets
+        android:id="@+id/sheets_hero"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/simulation_et_layout"
-        android:orientation="horizontal">
+        tools:orientation="horizontal">
 
-        <LinearLayout
+
+        <com.fang.starfang.ui.creative.DiagonalScrollRecyclerView
+            android:id="@+id/diagonal_hero_fixed"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="1dp"
-            android:background="@drawable/end_border_white_2dp"
-            android:orientation="vertical">
+            >
+            <LinearLayout
+                android:id="@+id/part_hero_fixed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="70dp"
+                android:id="@+id/column_hero_fixed"
+                android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:layout_marginTop="1dp"
                 android:background="@drawable/bottom_border_white_2dp"
                 android:orientation="horizontal">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginEnd="2dp"
-                    android:gravity="center"
-                    android:text="@string/name_kor"
-                    android:textSize="15sp" />
-
-
             </LinearLayout>
 
+
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_hero_fixed"
+                android:id="@+id/recycler_hero_fixed"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                tools:listitem="@layout/row_heroes_fixed"
                 android:fadeScrollbars="false"
-                />
-        </LinearLayout>
+                android:scrollbars="vertical"
+                tools:listitem="@layout/row_heroes_fixed"/>
+            </LinearLayout>
+
+        </com.fang.starfang.ui.creative.DiagonalScrollRecyclerView>
 
 
-        <com.fang.starfang.ui.common.DiagonalScrollRecyclerView
-            android:id="@+id/recycler_view_hero_content"
+        <com.fang.starfang.ui.creative.DiagonalScrollRecyclerView
+            android:id="@+id/diagonal_hero_floating"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/part_hero_floating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/column_hero_floating"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_marginTop="1dp"
                     android:background="@drawable/bottom_border_white_2dp"
                     android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="100dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/power_kor"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1dp"/>
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="35dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/branch_grade_kor"
-                        android:layout_marginBottom="2dp"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="35dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/cost"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1dp"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="130dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/stat_kor"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1dp"/>
-
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="200dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/spec_kor"
-                        android:textSize="15sp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1dp"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="210dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/item_kor"
-                        android:textSize="15sp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1dp"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="240dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/relic_kor"
-                        android:textSize="15sp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1dp"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="80dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/lineage_kor"
-                        android:textSize="15sp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/end_border_gray_1dp"/>
-
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_hero_floating"
+                    android:id="@+id/recycler_hero_floating"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scrollbars="vertical"
@@ -194,10 +122,9 @@
 
             </LinearLayout>
 
-        </com.fang.starfang.ui.common.DiagonalScrollRecyclerView>
+        </com.fang.starfang.ui.creative.DiagonalScrollRecyclerView>
 
-    </LinearLayout>
-
+    </com.fang.starfang.ui.creative.DynamicSheets>
 
 
 </RelativeLayout>

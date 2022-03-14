@@ -1,7 +1,7 @@
 package com.fang.starfang.ui.conversation.adapter;
 
+import android.util.Log;
 import android.widget.Filter;
-
 
 import com.fang.starfang.local.model.realm.Conversation;
 
@@ -12,18 +12,17 @@ import io.realm.RealmResults;
 
 public class ConversationFilter extends Filter {
 
+    private static final String TAG = "FANG_CONV_FILTER";
     private static ConversationFilter instance = null;
     private final ConversationRealmAdapter adapter;
-    private Realm realm;
 
     public static ConversationFilter getInstance() {
         return instance;
     }
 
-    ConversationFilter(ConversationRealmAdapter adapter, Realm realm) {
+    ConversationFilter(ConversationRealmAdapter adapter) {
         super();
         this.adapter = adapter;
-        this.realm = realm;
         instance = this;
     }
 
@@ -43,42 +42,46 @@ public class ConversationFilter extends Filter {
             return;
         }
 
-        ConversationFilterObject conversationFilterObject = ConversationFilterObject.getInstance();
-        RealmQuery<Conversation> query = realm.where(Conversation.class).alwaysTrue();
-        if(conversationFilterObject.isCatChecked()) {
-            makeQueryGroup(query, conversationFilterObject.getSendCats(), Conversation.FIELD_SENDCAT, true, true);
-        }
+        try (Realm realm = Realm.getDefaultInstance()) {
 
-        if( conversationFilterObject.isRoomChecked() ) {
-            makeQueryGroup(query, conversationFilterObject.getRooms(), Conversation.FIELD_ROOM, true, false);
-        }
-        makeQueryGroup(query,conversationFilterObject.getPackages(),Conversation.FIELD_PACKAGE,true, false);
-
-        if( conversationFilterObject.isConvChecked() ) {
-            makeQueryGroup(query, conversationFilterObject.getConversations(), Conversation.FIELD_CONVERSATION, false, false);
-        }
-
-        if( conversationFilterObject.isTimeChecked() ) {
-            long time_before = conversationFilterObject.getTime_before();
-            try {
-                long time_before_day_after = addAndCheck(time_before, (long) 24 * 60 * 60 * 1000 - 1, "");
-
-                query = (time_before < 0) ? query :
-                        query.and().lessThanOrEqualTo(Conversation.FIELD_TIME_VALUE, time_before_day_after);
-                //Log.d(TAG, "time_before: " + time_before_day_after);
-            } catch (ArithmeticException e) {
-                e.printStackTrace();
+            ConversationFilterObject conversationFilterObject = ConversationFilterObject.getInstance();
+            RealmQuery<Conversation> query = realm.where(Conversation.class).alwaysTrue();
+            if (conversationFilterObject.isCatChecked()) {
+                makeQueryGroup(query, conversationFilterObject.getSendCats(), Conversation.FIELD_SENDCAT, true, true);
             }
 
+            if (conversationFilterObject.isRoomChecked()) {
+                makeQueryGroup(query, conversationFilterObject.getRooms(), Conversation.FIELD_ROOM, true, false);
+            }
+            makeQueryGroup(query, conversationFilterObject.getPackages(), Conversation.FIELD_PACKAGE, true, false);
 
-            long time_after = conversationFilterObject.getTime_after();
-            query = (time_after < 0) ? query :
-                    query.and().greaterThanOrEqualTo(Conversation.FIELD_TIME_VALUE, time_after);
-            //Log.d(TAG,"time_after: "+ time_after);
+            if (conversationFilterObject.isConvChecked()) {
+                makeQueryGroup(query, conversationFilterObject.getConversations(), Conversation.FIELD_CONVERSATION, false, false);
+            }
+
+            if (conversationFilterObject.isTimeChecked()) {
+                long time_before = conversationFilterObject.getTime_before();
+                try {
+                    long time_before_day_after = addAndCheck(time_before, (long) 24 * 60 * 60 * 1000 - 1, "");
+
+                    query = (time_before < 0) ? query :
+                            query.and().lessThanOrEqualTo(Conversation.FIELD_TIME_VALUE, time_before_day_after);
+                    //Log.d(TAG, "time_before: " + time_before_day_after);
+                } catch (ArithmeticException e) {
+                    Log.e(TAG, Log.getStackTraceString( e ));
+                }
+
+
+                long time_after = conversationFilterObject.getTime_after();
+                query = (time_after < 0) ? query :
+                        query.and().greaterThanOrEqualTo(Conversation.FIELD_TIME_VALUE, time_after);
+            }
+
+            RealmResults<Conversation> realmResults = query.findAll();
+            adapter.updateData(realmResults);
+        } catch( RuntimeException e ) {
+            Log.e(TAG, Log.getStackTraceString( e ));
         }
-
-        RealmResults<Conversation> realmResults = query.findAll();
-        adapter.updateData(realmResults);
     }
 
     private long addAndCheck(long a, long b, String msg) {

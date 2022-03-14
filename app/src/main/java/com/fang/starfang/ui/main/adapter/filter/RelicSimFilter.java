@@ -1,7 +1,9 @@
 package com.fang.starfang.ui.main.adapter.filter;
 
+import android.util.Log;
 import android.widget.Filter;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fang.starfang.FangConstant;
@@ -18,66 +20,63 @@ import io.realm.Sort;
 
 public class RelicSimFilter extends Filter {
 
-    //private static final String TAG = "FANG_FILTER_ITEM_SIM";
+    private static final String TAG = "FANG_FILTER_ITEM_SIM";
     private RealmRecyclerViewAdapter<RelicSim, RecyclerView.ViewHolder> adapter;
-    private Realm realm;
 
-    public RelicSimFilter(RealmRecyclerViewAdapter<RelicSim, RecyclerView.ViewHolder> adapter, Realm realm) {
+    public RelicSimFilter(RealmRecyclerViewAdapter<RelicSim, RecyclerView.ViewHolder> adapter) {
         super();
         this.adapter = adapter;
-        this.realm = realm;
     }
 
 
     @Override
-    protected FilterResults performFiltering(CharSequence constraint) {
+    protected FilterResults performFiltering(@NonNull CharSequence constraint) {
         return new FilterResults();
     }
 
     @Override
-    protected void publishResults(CharSequence constraint, FilterResults results) {
+    protected void publishResults(@NonNull CharSequence constraint, FilterResults results) {
         filterResults(constraint.toString());
     }
 
     private void filterResults( String cs ) {
-        if(cs == null ) {
-            return;
-        }
-        // 사신, 접두사, 접미사, 등급
+        if( cs != null ) {
+            // 사신, 접두사, 접미사, 등급
+            cs = cs.trim();
 
-        cs = cs.trim();
-        String[] csSplit = cs.split(FangConstant.CONSTRAINT_SEPARATOR);
-        RealmQuery<RelicSim> query = realm.where(RelicSim.class).isNull(RelicSim.FIELD_HERO);
-        String relicSimPrefixField = RelicSim.FIELD_PREFIX + ".";
-        String relicSimSuffixField = RelicSim.FIELD_SUFFIX + ".";
+            try (Realm realm = Realm.getDefaultInstance()){
+            String[] csSplit = cs.split(FangConstant.CONSTRAINT_SEPARATOR);
+            RealmQuery<RelicSim> query = realm.where(RelicSim.class).isNull(RelicSim.FIELD_HERO);
+            String relicSimPrefixField = RelicSim.FIELD_PREFIX + ".";
+            String relicSimSuffixField = RelicSim.FIELD_SUFFIX + ".";
 
-        try {
-            if( csSplit.length > 0 ) {
-                int guardianType = NumberUtils.toInt(csSplit[0], 0);
-                if (guardianType > 0) {
-                    query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_TYPE, guardianType);
+
+                if (csSplit.length > 0) {
+                    int guardianType = NumberUtils.toInt(csSplit[0], 0);
+                    if (guardianType > 0) {
+                        query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_TYPE, guardianType);
+                    }
                 }
-            }
 
-            if (csSplit.length > 1 && !csSplit[1].isEmpty()) {
-                query.and().equalTo(relicSimPrefixField + RelicPRFX.FIELD_NAME, csSplit[1]);
-            }
-
-            if( csSplit.length > 2 && !csSplit[2].isEmpty() ) {
-                query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_NAME, csSplit[2]);
-
-            }
-
-            if( csSplit.length > 3 ) {
-                int grade = NumberUtils.toInt(csSplit[3], 0);
-                if (grade > 0) {
-                    query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_GRD, grade);
+                if (csSplit.length > 1 && !csSplit[1].isEmpty()) {
+                    query.and().equalTo(relicSimPrefixField + RelicPRFX.FIELD_NAME, csSplit[1]);
                 }
-            }
 
-        } catch( ArrayIndexOutOfBoundsException | IllegalArgumentException e ) {
-            e.printStackTrace();
-        }
-        adapter.updateData(query.findAll().sort(RelicSim.FIELD_LEVEL, Sort.DESCENDING));
+                if (csSplit.length > 2 && !csSplit[2].isEmpty()) {
+                    query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_NAME, csSplit[2]);
+
+                }
+
+                if (csSplit.length > 3) {
+                    int grade = NumberUtils.toInt(csSplit[3], 0);
+                    if (grade > 0) {
+                        query.and().equalTo(relicSimSuffixField + RelicSFX.FIELD_GRD, grade);
+                    }
+                }
+                adapter.updateData(query.findAll().sort(RelicSim.FIELD_LEVEL, Sort.DESCENDING));
+            } catch (RuntimeException e) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            } // try..catch
+        } // if cs != null
     }
 }

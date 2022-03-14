@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.fang.starfang.ui.common.DraggableRadarChart
+    <com.fang.starfang.ui.creative.DraggableRadarChart
         android:id="@+id/chart_relic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

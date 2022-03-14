@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
@@ -17,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.ui.main.MainActivity;
 import com.fang.starfang.util.VersionUtils;
@@ -24,6 +24,8 @@ import com.fang.starfang.util.VersionUtils;
 public class RestartService extends Service {
 
     private static final String TAG = "FANG_RESTART";
+    private static final String channelId = "rsChannel";
+    private static final String channelName = "RestartServiceChannel";
 
     @Nullable
     @Override
@@ -35,13 +37,12 @@ public class RestartService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG,"restart service activated");
 
-        startForegroundService("rsChannel", "RestartServiceChannel");
+        startForegroundService(channelId, channelName);
 
         Intent startServiceIntent = new Intent(RestartService.this, FangcatService.class);
-        Resources resources = getResources();
         startServiceIntent.putExtra(
-                resources.getString(R.string.bot_status),
-                resources.getString(R.string.bot_status_restart));
+                FangConstant.BOT_STATUS_KEY,
+                FangConstant.BOT_STATUS_RESTART);
         startService(startServiceIntent);
 
         stopForeground(true);

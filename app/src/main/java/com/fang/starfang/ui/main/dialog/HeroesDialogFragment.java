@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,7 +31,7 @@ import com.fang.starfang.local.model.realm.source.Branch;
 import com.fang.starfang.local.model.realm.source.Heroes;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.NormalItem;
-import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 import com.fang.starfang.ui.main.adapter.PowersRecyclerAdapter;
 import com.fang.starfang.ui.main.adapter.SpecsRecycleAdapter;
 import com.fang.starfang.util.ScreenUtils;
@@ -88,7 +89,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                         case FangConstant.REQ_CODE_PICK_ITEM_DIALOG_FRAGMENT:
                             String itemName = intent.getStringExtra(FangConstant.INTENT_KEY_ITEM_NAME);
                             String itemReinforce = intent.getStringExtra(FangConstant.INTENT_KEY_ITEM_REINFORCE);
-                            int itemID = intent.getIntExtra(FangConstant.INTENT_KEY_ITEM_ID,0);
+                            int itemID = intent.getIntExtra(FangConstant.INTENT_KEY_ITEM_ID, 0);
                             ItemSim itemSim = realm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID, itemID).findFirst();
                             itemSims.set(itemMainCate, itemSim);
                             texts_item_reinforcement[itemMainCate].setText(itemReinforce);
@@ -96,14 +97,18 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                             text_picked_item_name.setText(itemName);
                             button_release_picked_item.setEnabled(true);
                             button_reinforce_picked_item.setEnabled(itemReinforce != null);
-                            Snackbar.make(view,  itemReinforce + " " + itemName + " 착용", Snackbar.LENGTH_SHORT).show();
-                            onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
+                            Snackbar.make(view, itemReinforce + " " + itemName + " 착용", Snackbar.LENGTH_SHORT).show();
+                            for(OnUpdateEventListener listener : listeners ) {
+                                listener.updateEvent(FangConstant.RESULT_CODE_SUCCESS, null, null);
+                            }
                             break;
                         case FangConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT:
                             itemReinforce = intent.getStringExtra(FangConstant.INTENT_KEY_ITEM_REINFORCE);
                             texts_item_reinforcement[itemMainCate].setText(intent.getStringExtra(FangConstant.INTENT_KEY_ITEM_REINFORCE));
-                            Snackbar.make(view,  itemReinforce + " 강화", Snackbar.LENGTH_SHORT).show();
-                            onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
+                            Snackbar.make(view, itemReinforce + " 강화", Snackbar.LENGTH_SHORT).show();
+                            for(OnUpdateEventListener listener : listeners ) {
+                                listener.updateEvent(FangConstant.RESULT_CODE_SUCCESS, null, null);
+                            }
                             break;
                         default:
                     } // end switch
@@ -111,7 +116,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                     powerAdapter.notifyDataSetChanged();
 
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    Log.d(TAG, e.toString());
+                    Log.e(TAG,Log.getStackTraceString(e));
                 }
             }
         } // end if ok
@@ -122,16 +127,23 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        this.view = View.inflate(mActivity, R.layout.dialog_heroes, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        this.view = View.inflate(mContext, R.layout.dialog_heroes, null);
 
         Bundle args = getArguments();
         if (args != null) {
             int heroID = getArguments().getInt(FangConstant.INTENT_KEY_HERO_ID);
             HeroSim heroSim = realm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, heroID).findFirst();
             if (heroSim != null) {
-                Heroes hero = heroSim.getHero();
 
+                Resources resources = getResources();
+                final String grade_no_reinforce = resources.getString(R.string.grade_no_reinforce);
+                final String[] item_categories = {
+                        resources.getString(R.string.weapon),
+                        resources.getString(R.string.shield),
+                        resources.getString(R.string.aid)
+                };
+                Heroes hero = heroSim.getHero();
                 final AppCompatSeekBar seek_bar_hero_grade = view.findViewById(R.id.seek_bar_hero_grade);  // 0 ~ 4
                 final AppCompatTextView text_seek_bar_hero_grade_value = view.findViewById(R.id.text_seek_bar_hero_grade_value); // 1 ~ 5
                 final AppCompatSeekBar seek_bar_hero_level = view.findViewById(R.id.seek_bar_hero_level); // 0 ~ 98
@@ -161,10 +173,10 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                 final RecyclerView recycler_view_pasv_grades = view.findViewById(R.id.recycler_view_pasv_grades);
                 final RecyclerView recycler_view_hero_grades = view.findViewById(R.id.recycler_view_hero_grades);
                 final RecyclerView recycler_view_dialog_heroes_cell_power = view.findViewById(R.id.recycler_view_dialog_heroes_cell_power);
-                int calculateNoOfColumns = ScreenUtils.calculateNoOfColumns(mActivity, 65.0);
-                recycler_view_pasv_grades.setLayoutManager(new GridLayoutManager(mActivity, calculateNoOfColumns));
-                recycler_view_hero_grades.setLayoutManager(new GridLayoutManager(mActivity, calculateNoOfColumns));
-                recycler_view_dialog_heroes_cell_power.setLayoutManager(new LinearLayoutManager(mActivity));
+                int calculateNoOfColumns = ScreenUtils.calculateNoOfColumns(mContext, 65.0);
+                recycler_view_pasv_grades.setLayoutManager(new GridLayoutManager(mContext, calculateNoOfColumns));
+                recycler_view_hero_grades.setLayoutManager(new GridLayoutManager(mContext, calculateNoOfColumns));
+                recycler_view_dialog_heroes_cell_power.setLayoutManager(new LinearLayoutManager(mContext));
                 RealmList<RealmString> heroSpecs = hero.getHeroSpecs();   // 0 ~ 3 : pick & 4,5 : pasv
                 RealmList<RealmString> heroSpecVals = hero.getHeroSpecValues(); // 0 ~ 3
                 RealmList<RealmString> branchSpecs = null; // 0 ~ 4
@@ -277,8 +289,10 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
 
                 final AppCompatTextView text_dialog_heroes_cell_specs_total = view.findViewById(R.id.text_dialog_heroes_cell_specs_total);
                 ArrayList<Integer> checkedSpecLevels = heroSim.getCheckedLevelList();
-                final SpecsRecycleAdapter pasvAdapter = new SpecsRecycleAdapter(titles_pasv, specs_pasv, specVals_pasv, null, true, null);
-                final SpecsRecycleAdapter heroAdapter = new SpecsRecycleAdapter(titles, specs, specVals, checkedSpecLevels, false, text_dialog_heroes_cell_specs_total);
+                final SpecsRecycleAdapter pasvAdapter = new SpecsRecycleAdapter(
+                        titles_pasv, specs_pasv, specVals_pasv, null, true, null);
+                final SpecsRecycleAdapter heroAdapter = new SpecsRecycleAdapter(
+                        titles, specs, specVals, checkedSpecLevels, false, text_dialog_heroes_cell_specs_total);
                 recycler_view_pasv_grades.setAdapter(pasvAdapter);
                 recycler_view_hero_grades.setAdapter(heroAdapter);
                 text_dialog_heroes_cell_specs_total.setText(String.valueOf(heroSim.getHeroSpecScoreSum()));
@@ -304,7 +318,8 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
 
                 itemSims = heroSim.getHeroItemSims();
 
-                powerAdapter = new PowersRecyclerAdapter(branchStatGGs, heroBaseStats, heroStatsUpList, curLevel + 1, curReinforce + 1, normalItems, itemSims);
+                powerAdapter = new PowersRecyclerAdapter(
+                        branchStatGGs, heroBaseStats, heroStatsUpList, curLevel + 1, curReinforce + 1, normalItems, itemSims);
                 recycler_view_dialog_heroes_cell_power.setAdapter(powerAdapter);
 
                 final AppCompatTextView text_sum_of_plus_stat_cur = view.findViewById(R.id.text_sum_of_plus_stat_cur);
@@ -317,10 +332,10 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                 final AppCompatSeekBar[] seek_bar_hero_stat = new AppCompatSeekBar[numberOfStats];
 
                 for (int i = 0; i < numberOfStats; i++) {
-                    seek_bar_hero_stat[i] = view.findViewById(resources.getIdentifier("seekbar_hero_stat" + (i + 1), "id", mActivity.getPackageName()));
-                    text_base_plus_stat[i] = view.findViewById(resources.getIdentifier("text_base_plus_stat" + (i + 1), "id", mActivity.getPackageName()));
-                    text_seek_bar_hero_stat_cur[i] = view.findViewById(resources.getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_cur", "id", mActivity.getPackageName()));
-                    text_seek_bar_hero_stat_max[i] = view.findViewById(resources.getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_max", "id", mActivity.getPackageName()));
+                    seek_bar_hero_stat[i] = view.findViewById(resources.getIdentifier("seekbar_hero_stat" + (i + 1), "id", mContext.getPackageName()));
+                    text_base_plus_stat[i] = view.findViewById(resources.getIdentifier("text_base_plus_stat" + (i + 1), "id", mContext.getPackageName()));
+                    text_seek_bar_hero_stat_cur[i] = view.findViewById(resources.getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_cur", "id", mContext.getPackageName()));
+                    text_seek_bar_hero_stat_max[i] = view.findViewById(resources.getIdentifier("text_seekbar_hero_stat" + (i + 1) + "_max", "id", mContext.getPackageName()));
 
                     seek_bar_hero_stat[i].setMax(maxPlusStat);
                     text_seek_bar_hero_stat_max[i].setText(String.valueOf(maxPlusStat));
@@ -407,7 +422,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                             sumOfMax = Math.min(500, sumOfMax);
                             text_sum_of_plus_stat_max.setText(String.valueOf(sumOfMax));
                         } catch (StringIndexOutOfBoundsException e) {
-                            Log.d(TAG, e.toString());
+                            Log.e(TAG,Log.getStackTraceString(e));
                         }
 
                         if (branch != null) {
@@ -456,7 +471,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                                 seek_bar_hero_reinforce.setProgress(curReinforce - 1);
                             }
                         } catch (StringIndexOutOfBoundsException e) {
-                            Log.d(TAG, e.toString());
+                            Log.e(TAG,Log.getStackTraceString(e));
                         }
 
                         text_seek_bar_hero_level_value.setText(String.valueOf(progress + 1));
@@ -492,7 +507,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                                 seek_bar_hero_level.setProgress(maxLevelByReinforce - 1);
                             }
                         } catch (StringIndexOutOfBoundsException e) {
-                            Log.d(TAG, e.toString());
+                            Log.e(TAG,Log.getStackTraceString(e));
                         }
 
                         text_seek_bar_hero_reinforce_value.setText(String.valueOf(curReinforce));
@@ -537,7 +552,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                     ItemSim curItemSim = itemSims.get(i);
                     Item curItem = curItemSim == null ? null : curItemSim.getItem();
                     boolean reinforceImpossible = curItem == null
-                            || FangConstant.ITEM_GRADE_NO_REINFORCE.equals(curItem.getItemGrade());
+                            || grade_no_reinforce.equals(curItem.getItemGrade());
                     texts_item_reinforcement[i].setText(reinforceImpossible ? null
                             : "+" + curItemSim.getItemReinforcement());
                     texts_item_name[i].setText(curItem == null ? null : curItem.getItemName());
@@ -546,7 +561,13 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                         ItemSim pickedItemSim = itemSims.get(finalI);
                         Item pickedItem = pickedItemSim == null ? null : pickedItemSim.getItem();
                         String selectedMainCate = text_picked_item_cate_main.getText().toString();
-                        int selectedMainCateIndex = getMainCateIndex(selectedMainCate);
+                        int selectedMainCateIndex = -1;
+                        for( int cateIndex = 0; cateIndex < item_categories.length; cateIndex++ ){
+                            if( item_categories[cateIndex].equals(selectedMainCate)) {
+                                selectedMainCateIndex = cateIndex;
+                                break;
+                            }
+                        }
 
                         if (selectedMainCateIndex == finalI) {
                             button_release_picked_item.setEnabled(false);
@@ -557,11 +578,13 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                             vPickItem.setBackgroundResource(R.drawable.rect_black);
 
                         } else {
-                            if( selectedMainCateIndex > -1 ) {
+                            if (selectedMainCateIndex > -1) {
                                 cells_hero_item[selectedMainCateIndex].setBackgroundResource(R.drawable.rect_black);
                             }
                             vPickItem.setBackgroundResource(R.drawable.rect_checked);
-                            text_picked_item_cate_main.setText(getMainCateName(finalI));
+                            int cateSize = item_categories.length;
+                            int cateIndex = finalI>=cateSize? (cateSize-1) : finalI;
+                            text_picked_item_cate_main.setText(item_categories[cateIndex]);
                             text_picked_item_name.setText(texts_item_name[finalI].getText().toString());
 
                             if (pickedItem != null) {
@@ -585,7 +608,7 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
 
                             button_reinforce_picked_item.setOnClickListener(vReinforce -> {
                                 ItemSim reinforcingItem = itemSims.get(finalI);
-                                if(reinforcingItem != null) {
+                                if (reinforcingItem != null) {
                                     ReinforceItemDialogFragment reinforceDialogFragment = ReinforceItemDialogFragment.newInstance(reinforcingItem.getItemID(), finalI);
                                     reinforceDialogFragment.setTargetFragment(HeroesDialogFragment.this, FangConstant.REQ_CODE_REINFORCE_ITEM_DIALOG_FRAGMENT);
                                     reinforceDialogFragment.show(fragmentManager, TAG);
@@ -595,14 +618,14 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                             button_release_picked_item.setOnClickListener(vRelease -> {
                                 ItemSim releasingItemSim = itemSims.get(finalI);
                                 Item releasingItem = releasingItemSim == null ? null : releasingItemSim.getItem();
-                                if( releasingItem != null ) {
+                                if (releasingItem != null) {
                                     button_release_picked_item.setEnabled(false);
                                     button_reinforce_picked_item.setEnabled(false);
                                     final int itemID = releasingItemSim.getItemID();
-                                    realm.executeTransactionAsync( bgRealm -> {
+                                    realm.executeTransactionAsync(bgRealm -> {
                                         HeroSim bgHeroSim = bgRealm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, heroID).findFirst();
                                         ItemSim bgItemSim = bgRealm.where(ItemSim.class).equalTo(ItemSim.FIELD_ID, itemID).findFirst();
-                                        if( bgHeroSim != null && bgItemSim != null ) {
+                                        if (bgHeroSim != null && bgItemSim != null) {
                                             bgHeroSim.setHeroItemSim(null, finalI);
                                             bgItemSim.setHeroWhoHasThis(null);
                                         }
@@ -613,7 +636,9 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                                         text_picked_item_name.setText(null);
                                         powerAdapter.notifyDataSetChanged();
                                         Snackbar.make(view, releasingItem.getItemName() + " 해제", Snackbar.LENGTH_SHORT).show();
-                                        onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_ITEM, null);
+                                        for(OnUpdateEventListener listener : listeners ) {
+                                            listener.updateEvent(FangConstant.RESULT_CODE_SUCCESS, null, null);
+                                        }
                                     });
                                 }
                             });
@@ -625,8 +650,8 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
 
 
                 builder.setView(view).setPositiveButton(R.string.modify_kor, (dialog, which) -> realm.executeTransactionAsync(bgRealm -> {
-                    HeroSim bgHeroSim = bgRealm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID,heroID).findFirst();
-                    if( bgHeroSim != null) {
+                    HeroSim bgHeroSim = bgRealm.where(HeroSim.class).equalTo(HeroSim.FIELD_ID, heroID).findFirst();
+                    if (bgHeroSim != null) {
                         int heroGrade = seek_bar_hero_grade.getProgress() + 1;
                         int heroLevel = seek_bar_hero_level.getProgress() + 1;
                         int heroReinforce = seek_bar_hero_reinforce.getProgress() + 1;
@@ -661,7 +686,9 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
                     }
                 }, () -> {
                     final String message = heroSim.getHero().getHeroName() + " " + resources.getString(R.string.modified_kor);
-                    onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_HERO, message);
+                    for(OnUpdateEventListener listener : listeners ) {
+                        listener.updateEvent(FangConstant.RESULT_CODE_SUCCESS, null, null);
+                    }
                 })).setNegativeButton(R.string.cancel_kor, null);
 
             } // end if heroSim != null
@@ -685,29 +712,6 @@ public class HeroesDialogFragment extends UpdateDialogFragment {
         }
     }
 
-    private int getMainCateIndex( String mainCate ) {
-        switch( mainCate ) {
-            case FangConstant.WEAPON_KOR:
-                return 0;
-            case FangConstant.ARMOR_KOR:
-                return 1;
-            case FangConstant.AID_KOR:
-                return 2;
-            default:
-                return -1;
-        }
-    }
-
-    private String getMainCateName( int index ) {
-        switch( index ) {
-            case 0:
-                return FangConstant.WEAPON_KOR;
-            case 1:
-                return FangConstant.ARMOR_KOR;
-            default:
-                return FangConstant.AID_KOR;
-        }
-    }
 
     private String getItemSubCate(int position, Branch branch) {
         switch (position) {

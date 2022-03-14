@@ -21,7 +21,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import java.util.ArrayList;
 
 public class SpecsRecycleAdapter extends RecyclerView.Adapter<SpecsRecycleAdapter.SpecsRecyclerViewAdapterViewHolder>
-implements Filterable {
+        implements Filterable {
 
     private static final String TAG = "FANG_ADAPTER_SPEC";
     private ArrayList<String> titles;
@@ -39,7 +39,7 @@ implements Filterable {
     @NonNull
     @Override
     public SpecsRecyclerViewAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_heroes_cell_spec,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dialog_heroes_cell_spec, viewGroup, false);
         return new SpecsRecycleAdapter.SpecsRecyclerViewAdapterViewHolder(view);
     }
 
@@ -55,7 +55,7 @@ implements Filterable {
 
 
     public SpecsRecycleAdapter(ArrayList<String> titles, ArrayList<String> specs
-            , ArrayList<String> specVals, ArrayList<Integer> checkedLevels , boolean pasv, TextView resultView) {
+            , ArrayList<String> specVals, ArrayList<Integer> checkedLevels, boolean pasv, TextView resultView) {
 
         this.titles = titles;
         this.titlesFiltered = titles;
@@ -76,48 +76,49 @@ implements Filterable {
             private int cs;
 
             @Override
-            protected FilterResults performFiltering(CharSequence charSequence) {
+            protected FilterResults performFiltering(@NonNull CharSequence charSequence) {
 
                 String csStr = charSequence.toString();
-                cs = NumberUtils.toInt(csStr,0);
+                cs = NumberUtils.toInt(csStr, 0);
                 //Log.d(TAG,"CS: " + cs);
                 // 1 ~ 99  or 1 ~ 5
-                if( cs == 0 ) {
+                if (cs != 0) {
+
+
+                    if (!pasv && checkedLevels != null) {
+                        Integer level_before = cs + 1;
+                        if (checkedLevels.contains(level_before)) {
+                            checkedLevels.remove(level_before);
+                            setScoreResultView();
+                            Log.d(TAG, "level down : checked spec removed");
+                        }
+                    }
+
+                    ArrayList<Integer> results = new ArrayList<>();
+
+                    for (int i = 0; i < titles.size(); i++) {
+                        String titleStr = titles.get(i);
+                        //Log.d(TAG,"titleStr: " + titleStr);
+                        int titleValue = NumberUtils.toInt(titleStr.replaceAll("[^0-9]", ""), 0);
+                        //Log.d(TAG,"titleValue: " + titleValue);
+
+                        if (titleValue <= cs) {
+                            results.add(i);
+                        }
+                    }
+                    FilterResults filterResults = new FilterResults();
+                    filterResults.values = results;
+
+                    return filterResults;
+                } else {
                     return null;
                 }
-
-                if(!pasv && checkedLevels != null) {
-                    Integer level_before = cs + 1;
-                    if(checkedLevels.contains(level_before)) {
-                        checkedLevels.remove(level_before);
-                        setScoreResultView();
-                        Log.d(TAG,"level down : checked spec removed");
-                    }
-                }
-
-                ArrayList<Integer> results = new ArrayList<>();
-
-                for( int i = 0; i < titles.size(); i++ ) {
-                    String titleStr = titles.get(i);
-                    //Log.d(TAG,"titleStr: " + titleStr);
-                    int titleValue = NumberUtils.toInt(titleStr.replaceAll("[^0-9]", ""),0);
-                    //Log.d(TAG,"titleValue: " + titleValue);
-
-
-                    if( titleValue <= cs ) {
-                        results.add(i);
-                    }
-                }
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = results;
-
-                return filterResults;
             }
 
             @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                if( filterResults == null) {
-                    Log.d(TAG,"FILTER RESULT IS NULL");
+            protected void publishResults(@NonNull CharSequence charSequence, FilterResults filterResults) {
+                if (filterResults == null) {
+                    Log.d(TAG, "FILTER RESULT IS NULL");
                     return;
                 }
 
@@ -126,30 +127,30 @@ implements Filterable {
                 specValsFiltered = new ArrayList<>(); // do not clear()
 
                 Object values = filterResults.values;
-                if( values instanceof ArrayList<?>) {
-                    ArrayList<?> al = (ArrayList<?>)values;
-                    if(al.size()>0) {
-                        for(Object o : al) {
-                            if(o  instanceof Integer) {
+                if (values instanceof ArrayList<?>) {
+                    ArrayList<?> al = (ArrayList<?>) values;
+                    if (al.size() > 0) {
+                        for (Object o : al) {
+                            if (o instanceof Integer) {
                                 Integer integer = (Integer) o;
                                 String titleStr = titles.get(integer);
                                 String specValStr = specVals.get(integer);
-                                if(pasv) {
-                                    if(specValStr != null) {
-                                        if(specValStr.contains("/")) {
-                                            int titleValue = NumberUtils.toInt(titleStr.replaceAll("[^0-9]", ""),0);
+                                if (pasv) {
+                                    if (specValStr != null) {
+                                        if (specValStr.contains("/")) {
+                                            int titleValue = NumberUtils.toInt(titleStr.replaceAll("[^0-9]", ""), 0);
                                             String[] specValSplit = specValStr.split("/");
                                             int index = (cs - titleValue);
-                                            if( index >= specValSplit.length || index < 0 ) {
+                                            if (index >= specValSplit.length || index < 0) {
                                                 index = specValSplit.length - 1;
                                             }
                                             String specValCurCS = specValSplit[index];
-                                                String specValCurCSValue = specValCurCS.replaceAll("[^0-9]", "");
-                                                if (specValStr.contains("%")) {
-                                                    specValStr = specValCurCSValue + "%";
-                                                } else {
-                                                    specValStr = "[" + specValCurCSValue + "]";
-                                                }
+                                            String specValCurCSValue = specValCurCS.replaceAll("[^0-9]", "");
+                                            if (specValStr.contains("%")) {
+                                                specValStr = specValCurCSValue + "%";
+                                            } else {
+                                                specValStr = "[" + specValCurCSValue + "]";
+                                            }
 
                                         }
                                     }
@@ -167,10 +168,6 @@ implements Filterable {
     }
 
 
-
-
-
-
     class SpecsRecyclerViewAdapterViewHolder extends RecyclerView.ViewHolder {
         private AppCompatTextView text_cell_title_spec;
         private AppCompatCheckedTextView button_cell_spec;
@@ -186,12 +183,12 @@ implements Filterable {
             text_cell_title_spec.setText(titleStr);
             String buttonStr = specsFiltered.get(position) + "\n" + specValsFiltered.get(position);
             button_cell_spec.setText(buttonStr);
-            if( pasv ) {
+            if (pasv) {
                 button_cell_spec.setBackgroundResource(R.drawable.rect_button);
                 button_cell_spec.setOnClickListener(null);
             } else {
-                Integer titleInteger = NumberUtils.toInt(titleStr.replaceAll("[^0-9]",""),0);
-                if(checkedLevels.contains(titleInteger)) {
+                Integer titleInteger = NumberUtils.toInt(titleStr.replaceAll("[^0-9]", ""), 0);
+                if (checkedLevels.contains(titleInteger)) {
                     button_cell_spec.setChecked(true);
                     button_cell_spec.setBackgroundResource(R.drawable.rect_checked);
                 } else {
@@ -200,13 +197,13 @@ implements Filterable {
                 }
 
                 button_cell_spec.setEnabled(true);
-                button_cell_spec.setOnClickListener( v -> {
-                    if(button_cell_spec.isChecked()) {
+                button_cell_spec.setOnClickListener(v -> {
+                    if (button_cell_spec.isChecked()) {
                         button_cell_spec.setChecked(false);
                         button_cell_spec.setBackgroundResource(R.drawable.rect_button);
                         checkedLevels.remove(titleInteger);
                         setScoreResultView();
-                    } else if( checkedLevels.size() < 3 ){
+                    } else if (checkedLevels.size() < 3) {
                         button_cell_spec.setChecked(true);
                         button_cell_spec.setBackgroundResource(R.drawable.rect_checked);
                         checkedLevels.add(titleInteger);
@@ -218,11 +215,11 @@ implements Filterable {
     }
 
     private void setScoreResultView() {
-        if(resultView == null) {
+        if (resultView == null) {
             return;
         }
         int sum = 0;
-        for( int level : checkedLevels ) {
+        for (int level : checkedLevels) {
             sum += HeroSim.getSpecScoreByLevel(level);
         }
         resultView.setText(String.valueOf(sum));

@@ -12,13 +12,13 @@ public class PageViewModel extends ViewModel {
         String str;
         switch(input) {
             case 1:
-                str = "items";
-                break;
-            case 2:
                 str = "heroes";
                 break;
+            case 2:
+                str = "items";
+                break;
             case 3:
-                str = "magicItems";
+                str = "relics";
                 break;
                 default:
                     str = "error";

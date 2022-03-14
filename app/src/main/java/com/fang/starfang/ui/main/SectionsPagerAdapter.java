@@ -16,7 +16,7 @@ import com.fang.starfang.ui.main.Fragment.PlaceholderFragment;
 public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_4,R.string.tab_text_1, R.string.tab_text_5};
+    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1,R.string.tab_text_4, R.string.tab_text_5};
     private final Context mContext;
 
     SectionsPagerAdapter(Context context, FragmentManager fm) {

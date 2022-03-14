@@ -15,16 +15,26 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.ui.main.adapter.filter.ItemFilter;
 
-import io.realm.Realm;
+import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 
 public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerView.ViewHolder> implements Filterable {
 
-    private static final String TAG = "FANG_ADAPTER_ITEM";
+    private static final String TAG = "FANG_ADPT_ITEM";
     private AppCompatTextView text_info;
     private AppCompatTextView text_desc;
     private Item item_selected;
-    private Realm realm;
+
+    public ItemsRealmAdapter(
+            OrderedRealmCollection<Item> itemCollection
+            , AppCompatTextView text_info
+            , AppCompatTextView text_desc) {
+        super(itemCollection, false);
+        this.text_desc = text_desc;
+        this.text_info = text_info;
+        this.item_selected = null;
+        Log.d(TAG, "constructed");
+    }
 
     @NonNull
     @Override
@@ -42,23 +52,13 @@ public class ItemsRealmAdapter extends RealmRecyclerViewAdapter<Item, RecyclerVi
         }
     }
 
-
-    public ItemsRealmAdapter(Realm realm, AppCompatTextView text_info, AppCompatTextView text_desc) {
-        super(null, false);
-        this.text_desc = text_desc;
-        this.text_info = text_info;
-        this.item_selected = null;
-        this.realm = realm;
-        Log.d(TAG, "constructed");
-    }
-
     public Item getSelectedItem() {
         return item_selected;
     }
 
     @Override
     public Filter getFilter() {
-        return new ItemFilter(this, realm);
+        return new ItemFilter(this );
     }
 
     public class ItemsViewHolder extends RecyclerView.ViewHolder {

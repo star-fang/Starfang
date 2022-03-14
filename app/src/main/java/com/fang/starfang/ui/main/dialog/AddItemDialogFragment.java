@@ -17,7 +17,7 @@ import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.ItemSim;
 import com.fang.starfang.local.model.realm.source.Item;
 import com.fang.starfang.local.model.realm.source.ItemCate;
-import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 import com.fang.starfang.ui.main.adapter.ItemsRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 
@@ -42,13 +42,18 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        View view = View.inflate(mActivity, R.layout.dialog_add_item, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        View view = View.inflate(mContext, R.layout.dialog_add_item, null);
         final AppCompatTextView text_dialog_add_item_info = view.findViewById(R.id.text_dialog_add_item_info);
         final AppCompatTextView text_dialog_add_item_desc = view.findViewById(R.id.text_dialog_add_item_desc);
         final RecyclerView recycler_view_all_items = view.findViewById(R.id.recycler_view_all_items);
-        recycler_view_all_items.setLayoutManager(new GridLayoutManager(mActivity, ScreenUtils.calculateNoOfColumns(mActivity,80.0)));
-        ItemsRealmAdapter itemsRealmAdapter = new ItemsRealmAdapter(realm, text_dialog_add_item_info, text_dialog_add_item_desc);
+        recycler_view_all_items.setLayoutManager(new GridLayoutManager(mContext, ScreenUtils.calculateNoOfColumns(mContext,80.0)));
+
+        ItemsRealmAdapter itemsRealmAdapter = new ItemsRealmAdapter(
+                realm.where(Item.class).findAll().sort(Item.FIELD_GRD,Sort.DESCENDING)
+                , text_dialog_add_item_info
+                , text_dialog_add_item_desc
+        );
         recycler_view_all_items.setAdapter(itemsRealmAdapter);
 
         final NumberPicker picker_item_grade = view.findViewById(R.id.picker_item_grade);
@@ -140,7 +145,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
                     String cs = selected_grade + FangConstant.CONSTRAINT_SEPARATOR + selected_category_main + FangConstant.CONSTRAINT_SEPARATOR + selected_category_sub;
                     itemsRealmAdapter.getFilter().filter(cs.replace(ALL_PICK_KOR,""));
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    Log.d(TAG,"subCate : " + e.toString());
+                    Log.e(TAG,Log.getStackTraceString(e));
                 }
             });
 
@@ -154,7 +159,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
 
 
         } catch( IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
-            Log.d(TAG, e.toString());
+            Log.e(TAG,Log.getStackTraceString(e));
         }
         builder.setView(view).setPositiveButton(R.string.create_kor, (dialogInterface, i) -> {
             Item item_selected = itemsRealmAdapter.getSelectedItem();
@@ -167,7 +172,7 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
                                 ItemSim itemSim = new ItemSim(bgItem);
                                 bgRealm.copyToRealm(itemSim);
                             } catch (RealmPrimaryKeyConstraintException | RealmException e) {
-                                Log.d(TAG, e.toString());
+                                Log.e(TAG,Log.getStackTraceString(e));
                             }
 
 
@@ -175,7 +180,9 @@ public class AddItemDialogFragment extends UpdateDialogFragment {
                         }
                     }, () -> {
                         final String message = item_selected.getItemName() + " " + resources.getString(R.string.added_kor);
-                        onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_ADD_ITEM, message);
+                        for(OnUpdateEventListener listener : listeners ) {
+                            listener.updateEvent(FangConstant.RESULT_CODE_SUCCESS, message, null);
+                        }
                     });
 
 

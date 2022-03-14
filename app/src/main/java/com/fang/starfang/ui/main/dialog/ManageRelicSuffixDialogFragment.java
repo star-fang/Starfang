@@ -18,7 +18,7 @@ import com.fang.starfang.FangConstant;
 import com.fang.starfang.R;
 import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
-import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 import com.fang.starfang.ui.main.adapter.ManageRelicSimRealmAdapter;
 
 import io.realm.Realm;
@@ -52,8 +52,8 @@ public class ManageRelicSuffixDialogFragment extends UpdateDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        View view = View.inflate(mActivity, R.layout.dialog_manage_relic_suffix, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        View view = View.inflate(mContext, R.layout.dialog_manage_relic_suffix, null);
         Bundle args = this.getArguments();
         if (args != null) {
             final int suffixID = args.getInt(FangConstant.INTENT_KEY_SUFFIX_ID);
@@ -81,7 +81,7 @@ public class ManageRelicSuffixDialogFragment extends UpdateDialogFragment {
                 ManageRelicSimRealmAdapter manageRelicSimRealmAdapter = new ManageRelicSimRealmAdapter(
                         relicSims, layout_edit_relic_group, text_selected_relic_count
                 );
-                recycler_view_relic_suffix.setLayoutManager(new LinearLayoutManager(mActivity));
+                recycler_view_relic_suffix.setLayoutManager(new LinearLayoutManager(mContext));
                 recycler_view_relic_suffix.setAdapter(manageRelicSimRealmAdapter);
 
                 button_confirm_manage_relic.setOnClickListener(v -> {

@@ -18,7 +18,7 @@ import com.fang.starfang.local.model.realm.simulator.HeroSim;
 import com.fang.starfang.local.model.realm.simulator.RelicSim;
 import com.fang.starfang.local.model.realm.source.RelicPRFX;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
-import com.fang.starfang.ui.common.UpdateDialogFragment;
+import com.fang.starfang.ui.creative.UpdateDialogFragment;
 import com.fang.starfang.ui.main.adapter.PickRelicSimRealmAdapter;
 import com.fang.starfang.util.ScreenUtils;
 
@@ -44,8 +44,8 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        View view = View.inflate(mActivity, R.layout.dialog_pick_relic_sim, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        View view = View.inflate(mContext, R.layout.dialog_pick_relic_sim, null);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -59,13 +59,14 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                         view.findViewById(R.id.text_dialog_pick_relic_sim_info);
                 final AppCompatTextView text_dialog_pick_relic_sim_desc =
                         view.findViewById(R.id.text_dialog_pick_relic_sim_desc);
-                final PickRelicSimRealmAdapter pickRelicSimRealmAdapter = new PickRelicSimRealmAdapter(realm,
+                final PickRelicSimRealmAdapter pickRelicSimRealmAdapter = new PickRelicSimRealmAdapter(
+                        realm.where(RelicSim.class).isNull(RelicSim.FIELD_HERO).findAll(),
                         text_dialog_pick_relic_sim_info,
                         text_dialog_pick_relic_sim_desc);
                 final RecyclerView recycler_view_relic_sim =
                         view.findViewById(R.id.recycler_view_relic_sim);
-                recycler_view_relic_sim.setLayoutManager(new GridLayoutManager(mActivity,
-                        ScreenUtils.calculateNoOfColumns(mActivity, 75)));
+                recycler_view_relic_sim.setLayoutManager(new GridLayoutManager(mContext,
+                        ScreenUtils.calculateNoOfColumns(mContext, 75)));
                 recycler_view_relic_sim.setAdapter(pickRelicSimRealmAdapter);
 
                 final NumberPicker picker_pick_relic_guardian = view.findViewById(R.id.picker_pick_relic_guardian);
@@ -152,7 +153,7 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                             pickRelicSimRealmAdapter.getFilter().filter( cs.replace(ALL_PICK_KOR,"") );
 
                         } catch (ArrayIndexOutOfBoundsException e) {
-                            Log.d(TAG, "suffix error :" + e.toString());
+                            Log.e(TAG,Log.getStackTraceString(e));
                         }
                     });
 
@@ -197,7 +198,9 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                                 RelicSFX relicSuffix = selectedRelic.getSuffix();
                                 String message = heroSim.getHero().getHeroName() + ": " + (relicPrefix != null ? relicPrefix.getRelicPrefixName() : "" ) + " " +
                                         relicSuffix.getNameStarGrade() + " " + resources.getString(R.string.wear_kor);
-                                onUpdateEventListener.updateEvent(FangConstant.RESULT_CODE_SUCCESS_MODIFY_RELIC, message);
+                                for(OnUpdateEventListener listener : listeners ) {
+                                    listener.updateEvent(FangConstant.RESULT_CODE_SUCCESS, message, null);
+                                }
                             });
 
 
@@ -205,7 +208,7 @@ public class PickRelicSimDialogFragment extends UpdateDialogFragment {
                     }).setNegativeButton(R.string.cancel_kor, null);
 
                 } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
-                    Log.d(TAG, e.toString());
+                    Log.e(TAG,Log.getStackTraceString(e));
                 }
 
             }

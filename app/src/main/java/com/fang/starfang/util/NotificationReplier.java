@@ -34,16 +34,16 @@ public class NotificationReplier extends AsyncTask<String, Integer, String> {
     private String sendCat;
     private String catRoom;
     private boolean record;
-    private boolean isLocalRequest;
+    private boolean debug;
 
     public NotificationReplier(Context context, String sendCat, String catRoom,
-                               StatusBarNotification sbn, boolean isLocalRequest, boolean record) {
+                               StatusBarNotification sbn, boolean debug, boolean record) {
         this.sbn = sbn;
         this.sendCat = sendCat;
         this.catRoom = catRoom;
         this.context = new WeakReference<>(context);
-        this.isLocalRequest = isLocalRequest;
-        this.record = record || isLocalRequest;
+        this.debug = debug;
+        this.record = record;
     }
 
     @Override
@@ -52,8 +52,7 @@ public class NotificationReplier extends AsyncTask<String, Integer, String> {
             try (Realm realm = Realm.getDefaultInstance()) {
                 Log.d(TAG, "REPLY TO " + sbn.getPackageName());
 
-                Action quickReplyAction = isLocalRequest ? null :
-                        getQuickReplyAction(sbn.getNotification(), sbn.getPackageName());
+                Action quickReplyAction = getQuickReplyAction(sbn.getNotification(), sbn.getPackageName());
 
                 StringTokenizer st = new StringTokenizer(answers[0], FangConstant.CONSTRAINT_SEPARATOR);
 
@@ -78,7 +77,7 @@ public class NotificationReplier extends AsyncTask<String, Integer, String> {
                         if (quickReplyAction != null) {
                             quickReplyAction.sendReply(context.get(), "[" + finalBotName + "] to. " + sendCat + "\r\n" + finalMessage);
                         }
-                        if (record) {
+                        if (record && !debug ) {
                             realm.executeTransaction(bgRealm -> {
                                 Conversation conversation = bgRealm.createObject(Conversation.class);
                                 conversation.setReplyID(sbn.getTag());

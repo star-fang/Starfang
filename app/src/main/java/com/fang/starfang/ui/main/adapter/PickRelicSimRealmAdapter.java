@@ -17,7 +17,7 @@ import com.fang.starfang.local.model.realm.source.RelicPRFX;
 import com.fang.starfang.local.model.realm.source.RelicSFX;
 import com.fang.starfang.ui.main.adapter.filter.RelicSimFilter;
 
-import io.realm.Realm;
+import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 
 public class PickRelicSimRealmAdapter extends RealmRecyclerViewAdapter<RelicSim, RecyclerView.ViewHolder> implements Filterable {
@@ -26,7 +26,17 @@ public class PickRelicSimRealmAdapter extends RealmRecyclerViewAdapter<RelicSim,
     private AppCompatTextView text_info;
     private AppCompatTextView text_desc;
     private RelicSim relic_selected;
-    private Realm realm;
+
+    public PickRelicSimRealmAdapter(
+            OrderedRealmCollection<RelicSim> relicCollection
+            , AppCompatTextView text_info
+            , AppCompatTextView text_desc) {
+        super(relicCollection, false);
+        this.text_info = text_info;
+        this.text_desc = text_desc;
+        this.relic_selected = null;
+        Log.d(TAG, "constructed");
+    }
 
     @NonNull
     @Override
@@ -44,23 +54,13 @@ public class PickRelicSimRealmAdapter extends RealmRecyclerViewAdapter<RelicSim,
         }
     }
 
-
-    public PickRelicSimRealmAdapter(Realm realm, AppCompatTextView text_info, AppCompatTextView text_desc) {
-        super(realm.where(RelicSim.class).isNull(RelicSim.FIELD_HERO).findAll(), false);
-        this.text_info = text_info;
-        this.text_desc = text_desc;
-        this.relic_selected = null;
-        this.realm = realm;
-        Log.d(TAG, "constructed");
-    }
-
     public RelicSim getSelectedRelic() {
         return relic_selected;
     }
 
     @Override
     public Filter getFilter() {
-        return new RelicSimFilter(this, realm);
+        return new RelicSimFilter(this);
     }
 
     public class RelicSimViewHolder extends RecyclerView.ViewHolder {
